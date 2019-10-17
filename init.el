@@ -2507,5 +2507,3 @@ series of processes in the same Comint buffer.  The hook
 ;;                 "/run/current-system/profile/bin"
 ;;                 "/run/current-system/profile/sbin"))
 ;;   (add-to-list 'tramp-remote-path path)
-
-;; sly (instead of slime)
