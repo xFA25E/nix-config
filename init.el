@@ -1133,7 +1133,7 @@ series of processes in the same Comint buffer.  The hook
         ("z w" . counsel-colors-web))
 
   (:map search-map
-        ("g r" . counsel-rg-default-directory))
+        ("r" . counsel-rg-default-directory))
 
   (:map ctl-x-map
         ("C-f"   . counsel-find-file)
@@ -1928,21 +1928,25 @@ series of processes in the same Comint buffer.  The hook
 
 (use-package grep
   :bind (:map search-map
-              ("g g" . ergrep)
-              ("g f" . frgrep)
-              ("g z" . zrgrep))
+              ("g" . grep-interactive))
 
   :config
   (add-to-list 'grep-files-aliases '("php" . "*.php *.phtml"))
   (add-to-list 'grep-find-ignored-files "*.min.js" t)
   (add-to-list 'grep-find-ignored-files "*.min.css" t)
 
-  (defun xrgrep (grep-program null-separator)
+  (defun grep-interactive ()
+    (interactive)
     (grep-compute-defaults)
-    (let ((grep-find-template nil)
+    (let ((grep-program (completing-read
+                         "Grep type: "
+                         (list "grep -E" "grep -F" "zgrep -E" "zgrep -F")
+                         nil t))
+          (grep-find-template nil)
           (grep-find-command nil)
           (grep-host-defaults-alist nil)
-          (grep-use-null-filename-separator null-separator))
+          (grep-use-null-filename-separator t))
+
       (grep-compute-defaults)
       (cond
        ((and grep-find-command (equal current-prefix-arg '(16)))
@@ -1950,15 +1954,12 @@ series of processes in the same Comint buffer.  The hook
                                      nil nil 'grep-find-history)))
        ((not grep-find-template)
         (error "grep.el: No `grep-find-template' available"))
+
        (t (let* ((regexp (grep-read-regexp))
                  (files (grep-read-files regexp))
                  (dir (read-directory-name "Base directory: "
-                                           nil default-directory t))
-                 (confirm (equal current-prefix-arg '(4))))
-            (rgrep regexp files dir confirm))))))
-
-  (defun ergrep () (interactive) (xrgrep "egrep" t))
-  (defun frgrep () (interactive) (xrgrep "fgrep" t)))
+                                           nil default-directory t)))
+            (rgrep regexp files dir (equal current-prefix-arg '(4)))))))))
 
 (use-package nix-mode
   :ensure t
@@ -2325,39 +2326,35 @@ series of processes in the same Comint buffer.  The hook
     (let ((args "")
           (dir ""))
 
-      (cl-flet ((add-name-arg (find-arg prompt)
-                              (setq args (concat args " " find-arg " "
-                                                 (shell-quote-argument (read-string prompt)))))
-                (add-grep-arg (grep-opt prompt)
-                              (setq args (concat args " -type f -exec grep " grep-opt " "
-                                                 find-grep-options " -e "
-                                                 (shell-quote-argument (read-string prompt))
-                                                 " " (shell-quote-argument "{}")
-                                                 " " (shell-quote-argument ";")))))
+      (cond
+       ((equal current-prefix-arg '(16))
+        (call-interactively #'find-dired))
+       (t
+        (let ((search-type (completing-read "Search type: "
+                                            (list "-iname" "-iregex" "-exec grep")
+                                            nil t)))
+          (when (not (string-equal search-type "-exec grep"))
+            (let ((arg (read-string (concat search-type " pattern: "))))
+              (setq args (concat search-type " " (shell-quote-argument arg))))))
 
-        (let ((search-filename (completing-read "Search name or regex: "
-                                                (list "name" "regex" "no"))))
+        (let ((grep-type (completing-read
+                          "Grep type: "
+                          (list "no" "grep -E" "grep -F" "zgrep -E" "zgrep -F")
+                          nil t)))
+          (when (not (string-equal grep-type "no"))
+            (let ((arg (read-string (concat grep-type " pattern: "))))
+              (setq args (concat args " -type f -exec " grep-type " "
+                                 find-grep-options " -e "
+                                 (shell-quote-argument arg)
+                                 " " (shell-quote-argument "{}")
+                                 " " (shell-quote-argument ";"))))))
 
-          (cond ((string-equal search-filename "name")
-                 (add-name-arg "-iname" "Find-name (filename wildcard): "))
-                ((string-equal search-filename "regex")
-                 (add-name-arg "-iregex" "Find-regex (emacs regexp): "))))
+        (when (equal current-prefix-arg '(4))
+          (setq args (read-from-minibuffer "Confirm: " args
+                                           nil nil '(find-args-history . 1))))
 
-        (let ((search-grep (completing-read
-                            "Search contents: "
-                            (list "no" "fixed string" "extended regexp"))))
-
-          (cond ((string-equal search-grep "fixed string")
-                 (add-grep-arg "-F" "Find-grep (fixed string): "))
-                ((string-equal search-grep "extended regexp")
-                 (add-grep-arg "-E" "Find-grep (extended regexp): ")))))
-
-      (when (string-equal "yes" (completing-read "Modify: " (list "no" "yes")))
-        (setq args (read-string "Final find arguments: " args)))
-
-      (setq dir (read-directory-name "Search in directory: "))
-
-      (find-dired dir args))))
+        (find-dired (read-directory-name "Run find in directory: " nil "" t)
+                    args))))))
 
 (use-package flycheck-checkbashisms
   :ensure t
