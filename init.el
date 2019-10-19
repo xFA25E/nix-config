@@ -2,12 +2,11 @@
 
 (defvar nsm-settings-file "~/.cache/emacs/network-security.data")
 (defvar package-user-dir "~/.cache/emacs/elpa")
-(defvar gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3") ;; TLS fix
+(defvar gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
 (require 'package)
 
-(setq package-archives `(;; ,@package-archives
-                         ("gnu" . "https://elpa.gnu.org/packages/")
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")))
 
@@ -156,46 +155,9 @@
   (set-language-environment   "UTF-8"))
 
 (use-package ispell
-  ;; to learn
-
-  ;; pig greenest config
-  ;; '(ispell-local-dictionary-alist
-  ;;   (quote
-  ;;    (("russian" "[А-Яа-яA-Za-z]" "[^А-Яа-яA-Za-z]" "[-]" nil
-  ;;      ("-d" "ru_RU,en_US")
-  ;;      "~tex" utf-8)
-  ;;     ("english" "[A-Za-z]" "[^A-Za-z]" "[-']" nil nil "~tex" utf-8))))
-  ;; '(ispell-program-name "hunspell")
-
-
-  ;; :custom
-  ;; (ispell-dictionary        "en_US,ru_RU,it_IT")
-  ;; (ispell-encoding8-command t)
-  ;; (ispell-local-dictionary-alist
-  ;;  '(("russian"
-  ;;     "[АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯабвгдеёжзийклмнопрстуфхцчшщьыъэюяіїєґ’A-Za-z]"
-  ;;     "[^АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯабвгдеёжзийклмнопрстуфхцчшщьыъэюяіїєґ’A-Za-z]"
-  ;;     "[-']"  nil ("-d" "uk_UA,ru_RU,en_US,it_IT") nil utf-8)))
-  ;; (ispell-program-name    "hunspell")
-  ;; (ispell-really-aspell   nil)
-  ;; (ispell-really-hunspell t)
-
-  ;; (ispell-silently-savep t))
-
-  ;; :config
-
-  ;; ispell-set-spellchecker-params has to be called
-  ;; before ispell-hunspell-add-multi-dic will work
-  ;; (ispell-hunspell-add-multi-dic "en_US,ru_RU")
-
-  ;; (ispell-set-spellchecker-params)
-
-  )
-
-(use-package flyspell
-  :disabled                             ; to learn
-
-  :custom (flyspell-delay 1))
+  :custom
+  (ispell-program-name "aspell")
+  (ispell-extra-args (list "--sug-mode=ultra")))
 
 (use-package paragraphs
   :init (provide 'paragraphs)
@@ -254,35 +216,35 @@
 
   (defun terminal-in-path (&optional path)
     "Opens an terminal at PATH. If no PATH is given, it uses
-the value of `default-directory'. PATH may be a tramp remote path."
+    the value of `default-directory'. PATH may be a tramp remote path."
     (interactive)
     (unless path (setq path default-directory))
 
     (let ((path     (replace-regexp-in-string (rx line-start "file:") "" path))
           (cd-str   "{ fn=%s; [ -d $fn ] && cd $fn || cd $(dirname $fn); }")
-          (term-cmd nil))
+    (term-cmd nil))
 
-      (if (tramp-tramp-file-p path)
-          (let* ((tstruct   (tramp-dissect-file-name   path))
-                 (tmethod   (tramp-file-name-method    tstruct))
-                 (thost     (tramp-file-name-host      tstruct))
-                 (tpath     (tramp-file-name-localname tstruct))
-                 (tport     (tramp-file-name-port      tstruct))
-                 (tuser     (tramp-file-name-user      tstruct)))
+  (if (tramp-tramp-file-p path)
+      (let* ((tstruct   (tramp-dissect-file-name   path))
+             (tmethod   (tramp-file-name-method    tstruct))
+             (thost     (tramp-file-name-host      tstruct))
+             (tpath     (tramp-file-name-localname tstruct))
+             (tport     (tramp-file-name-port      tstruct))
+             (tuser     (tramp-file-name-user      tstruct)))
 
-            (cond
-             ((member tmethod '("scp" "ssh" "sftp"))
-              (setq term-cmd (format "ssh %s %s%s -t '%s && bash'"
-                                     (if tport (concat "-p " tport) "")
-                                     (if tuser (concat tuser "@") "")
-                                     thost
-                                     (format cd-str tpath))))
+        (cond
+         ((member tmethod '("scp" "ssh" "sftp"))
+          (setq term-cmd (format "ssh %s %s%s -t '%s && bash'"
+                                 (if tport (concat "-p " tport) "")
+                                 (if tuser (concat tuser "@") "")
+                                 thost
+                                 (format cd-str tpath))))
 
-             (t (error "not implemented for method %s" tmethod))))
+         (t (error "not implemented for method %s" tmethod))))
 
-        (setq term-cmd (format "%s && zsh" (format cd-str path))))
+    (setq term-cmd (format "%s && zsh" (format cd-str path))))
 
-      (start-process "terminal" nil "tml" term-cmd))))
+  (start-process "terminal" nil "tml" term-cmd))))
 
 (use-package subr-x :commands if-let)
 
@@ -421,16 +383,11 @@ the value of `default-directory'. PATH may be a tramp remote path."
   :config
 
   (defun back-to-indentation-or-beginning ()
-    "Smarter `beginning-of-line' command.
-Jump to first non-whitespace char,if it was already there, jump to column 0."
     (interactive)
     (if (= (point) (progn (back-to-indentation) (point)))
         (beginning-of-line)))
 
   (defun delete-region-first-last-chars ()
-    "Delete characters ot region beginning and end.
-Preserve active mark. So you can exchange mark and point to
-reactivate region"
     (interactive)
     (if (use-region-p)
         (let ((beginning (region-beginning))
@@ -443,11 +400,6 @@ reactivate region"
       (message "Region is not active")))
 
   (defun just-one-space-fast (&optional n)
-    "Delete all spaces and tabs around point, leaving one space (or N spaces).
-If N is negative, delet newlines as well, leaving -N spaces. The
-defference between the original `just-one-space' and this
-functions is that it uses 'fast instead of 'single-shot as
-argument. See alse `cycle-spacing'."
     (interactive "*p")
     (cycle-spacing n nil 'fast))
 
@@ -464,7 +416,7 @@ argument. See alse `cycle-spacing'."
   :custom (he-file-name-chars "-a-zA-Z0-9_/.,~^#$+={}")
 
   :config
-
+  ;; this is ugly
   (defun try-complete-file-name (old)
     "Try to complete text as a file name.
 The argument OLD has to be nil the first call of this function, and t
@@ -475,8 +427,9 @@ string).  It returns t if a new completion is found, nil otherwise."
           (he-init-string (he-file-name-beg) (point))
           (let ((name-part (file-name-nondirectory he-search-string))
                 (dir-part (expand-file-name
-                           (substitute-in-file-name (or (file-name-directory
-                                                         he-search-string) "")))))
+                           (substitute-in-file-name
+                            (or (file-name-directory
+                                 he-search-string) "")))))
             (if (not (he-string-member name-part he-tried-table))
                 (setq he-tried-table (cons name-part he-tried-table)))
             (if (and (not (equal he-search-string ""))
@@ -513,8 +466,9 @@ otherwise."
             (he-init-string (he-file-name-beg) (point))
             (let ((name-part (file-name-nondirectory he-search-string))
                   (dir-part (expand-file-name
-                             (substitute-in-file-name (or (file-name-directory
-                                                           he-search-string) "")))))
+                             (substitute-in-file-name
+                              (or (file-name-directory
+                                   he-search-string) "")))))
               (if (and (not (equal he-search-string ""))
                        (file-directory-p dir-part))
                   (setq expansion (file-name-completion name-part
@@ -603,6 +557,7 @@ otherwise."
   :bind (:map ctl-x-map ("C-j" . dired-jump))
 
   :custom
+  (dired-bind-vm t)
   (dired-guess-shell-alist-user
    `((,(rx "." (or "doc" "docx" "xlsx" "xls" "odt" "ppt") string-end)
       "setsid -f libreoffice * >/dev/null 2>&1"
@@ -738,7 +693,7 @@ Note: variable `global-hl-line-mode' should be buffer local."
   (add-hook 'comint-output-filter-functions #'comint-truncate-buffer)
 
   :config
-
+  ;; this is ugly
   (defun comint-exec (buffer name command startfile switches)
     "Start up a process named NAME in buffer BUFFER for Comint modes.
 Runs the given COMMAND with SWITCHES, and initial input from STARTFILE.
@@ -870,6 +825,18 @@ series of processes in the same Comint buffer.  The hook
 
 (use-package autoinsert :hook (find-file . auto-insert))
 
+(use-package message
+  :commands message-send-mail-with-sendmail
+
+  :custom
+  (message-kill-buffer-on-exit t)
+  (message-send-mail-function  #'message-send-mail-with-sendmail))
+
+(use-package sendmail
+  :custom
+  (sendmail-program   "msmtp")
+  (send-mail-function #'message-send-mail-with-sendmail))
+
 (use-package mu4e
   :secret (start-mu4e "mu4e.el.gpg")
 
@@ -886,13 +853,8 @@ series of processes in the same Comint buffer.  The hook
   (mu4e-compose-context-policy       'always-ask)
   (mu4e-headers-date-format          "%Y-%m-%d %H:%M")
   (mu4e-view-show-addresses          t)
-  (message-kill-buffer-on-exit       t)
-  (send-mail-function                #'message-send-mail-with-sendmail)
-  (message-send-mail-function        #'message-send-mail-with-sendmail)
-  (sendmail-program                  "msmtp")
   (mu4e-attachment-dir               "~/Downloads")
   (mu4e-modeline-max-width           100)
-  (dired-bind-vm                     t)
   (mu4e-view-attachment-assoc        '(("png"  . "sxiv")
                                        ("jpg"  . "sxiv")
                                        ("gif"  . "sxiv")
@@ -1513,21 +1475,6 @@ series of processes in the same Comint buffer.  The hook
 
   :init (add-to-list 'company-backends #'company-lsp))
 
-;; https://github.com/Microsoft/vscode-python/blob/master/src/client/activation/languageServer/languageServer.ts#L219
-;; (use-package lsp-python-ms
-;;   :ensure t
-;;   :quelpa
-;;   (lsp-python-ms
-;;    :repo "andrew-christianson/lsp-python-ms"
-;;    :branch "master"
-;;    :fetcher github
-;;    :upgrade t)
-;;   :hook (python-mode . lsp-mode)
-;;   :custom
-;;   (lsp-python-ms-dir (expand-file-name "~/projects/python-language-server/output/bin/Release/")))
-
-;; (use-package dap-mode)
-
 (use-package pdf-tools
   :disabled
 
@@ -1595,13 +1542,7 @@ series of processes in the same Comint buffer.  The hook
               ("M-]" . ac-php-find-symbol-at-point)
               ("M-[" . ac-php-location-stack-back))
 
-  :init (add-to-list 'company-backends #'company-ac-php-backend)
-
-  ;; (ac-php-core-eldoc-setup)
-  ;;              (set (make-local-variable 'company-backends)
-  ;;                   '((company-ac-php-backend company-dabbrev-code)
-  ;;                     company-capf company-files))
-  )
+  :init (add-to-list 'company-backends #'company-ac-php-backend))
 
 (use-package php-eldoc
   :ensure t
@@ -2050,28 +1991,6 @@ series of processes in the same Comint buffer.  The hook
 
   (defun enable-local-browser-refresh ()
     (add-hook 'after-save-hook #'browser-refresh nil t)))
-
-(use-package lorem-ipsum
-  :ensure t
-
-  :bind (:map web-mode-map
-              :prefix-map lorem-ipsum-prefix-map
-              :prefix "C-c i"
-              ("l" . lorem-ipsum-insert-list)
-              ("p" . lorem-ipsum-insert-paragraphs)
-              ("s" . lorem-ipsum-insert-sentences))
-
-  :hook (web-mode . setup-web-mode-lorep-ipsum)
-
-  :config
-
-  (defun setup-web-mode-lorep-ipsum ()
-    (setq-local lorem-ipsum-paragraph-separator "<br><br>\n")
-    (setq-local lorem-ipsum-sentence-separator "&nbsp class=\"comment\">;&nbsp;")
-    (setq-local lorem-ipsum-list-beginning "<ul>\n")
-    (setq-local lorem-ipsum-list-bullet "<li>")
-    (setq-local lorem-ipsum-list-item-end "</li>\n")
-    (setq-local lorem-ipsum-list-end "</ul>\n")))
 
 (use-package savehist
   :custom (savehist-file "~/.cache/emacs/savehist")
