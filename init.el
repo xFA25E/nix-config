@@ -84,7 +84,7 @@
                                         kill-buffer-query-functions))
   (next-screen-context-lines      10)
   (resize-mini-windows            t)
-  (tab-width                      4)
+  (tab-width                      8)
   (truncate-lines                 t)
   (undo-limit                     200000)
   (undo-outer-limit               20000000)
@@ -416,78 +416,73 @@
   :custom (he-file-name-chars "-a-zA-Z0-9_/.,~^#$+={}")
 
   :config
-  ;; this is ugly
-  (defun try-complete-file-name (old)
-    "Try to complete text as a file name.
-The argument OLD has to be nil the first call of this function, and t
-for subsequent calls (for further possible completions of the same
-string).  It returns t if a new completion is found, nil otherwise."
-    (if (not old)
-        (progn
-          (he-init-string (he-file-name-beg) (point))
-          (let ((name-part (file-name-nondirectory he-search-string))
-                (dir-part (expand-file-name
-                           (substitute-in-file-name
-                            (or (file-name-directory
-                                 he-search-string) "")))))
-            (if (not (he-string-member name-part he-tried-table))
-                (setq he-tried-table (cons name-part he-tried-table)))
-            (if (and (not (equal he-search-string ""))
-                     (file-directory-p dir-part))
-                (setq he-expand-list (sort (file-name-all-completions
-                                            name-part
-                                            dir-part)
-                                           #'string-lessp))
-              (setq he-expand-list ())))))
+  (add-to-list 'hippie-expand-try-functions-list #'try-complete-file-name-env)
+  (add-to-list 'hippie-expand-try-functions-list
+               #'try-complete-file-name-partially-env)
 
-    (while (and he-expand-list
-                (he-string-member (car he-expand-list) he-tried-table))
+  (defun try-complete-file-name-env (old)
+    (when (not old)
+      (he-init-string (he-file-name-beg) (point))
+      (let ((name-part (file-name-nondirectory he-search-string))
+            (dir-part (expand-file-name
+                       (substitute-in-file-name (or (file-name-directory
+                                                     he-search-string) "")))))
+        (when (not (he-string-member name-part he-tried-table))
+          (setq he-tried-table (cons name-part he-tried-table)))
+        (if (and (not (equal he-search-string ""))
+                 (file-directory-p dir-part))
+            (setq he-expand-list (sort (file-name-all-completions name-part
+                                                                  dir-part)
+                                       #'string-lessp))
+          (setq he-expand-list ()))))
+
+    (while (and he-expand-list (he-string-member (car he-expand-list)
+                                                 he-tried-table))
       (setq he-expand-list (cdr he-expand-list)))
-    (if (null he-expand-list)
-        (progn
-          (if old (he-reset-string))
-          ())
-      (let ((filename (he-concat-directory-file-name
-                       (file-name-directory he-search-string)
-                       (car he-expand-list))))
-        (he-substitute-string filename)
-        (setq he-tried-table (cons (car he-expand-list) (cdr he-tried-table)))
-        (setq he-expand-list (cdr he-expand-list))
-        t)))
 
-  (defun try-complete-file-name-partially (old)
-    "Try to complete text as a file name, as many characters as unique.
-The argument OLD has to be nil the first call of this function.  It
-returns t if a unique, possibly partial, completion is found, nil
-otherwise."
+    (cond (he-expand-list
+           (let ((filename (he-concat-directory-file-name
+                            (file-name-directory he-search-string)
+                            (car he-expand-list))))
+             (he-substitute-string filename)
+             (setq he-tried-table (cons (car he-expand-list)
+                                        (cdr he-tried-table)))
+             (setq he-expand-list (cdr he-expand-list))
+             t))
+
+          (old
+           (he-reset-string)
+           nil)))
+
+  (defun try-complete-file-name-partially-env (old)
     (let ((expansion ()))
-      (if (not old)
-          (progn
-            (he-init-string (he-file-name-beg) (point))
-            (let ((name-part (file-name-nondirectory he-search-string))
-                  (dir-part (expand-file-name
-                             (substitute-in-file-name
-                              (or (file-name-directory
-                                   he-search-string) "")))))
-              (if (and (not (equal he-search-string ""))
-                       (file-directory-p dir-part))
-                  (setq expansion (file-name-completion name-part
-                                                        dir-part)))
-              (if (or (eq expansion t)
-                      (string-equal expansion name-part)
-                      (he-string-member expansion he-tried-table))
-                  (setq expansion ())))))
+      (when (not old)
+        (he-init-string (he-file-name-beg) (point))
+        (let ((name-part (file-name-nondirectory he-search-string))
+              (dir-part (expand-file-name
+                         (substitute-in-file-name (or (file-name-directory
+                                                       he-search-string) "")))))
+          (when (and (not (equal he-search-string ""))
+                     (file-directory-p dir-part))
+            (setq expansion (file-name-completion name-part dir-part)))
 
-      (if (not expansion)
-          (progn
-            (if old (he-reset-string))
-            ())
+          (when (or (eq expansion t)
+                    (string-equal expansion name-part)
+                    (he-string-member expansion he-tried-table))
+            (setq expansion ()))))
+
+      (cond
+       (expansion
         (let ((filename (he-concat-directory-file-name
                          (file-name-directory he-search-string)
                          expansion)))
           (he-substitute-string filename)
           (setq he-tried-table (cons expansion (cdr he-tried-table)))
-          t)))))
+          t))
+
+       (old
+        (he-reset-string)
+        nil)))))
 
 (use-package tex-mode
   :hook (tex-mode . setup-tex-mode-ispell-parser)
@@ -569,7 +564,7 @@ otherwise."
 
      (,(rx ".fb2" string-end)
       "ebook-convert ? .epub &")
-
+     xb
      (,(rx "." (or "pdf" "epub" "djvu") string-end)
       "setsid -f zathura * >/dev/null 2>&1")
 
@@ -686,52 +681,12 @@ Note: variable `global-hl-line-mode' should be buffer local."
   (comint-input-ignoredups             t)
   (comint-input-ring-size              10000)
   (comint-write-input-ring-append-hook nil)
-  (comint-exec-startfile-wait          1)
 
   :init
   (add-hook 'comint-output-filter-functions #'comint-strip-ctrl-m)
   (add-hook 'comint-output-filter-functions #'comint-truncate-buffer)
 
   :config
-  ;; this is ugly
-  (defun comint-exec (buffer name command startfile switches)
-    "Start up a process named NAME in buffer BUFFER for Comint modes.
-Runs the given COMMAND with SWITCHES, and initial input from STARTFILE.
-
-COMMAND should be one of the following:
-- a string, denoting an executable program to create via
-  `start-file-process'
-- a cons pair of the form (HOST . SERVICE), denoting a TCP
-  connection to be opened via `open-network-stream'
-- nil, denoting a newly-allocated pty.
-
-This function blasts any old process running in the buffer, and
-does not set the buffer mode.  You can use this to cheaply run a
-series of processes in the same Comint buffer.  The hook
-`comint-exec-hook' is run after each exec."
-    (with-current-buffer buffer
-      (let ((proc (get-buffer-process buffer)))	; Blast any old process.
-        (if proc (delete-process proc)))
-      ;; Crank up a new process
-      (let ((proc
-             (if (consp command)
-                 (open-network-stream name buffer (car command) (cdr command))
-               (comint-exec-1 name buffer command switches))))
-        (set-process-filter proc #'comint-output-filter)
-        (setq-local comint-ptyp process-connection-type) ; t if pty, nil if pipe.
-        ;; Jump to the end, and set the process mark.
-        (goto-char (point-max))
-        (set-marker (process-mark proc) (point))
-        ;; Feed it the startfile.
-        (cond (startfile
-               (sleep-for comint-exec-startfile-wait)
-               (goto-char (point-max))
-               (insert-file-contents startfile)
-               (setq startfile (buffer-substring (point) (point-max)))
-               (delete-region (point) (point-max))
-               (comint-send-string proc startfile)))
-        (run-hooks 'comint-exec-hook)
-        buffer)))
 
   (defun save-buffers-comint-input-ring ()
     (dolist (buf (buffer-list))
@@ -1164,8 +1119,7 @@ series of processes in the same Comint buffer.  The hook
     "Switch to a shell buffer, or create one."
     (interactive)
 
-    (let ((comint-exec-startfile-wait 0.1)
-          (default-directory (or directory
+    (let ((default-directory (or directory
                                  (when current-prefix-arg
                                    (expand-file-name
                                     (read-directory-name
