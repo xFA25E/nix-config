@@ -564,7 +564,7 @@
 
      (,(rx ".fb2" string-end)
       "ebook-convert ? .epub &")
-     xb
+
      (,(rx "." (or "pdf" "epub" "djvu") string-end)
       "setsid -f zathura * >/dev/null 2>&1")
 
