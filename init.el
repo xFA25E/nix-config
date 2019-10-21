@@ -1,4 +1,4 @@
-;; -*- flycheck-disabled-checkers: (emacs-lisp-checkdoc); -*-
+;; -*- flycheck-disabled-checkers: (emacs-lisp-checkdoc); lexical-binding: t -*-
 
 (defvar nsm-settings-file "~/.cache/emacs/network-security.data")
 (defvar package-user-dir "~/.cache/emacs/elpa")
