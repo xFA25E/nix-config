@@ -96,7 +96,6 @@
   (fill-column                    80)
 
   :config
-
   (defun insert-space-after-point ()
     (interactive)
     (save-excursion (insert " "))))
@@ -246,7 +245,10 @@
 
   (start-process "terminal" nil "tml" term-cmd))))
 
-(use-package subr-x :commands if-let)
+(use-package subr-x
+  :commands
+  if-let
+  when-let)
 
 (use-package tramp
   :commands
@@ -326,19 +328,16 @@
   (backup-enable-predicate #'custom-backup-enable-predicate)
 
   :config
-
   (defun rename-this-file ()
     "Rename visiting file and it's buffer name."
     (interactive)
-    (let ((buf-name (buffer-name))
-          (filename (buffer-file-name)))
-      (if filename
-          (let ((new-name (read-file-name "New name: " filename)))
-            (when (not (get-buffer new-name))
-              (rename-file filename new-name 1)
-              (rename-buffer new-name)
-              (set-visited-file-name new-name)
-              (set-buffer-modified-p nil))))))
+    (when-let ((filename (buffer-file-name)))
+      (let ((new-name (read-file-name "New name: " filename)))
+        (when (not (get-buffer new-name))
+          (rename-file filename new-name 1)
+          (rename-buffer new-name)
+          (set-visited-file-name new-name)
+          (set-buffer-modified-p nil)))))
 
   (defun revert-buffer-no-confirm ()
     "Revert buffer without confirmation."
@@ -357,7 +356,6 @@
   (before-save . delete-trailing-whitespace)
   (after-init  . size-indication-mode)
   (after-init  . column-number-mode)
-
 
   :bind
   ("C-h"                          . backward-delete-char-untabify)
@@ -381,7 +379,6 @@
   (async-shell-command-display-buffer nil)
 
   :config
-
   (defun back-to-indentation-or-beginning ()
     (interactive)
     (if (= (point) (progn (back-to-indentation) (point)))
@@ -487,7 +484,9 @@
 (use-package tex-mode
   :hook (tex-mode . setup-tex-mode-ispell-parser)
 
-  :config (defun setup-tex-mode-ispell-parser () (setq-local ispell-parser 'tex)))
+  :config
+  (defun setup-tex-mode-ispell-parser ()
+    (setq-local ispell-parser 'tex)))
 
 (use-package dired
   :commands dired-get-marked-files
@@ -502,7 +501,6 @@
   (dired-ls-F-marks-symlinks t)
 
   :config
-
   (defun dired-setup-switches ()
     (if-let (method (file-remote-p default-directory 'method))
         (cond
@@ -520,7 +518,8 @@
 
   :bind (:map dired-mode-map ("b" . dired-stat))
 
-  :config (add-to-list 'dired-compress-files-alist '("\\.tar\\'" . "tar -cf %o %i"))
+  :config
+  (add-to-list 'dired-compress-files-alist '("\\.tar\\'" . "tar -cf %o %i"))
 
   (defun dired-stat ()
     (interactive)
@@ -581,12 +580,11 @@
       "transmission-remote --add")))
 
   :config
-
   (defun enable-dired-omit-mode ()
     (if (not (string-equal "*Find*" (buffer-name)))
         (dired-omit-mode))))
 
-(use-package fringe :config (fringe-mode '(3 . 3)))
+(use-package fringe :config (fringe-mode '(3 . 0)))
 
 (use-package ibuffer
   :bind (:map ctl-x-map ("C-S-b" . ibuffer-jump))
@@ -600,19 +598,21 @@
 (use-package browse-url :custom (browse-url-browser-function #'eww-browse-url))
 
 (use-package hl-line
+  :disabled
+
   :hook
   (term-mode  . disable-local-hl-line-mode)
   (after-init . global-hl-line-mode)
 
   :config
-
   (defun disable-local-hl-line-mode ()
     "Disable variable `global-hl-line-mode'.
 Note: variable `global-hl-line-mode' should be buffer local."
     (setq-local global-hl-line-mode nil)))
 
-(use-package cc-mode :custom (c-default-style '((java-mode . "java")
-                                                (other     . "awk"))))
+(use-package cc-mode
+  :custom (c-default-style '((java-mode . "java")
+                             (other     . "awk"))))
 (use-package compile
   :custom
   (compilation-always-kill   t)
@@ -661,7 +661,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
   :hook (wdired-mode . disable-image-dired)
 
   :config
-
   (defun disable-image-dired ()
     (image-dired-minor-mode -1)))
 
@@ -687,7 +686,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
   (add-hook 'comint-output-filter-functions #'comint-truncate-buffer)
 
   :config
-
   (defun save-buffers-comint-input-ring ()
     (dolist (buf (buffer-list))
       (with-current-buffer buf (comint-write-input-ring-append))))
@@ -751,10 +749,8 @@ Note: variable `global-hl-line-mode' should be buffer local."
   :hook
   (shell-mode . shell-enable-comint-history)
   (shell-mode . shell-enable-save-filter)
-  ;; (shell-mode . shell-enable-buffer-name-dirtrack)
 
   :config
-
   (defun shell-enable-comint-history ()
     (setq-local comint-input-ring-file-name
                 "~/.cache/emacs/comint/shell_history")
@@ -840,8 +836,7 @@ Note: variable `global-hl-line-mode' should be buffer local."
                                        (:subject)))
 
   :config
-
-  (defun vm-visit-folder (fil &optional read-only)
+  (defun vm-visit-folder (fil &optional _read-only)
     (if (string-prefix-p mu4e-maildir fil)
         (mu4e~headers-jump-to-maildir (substring fil (length mu4e-maildir)))
       (error (format "%s is not a valid mail dir" fil))))
@@ -880,20 +875,13 @@ Note: variable `global-hl-line-mode' should be buffer local."
 (use-package uniquify
   :custom
   (uniquify-after-kill-buffer-p t)
-  (uniquify-buffer-name-style   'forward)
-  (uniquify-ignore-buffers-re   "^\\*")
-  (uniquify-separator           "/"))
+  (uniquify-buffer-name-style   'post-forward-angle-brackets)
+  (uniquify-ignore-buffers-re   "^\\*"))
 
 (use-package dired-hide-dotfiles
   :ensure t
 
-  :bind (:map dired-mode-map ("." . dired-hide-dotfiles-mode))
-
-  :config
-
-  (defun enable-dired-hide-dotfiles ()
-    (if (not (string-equal "*Find*" (buffer-name)))
-        (dired-hide-dotfiles-mode))))
+  :bind (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
 
 (use-package diredfl
   :ensure t
@@ -912,8 +900,9 @@ Note: variable `global-hl-line-mode' should be buffer local."
   (auto-package-update-delete-old-versions      t)
   (auto-package-update-hide-results             t)
   (auto-package-update-last-update-day-filename "last-package-update-day")
-  (auto-package-update-last-update-day-path     "~/.cache/emacs/last-package-update-day")
-  (auto-package-update-prompt-before-update     t))
+  (auto-package-update-prompt-before-update     t)
+  (auto-package-update-last-update-day-path
+   "~/.cache/emacs/last-package-update-day"))
 
 (use-package smali-mode
   :quelpa (smali-mode :repo "strazzere/Emacs-Smali"
@@ -1094,7 +1083,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
         ("v"   . counsel-set-variable))
 
   :config
-
   (defun counsel-file-directory-jump (&optional initial-input initial-directory)
     (interactive
      (list nil
@@ -1103,7 +1091,8 @@ Note: variable `global-hl-line-mode' should be buffer local."
     (counsel-require-program find-program)
     (let ((default-directory (or initial-directory default-directory))
           (counsel-file-jump-args '("." "-name" ".git" "-prune" "-o"
-                                    "(" "-type" "f" "-o" "-type" "d" ")" "-print")))
+                                    "(" "-type" "f" "-o" "-type" "d" ")"
+                                    "-print")))
       (ivy-read "Find file: "
                 (cdr (counsel--find-return-list counsel-file-jump-args))
                 :matcher #'counsel--find-file-matcher
@@ -1187,7 +1176,8 @@ Note: variable `global-hl-line-mode' should be buffer local."
     :command '("dash" "-n")
     :standard-input t
     :error-patterns '((error
-                       line-start (one-or-more (not (any ":"))) ": " line ": " (message)))
+                       line-start (one-or-more (not (any ":"))) ": " line ": "
+                       (message)))
     :modes 'sh-mode
     :predicate (lambda () (eq sh-shell 'dash))
     :next-checkers '((warning . sh-shellcheck)))
@@ -1235,7 +1225,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
                               shell-mode))
 
   :config
-
   (defun company-indent-or-manual-begin ()
     "Indent the current line or region, or begin company manualy."
     (interactive)
@@ -1477,10 +1466,8 @@ Note: variable `global-hl-line-mode' should be buffer local."
 
   :custom
   (php-manual-path "~/.cache/php_docs/php-chunked-xhtml")
-  (php-search-documentation-browser-function '(lambda (url &rest args) (eww url)))
 
   :config
-
   (defun run-php ()
     (interactive)
     (pop-to-buffer (make-comint-in-buffer "php" "*php*" "php" nil "-a"))))
@@ -1511,28 +1498,19 @@ Note: variable `global-hl-line-mode' should be buffer local."
   :custom (php-beautifier-phpcbf-standard "PSR12,PSR1,PSR2,PEAR")
 
   :config
-
-  (defvar php-beautifier-custom-options
-    "--filters 'ArrayNested() Pear() NewLines(before=T_FUNCTION)'")
-
-  (defun php-beautifier-phpcbf-valid-standard-p (standard-name)
+  (define-advice php-beautifier-phpcbf-valid-standard-p
+      (:override (standard-name) standard-list)
     "Check STANDARD-NAME is registered with phpcbf."
     (unless (string-empty-p standard-name)
       (let ((standards (php-beautifier-phpcbf-standards)))
         (cl-every (lambda (standard) (member standard standards))
                   (split-string standard-name ",")))))
 
-  (defun php-beautifier--create-shell-command ()
-    "Create the shell command to call PHP_Beautifier."
-    (format "%s %s %s%s"
-            php-beautifier-executable-path
-            (if (string= "spaces" php-beautifier-indent-method)
-                "--indent_spaces"
-              "--indent_tabs")
-            php-beautifier-custom-options
-            (if (php-beautifier-phpcbf-can-use-p)
-                (format " | %s" (php-beautifier--create-phpcbf-shell-command))
-              ""))))
+  (define-advice php-beautifier--create-shell-command
+      (:filter-return (arg) custom-options)
+    (concat php-beautifier-executable-path
+            " --filters 'ArrayNested() Pear() NewLines(before=T_FUNCTION)'"
+            (string-remove-prefix php-beautifier-executable-path arg))))
 
 (use-package php-extras
   :disabled
@@ -1590,7 +1568,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
   :hook (prog-mode . enable-check-parens)
 
   :config
-
   (defun enable-check-parens ()
     (add-hook 'after-save-hook #'check-parens nil t)))
 
@@ -1640,7 +1617,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
   :custom (elfeed-search-filter "+unread")
 
   :config
-
   (defun elfeed-switch-to-log-buffer ()
     (interactive)
     (switch-to-buffer (elfeed-log-buffer)))
@@ -1766,7 +1742,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
   (shell-mode         . ansi-color-for-comint-mode-on)
 
   :config
-
   (defun colorize-compilation ()
     "Colorize from `compilation-filter-start' to `point'."
     (let ((inhibit-read-only t))
@@ -1835,7 +1810,8 @@ Note: variable `global-hl-line-mode' should be buffer local."
     (grep-compute-defaults)
     (let ((grep-program (completing-read
                          "Grep type: "
-                         (list "grep -E" "grep -F" "zgrep -E" "zgrep -F")
+                         (list "grep -E" "grep -F" "grep -G" "grep -P"
+                               "zgrep -E" "zgrep -F" "zgrep -G" "zgrep -P")
                          nil t))
           (grep-find-template nil)
           (grep-find-command nil)
@@ -1884,15 +1860,12 @@ Note: variable `global-hl-line-mode' should be buffer local."
   (mingus-use-mouse-p          nil)
 
   :config
-
-  (defun mingus-dired-file ()
-    "Open dired with parent dir of song at point."
+  (define-advice mingus-dired-file (:override () dired-jump)
     (interactive)
-    (dired-jump nil
-                (cond ((mingus-playlistp)
-                       mingus-mpd-playlist-dir)
-                      (t
-                       (mingus-get-absolute-filename))))))
+    (dired-jump nil (cond ((mingus-playlistp)
+                           mingus-mpd-playlist-dir)
+                          (t
+                           (mingus-get-absolute-filename))))))
 
 (use-package ede/base
   :custom (ede-project-placeholder-cache-file "~/.cache/emacs/ede/projects.el"))
@@ -1927,25 +1900,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
 
   :hook (after-init . elf-setup-default))
 
-(use-package browser-refresh
-  :disabled
-
-  :quelpa (browser-refresh :repo "syohex/emacs-browser-refresh"
-                           :fetcher github
-                           :version original)
-
-  :hook (web-mode . enable-local-browser-refresh)
-
-  :custom
-  (browser-refresh-activate        nil)
-  (browser-refresh-default-browser 'firefox)
-  (browser-refresh-save-buffer     t)
-
-  :config
-
-  (defun enable-local-browser-refresh ()
-    (add-hook 'after-save-hook #'browser-refresh nil t)))
-
 (use-package savehist
   :custom (savehist-file "~/.cache/emacs/savehist")
 
@@ -1954,15 +1908,14 @@ Note: variable `global-hl-line-mode' should be buffer local."
   (savehist-save . savehist-filter-file-name-history)
 
   :config
-
   (defun savehist-filter-file-name-history ()
-    (cl-delete-if #'(lambda (e) (not (or (tramp-tramp-file-p e) (file-exists-p e))))
+    (cl-delete-if (lambda (e)
+                    (not (or (tramp-tramp-file-p e) (file-exists-p e))))
                   file-name-history)
     (cl-delete-duplicates file-name-history
-                          :test #'(lambda (a b)
-                                    (string-equal (string-trim-left a "/")
-                                                  (string-trim-left b "/"))))))
-
+                          :test (lambda (a b)
+                                  (string-equal (string-trim-left a "/")
+                                                (string-trim-left b "/"))))))
 (use-package net-utils
   :bind (:map mode-specific-map
               :prefix-map net-utils-prefix-map
@@ -1979,13 +1932,10 @@ Note: variable `global-hl-line-mode' should be buffer local."
               ("t" . traceroute)
               ("w" . iwconfig)))
 
-;; (use-package pcomplete :hook (shell-mode . pcomplete-shell-setup))
-
 (use-package pcomplete
   :commands pcomplete/ls
 
   :config
-
   (defun pcomplete/ls ()
     (while (pcomplete-match "^-" 'last)
       (cond ((pcomplete-match "^-\\{2\\}" 'last)
@@ -2036,9 +1986,7 @@ Note: variable `global-hl-line-mode' should be buffer local."
   :hook (conf-xdefaults-mode . setup-xresources-reload)
 
   :config
-
   (defun xresources-reload ()
-    "Reload xresources."
     (interactive)
     (shell-command "xrdb -load ~/.Xresources; runel remote reload"))
 
@@ -2059,7 +2007,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
   (remember-notes-initial-major-mode 'outline-mode)
 
   :config
-
   (defun remember-notes-save-and-kill-terminal ()
     (interactive)
     (remember-notes-save-and-bury-buffer)
@@ -2073,9 +2020,7 @@ Note: variable `global-hl-line-mode' should be buffer local."
   (eval-expression-print-length t)
 
   :config
-
   (defun eval-and-replace ()
-    "Replace the preceding sexp with its value."
     (interactive)
     (backward-kill-sexp)
     (condition-case nil
@@ -2094,7 +2039,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
   :custom (edit-indirect-guess-mode-function #'edit-indirect-guess-mode)
 
   :config
-
   (defun edit-indirect-region-or-at-point ()
     (interactive)
     (if (use-region-p)
@@ -2132,7 +2076,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
   :hook (emacs-lisp-mode . setup-byte-recompile-after-save)
 
   :config
-
   (defun byte-recompile-current-file ()
     (interactive)
     (byte-recompile-file (buffer-file-name)))
@@ -2193,7 +2136,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
   :custom (find-ls-option '("-print0 | xargs -0 ls -lahsbdi" . "-lahsbdi"))
 
   :config
-
   (defun find-dired-interactive ()
     (interactive)
     (let ((args "")
@@ -2212,7 +2154,8 @@ Note: variable `global-hl-line-mode' should be buffer local."
 
         (let ((grep-type (completing-read
                           "Grep type: "
-                          (list "no" "grep -E" "grep -F" "zgrep -E" "zgrep -F")
+                          (list "no" "grep -E" "grep -F" "grep -G" "grep -P"
+                                "zgrep -E" "zgrep -F" "zgrep -G" "zgrep -P")
                           nil t)))
           (when (not (string-equal grep-type "no"))
             (let ((arg (read-string (concat grep-type " pattern: "))))
@@ -2369,11 +2312,3 @@ Note: variable `global-hl-line-mode' should be buffer local."
   :bind (:map sgml-mode-map
               ("C-M-n" . sgml-skip-tag-forward)
               ("C-M-p" . sgml-skip-tag-backward)))
-
-;; guix ssh
-;; (dolist (path '("/run/setuid-programs"
-;;                 "/root/.config/guix/current/bin"
-;;                 "/root/.guix-profile/bin"
-;;                 "/run/current-system/profile/bin"
-;;                 "/run/current-system/profile/sbin"))
-;;   (add-to-list 'tramp-remote-path path)
