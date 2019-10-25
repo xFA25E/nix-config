@@ -141,11 +141,12 @@
   :init (provide 'startup)
 
   :custom
-  (auto-save-list-file-name          (format-time-string "~/.cache/emacs/auto-saves/list/%y-%m-%d~"))
   (auto-save-list-file-prefix        nil)
   (inhibit-startup-echo-area-message t)
   (inhibit-startup-screen            t)
-  (initial-scratch-message           nil))
+  (initial-scratch-message           nil)
+  (auto-save-list-file-name (format-time-string
+                             "~/.cache/emacs/auto-saves/list/%y-%m-%d~")))
 
 (use-package mule
   :config
@@ -413,11 +414,7 @@
   :custom (he-file-name-chars "-a-zA-Z0-9_/.,~^#$+={}")
 
   :config
-  (add-to-list 'hippie-expand-try-functions-list #'try-complete-file-name-env)
-  (add-to-list 'hippie-expand-try-functions-list
-               #'try-complete-file-name-partially-env)
-
-  (defun try-complete-file-name-env (old)
+  (define-advice try-complete-file-name (:override (old) with-env)
     (when (not old)
       (he-init-string (he-file-name-beg) (point))
       (let ((name-part (file-name-nondirectory he-search-string))
@@ -451,7 +448,7 @@
            (he-reset-string)
            nil)))
 
-  (defun try-complete-file-name-partially-env (old)
+  (define-advice try-complete-file-name-partially (:override (old) with-env)
     (let ((expansion ()))
       (when (not old)
         (he-init-string (he-file-name-beg) (point))
@@ -502,14 +499,14 @@
 
   :config
   (defun dired-setup-switches ()
-    (if-let (method (file-remote-p default-directory 'method))
-        (cond
-         ((string-equal method "ftp")
-          (setq-local dired-actual-switches "-al"))
-         ((string-equal method "sftp")
-          (setq-local dired-actual-switches "-alh"))
-         ((string-equal method "adb")
-          (setq-local dired-actual-switches "-alhDF"))))))
+    (when-let (method (file-remote-p default-directory 'method))
+      (cond
+       ((string-equal method "ftp")
+        (setq-local dired-actual-switches "-al"))
+       ((string-equal method "sftp")
+        (setq-local dired-actual-switches "-alh"))
+       ((string-equal method "adb")
+        (setq-local dired-actual-switches "-alhDF"))))))
 
 (use-package dired-aux
   :after dired
@@ -596,19 +593,6 @@
 (use-package shr :custom (shr-external-browser #'browse-url-firefox))
 
 (use-package browse-url :custom (browse-url-browser-function #'eww-browse-url))
-
-(use-package hl-line
-  :disabled
-
-  :hook
-  (term-mode  . disable-local-hl-line-mode)
-  (after-init . global-hl-line-mode)
-
-  :config
-  (defun disable-local-hl-line-mode ()
-    "Disable variable `global-hl-line-mode'.
-Note: variable `global-hl-line-mode' should be buffer local."
-    (setq-local global-hl-line-mode nil)))
 
 (use-package cc-mode
   :custom (c-default-style '((java-mode . "java")
@@ -729,23 +713,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
                             (one-or-more digit) " "
                             alpha
                             (zero-or-more (in ?- ?_ alpha digit)) " "))
-  (shell-unwanted-regexp
-   (rx (or (and line-start
-                (or "aria2c" "awk" "bspc" "cat" "cd" "ckbatt" "cp"
-                    "cut" "dd" "df" "du" "echo" "em" "env" "exit"
-                    "export" "fd" "feh" "file" "find" "gawk" "grep"
-                    "gzip" "htop" "ln" "locate" "ls" "man" "mkdir"
-                    "mmpv" "mpv" "mpvi" "mv" "myoutube-dl"
-                    "notify-send" "pkill" "printf" "python" "rg"
-                    "rimer" "rm" "rmdir" "rofi" "runel" "setsid"
-                    "sleep" "strip" "sxiv" "timer" "top" "tr" "uname"
-                    "uptime" "watch" "wc" "which" "xclip" "xz"
-                    "youtube-dl" "ytdl" "ytdla" "ytdlam" "ytdlay"
-                    "ytdlp" "ytdlpa" "ytdlpay" "ytdlpy" "ytdly"
-                    "ytdli" "emacs")
-                word-end)
-           (not (any print space)))))
-
   :hook
   (shell-mode . shell-enable-comint-history)
   (shell-mode . shell-enable-save-filter)
@@ -767,7 +734,21 @@ Note: variable `global-hl-line-mode' should be buffer local."
     (comint-send-input))
 
   (defun shell-remove-unwanted-lines ()
-    (flush-lines shell-unwanted-regexp (point-min) (point-max)))
+    (flush-lines
+     (rx (or
+          (and bol
+               (or "aria2c" "awk" "bspc" "cat" "cd" "ckbatt" "cp" "cut" "dd"
+                   "df" "du" "echo" "em" "env" "exit" "export" "fd" "feh" "file"
+                   "find" "gawk" "grep" "gzip" "htop" "ln" "locate" "ls" "man"
+                   "mkdir" "mmpv" "mpv" "mpvi" "mv" "myoutube-dl" "notify-send"
+                   "pkill" "printf" "python" "rg" "rimer" "rm" "rmdir" "rofi"
+                   "runel" "setsid" "sleep" "strip" "sxiv" "timer" "top" "tr"
+                   "uname" "uptime" "watch" "wc" "which" "xclip" "xz"
+                   "youtube-dl" "ytdl" "ytdla" "ytdlam" "ytdlay" "ytdlp"
+                   "ytdlpa" "ytdlpay" "ytdlpy" "ytdly" "ytdli" "emacs")
+               eow)
+          (not (any print space))))
+     (point-min) (point-max)))
 
   (defun shell-enable-save-filter ()
     (add-hook 'comint-write-input-ring-append-hook
@@ -1038,8 +1019,7 @@ Note: variable `global-hl-line-mode' should be buffer local."
         ("z e" . counsel-colors-emacs)
         ("z w" . counsel-colors-web))
 
-  (:map search-map
-        ("r" . counsel-rg-default-directory))
+  (:map search-map ("r" . counsel-rg))
 
   (:map ctl-x-map
         ("C-f"   . counsel-find-file)
@@ -1056,7 +1036,7 @@ Note: variable `global-hl-line-mode' should be buffer local."
 
   (:map mode-specific-map
         ;; SHELL
-        ("x s" . counsel-switch-to-shell-buffer-unique)
+        ("x s" . counsel-switch-to-shell-buffer)
         ;; HISTORY
         ("h c" . counsel-command-history)
         ("h e" . counsel-esh-history)
@@ -1083,52 +1063,29 @@ Note: variable `global-hl-line-mode' should be buffer local."
         ("v"   . counsel-set-variable))
 
   :config
-  (defun counsel-file-directory-jump (&optional initial-input initial-directory)
-    (interactive
-     (list nil
-           (when current-prefix-arg
-             (read-directory-name "From directory: "))))
-    (counsel-require-program find-program)
-    (let ((default-directory (or initial-directory default-directory))
-          (counsel-file-jump-args '("." "-name" ".git" "-prune" "-o"
-                                    "(" "-type" "f" "-o" "-type" "d" ")"
-                                    "-print")))
-      (ivy-read "Find file: "
-                (cdr (counsel--find-return-list counsel-file-jump-args))
-                :matcher #'counsel--find-file-matcher
-                :initial-input initial-input
-                :action #'find-file
-                :preselect (counsel--preselect-file)
-                :require-match 'confirm-after-completion
-                :history 'file-name-history
-                :keymap counsel-find-file-map
-                :caller #'counsel-file-jump)))
-
-  (defun counsel-switch-to-shell-buffer-unique (&optional directory)
-    "Switch to a shell buffer, or create one."
+  (defun counsel-file-directory-jump ()
     (interactive)
+    (let ((counsel-file-jump-args '("." "-name" ".git" "-prune" "-o"
+                                    "(" "-type" "f" "-o"
+                                    "!" "-path" "." "-type" "d" ")" "-print")))
+      (call-interactively #'counsel-file-jump)))
 
-    (let ((default-directory (or directory
-                                 (when current-prefix-arg
-                                   (expand-file-name
-                                    (read-directory-name
-                                     "Default directory: "
-                                     default-directory default-directory t nil)))
-                                 default-directory)))
+  (define-advice counsel-switch-to-shell-buffer (:override () unique)
+    (interactive)
+    (let ((default-directory (if current-prefix-arg
+                                 (expand-file-name
+                                  (counsel-read-directory-name
+                                   "Default directory: "))
+                               default-directory)))
       (ivy-read "Shell buffer: "
-                (cons (generate-new-buffer-name (shell-pwd-generate-buffer-name
-                                                 default-directory))
+                (cons (generate-new-buffer-name
+                       (shell-pwd-generate-buffer-name default-directory))
                       (counsel--buffers-with-mode 'shell-mode))
                 :action #'counsel--switch-to-shell
                 :caller #'counsel-switch-to-shell-buffer)))
 
   (defun kill-buffer-if-alive (buffer)
     (if (get-buffer buffer) (kill-buffer buffer)))
-
-  (defun counsel-rg-default-directory ()
-    "Call `counsel-rg' with `default-directory'."
-    (interactive)
-    (counsel-rg "" default-directory))
 
   (defun ivy-dired-jump-action (dir)
     (dired-jump nil (string-trim-right dir "/")))
@@ -1320,15 +1277,9 @@ Note: variable `global-hl-line-mode' should be buffer local."
 
   :hook (after-init . clipmon-mode))
 
-(use-package cider
-  :disabled
+(use-package cider :ensure t)
 
-  :ensure t)
-
-(use-package clojure-mode
-  :disabled
-
-  :ensure t)
+(use-package clojure-mode :ensure t)
 
 (use-package eldoc
   :diminish eldoc-mode
@@ -1418,17 +1369,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
 
   :init (add-to-list 'company-backends #'company-lsp))
 
-(use-package pdf-tools
-  :disabled
-
-  :ensure t
-
-  :bind (:map pdf-view-mode-map
-              ("C-s" . isearch-forward)
-              ("C-r" . isearch-backward))
-
-  :hook (after-init . pdf-tools-install))
-
 (use-package multiple-cursors
   :ensure t
 
@@ -1511,11 +1451,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
     (concat php-beautifier-executable-path
             " --filters 'ArrayNested() Pear() NewLines(before=T_FUNCTION)'"
             (string-remove-prefix php-beautifier-executable-path arg))))
-
-(use-package php-extras
-  :disabled
-
-  :ensure t)
 
 (use-package web-mode
   :ensure t
@@ -1756,45 +1691,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
   :config
   (add-hook 'eshell-preoutput-filter-functions #'ansi-color-apply)
   (add-hook 'eshell-preoutput-filter-functions #'ansi-color-filter-apply))
-
-(use-package em-smart
-  :after eshell
-
-  :custom
-  (eshell-where-to-jump           'begin)
-  (eshell-review-quick-commands   nil)
-  (eshell-smart-space-goes-to-end t)
-
-  :config (eshell-smart-initialize))
-
-(use-package esh-help
-  :ensure t
-
-  :after eshell
-
-  :config (setup-esh-help-eldoc))
-
-(use-package esh-autosuggest
-  :disabled
-
-  :ensure t
-
-  :after eshell
-
-  :hook (eshell-mode . esh-autosuggest-mode))
-
-(use-package eshell-fringe-status
-  :ensure t
-
-  :after eshell
-
-  :hook (eshell-mode . eshell-fringe-status-mode))
-
-(use-package em-term
-  :after eshell
-
-  :config (dolist (prog '("htop"))
-            (add-to-list 'eshell-visual-commands prog)))
 
 (use-package grep
   :bind (:map search-map
@@ -2105,15 +2001,11 @@ Note: variable `global-hl-line-mode' should be buffer local."
   sql-interactive-mode)
 
 (use-package polymode
-  :disabled
-
   :ensure t
 
   :init (defvar polymode-prefix-key (kbd "C-c P")))
 
 (use-package poly-php-sql-mode
-  :disabled
-
   :requires
   polymode
   php-mode
@@ -2216,16 +2108,6 @@ Note: variable `global-hl-line-mode' should be buffer local."
            :fetcher github)
 
   :hook (shell-mode . shell-synopsis-setup))
-
-(use-package flycheck-phpstan
-  ;; to use it, create .projectile and phpstan.nean files
-  :disabled
-
-  :ensure t
-
-  :after php-mode
-
-  :demand t)
 
 (use-package indent
   :init (provide 'indent)
