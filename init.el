@@ -770,6 +770,8 @@
   (send-mail-function #'message-send-mail-with-sendmail))
 
 (use-package mu4e
+  :defines mu4e-maildir
+
   :secret (start-mu4e "mu4e.el.gpg")
 
   :hook (after-init . start-mu4e)
@@ -1065,9 +1067,9 @@
   :config
   (defun counsel-file-directory-jump ()
     (interactive)
-    (let ((counsel-file-jump-args '("." "-name" ".git" "-prune" "-o"
-                                    "(" "-type" "f" "-o"
-                                    "!" "-path" "." "-type" "d" ")" "-print")))
+    (let ((counsel-file-jump-args
+           (split-string
+            ". -name .git -prune -o ( -type f -o -type d ) -print")))
       (call-interactively #'counsel-file-jump)))
 
   (define-advice counsel-switch-to-shell-buffer (:override () unique)
@@ -1574,11 +1576,13 @@
             (buf "*youtube-duration*"))
         (message "\"%s\" duration: ..." title)
         (set-process-sentinel
-         (start-process "youtube-duration" buf youtube-dl-program "--no-color" "--get-duration" link)
+         (start-process "youtube-duration" buf youtube-dl-program
+                        "--no-color" "--get-duration" link)
          `(lambda (p _m)
             (when (eq 0 (process-exit-status p))
               (with-current-buffer ,buf
-                (message "\"%s\" duration: %s" ,title (string-trim (buffer-string)))
+                (message "\"%s\" duration: %s" ,title (string-trim
+                                                       (buffer-string)))
                 (kill-buffer))))))))
 
   (defun elfeed-show-youtube-dl ()
@@ -1704,29 +1708,30 @@
   (defun grep-interactive ()
     (interactive)
     (grep-compute-defaults)
-    (let ((grep-program (completing-read
-                         "Grep type: "
-                         (list "grep -E" "grep -F" "grep -G" "grep -P"
-                               "zgrep -E" "zgrep -F" "zgrep -G" "zgrep -P")
-                         nil t))
-          (grep-find-template nil)
-          (grep-find-command nil)
-          (grep-host-defaults-alist nil)
-          (grep-use-null-filename-separator t))
+    (let* ((grep-program (completing-read
+                          "Grep type: "
+                          (list "grep -E" "grep -F" "grep -G" "grep -P"
+                                "zgrep -E" "zgrep -F" "zgrep -G" "zgrep -P")
+                          nil t))
+           (grep-find-template nil)
+           (grep-find-command nil)
+           (grep-host-defaults-alist nil)
+           (grep-use-null-filename-separator
+            (string-prefix-p "grep" grep-program)))
 
       (grep-compute-defaults)
-      (cond
-       ((and grep-find-command (equal current-prefix-arg '(16)))
-        (rgrep (read-from-minibuffer "Run: " grep-find-command
-                                     nil nil 'grep-find-history)))
-       ((not grep-find-template)
-        (error "grep.el: No `grep-find-template' available"))
 
-       (t (let* ((regexp (grep-read-regexp))
-                 (files (grep-read-files regexp))
-                 (dir (read-directory-name "Base directory: "
-                                           nil default-directory t)))
-            (rgrep regexp files dir (equal current-prefix-arg '(4)))))))))
+      (cond ((and grep-find-command (equal current-prefix-arg '(16)))
+             (rgrep (read-from-minibuffer "Run: " grep-find-command
+                                          nil nil 'grep-find-history)))
+            ((not grep-find-template)
+             (error "grep.el: No `grep-find-template' available"))
+
+            (t (let* ((regexp (grep-read-regexp))
+                      (files (grep-read-files regexp))
+                      (dir (read-directory-name "Base directory: "
+                                                nil default-directory t)))
+                 (rgrep regexp files dir (equal current-prefix-arg '(4)))))))))
 
 (use-package nix-mode
   :ensure t
@@ -1941,7 +1946,7 @@
         (call-interactively #'edit-indirect-region)
       (edit-indirect-region (point) (point) t)))
 
-  (defun edit-indirect-guess-mode (buf beg end)
+  (defun edit-indirect-guess-mode (buf _beg _end)
     (case (buffer-local-value 'major-mode buf)
       ('web-mode (php-mode))
       ('php-mode
@@ -2030,39 +2035,45 @@
   :config
   (defun find-dired-interactive ()
     (interactive)
-    (let ((args "")
-          (dir ""))
+    (if (equal current-prefix-arg '(16))
+        (call-interactively #'find-dired)
 
-      (cond
-       ((equal current-prefix-arg '(16))
-        (call-interactively #'find-dired))
-       (t
+      (let (args)
+
         (let ((search-type (completing-read "Search type: "
-                                            (list "-iname" "-iregex" "-exec grep")
+                                            (list "-iname" "-iregex"
+                                                  "-exec grep")
                                             nil t)))
           (when (not (string-equal search-type "-exec grep"))
-            (let ((arg (read-string (concat search-type " pattern: "))))
-              (setq args (concat search-type " " (shell-quote-argument arg))))))
+            (push search-type args)
+            (push (shell-quote-argument
+                   (read-string (concat search-type " pattern: ")))
+                  args)))
 
         (let ((grep-type (completing-read
                           "Grep type: "
-                          (list "no" "grep -E" "grep -F" "grep -G" "grep -P"
+                          (list "no"
+                                "grep -E" "grep -F" "grep -G" "grep -P"
                                 "zgrep -E" "zgrep -F" "zgrep -G" "zgrep -P")
                           nil t)))
           (when (not (string-equal grep-type "no"))
-            (let ((arg (read-string (concat grep-type " pattern: "))))
-              (setq args (concat args " -type f -exec " grep-type " "
-                                 find-grep-options " -e "
-                                 (shell-quote-argument arg)
-                                 " " (shell-quote-argument "{}")
-                                 " " (shell-quote-argument ";"))))))
+            (push "-type f -exec" args)
+            (push grep-type args)
+            (push find-grep-options args)
+            (push "-e" args)
+            (push (shell-quote-argument
+                   (read-string (concat grep-type " pattern: ")))
+                  args)
+            (push (shell-quote-argument "{}") args)
+            (push (shell-quote-argument ";") args)))
 
-        (when (equal current-prefix-arg '(4))
-          (setq args (read-from-minibuffer "Confirm: " args
-                                           nil nil '(find-args-history . 1))))
+        (setq args (string-join (nreverse args) " "))
 
         (find-dired (read-directory-name "Run find in directory: " nil "" t)
-                    args))))))
+                    (if (equal current-prefix-arg '(4))
+                        (read-from-minibuffer
+                         "Confirm: " args nil nil '(find-args-history . 1))
+                      args))))))
 
 (use-package flycheck-checkbashisms
   :ensure t
