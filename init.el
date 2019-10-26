@@ -100,33 +100,7 @@
     (interactive)
     (save-excursion (insert " "))))
 
-(use-package custom
-  :custom
-  (custom-theme-directory "~/.emacs.d/custom-themes/")
-  (custom-safe-themes     t)
-
-  :config
-  (unless (ignore-errors (load-theme 'my-base16-darktooth t))
-    (use-package base16-theme
-      :custom
-      (base16-shell-colors (list :base00 "black"
-                                 :base01 "color-18"
-                                 :base02 "color-19"
-                                 :base03 "brightblack"
-                                 :base04 "color-20"
-                                 :base05 "white"
-                                 :base06 "color-21"
-                                 :base07 "brightwhite"
-                                 :base08 "red"
-                                 :base09 "color-16"
-                                 :base0A "yellow"
-                                 :base0B "green"
-                                 :base0C "cyan"
-                                 :base0D "blue"
-                                 :base0E "magenta"
-                                 :base0F "color-17"))
-      :config
-      (load-theme 'base16-darktooth t))))
+(use-package custom :config (load-theme 'leuven t))
 
 (use-package minibuffer
   :commands read-file-name
@@ -212,7 +186,8 @@
     (skip-chars-backward "-0-9")
     (or (looking-at (rx (optional "-") (one-or-more digit)))
         (error "No number at point"))
-    (replace-match (number-to-string (+ arg (string-to-number (match-string 0))))))
+    (replace-match (number-to-string
+                    (+ arg (string-to-number (match-string 0))))))
 
   (defun terminal-in-path (&optional path)
     "Opens an terminal at PATH. If no PATH is given, it uses
@@ -222,29 +197,29 @@
 
     (let ((path     (replace-regexp-in-string (rx line-start "file:") "" path))
           (cd-str   "{ fn=%s; [ -d $fn ] && cd $fn || cd $(dirname $fn); }")
-    (term-cmd nil))
+          (term-cmd nil))
 
-  (if (tramp-tramp-file-p path)
-      (let* ((tstruct   (tramp-dissect-file-name   path))
-             (tmethod   (tramp-file-name-method    tstruct))
-             (thost     (tramp-file-name-host      tstruct))
-             (tpath     (tramp-file-name-localname tstruct))
-             (tport     (tramp-file-name-port      tstruct))
-             (tuser     (tramp-file-name-user      tstruct)))
+      (if (tramp-tramp-file-p path)
+          (let* ((tstruct   (tramp-dissect-file-name   path))
+                 (tmethod   (tramp-file-name-method    tstruct))
+                 (thost     (tramp-file-name-host      tstruct))
+                 (tpath     (tramp-file-name-localname tstruct))
+                 (tport     (tramp-file-name-port      tstruct))
+                 (tuser     (tramp-file-name-user      tstruct)))
 
-        (cond
-         ((member tmethod '("scp" "ssh" "sftp"))
-          (setq term-cmd (format "ssh %s %s%s -t '%s && bash'"
-                                 (if tport (concat "-p " tport) "")
-                                 (if tuser (concat tuser "@") "")
-                                 thost
-                                 (format cd-str tpath))))
+            (cond
+             ((member tmethod '("scp" "ssh" "sftp"))
+              (setq term-cmd (format "ssh %s %s%s -t '%s && bash'"
+                                     (if tport (concat "-p " tport) "")
+                                     (if tuser (concat tuser "@") "")
+                                     thost
+                                     (format cd-str tpath))))
 
-         (t (error "not implemented for method %s" tmethod))))
+             (t (error "not implemented for method %s" tmethod))))
 
-    (setq term-cmd (format "%s && zsh" (format cd-str path))))
+        (setq term-cmd (format "%s && zsh" (format cd-str path))))
 
-  (start-process "terminal" nil "tml" term-cmd))))
+      (start-process "terminal" nil "tml" term-cmd))))
 
 (use-package subr-x
   :commands
@@ -289,7 +264,6 @@
 (use-package faces :config (set-face-attribute 'fixed-pitch-serif nil
                                                :font "Times New Roman"
                                                :height 110))
-
 (use-package paren
   :custom (show-paren-style 'parentheses)
 
@@ -778,7 +752,8 @@
   :bind (:map mode-specific-map ("o m" . mu4e))
 
   :custom
-  (mu4e-maildir                      (or (getenv "MAILDIR") (expand-file-name "~/.mail")))
+  (mu4e-maildir                      (or (getenv "MAILDIR")
+                                         (expand-file-name "~/.mail")))
   (mu4e-completing-read-function     #'completing-read)
   (mu4e-change-filenames-when-moving t)
   (mu4e-update-interval              900)
@@ -1254,11 +1229,11 @@
   (org-agenda-files                                 '("~/org/life.org"))
   (org-log-into-drawer                              t)
   (org-log-reschedule                               'note)
-  (org-refile-targets                               '((org-agenda-files :level . 1)))
   (org-refile-use-outline-path                      'file)
   (org-refile-allow-creating-parent-nodes           'confirm)
   (org-agenda-skip-additional-timestamps-same-entry nil)
-  (org-id-locations-file                            "~/.cache/emacs/org/id-locations")
+  (org-refile-targets '((org-agenda-files :level . 1)))
+  (org-id-locations-file "~/.cache/emacs/org/id-locations")
 
   :config
   (org-babel-do-load-languages 'org-babel-load-languages
@@ -1484,12 +1459,13 @@
               ("C-c m"   . php-search-documentation)
               ("C-c t"   . php-mode))
 
-  :custom (web-mode-extra-snippets
-           '(("php" . (("var" . "<?= | ?>")
-                       ("php" . "<?php |; ?>")
-                       ("var_dump" . "echo '<pre>'; var_dump( | ); echo '</pre>'")
-                       ("dowhile" . "<?php do { ?>\n\n<?php } while (|); ?>")
-                       ("debug" . "<?php error_log(__LINE__); ?>"))))))
+  :custom
+  (web-mode-extra-snippets
+   '(("php" . (("var" . "<?= | ?>")
+               ("php" . "<?php |; ?>")
+               ("var_dump" . "echo '<pre>'; var_dump( | ); echo '</pre>'")
+               ("dowhile" . "<?php do { ?>\n\n<?php } while (|); ?>")
+               ("debug" . "<?php error_log(__LINE__); ?>"))))))
 
 ;; (use-package js2-mode)
 
@@ -1545,7 +1521,8 @@
     (setq-local eldoc-documentation-function #'ggtags-eldoc-function)
     (setq-local imenu-create-index-function #'ggtags-build-imenu-index)
     (setq-local hippie-expand-try-functions-list
-                (cons #'ggtags-try-complete-tag hippie-expand-try-functions-list))))
+                (cons #'ggtags-try-complete-tag
+                      hippie-expand-try-functions-list))))
 
 (use-package youtube-dl
   :quelpa (youtube-dl :repo "skeeto/youtube-dl-emacs"
@@ -2118,9 +2095,11 @@
   :hook (after-init . flycheck-checkbashisms-setup))
 
 (use-package so-long
-  :quelpa (so-long
-           :url "https://raw.githubusercontent.com/emacs-mirror/emacs/master/lisp/so-long.el"
-           :fetcher url)
+  :quelpa
+  (so-long
+   :url
+   "https://raw.githubusercontent.com/emacs-mirror/emacs/master/lisp/so-long.el"
+   :fetcher url)
 
   :hook (after-init . global-so-long-mode))
 
