@@ -286,10 +286,9 @@
 
 (use-package tooltip :config (tooltip-mode -1))
 
-(use-package faces
-  :config
-  (set-face-attribute 'default nil :height 90)
-  (set-face-attribute 'fixed-pitch-serif nil :font "Times New Roman" :height 110))
+(use-package faces :config (set-face-attribute 'fixed-pitch-serif nil
+                                               :font "Times New Roman"
+                                               :height 110))
 
 (use-package paren
   :custom (show-paren-style 'parentheses)
@@ -1024,10 +1023,11 @@
   (:map search-map ("r" . counsel-rg))
 
   (:map ctl-x-map
-        ("C-f"   . counsel-find-file)
-        ("F F"   . counsel-file-directory-jump)
-        ("F L"   . counsel-find-library)
-        ("F l"   . counsel-locate))
+        ("C-f" . counsel-find-file)
+        ("F F" . counsel-file-directory-jump)
+        ("F D" . counsel-file-directory-jump-fd)
+        ("F L" . counsel-find-library)
+        ("F l" . counsel-locate))
 
   (:map goto-map
         ("i" . counsel-semantic-or-imenu)
@@ -1072,6 +1072,12 @@
             ". -name .git -prune -o ( -type f -o -type d ) -print")))
       (call-interactively #'counsel-file-jump)))
 
+  (defun counsel-file-directory-jump-fd ()
+    (interactive)
+    (let ((find-program "fd")
+          (counsel-file-jump-args (split-string "-t d -t f")))
+      (call-interactively #'counsel-file-jump)))
+
   (define-advice counsel-switch-to-shell-buffer (:override () unique)
     (interactive)
     (let ((default-directory (if current-prefix-arg
@@ -1103,7 +1109,23 @@
 
   (ivy-add-actions
    #'counsel-switch-to-shell-buffer
-   '(("k" kill-buffer-if-alive "kill buffer"))))
+   '(("k" kill-buffer-if-alive "kill buffer")))
+
+  (defun get-grep-lines (regex)
+    (butlast
+     (split-string
+      (shell-command-to-string
+       (format "grep -E -Hn --color=never -r -e %s"
+               (shell-quote-argument regex)))
+      "\n")))
+
+  (defun counsel-dynamic-grep ()
+    (interactive)
+    (ivy-read "Grep: "
+              #'get-grep-lines
+              :dynamic-collection t
+              :action #'counsel-git-grep-action
+              :caller 'counsel-dynamic-grep)))
 
 (use-package ivy-xref
   :ensure t
@@ -1716,6 +1738,8 @@
            (grep-find-template nil)
            (grep-find-command nil)
            (grep-host-defaults-alist nil)
+           (grep-find-ignored-files nil)
+           (grep-find-ignored-directories nil)
            (grep-use-null-filename-separator
             (string-prefix-p "grep" grep-program)))
 
@@ -2075,6 +2099,13 @@
                          "Confirm: " args nil nil '(find-args-history . 1))
                       args))))))
 
+(use-package fd-dired
+  :ensure t
+
+  :bind (:map ctl-x-map ("F d" . fd-dired))
+
+  :custom (fd-dired-ls-option '("| xargs -0 ls -lahsbdi" . "-lahsbdi")))
+
 (use-package flycheck-checkbashisms
   :ensure t
 
@@ -2205,3 +2236,8 @@
   :bind (:map sgml-mode-map
               ("C-M-n" . sgml-skip-tag-forward)
               ("C-M-p" . sgml-skip-tag-backward)))
+
+(use-package deadgrep
+  :ensure t
+
+  :bind (:map search-map ("R" . deadgrep)))
