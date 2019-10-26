@@ -867,7 +867,8 @@
 (use-package cyrillic-dvorak-im
   :quelpa (cyrillic-dvorak-im
            :repo "xFA25E/cyrillic-dvorak-im"
-           :fetcher github)
+           :fetcher github
+           :version original)
 
   :demand t)
 
@@ -883,7 +884,8 @@
 (use-package always-append-mode
   :quelpa (always-append-mode
            :repo "xFA25E/always-append-mode"
-           :fetcher github)
+           :fetcher github
+           :version original)
 
   :bind ("C-M-w" . always-append-mode))
 
@@ -1541,6 +1543,8 @@
         ("i" . elfeed-show-get-video-duration)
         ("w" . elfeed-show-play-link-in-mpvi))
 
+  :custom-face (elfeed-search-filter-face ((t (:foreground "spring green"))))
+
   :custom (elfeed-search-filter "+unread")
 
   :config
@@ -1871,7 +1875,8 @@
   ;; finish this package
   :quelpa (sxhkd-mode
            :repo "xFA25E/sxhkd-mode"
-           :fetcher github)
+           :fetcher github
+           :version original)
 
   :mode (rx string-start "sxhkdrc" string-end))
 
@@ -2011,7 +2016,8 @@
 
   :quelpa (poly-php-sql-mode
            :repo "xFA25E/poly-php-sql-mode"
-           :fetcher github)
+           :fetcher github
+           :version original)
 
   :mode ((rx ".php" string-end) . poly-php-sql-mode))
 
@@ -2092,7 +2098,8 @@
   (so-long
    :url
    "https://raw.githubusercontent.com/emacs-mirror/emacs/master/lisp/so-long.el"
-   :fetcher url)
+   :fetcher url
+   :version original)
 
   :hook (after-init . global-so-long-mode))
 
@@ -2103,14 +2110,16 @@
 
   :quelpa (elfeed-youtube-parser
            :repo "xFA25E/elfeed-youtube-parser"
-           :fetcher github)
+           :fetcher github
+           :version original)
 
   :hook (elfeed-new-entry-parse . elfeed-youtube-parser-parse-youtube))
 
 (use-package shell-pwd
   :quelpa (shell-pwd
            :repo "xFA25E/shell-pwd"
-           :fetcher github)
+           :fetcher github
+           :version original)
 
   :commands shell-pwd-generate-buffer-name
 
@@ -2119,7 +2128,8 @@
 (use-package shell-synopsis
   :quelpa (shell-synopsis
            :repo "xFA25E/shell-synopsis"
-           :fetcher github)
+           :fetcher github
+           :version original)
 
   :hook (shell-mode . shell-synopsis-setup))
 
@@ -2163,7 +2173,8 @@
 (use-package pcomplete-declare-magento
   :quelpa (pcomplete-declare-magento
            :repo "xFA25E/pcomplete-declare-magento"
-           :fetcher github))
+           :fetcher github
+           :version original))
 
 (use-package activity-log
   :quelpa (activity-log
@@ -2212,3 +2223,17 @@
   :ensure t
 
   :bind (:map search-map ("R" . deadgrep)))
+
+(use-package darkroom :ensure t)
+
+(use-package highlight-sexp
+  :quelpa (highlight-sexp
+           :repo "daimrod/highlight-sexp"
+           :fetcher github
+           :version original)
+
+  :hook ((lisp-mode emacs-lisp-mode scheme-mode) . highlight-sexp-mode)
+
+  :custom
+  (hl-sexp-foreground-color (face-attribute 'hl-line :foreground))
+  (hl-sexp-background-color (face-attribute 'hl-line :background)))
