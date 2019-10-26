@@ -937,7 +937,7 @@
 
   :config
   (set-face-attribute 'aw-leading-char-face nil
-                      :foreground "yellow" :weight 'bold)
+                      :foreground "red" :weight 'bold)
 
   (defun aw-find-file-in-window (window)
     "Find file in WINDOW."
@@ -1256,11 +1256,6 @@
   :ensure t
 
   :commands htmlize-region-save-screenshot)
-
-(use-package rainbow-identifiers
-  :ensure t
-
-  :hook (prog-mode . rainbow-identifiers-mode))
 
 (use-package css-mode :bind (:map css-mode-map ("C-c m" . css-lookup-symbol)))
 
