@@ -23,12 +23,12 @@
   :demand t
 
   :custom
-  (use-package-verbose               nil)
-  (use-package-expand-minimally      t)
+  (use-package-verbose nil)
+  (use-package-expand-minimally t)
   (use-package-minimum-reported-time 0.1)
-  (use-package-enable-imenu-support  t)
-  (use-package-always-demand         nil)
-  (use-package-always-defer          t))
+  (use-package-enable-imenu-support t)
+  (use-package-always-demand nil)
+  (use-package-always-defer t))
 
 (use-package diminish :ensure t)
 
@@ -38,8 +38,8 @@
   :demand t
 
   :custom
-  (quelpa-build-dir      "~/.cache/emacs/quelpa/build")
-  (quelpa-dir            "~/.cache/emacs/quelpa")
+  (quelpa-build-dir "~/.cache/emacs/quelpa/build")
+  (quelpa-dir "~/.cache/emacs/quelpa")
   (quelpa-update-melpa-p nil))
 
 (use-package quelpa-use-package
@@ -71,29 +71,29 @@
   :bind ("C-S-SPC" . insert-space-after-point)
 
   :custom
-  (create-lockfiles               nil)
+  (create-lockfiles nil)
   (cursor-in-non-selected-windows nil)
-  (enable-recursive-minibuffers   t)
-  (history-delete-duplicates      t)
-  (history-length                 200)
-  (hscroll-step                   1)
-  (indent-tabs-mode               nil)
-  (indicate-buffer-boundaries     'left)
-  (indicate-empty-lines           t)
-  (kill-buffer-query-functions    (remq #'process-kill-buffer-query-function
-                                        kill-buffer-query-functions))
-  (next-screen-context-lines      10)
-  (resize-mini-windows            t)
-  (tab-width                      8)
-  (truncate-lines                 t)
-  (undo-limit                     200000)
-  (undo-outer-limit               20000000)
-  (undo-strong-limit              300000)
-  (use-dialog-box                 nil)
-  (visible-bell                   nil)
-  (x-gtk-use-system-tooltips      nil)
-  (x-stretch-cursor               t)
-  (fill-column                    80)
+  (enable-recursive-minibuffers t)
+  (history-delete-duplicates t)
+  (history-length 200)
+  (hscroll-step 1)
+  (indent-tabs-mode nil)
+  (indicate-buffer-boundaries 'left)
+  (indicate-empty-lines t)
+  (kill-buffer-query-functions (remq #'process-kill-buffer-query-function
+                                     kill-buffer-query-functions))
+  (next-screen-context-lines 10)
+  (resize-mini-windows t)
+  (tab-width 8)
+  (truncate-lines t)
+  (undo-limit 200000)
+  (undo-outer-limit 20000000)
+  (undo-strong-limit 300000)
+  (use-dialog-box nil)
+  (visible-bell nil)
+  (x-gtk-use-system-tooltips nil)
+  (x-stretch-cursor t)
+  (fill-column 80)
 
   :config
   (defun insert-space-after-point ()
@@ -115,18 +115,18 @@
   :init (provide 'startup)
 
   :custom
-  (auto-save-list-file-prefix        nil)
+  (auto-save-list-file-prefix nil)
   (inhibit-startup-echo-area-message t)
-  (inhibit-startup-screen            t)
-  (initial-scratch-message           nil)
+  (inhibit-startup-screen t)
+  (initial-scratch-message nil)
   (auto-save-list-file-name (format-time-string
                              "~/.cache/emacs/auto-saves/list/%y-%m-%d~")))
 
 (use-package mule
   :config
-  (prefer-coding-system       'utf-8)
+  (prefer-coding-system 'utf-8)
   (set-terminal-coding-system 'utf-8)
-  (set-language-environment   "UTF-8"))
+  (set-language-environment "UTF-8"))
 
 (use-package ispell
   :custom
@@ -248,8 +248,8 @@
 
 (use-package scroll-bar
   :custom
-  (scroll-step           1)
-  (scroll-margin         5)
+  (scroll-step 1)
+  (scroll-margin 5)
   (scroll-conservatively 10000)
 
   :config (scroll-bar-mode -1))
@@ -332,13 +332,13 @@
   (after-init  . column-number-mode)
 
   :bind
-  ("C-h"                          . backward-delete-char-untabify)
-  ("C-x w"                        . mark-whole-buffer)
-  ("C-w"                          . backward-kill-word-or-region)
-  ("M-K"                          . kill-whole-line)
-  ("M-\\"                         . delete-indentation)
-  ("C-*"                          . delete-region-first-last-chars)
-  ("M-SPC"                        . just-one-space-fast)
+  ("C-h"   . backward-delete-char-untabify)
+  ("C-x w" . mark-whole-buffer)
+  ("C-w"   . backward-kill-word-or-region)
+  ("M-K"   . kill-whole-line)
+  ("M-\\"  . delete-indentation)
+  ("C-*"   . delete-region-first-last-chars)
+  ("M-SPC" . just-one-space-fast)
   ([remap move-beginning-of-line] . back-to-indentation-or-beginning)
   (:map ctl-x-map
         ("K"   . kill-current-buffer)
@@ -346,10 +346,10 @@
         ("m"   . nil))
 
   :custom
-  (shift-select-mode                  nil)
-  (kill-do-not-save-duplicates        t)
-  (kill-read-only-ok                  t)
-  (async-shell-command-buffer         'new-buffer)
+  (shift-select-mode nil)
+  (kill-do-not-save-duplicates t)
+  (kill-read-only-ok t)
+  (async-shell-command-buffer 'new-buffer)
   (async-shell-command-display-buffer nil)
 
   :config
@@ -466,20 +466,19 @@
   (dired-before-readin . dired-setup-switches)
 
   :custom
-  (dired-dwim-target         t)
-  (dired-listing-switches    "-alhDF --group-directories-first")
+  (dired-dwim-target t)
+  (dired-listing-switches "-alhDF --group-directories-first")
   (dired-ls-F-marks-symlinks t)
 
   :config
   (defun dired-setup-switches ()
     (when-let (method (file-remote-p default-directory 'method))
-      (cond
-       ((string-equal method "ftp")
-        (setq-local dired-actual-switches "-al"))
-       ((string-equal method "sftp")
-        (setq-local dired-actual-switches "-alh"))
-       ((string-equal method "adb")
-        (setq-local dired-actual-switches "-alhDF"))))))
+      (cond ((string-equal method "ftp")
+             (setq-local dired-actual-switches "-al"))
+            ((string-equal method "sftp")
+             (setq-local dired-actual-switches "-alh"))
+            ((string-equal method "adb")
+             (setq-local dired-actual-switches "-alhDF"))))))
 
 (use-package dired-aux
   :after dired
@@ -493,10 +492,8 @@
 
   (defun dired-stat ()
     (interactive)
-    (dired-do-shell-command
-     "stat"
-     current-prefix-arg
-     (dired-get-marked-files t current-prefix-arg))))
+    (dired-do-shell-command "stat" current-prefix-arg
+                            (dired-get-marked-files t current-prefix-arg))))
 
 (use-package async
   :ensure t
@@ -606,11 +603,11 @@
   :hook (dired-mode . image-dired-minor-mode)
 
   :custom
-  (image-dired-external-viewer        "sxiv")
-  (image-dired-db-file                "~/.cache/emacs/image-dired/db")
-  (image-dired-dir                    "~/.cache/emacs/image-dired/thumbnails/")
-  (image-dired-gallery-dir            "~/.cache/emacs/image-dired/gallery/")
-  (image-dired-temp-image-file        "~/.cache/emacs/image-dired/temp")
+  (image-dired-external-viewer "sxiv")
+  (image-dired-db-file "~/.cache/emacs/image-dired/db")
+  (image-dired-dir "~/.cache/emacs/image-dired/thumbnails/")
+  (image-dired-gallery-dir "~/.cache/emacs/image-dired/gallery/")
+  (image-dired-temp-image-file "~/.cache/emacs/image-dired/temp")
   (image-dired-temp-rotate-image-file "~/.cache/emacs/image-dired/rotate_temp"))
 
 (use-package wdired
@@ -634,8 +631,8 @@
   (kill-emacs  . save-buffers-comint-input-ring)
 
   :custom
-  (comint-input-ignoredups             t)
-  (comint-input-ring-size              10000)
+  (comint-input-ignoredups t)
+  (comint-input-ring-size 10000)
   (comint-write-input-ring-append-hook nil)
 
   :init
@@ -752,45 +749,44 @@
   :bind (:map mode-specific-map ("o m" . mu4e))
 
   :custom
-  (mu4e-maildir                      (or (getenv "MAILDIR")
-                                         (expand-file-name "~/.mail")))
-  (mu4e-completing-read-function     #'completing-read)
+  (mu4e-maildir (or (getenv "MAILDIR") (expand-file-name "~/.mail")))
+  (mu4e-completing-read-function #'completing-read)
   (mu4e-change-filenames-when-moving t)
-  (mu4e-update-interval              900)
-  (mu4e-context-policy               'pick-first)
-  (mu4e-compose-context-policy       'always-ask)
-  (mu4e-headers-date-format          "%Y-%m-%d %H:%M")
-  (mu4e-view-show-addresses          t)
-  (mu4e-attachment-dir               "~/Downloads")
-  (mu4e-modeline-max-width           100)
-  (mu4e-view-attachment-assoc        '(("png"  . "sxiv")
-                                       ("jpg"  . "sxiv")
-                                       ("gif"  . "sxiv")
-                                       ("jpeg" . "sxiv")
-                                       ("bmp"  . "sxiv")
-                                       ("tif"  . "sxiv")
-                                       ("thm"  . "sxiv")
-                                       ("pdf"  . "zathura")
-                                       ("epub" . "zathura")
-                                       ("doc"  . "libreoffice")
-                                       ("docx" . "libreoffice")
-                                       ("flac" . "mpv")
-                                       ("m4a"  . "mpv")
-                                       ("mp3"  . "mpv")
-                                       ("ogg"  . "mpv")
-                                       ("opus" . "mpv")
-                                       ("webm" . "mpv")
-                                       ("m4a"  . "mpv")
-                                       ("mkv"  . "mpv")
-                                       ("mp4"  . "mpv")
-                                       ("avi"  . "mpv")
-                                       ("mpg"  . "mpv")
-                                       ("mov"  . "mpv")
-                                       ("3gp"  . "mpv")))
-  (mu4e-headers-fields               '((:human-date . 16)
-                                       (:flags      . 6)
-                                       (:from       . 22)
-                                       (:subject)))
+  (mu4e-update-interval 900)
+  (mu4e-context-policy 'pick-first)
+  (mu4e-compose-context-policy 'always-ask)
+  (mu4e-headers-date-format "%Y-%m-%d %H:%M")
+  (mu4e-view-show-addresses t)
+  (mu4e-attachment-dir "~/Downloads")
+  (mu4e-modeline-max-width 100)
+  (mu4e-view-attachment-assoc '(("png"  . "sxiv")
+                                ("jpg"  . "sxiv")
+                                ("gif"  . "sxiv")
+                                ("jpeg" . "sxiv")
+                                ("bmp"  . "sxiv")
+                                ("tif"  . "sxiv")
+                                ("thm"  . "sxiv")
+                                ("pdf"  . "zathura")
+                                ("epub" . "zathura")
+                                ("doc"  . "libreoffice")
+                                ("docx" . "libreoffice")
+                                ("flac" . "mpv")
+                                ("m4a"  . "mpv")
+                                ("mp3"  . "mpv")
+                                ("ogg"  . "mpv")
+                                ("opus" . "mpv")
+                                ("webm" . "mpv")
+                                ("m4a"  . "mpv")
+                                ("mkv"  . "mpv")
+                                ("mp4"  . "mpv")
+                                ("avi"  . "mpv")
+                                ("mpg"  . "mpv")
+                                ("mov"  . "mpv")
+                                ("3gp"  . "mpv")))
+  (mu4e-headers-fields '((:human-date . 16)
+                         (:flags      . 6)
+                         (:from       . 22)
+                         (:subject)))
 
   :config
   (defun vm-visit-folder (fil &optional _read-only)
@@ -854,10 +850,10 @@
   :ensure t
 
   :custom
-  (auto-package-update-delete-old-versions      t)
-  (auto-package-update-hide-results             t)
+  (auto-package-update-delete-old-versions t)
+  (auto-package-update-hide-results t)
   (auto-package-update-last-update-day-filename "last-package-update-day")
-  (auto-package-update-prompt-before-update     t)
+  (auto-package-update-prompt-before-update t)
   (auto-package-update-last-update-day-path
    "~/.cache/emacs/last-package-update-day"))
 
@@ -905,9 +901,9 @@
         ("p"   . nil))
 
   :custom
-  (avy-background         t)
+  (avy-background t)
   (avy-goto-word-0-regexp (rx symbol-start (or (syntax word) (syntax symbol))))
-  (avy-keys               (string-to-list "aoeuhtns")))
+  (avy-keys (string-to-list "aoeuhtns")))
 
 (use-package ace-window
   :ensure t
@@ -1115,14 +1111,14 @@
   :hook (after-init . global-flycheck-mode)
 
   :custom
-  (flycheck-global-modes                '(not lisp-interaction-mode))
+  (flycheck-global-modes '(not lisp-interaction-mode))
   (flycheck-shellcheck-supported-shells '(dash bash ksh88 sh))
-  (flycheck-check-syntax-automatically  '(save mode-enabled))
-  (flycheck-clang-pedantic-errors       t)
-  (flycheck-clang-pedantic              t)
-  (flycheck-gcc-pedantic-errors         t)
-  (flycheck-gcc-pedantic                t)
-  (flycheck-phpcs-standard              "PSR12,PSR1,PSR2")
+  (flycheck-check-syntax-automatically '(save mode-enabled))
+  (flycheck-clang-pedantic-errors t)
+  (flycheck-clang-pedantic t)
+  (flycheck-gcc-pedantic-errors t)
+  (flycheck-gcc-pedantic t)
+  (flycheck-phpcs-standard "PSR12,PSR1,PSR2")
 
   :config
   (setq flycheck-shellcheck-supported-shells '(dash bash ksh88 sh))
@@ -1225,19 +1221,19 @@
   :bind (:map mode-specific-map ("G a a" . org-agenda))
 
   :custom
-  (org-src-tab-acts-natively                        t)
-  (org-agenda-files                                 '("~/org/life.org"))
-  (org-log-into-drawer                              t)
-  (org-log-reschedule                               'note)
-  (org-refile-use-outline-path                      'file)
-  (org-refile-allow-creating-parent-nodes           'confirm)
+  (org-src-tab-acts-natively t)
+  (org-agenda-files '("~/org/life.org"))
+  (org-log-into-drawer t)
+  (org-log-reschedule 'note)
+  (org-refile-use-outline-path 'file)
+  (org-refile-allow-creating-parent-nodes 'confirm)
   (org-agenda-skip-additional-timestamps-same-entry nil)
   (org-refile-targets '((org-agenda-files :level . 1)))
   (org-id-locations-file "~/.cache/emacs/org/id-locations")
 
   :config
   (org-babel-do-load-languages 'org-babel-load-languages
-                               '((calc . t)
+                               '((calc       . t)
                                  (emacs-lisp . t))))
 
 (use-package ox-html
@@ -1300,7 +1296,7 @@
   :ensure t
 
   :custom
-  (wttrin-default-cities          '("Vertemate, Italy" "Como, Italy"))
+  (wttrin-default-cities '("Vertemate, Italy" "Como, Italy"))
   (wttrin-default-accept-language '("Accept-Language" . "en-US")))
 
 (use-package rust-mode
@@ -1336,11 +1332,11 @@
   :hook (rust-mode . lsp)
 
   :custom
-  (lsp-auto-guess-root            t)
-  (lsp-enable-folding             nil)
+  (lsp-auto-guess-root t)
+  (lsp-enable-folding nil)
   (lsp-enable-symbol-highlighting nil)
-  (lsp-prefer-flymake             nil)
-  (lsp-session-file               "~/.cache/emacs/lsp/session"))
+  (lsp-prefer-flymake nil)
+  (lsp-session-file "~/.cache/emacs/lsp/session"))
 
 (use-package lsp-ui
   :ensure t
@@ -1350,10 +1346,10 @@
   :bind (:map lsp-prefix-map ("e" . lsp-ui-flycheck-list))
 
   :custom
-  (lsp-ui-doc-enable      nil)
+  (lsp-ui-doc-enable nil)
   (lsp-ui-flycheck-enable t)
-  (lsp-ui-imenu-enable    nil)
-  (lsp-ui-peek-enable     nil)
+  (lsp-ui-imenu-enable nil)
+  (lsp-ui-peek-enable nil)
   (lsp-ui-sideline-enable nil))
 
 (use-package company-lsp
@@ -1374,7 +1370,7 @@
         ("C-<" . mc/mark-all-like-this))
 
   :custom
-  (mc/always-run-for-all    t)
+  (mc/always-run-for-all t)
   (mc/always-repeat-command t))
 
 (use-package jdecomp
@@ -1456,11 +1452,11 @@
 
   :custom
   (web-mode-extra-snippets
-   '(("php" . (("var" . "<?= | ?>")
-               ("php" . "<?php |; ?>")
+   '(("php" . (("var"      . "<?= | ?>")
+               ("php"      . "<?php |; ?>")
                ("var_dump" . "echo '<pre>'; var_dump( | ); echo '</pre>'")
-               ("dowhile" . "<?php do { ?>\n\n<?php } while (|); ?>")
-               ("debug" . "<?php error_log(__LINE__); ?>"))))))
+               ("dowhile"  . "<?php do { ?>\n\n<?php } while (|); ?>")
+               ("debug"    . "<?php error_log(__LINE__); ?>"))))))
 
 ;; (use-package js2-mode)
 
@@ -1526,7 +1522,7 @@
 
   :custom
   (youtube-dl-arguments nil)
-  (youtube-dl-program   "ytdly"))
+  (youtube-dl-program "ytdly"))
 
 (use-package elfeed
   :ensure t
@@ -1618,11 +1614,11 @@
   :bind-keymap ("M-m" . projectile-command-map)
 
   :custom
-  (projectile-cache-file          "~/.cache/emacs/projectile/cache")
-  (projectile-completion-system   'ivy)
-  (projectile-enable-caching      t)
+  (projectile-cache-file "~/.cache/emacs/projectile/cache")
+  (projectile-completion-system 'ivy)
+  (projectile-enable-caching t)
   (projectile-known-projects-file "~/.cache/emacs/projectile/projects")
-  (projectile-mode-line-prefix    " P"))
+  (projectile-mode-line-prefix " P"))
 
 (use-package counsel-projectile
   :ensure t
@@ -1900,7 +1896,7 @@
         ("C-c \""  . remember-notes-save-and-kill-terminal))
 
   :custom
-  (initial-buffer-choice             'remember-notes)
+  (initial-buffer-choice 'remember-notes)
   (remember-notes-initial-major-mode 'outline-mode)
 
   :config
@@ -1913,7 +1909,7 @@
   :bind ("C-x C-S-e" . eval-and-replace)
 
   :custom
-  (eval-expression-print-level  t)
+  (eval-expression-print-level t)
   (eval-expression-print-length t)
 
   :config
@@ -1948,8 +1944,10 @@
       ('php-mode
        (let ((modes '("web-mode" "sql-mode")))
          (funcall (intern (completing-read "From php: " modes nil t)))))
-      ('sh-mode  (awk-mode))
-      (t         (normal-mode)))))
+      ('sh-mode
+       (awk-mode))
+      (t
+       (normal-mode)))))
 
 (use-package web-beautify :ensure t)
 
@@ -1959,7 +1957,7 @@
   :hook ((nxml-mode web-mode html-mode mhtml-mode) . emmet-mode)
 
   :custom
-  (emmet-preview-default        t)
+  (emmet-preview-default t)
   (emmet-self-closing-tag-style ""))
 
 (use-package nov
@@ -2085,7 +2083,7 @@
 
   :custom
   (flycheck-checkbashisms-newline t)
-  (flycheck-checkbashisms-posix   t)
+  (flycheck-checkbashisms-posix t)
 
   :hook (after-init . flycheck-checkbashisms-setup))
 
@@ -2133,8 +2131,7 @@
 (use-package imenu-anywhere
   :ensure t
 
-  :bind (:map goto-map
-              ("I" . ivy-imenu-anywhere)))
+  :bind (:map goto-map ("I" . ivy-imenu-anywhere)))
 
 (use-package whitespace
   :diminish whitespace-mode
