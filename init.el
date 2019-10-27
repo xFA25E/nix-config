@@ -1900,11 +1900,10 @@
 (use-package mwheel :config (mouse-wheel-mode -1))
 
 (use-package remember
-  :bind
-  (:map remember-notes-mode-map
-        ("C-c C-c" . nil)
-        ("C-c '"   . remember-notes-save-and-bury-buffer)
-        ("C-c \""  . remember-notes-save-and-kill-terminal))
+  :bind (:map remember-notes-mode-map
+              ("C-c C-c" . nil)
+              ("C-c '"   . remember-notes-save-and-bury-buffer)
+              ("C-c \""  . remember-notes-save-and-kill-terminal))
 
   :custom
   (initial-buffer-choice 'remember-notes)
