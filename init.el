@@ -640,6 +640,9 @@
   (add-hook 'comint-output-filter-functions #'comint-truncate-buffer)
 
   :config
+  (set-face-attribute 'comint-highlight-input nil :inherit 'hl-line)
+  (set-face-attribute 'comint-highlight-prompt nil :inherit 'diff-refine)
+
   (defun save-buffers-comint-input-ring ()
     (dolist (buf (buffer-list))
       (with-current-buffer buf (comint-write-input-ring-append))))
@@ -1869,7 +1872,10 @@
 
   :hook (after-init . unicode-fonts-setup))
 
-(use-package pcache :custom (pcache-directory "~/.cache/emacs/pcache"))
+(use-package pcache
+  :ensure t
+
+  :custom (pcache-directory "~/.cache/emacs/pcache"))
 
 (use-package sxhkd-mode
   ;; finish this package
@@ -2226,19 +2232,26 @@
 
 (use-package darkroom :ensure t)
 
-(use-package highlight-sexp
-  :quelpa (highlight-sexp
-           :repo "daimrod/highlight-sexp"
-           :fetcher github
-           :version original)
+(use-package highlight-parentheses
+  :ensure t
 
-  :hook ((lisp-mode emacs-lisp-mode scheme-mode) . highlight-sexp-mode)
+  :hook ((lisp-mode emacs-lisp-mode scheme-mode) . highlight-parentheses-mode)
 
-  :custom
-  (hl-sexp-foreground-color (face-attribute 'hl-line :foreground))
-  (hl-sexp-background-color (face-attribute 'hl-line :background)))
+  :custom (hl-paren-colors (list "red")))
 
 (use-package lisp-extra-font-lock
   :ensure t
 
   :hook ((emacs-lisp-mode lisp-mode) . lisp-extra-font-lock-mode))
+
+(use-package ivy-youtube
+  :ensure t
+
+  :secret (ivy-youtube "ivy-youtube.el.gpg")
+
+  :custom
+  (ivy-youtube-play-at "mpvi")
+  (ivy-youtube-history-file "~/.cache/emacs/ivy-youtube-history"))
+
+(use-package request
+  :custom (request-storage-directory "~/.cache/emacs/request/"))
