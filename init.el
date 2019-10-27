@@ -2237,3 +2237,8 @@
   :custom
   (hl-sexp-foreground-color (face-attribute 'hl-line :foreground))
   (hl-sexp-background-color (face-attribute 'hl-line :background)))
+
+(use-package lisp-extra-font-lock
+  :ensure t
+
+  :hook ((emacs-lisp-mode lisp-mode) . lisp-extra-font-lock-mode))
