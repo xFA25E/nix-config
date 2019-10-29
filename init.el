@@ -548,7 +548,8 @@
 
   :config
   (defun enable-dired-omit-mode ()
-    (if (not (string-equal "*Find*" (buffer-name)))
+    (if (not (or (string-equal "*Find*" (buffer-name))
+                 (string-equal "*Fd*" (buffer-name))))
         (dired-omit-mode))))
 
 (use-package fringe :config (fringe-mode '(3 . 0)))
@@ -640,8 +641,8 @@
   (add-hook 'comint-output-filter-functions #'comint-truncate-buffer)
 
   :config
-  (set-face-attribute 'comint-highlight-input nil :inherit 'hl-line)
-  (set-face-attribute 'comint-highlight-prompt nil :inherit 'diff-refine)
+  (set-face-attribute 'comint-highlight-input nil :inherit 'highlight)
+  (set-face-attribute 'comint-highlight-prompt nil :inherit 'minibuffer-prompt)
 
   (defun save-buffers-comint-input-ring ()
     (dolist (buf (buffer-list))
@@ -1639,8 +1640,7 @@
   ("C-M-g" . dumb-jump-go)
   ("C-M-m" . dumb-jump-back)
 
-  :custom
-  (dumb-jump-selector 'ivy))
+  :custom (dumb-jump-selector 'ivy))
 
 (use-package free-keys :ensure t)
 
@@ -1789,7 +1789,23 @@
 
 (use-package time :custom (display-time-24hr-format t))
 
-(use-package url :custom (url-configuration-directory "~/.cache/emacs/url/"))
+(use-package url
+  :custom (url-configuration-directory "~/.cache/emacs/url/")
+
+  :config
+  (defun insert-image-from-url (&optional url)
+    (interactive)
+    (unless url (setq url (url-get-url-at-point)))
+    (unless url
+      (error "Couldn't find URL."))
+    (let ((buffer (url-retrieve-synchronously url)))
+      (unwind-protect
+          (let ((data (with-current-buffer buffer
+                        (goto-char (point-min))
+                        (search-forward "\n\n")
+                        (buffer-substring (point) (point-max)))))
+            (insert-image (create-image data nil t)))
+        (kill-buffer buffer)))))
 
 (use-package prog-mode :hook (after-init . global-prettify-symbols-mode))
 
@@ -2254,3 +2270,14 @@
 
 (use-package request
   :custom (request-storage-directory "~/.cache/emacs/request/"))
+
+(use-package shr-tag-pre-highlight
+  :ensure t
+
+  :after shr
+
+  :config
+  (add-to-list 'shr-external-rendering-functions
+               '(pre . shr-tag-pre-highlight)))
+
+(use-package nxml-mode :custom (nxml-child-indent 4))
