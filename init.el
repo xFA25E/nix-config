@@ -240,7 +240,9 @@
   (tramp-persistency-file-name "~/.cache/emacs/tramp/connection-history")
   (tramp-default-method        "ssh")
 
-  :config (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+  :config
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+  (add-to-list 'tramp-remote-path "~/.local/bin"))
 
 (use-package apropos :custom (apropos-sort-by-scores t))
 
@@ -1883,16 +1885,6 @@
 
 (use-package geiser :ensure t)
 
-(use-package unicode-fonts
-  :ensure t
-
-  :hook (after-init . unicode-fonts-setup))
-
-(use-package pcache
-  :ensure t
-
-  :custom (pcache-directory "~/.cache/emacs/pcache"))
-
 (use-package sxhkd-mode
   ;; finish this package
   :quelpa (sxhkd-mode
@@ -1967,13 +1959,8 @@
   (defun edit-indirect-guess-mode (buf _beg _end)
     (case (buffer-local-value 'major-mode buf)
       ('web-mode (php-mode))
-      ('php-mode
-       (let ((modes '("web-mode" "sql-mode")))
-         (funcall (intern (completing-read "From php: " modes nil t)))))
-      ('sh-mode
-       (awk-mode))
-      (t
-       (normal-mode)))))
+      ('sh-mode (awk-mode))
+      (t (normal-mode)))))
 
 (use-package web-beautify :ensure t)
 
