@@ -238,7 +238,8 @@
 
   :custom
   (tramp-persistency-file-name "~/.cache/emacs/tramp/connection-history")
-  (tramp-default-method        "ssh")
+  (tramp-default-method "ssh")
+  (tramp-histfile-override t)
 
   :config
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
@@ -1054,7 +1055,7 @@
   (defun counsel-file-directory-jump-fd ()
     (interactive)
     (let ((find-program "fd")
-          (counsel-file-jump-args (split-string "-t d -t f")))
+          (counsel-file-jump-args (split-string "-t d -t f -c never")))
       (call-interactively #'counsel-file-jump)))
 
   (define-advice counsel-switch-to-shell-buffer (:override () unique)
@@ -2236,6 +2237,8 @@
 
 (use-package highlight-parentheses
   :ensure t
+
+  :diminish highlight-parentheses-mode
 
   :hook ((lisp-mode emacs-lisp-mode scheme-mode) . highlight-parentheses-mode)
 
