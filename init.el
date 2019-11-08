@@ -1396,9 +1396,6 @@
   php-search-documentation
   run-php
 
-  :bind (:map php-mode-map
-              ("C-c t" . web-mode))
-
   :mode (rx ".php" string-end)
 
   :hook (php-mode . subword-mode)
@@ -1451,22 +1448,6 @@
             " --filters 'ArrayNested() Pear() NewLines(before=T_FUNCTION)'"
             (string-remove-prefix php-beautifier-executable-path arg))))
 
-(use-package web-mode
-  :ensure t
-
-  :bind (:map web-mode-map
-              ("C-c C-c" . sgml-name-char)
-              ("C-c m"   . php-search-documentation)
-              ("C-c t"   . php-mode))
-
-  :custom
-  (web-mode-extra-snippets
-   '(("php" . (("var"      . "<?= | ?>")
-               ("php"      . "<?php |; ?>")
-               ("var_dump" . "echo '<pre>'; var_dump( | ); echo '</pre>'")
-               ("dowhile"  . "<?php do { ?>\n\n<?php } while (|); ?>")
-               ("debug"    . "<?php error_log(__LINE__); ?>"))))))
-
 ;; (use-package js2-mode)
 
 (use-package lua-mode :ensure t)
@@ -1510,7 +1491,7 @@
   :ensure t
 
   :hook
-  ((c++-mode c-mode php-mode python-mode web-mode) . ggtags-mode)
+  ((c++-mode c-mode php-mode python-mode) . ggtags-mode)
   (ggtags-mode . setup-ggtags-completion-backends)
 
   :config
@@ -1959,7 +1940,6 @@
 
   (defun edit-indirect-guess-mode (buf _beg _end)
     (case (buffer-local-value 'major-mode buf)
-      ('web-mode (php-mode))
       ('sh-mode (awk-mode))
       (t (normal-mode)))))
 
@@ -1968,7 +1948,7 @@
 (use-package emmet-mode
   :ensure t
 
-  :hook ((nxml-mode web-mode html-mode mhtml-mode) . emmet-mode)
+  :hook ((nxml-mode html-mode mhtml-mode) . emmet-mode)
 
   :custom
   (emmet-preview-default t)
@@ -1993,7 +1973,7 @@
     (add-hook 'after-save-hook #'byte-recompile-current-file nil t)))
 
 (use-package fb2-mode
-  :quelpa (fb2-mode :repo "spline1986/fb2-mode"
+  :quelpa (fb2-mode :repo "5k1m1/fb2-mode"
                     :fetcher github
                     :version original)
 
@@ -2017,18 +1997,6 @@
   :ensure t
 
   :init (defvar polymode-prefix-key (kbd "C-c P")))
-
-(use-package poly-php-sql-mode
-  :requires
-  polymode
-  php-mode
-
-  :quelpa (poly-php-sql-mode
-           :repo "xFA25E/poly-php-sql-mode"
-           :fetcher github
-           :version original)
-
-  :mode ((rx ".php" string-end) . poly-php-sql-mode))
 
 (use-package find-func
   :custom
@@ -2179,12 +2147,6 @@
             :fetcher github
             :version original))
 
-(use-package pcomplete-declare-magento
-  :quelpa (pcomplete-declare-magento
-           :repo "xFA25E/pcomplete-declare-magento"
-           :fetcher github
-           :version original))
-
 (use-package activity-log
   :quelpa (activity-log
            :repo "xFA25E/activity-log"
@@ -2271,3 +2233,15 @@
                '(pre . shr-tag-pre-highlight)))
 
 (use-package nxml-mode :custom (nxml-child-indent 4))
+
+(use-package poly-mhtml-php-mode
+  :requires
+  polymode
+  php-mode
+
+  :quelpa (poly-mhtml-php-mode
+           :repo "xFA25E/poly-mhtml-php-mode"
+           :fetcher github
+           :version original)
+
+  :mode (rx ".phtml" string-end))
