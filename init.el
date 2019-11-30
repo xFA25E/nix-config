@@ -264,9 +264,10 @@
 
 (use-package tooltip :config (tooltip-mode -1))
 
-(use-package faces :config (set-face-attribute 'fixed-pitch-serif nil
-                                               :font "Times New Roman"
-                                               :height 110))
+(use-package faces
+  :config (set-face-attribute
+           'fixed-pitch-serif nil :font "Times New Roman" :height 110))
+
 (use-package paren
   :custom (show-paren-style 'parentheses)
 
@@ -551,9 +552,10 @@
 
   :config
   (defun enable-dired-omit-mode ()
-    (if (not (or (string-equal "*Find*" (buffer-name))
-                 (string-equal "*Fd*" (buffer-name))))
-        (dired-omit-mode))))
+    (when (not (or (string-equal "*Find*" (buffer-name))
+                   (string-equal "*Fd*" (buffer-name))
+                   (string-equal "*Find Lisp Dired*" (buffer-name))))
+      (dired-omit-mode))))
 
 (use-package fringe :config (fringe-mode '(3 . 0)))
 
@@ -796,6 +798,9 @@
                          (:subject)))
 
   :config
+  (set-face-attribute 'mu4e-modeline-face nil :foreground "yellow")
+  (set-face-attribute 'mu4e-context-face nil :foreground "magenta")
+
   (defun vm-visit-folder (fil &optional _read-only)
     (if (string-prefix-p mu4e-maildir fil)
         (mu4e~headers-jump-to-maildir (substring fil (length mu4e-maildir)))
@@ -1058,20 +1063,6 @@
           (counsel-file-jump-args (split-string "-t d -t f -c never")))
       (call-interactively #'counsel-file-jump)))
 
-  (define-advice counsel-switch-to-shell-buffer (:override () unique)
-    (interactive)
-    (let ((default-directory (if current-prefix-arg
-                                 (expand-file-name
-                                  (counsel-read-directory-name
-                                   "Default directory: "))
-                               default-directory)))
-      (ivy-read "Shell buffer: "
-                (cons (generate-new-buffer-name
-                       (shell-pwd-generate-buffer-name default-directory))
-                      (counsel--buffers-with-mode 'shell-mode))
-                :action #'counsel--switch-to-shell
-                :caller #'counsel-switch-to-shell-buffer)))
-
   (defun kill-buffer-if-alive (buffer)
     (if (get-buffer buffer) (kill-buffer buffer)))
 
@@ -1291,8 +1282,8 @@
   :ensure t
 
   :init
-  (eval-after-load 'ivy
-    '(ivy-add-actions #'counsel-find-file '(("l" vlf "view large file")))))
+  (with-eval-after-load "ivy"
+    (ivy-add-actions #'counsel-find-file '(("l" vlf "view large file")))))
 
 (use-package which-key
   :ensure t
@@ -1993,11 +1984,6 @@
   sql-mode
   sql-interactive-mode)
 
-(use-package polymode
-  :ensure t
-
-  :init (defvar polymode-prefix-key (kbd "C-c P")))
-
 (use-package find-func
   :custom
   (find-function-C-source-directory "~/Downloads/programs/emacs-26.3/src"))
@@ -2098,9 +2084,23 @@
            :fetcher github
            :version original)
 
-  :commands shell-pwd-generate-buffer-name
+  :hook (shell-mode . shell-pwd-enable)
 
-  :hook (shell-mode . shell-pwd-enable))
+  :config
+  (with-eval-after-load "counsel"
+    (define-advice counsel-switch-to-shell-buffer (:override () unique)
+      (interactive)
+      (let ((default-directory (if current-prefix-arg
+                                   (expand-file-name
+                                    (counsel-read-directory-name
+                                     "Default directory: "))
+                                 default-directory)))
+        (ivy-read "Shell buffer: "
+                  (cons (generate-new-buffer-name
+                         (shell-pwd-generate-buffer-name default-directory))
+                        (counsel--buffers-with-mode 'shell-mode))
+                  :action #'counsel--switch-to-shell
+                  :caller #'counsel-switch-to-shell-buffer)))))
 
 (use-package shell-synopsis
   :quelpa (shell-synopsis
@@ -2139,7 +2139,12 @@
   :bind (:map aggressive-indent-mode-map
               ("C-c C-q" . nil))
 
-  :hook (prog-mode . aggressive-indent-mode))
+  :hook (prog-mode . aggressive-indent-enable)
+
+  :config
+  (defun aggressive-indent-enable ()
+    (unless (memq major-mode (list 'web-mode 'php-mode))
+      (aggressive-indent-mode))))
 
 (use-package pcomplete-declare
   :quelpa (pcomplete-declare
@@ -2188,7 +2193,9 @@
 (use-package sgml-mode
   :bind (:map sgml-mode-map
               ("C-M-n" . sgml-skip-tag-forward)
-              ("C-M-p" . sgml-skip-tag-backward)))
+              ("C-M-p" . sgml-skip-tag-backward))
+
+  :custom (sgml-basic-offset 4))
 
 (use-package deadgrep
   :ensure t
@@ -2234,14 +2241,11 @@
 
 (use-package nxml-mode :custom (nxml-child-indent 4))
 
-(use-package poly-mhtml-php-mode
-  :requires
-  polymode
-  php-mode
+(use-package dap-mode
+  :ensure t
 
-  :quelpa (poly-mhtml-php-mode
-           :repo "xFA25E/poly-mhtml-php-mode"
-           :fetcher github
-           :version original)
+  :custom
+  (dap-breakpoints-file "~/.cache/emacs/dap-breakpoints")
+  (dap-utils-extension-path "~/.cache/emacs/extension"))
 
-  :mode (rx ".phtml" string-end))
+(use-package web-mode :ensure t)
