@@ -1096,7 +1096,21 @@
               #'get-grep-lines
               :dynamic-collection t
               :action #'counsel-git-grep-action
-              :caller 'counsel-dynamic-grep)))
+              :caller 'counsel-dynamic-grep))
+
+  (define-advice counsel-switch-to-shell-buffer (:override () unique)
+    (interactive)
+    (let ((default-directory (if current-prefix-arg
+                                 (expand-file-name
+                                  (counsel-read-directory-name
+                                   "Default directory: "))
+                               default-directory)))
+      (ivy-read "Shell buffer: "
+                (cons (generate-new-buffer-name
+                       (shell-pwd-generate-buffer-name default-directory))
+                      (counsel--buffers-with-mode 'shell-mode))
+                :action #'counsel--switch-to-shell
+                :caller #'counsel-switch-to-shell-buffer))))
 
 (use-package ivy-xref
   :ensure t
@@ -2086,21 +2100,7 @@
 
   :hook (shell-mode . shell-pwd-enable)
 
-  :config
-  (with-eval-after-load "counsel"
-    (define-advice counsel-switch-to-shell-buffer (:override () unique)
-      (interactive)
-      (let ((default-directory (if current-prefix-arg
-                                   (expand-file-name
-                                    (counsel-read-directory-name
-                                     "Default directory: "))
-                                 default-directory)))
-        (ivy-read "Shell buffer: "
-                  (cons (generate-new-buffer-name
-                         (shell-pwd-generate-buffer-name default-directory))
-                        (counsel--buffers-with-mode 'shell-mode))
-                  :action #'counsel--switch-to-shell
-                  :caller #'counsel-switch-to-shell-buffer)))))
+  :commands shell-pwd-generate-buffer-name)
 
 (use-package shell-synopsis
   :quelpa (shell-synopsis
