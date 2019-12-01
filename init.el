@@ -94,6 +94,7 @@
   (x-gtk-use-system-tooltips nil)
   (x-stretch-cursor t)
   (fill-column 80)
+  (help-char 67108927)                  ; (aref (kbd "C-?") 0)
 
   :config
   (defun insert-space-after-point ()
@@ -105,9 +106,7 @@
 (use-package minibuffer
   :commands read-file-name
 
-  :bind (:map minibuffer-inactive-mode-map
-              ("C-h"     . backward-delete-char-untabify)
-              ("C-c M-h" . pcomplete-help))
+  :bind (:map minibuffer-inactive-mode-map ("C-c M-h" . pcomplete-help))
 
   :custom (read-file-name-completion-ignore-case t))
 
@@ -280,6 +279,13 @@
 
 (use-package elec-pair :hook (after-init . electric-pair-mode))
 
+(use-package electric
+  :hook (after-init . disable-electric-indent)
+
+  :config
+  (defun disable-electric-indent ()
+    (electric-indent-mode -1)))
+
 (use-package files
   :commands
   read-directory-name
@@ -344,6 +350,7 @@
   ("C-*"   . delete-region-first-last-chars)
   ("M-SPC" . just-one-space-fast)
   ([remap move-beginning-of-line] . back-to-indentation-or-beginning)
+  ([remap newline] . newline-and-indent)
   (:map ctl-x-map
         ("K"   . kill-current-buffer)
         ("C-r" . overwrite-mode)
