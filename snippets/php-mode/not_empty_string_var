@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: not_empty_string_var
-# key: nemp
-# --
-isset($1) && $1 !== ''$0

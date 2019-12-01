@@ -1,4 +1,0 @@
-# key: hvd
-# name: html_var_dump
-# --
-echo '<pre>'; var_dump($0); echo '</pre>';
