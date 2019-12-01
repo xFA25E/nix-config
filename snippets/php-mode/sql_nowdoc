@@ -1,0 +1,7 @@
+# key: sql
+# name: sql_nowdoc
+# expand-env: ((yas-indent-line nil))
+# --
+<<<'SQL'
+$0
+SQL${1:;}
