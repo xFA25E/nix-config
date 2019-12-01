@@ -913,10 +913,8 @@
 
   :bind
   ("M-z" . avy-goto-word-0)
-  ("M-Z" . avy-goto-word-1)
   (:map goto-map
         ("M-g" . avy-goto-line)
-        ("M-r" . avy-resume)
         ("g"   . nil)
         ("n"   . nil)
         ("p"   . nil))
@@ -1486,7 +1484,9 @@
         ("C-S-z"       . yas-prev-field)
         ("C-z"         . yas-next-field-or-maybe-expand))
 
-  :hook (after-init . yas-global-mode))
+  :hook (after-init . yas-global-mode)
+
+  :custom (yas-wrap-around-region t))
 
 (use-package yasnippet-snippets :ensure t)
 
@@ -1953,6 +1953,12 @@
   (defun edit-indirect-guess-mode (buf _beg _end)
     (case (buffer-local-value 'major-mode buf)
       ('sh-mode (awk-mode))
+      ('php-mode
+       (let ((mode (completing-read "Mode: " '("sql" "html") nil t)))
+         (cond ((string-equal mode "sql")
+                (sql-mode))
+               ((string-equal mode "html")
+                (html-mode)))))
       (t (normal-mode)))))
 
 (use-package web-beautify :ensure t)
