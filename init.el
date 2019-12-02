@@ -94,7 +94,7 @@
   (x-gtk-use-system-tooltips nil)
   (x-stretch-cursor t)
   (fill-column 80)
-  (help-char 67108927)                  ; (aref (kbd "C-?") 0)
+  (help-char (aref (kbd "C-?") 0))
 
   :config
   (defun insert-space-after-point ()
