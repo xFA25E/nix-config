@@ -1110,16 +1110,16 @@
     (dired-jump nil (string-trim-right dir "/")))
 
   (ivy-add-actions
-   #'counsel-file-jump
+   'counsel-file-jump
    '(("j" ivy-dired-jump-action "dired jump")))
 
   (ivy-add-actions
-   #'counsel-find-file
+   'counsel-find-file
    '(("j" ivy-dired-jump-action  "dired jump")
      ("J" find-file-other-window "other window")))
 
   (ivy-add-actions
-   #'counsel-switch-to-shell-buffer
+   'counsel-switch-to-shell-buffer
    '(("k" kill-buffer-if-alive "kill buffer")))
 
   (defun get-grep-lines (regex)
@@ -1335,9 +1335,9 @@
 (use-package vlf
   :ensure t
 
-  :init
-  (with-eval-after-load "ivy"
-    (ivy-add-actions #'counsel-find-file '(("l" vlf "view large file")))))
+  :after counsel
+
+  :init (ivy-add-actions 'counsel-find-file '(("l" vlf "view large file"))))
 
 (use-package which-key
   :ensure t
