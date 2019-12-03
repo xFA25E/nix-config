@@ -524,8 +524,6 @@
 
   :demand t
 
-  :hook (dired-mode . enable-dired-omit-mode)
-
   :bind (:map ctl-x-map ("C-j" . dired-jump))
 
   :custom
@@ -555,14 +553,7 @@
 
      (,(rx ".torrent" string-end)
       "transmission-show"
-      "transmission-remote --add")))
-
-  :config
-  (defun enable-dired-omit-mode ()
-    (when (not (or (string-equal "*Find*" (buffer-name))
-                   (string-equal "*Fd*" (buffer-name))
-                   (string-equal "*Find Lisp Dired*" (buffer-name))))
-      (dired-omit-mode))))
+      "transmission-remote --add"))))
 
 (use-package fringe :config (fringe-mode '(3 . 0)))
 
