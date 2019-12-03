@@ -1,62 +1,58 @@
 ;; -*- flycheck-disabled-checkers: (emacs-lisp-checkdoc); lexical-binding: t -*-
 
-(defvar nsm-settings-file "~/.cache/emacs/network-security.data")
-(defvar package-user-dir "~/.cache/emacs/elpa")
-(defvar gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+(eval-and-compile
+  (defvar nsm-settings-file "~/.cache/emacs/network-security.data")
+  (defvar package-user-dir "~/.cache/emacs/elpa")
+  (defvar gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
-(require 'package)
+  (require 'package)
 
-(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")))
+  (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                           ("melpa" . "https://melpa.org/packages/")
+                           ("org" . "https://orgmode.org/elpa/")))
 
-(package-initialize)
+  (package-initialize)
 
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
 
-(eval-when-compile
-  (require 'use-package))
+  (require 'use-package)
 
-(use-package use-package-core
-  :demand t
+  (setq use-package-verbose nil
+        use-package-expand-minimally t
+        use-package-minimum-reported-time 0.1
+        use-package-enable-imenu-support t
+        use-package-always-demand nil
+        use-package-always-defer t)
 
-  :custom
-  (use-package-verbose nil)
-  (use-package-expand-minimally t)
-  (use-package-minimum-reported-time 0.1)
-  (use-package-enable-imenu-support t)
-  (use-package-always-demand nil)
-  (use-package-always-defer t))
+  (use-package diminish :ensure t)
 
-(use-package diminish :ensure t)
+  (use-package quelpa
+    :ensure t
 
-(use-package quelpa
-  :ensure t
+    :demand t
 
-  :demand t
+    :custom
+    (quelpa-build-dir "~/.cache/emacs/quelpa/build")
+    (quelpa-dir "~/.cache/emacs/quelpa")
+    (quelpa-update-melpa-p nil))
 
-  :custom
-  (quelpa-build-dir "~/.cache/emacs/quelpa/build")
-  (quelpa-dir "~/.cache/emacs/quelpa")
-  (quelpa-update-melpa-p nil))
+  (use-package quelpa-use-package
+    :ensure t
 
-(use-package quelpa-use-package
-  :ensure t
+    :demand t
 
-  :demand t
+    :custom (quelpa-use-package-inhibit-loading-quelpa t))
 
-  :custom (quelpa-use-package-inhibit-loading-quelpa t))
+  (use-package use-package-secrets
+    :custom (use-package-secrets-default-directory "~/.emacs.d/secrets")
 
-(use-package use-package-secrets
-  :custom (use-package-secrets-default-directory "~/.emacs.d/secrets")
+    :demand t
 
-  :demand t
-
-  :quelpa (use-package-secrets :repo "a13/use-package-secrets"
-                               :fetcher github
-                               :version original))
+    :quelpa (use-package-secrets :repo "xFA25E/use-package-secrets"
+                                 :fetcher github
+                                 :version original)))
 
 (use-package gcmh
   :diminish gcmh-mode
@@ -169,6 +165,11 @@
   add-to-list
   add-hook
   eval-after-load
+  match-string
+  replace-regexp-in-string
+  string-prefix-p
+  split-string
+  butlast
 
   :bind
   (:map mode-specific-map
@@ -177,7 +178,7 @@
         ("+" . increment-number-at-point))
 
   :config
-  (fset #'yes-or-no-p #'y-or-n-p)
+  (defalias 'yes-or-no-p 'y-or-n-p)
 
   (defun increment-number-at-point (arg)
     "Increment number at point by `ARG'."
@@ -393,6 +394,18 @@
 (use-package ffap :bind (:map ctl-x-map ("F ." . find-file-at-point)))
 
 (use-package hippie-exp
+  :functions
+  try-complete-file-name@with-env
+  try-complete-file-name-partially@with-env
+
+  :commands
+  he-init-string
+  he-file-name-beg
+  he-string-member
+  he-concat-directory-file-name
+  he-substitute-string
+  he-reset-string
+
   :bind ([remap dabbrev-expand] . hippie-expand)
 
   :custom (he-file-name-chars "-a-zA-Z0-9_/.,~^#$+={}")
@@ -492,6 +505,8 @@
              (setq-local dired-actual-switches "-alhDF"))))))
 
 (use-package dired-aux
+  :commands dired-do-shell-command
+
   :after dired
 
   :demand t
@@ -630,6 +645,14 @@
   ring-ref)
 
 (use-package comint
+  :commands
+  comint-strip-ctrl-m
+  comint-truncate-buffer
+  comint-read-input-ring
+  comint-show-maximum-output
+  comint-delete-input
+  comint-send-input
+
   :hook
   (kill-buffer . comint-write-input-ring-append)
   (kill-emacs  . save-buffers-comint-input-ring)
@@ -660,8 +683,7 @@
           ((not (file-writable-p comint-input-ring-file-name))
            (message "Cannot write history file %s" comint-input-ring-file-name))
           (t
-           (let* ((hooks comint-write-input-ring-append-hook)
-                  (history-buf (get-buffer-create " *Temp Input History*"))
+           (let* ((history-buf (get-buffer-create " *Temp Input History*"))
                   (ring comint-input-ring)
                   (file comint-input-ring-file-name)
                   (index (ring-length ring)))
@@ -674,11 +696,13 @@
                  (when (not (search-forward (ring-ref ring index) nil t))
                    (goto-char (point-max))
                    (insert (ring-ref ring index) comint-input-ring-separator)))
-               (run-hooks 'hooks)
+               (run-hooks 'comint-write-input-ring-append-hook)
                (write-region nil nil file nil 'no-message)
                (kill-buffer nil)))))))
 
 (use-package shell
+  :functions shell-remove-unwanted-lines
+
   :commands shell-generate-buffer-name
 
   :bind (:map shell-mode-map
@@ -748,6 +772,8 @@
 
 (use-package mu4e
   :defines mu4e-maildir
+
+  :commands mu4e~headers-jump-to-maildir
 
   :secret (start-mu4e "mu4e.el.gpg")
 
@@ -883,6 +909,8 @@
   :demand t)
 
 (use-package reverse-im
+  :commands reverse-im-activate
+
   :ensure t
 
   :after cyrillic-dvorak-im
@@ -916,6 +944,10 @@
   (avy-keys (string-to-list "aoeuhtns")))
 
 (use-package ace-window
+  :commands
+  aw-switch-to-window
+  aw-flip-window
+
   :ensure t
 
   :bind ("M-o" . ace-window)
@@ -962,6 +994,8 @@
   :hook (after-init . ace-link-setup-default))
 
 (use-package ivy
+  :commands ivy-add-actions
+
   :ensure t
 
   :diminish ivy-mode
@@ -982,6 +1016,16 @@
         ("." . swiper-isearch-thing-at-point)))
 
 (use-package counsel
+  :functions
+  get-grep-lines
+  counsel-switch-to-shell-buffer@unique
+
+  :commands
+  counsel-git-grep-action
+  counsel-read-directory-name
+  counsel--buffers-with-mode
+  counsel--switch-to-shell
+
   :ensure t
 
   :diminish counsel-mode
@@ -1428,6 +1472,12 @@
   :hook (php-mode . php-eldoc-enable))
 
 (use-package php-beautifier
+  :functions
+  php-beautifier-phpcbf-valid-standard-p@standard-list
+  php-beautifier--create-shell-command@custom-options
+
+  :commands php-beautifier-phpcbf-standards
+
   :quelpa (php-beautifier :repo "Sodaware/php-beautifier.el"
                           :fetcher github
                           :version original)
@@ -1482,6 +1532,10 @@
 (use-package yasnippet-snippets :ensure t)
 
 (use-package lisp
+  :commands
+  check-parens
+  backward-kill-sexp
+
   :init (provide 'lisp)
 
   :hook (prog-mode . enable-check-parens)
@@ -1491,6 +1545,8 @@
     (add-hook 'after-save-hook #'check-parens nil t)))
 
 (use-package ggtags
+  :commands ggtags-eldoc-function
+
   :ensure t
 
   :hook
@@ -1518,6 +1574,12 @@
   (youtube-dl-program "ytdly"))
 
 (use-package elfeed
+  :commands
+  elfeed-log-buffer
+  elfeed-untag
+  elfeed-search-selected
+  elfeed-search-update-entry
+
   :ensure t
 
   :secret (elfeed "elfeed.el.gpg")
@@ -1660,6 +1722,11 @@
   :mode (rx ".csv" string-end))
 
 (use-package ansi-color
+  :commands
+  ansi-color-apply-on-region
+  ansi-color-apply
+  ansi-color-filter-apply
+
   :hook
   (compilation-filter . colorize-compilation)
   (shell-mode         . ansi-color-for-comint-mode-on)
@@ -1681,6 +1748,10 @@
   (add-hook 'eshell-preoutput-filter-functions #'ansi-color-filter-apply))
 
 (use-package grep
+  :commands
+  grep-read-regexp
+  grep-read-files
+
   :bind (:map search-map
               ("g" . grep-interactive))
 
@@ -1730,6 +1801,12 @@
   :commands wgrep-change-to-wgrep-mode)
 
 (use-package mingus
+  :functions mingus-dired-file@dired-jump
+
+  :commands
+  mingus-playlistp
+  mingus-get-absolute-filename
+
   :ensure t
 
   :bind
@@ -1775,6 +1852,8 @@
 (use-package autorevert :custom (auto-revert-remote-files t))
 
 (use-package time :custom (display-time-24hr-format t))
+
+(use-package url-util :commands url-get-url-at-point)
 
 (use-package url
   :custom (url-configuration-directory "~/.cache/emacs/url/")
@@ -1836,7 +1915,12 @@
               ("w" . iwconfig)))
 
 (use-package pcomplete
-  :commands pcomplete/ls
+  :commands
+  pcomplete/ls
+  pcomplete-match
+  pcomplete--here
+  pcomplete-opt
+  pcomplete-entries
 
   :config
   (defun pcomplete/ls ()
@@ -1880,6 +1964,8 @@
   :mode (rx string-start "sxhkdrc" string-end))
 
 (use-package conf-mode
+  :functions xresources-reload
+
   :hook (conf-xdefaults-mode . setup-xresources-reload)
 
   :config
@@ -1928,6 +2014,8 @@
 (use-package help :bind-keymap ("C-x h" . help-map))
 
 (use-package edit-indirect
+  :functions edit-indirect-guess-mode
+
   :ensure t
 
   :bind (:map ctl-x-map ("E" . edit-indirect-region-or-at-point))
@@ -1971,6 +2059,8 @@
   :mode ((rx ".epub" string-end) . nov-mode))
 
 (use-package byte-compile
+  :functions byte-recompile-current-file
+
   :hook (emacs-lisp-mode . setup-byte-recompile-after-save)
 
   :config
