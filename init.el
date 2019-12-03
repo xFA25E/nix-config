@@ -395,8 +395,7 @@
 
 (use-package hippie-exp
   :functions
-  try-complete-file-name@with-env
-  try-complete-file-name-partially@with-env
+  try-complete-with-env-advice
 
   :commands
   he-init-string
@@ -411,69 +410,16 @@
   :custom (he-file-name-chars "-a-zA-Z0-9_/.,~^#$+={}")
 
   :config
-  (define-advice try-complete-file-name (:override (old) with-env)
-    (when (not old)
-      (he-init-string (he-file-name-beg) (point))
-      (let ((name-part (file-name-nondirectory he-search-string))
-            (dir-part (expand-file-name
-                       (substitute-in-file-name (or (file-name-directory
-                                                     he-search-string) "")))))
-        (when (not (he-string-member name-part he-tried-table))
-          (setq he-tried-table (cons name-part he-tried-table)))
-        (if (and (not (equal he-search-string ""))
-                 (file-directory-p dir-part))
-            (setq he-expand-list (sort (file-name-all-completions name-part
-                                                                  dir-part)
-                                       #'string-lessp))
-          (setq he-expand-list ()))))
+  (let ((original-expand-file-name (symbol-function 'expand-file-name)))
+    (defun try-complete-with-env-advice (oldfunc &rest args)
+      (cl-letf (((symbol-function 'expand-file-name)
+                 (lambda (arg) (funcall original-expand-file-name
+                                   (substitute-in-file-name arg)))))
+        (apply oldfunc args))))
 
-    (while (and he-expand-list (he-string-member (car he-expand-list)
-                                                 he-tried-table))
-      (setq he-expand-list (cdr he-expand-list)))
-
-    (cond (he-expand-list
-           (let ((filename (he-concat-directory-file-name
-                            (file-name-directory he-search-string)
-                            (car he-expand-list))))
-             (he-substitute-string filename)
-             (setq he-tried-table (cons (car he-expand-list)
-                                        (cdr he-tried-table)))
-             (setq he-expand-list (cdr he-expand-list))
-             t))
-
-          (old
-           (he-reset-string)
-           nil)))
-
-  (define-advice try-complete-file-name-partially (:override (old) with-env)
-    (let ((expansion ()))
-      (when (not old)
-        (he-init-string (he-file-name-beg) (point))
-        (let ((name-part (file-name-nondirectory he-search-string))
-              (dir-part (expand-file-name
-                         (substitute-in-file-name (or (file-name-directory
-                                                       he-search-string) "")))))
-          (when (and (not (equal he-search-string ""))
-                     (file-directory-p dir-part))
-            (setq expansion (file-name-completion name-part dir-part)))
-
-          (when (or (eq expansion t)
-                    (string-equal expansion name-part)
-                    (he-string-member expansion he-tried-table))
-            (setq expansion ()))))
-
-      (cond
-       (expansion
-        (let ((filename (he-concat-directory-file-name
-                         (file-name-directory he-search-string)
-                         expansion)))
-          (he-substitute-string filename)
-          (setq he-tried-table (cons expansion (cdr he-tried-table)))
-          t))
-
-       (old
-        (he-reset-string)
-        nil)))))
+  (advice-add 'try-complete-file-name :around #'try-complete-with-env-advice)
+  (advice-add 'try-complete-file-name-partially :around
+              #'try-complete-with-env-advice))
 
 (use-package tex-mode
   :hook (tex-mode . setup-tex-mode-ispell-parser)
@@ -1150,7 +1096,13 @@
                        (shell-pwd-generate-buffer-name default-directory))
                       (counsel--buffers-with-mode 'shell-mode))
                 :action #'counsel--switch-to-shell
-                :caller #'counsel-switch-to-shell-buffer))))
+                :caller #'counsel-switch-to-shell-buffer)))
+
+  (define-advice counsel-set-variable (:around (c-set-var &rest args) prin-fix)
+    (cl-letf (((symbol-function 'prin1-char) #'prin1-to-string))
+      (if args
+          (apply c-set-var args)
+        (call-interactively c-set-var)))))
 
 (use-package ivy-xref
   :ensure t
