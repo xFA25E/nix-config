@@ -1086,14 +1086,17 @@
 
   (define-advice counsel-switch-to-shell-buffer (:override () unique)
     (interactive)
-    (let ((default-directory (if current-prefix-arg
-                                 (expand-file-name
-                                  (counsel-read-directory-name
-                                   "Default directory: "))
-                               default-directory)))
+    (let* ((default-directory (if current-prefix-arg
+                                  (expand-file-name
+                                   (counsel-read-directory-name
+                                    "Default directory: "))
+                                default-directory))
+           (buffer-name (if (fboundp 'shell-pwd-generate-buffer-name)
+                            (shell-pwd-generate-buffer-name default-directory)
+                          "*shell*")))
+
       (ivy-read "Shell buffer: "
-                (cons (generate-new-buffer-name
-                       (shell-pwd-generate-buffer-name default-directory))
+                (cons (generate-new-buffer-name buffer-name)
                       (counsel--buffers-with-mode 'shell-mode))
                 :action #'counsel--switch-to-shell
                 :caller #'counsel-switch-to-shell-buffer)))
@@ -1618,8 +1621,6 @@
 (use-package projectile
   :ensure t
 
-  :hook (after-init . projectile-mode)
-
   :bind-keymap ("M-m" . projectile-command-map)
 
   :custom
@@ -1778,10 +1779,9 @@
   :config
   (define-advice mingus-dired-file (:override () dired-jump)
     (interactive)
-    (dired-jump nil (cond ((mingus-playlistp)
-                           mingus-mpd-playlist-dir)
-                          (t
-                           (mingus-get-absolute-filename))))))
+    (dired-jump nil (if (mingus-playlistp)
+                        mingus-mpd-playlist-dir
+                      (mingus-get-absolute-filename)))))
 
 (use-package ede/base
   :custom (ede-project-placeholder-cache-file "~/.cache/emacs/ede/projects.el"))
@@ -2295,3 +2295,5 @@
   (dap-utils-extension-path "~/.cache/emacs/extension"))
 
 (use-package web-mode :ensure t)
+
+(use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
