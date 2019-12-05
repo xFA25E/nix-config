@@ -221,10 +221,7 @@
 
       (start-process "terminal" nil "tml" term-cmd))))
 
-(use-package subr-x
-  :commands
-  if-let
-  when-let)
+(use-package subr-x :commands when-let)
 
 (use-package tramp
   :commands
@@ -305,11 +302,11 @@
   (backup-directory-alist
    `((".*" . ,(expand-file-name "~/.cache/emacs/backups"))))
   (confirm-nonexistent-file-or-buffer nil)
-  (delete-old-versions                t)
-  (kept-new-versions                  6)
-  (kept-old-versions                  2)
-  (require-final-newline              nil)
-  (version-control                    t)
+  (delete-old-versions t)
+  (kept-new-versions 6)
+  (kept-old-versions 2)
+  (require-final-newline nil)
+  (version-control t)
   (backup-enable-predicate #'custom-backup-enable-predicate)
 
   :config
@@ -394,16 +391,7 @@
 (use-package ffap :bind (:map ctl-x-map ("F ." . find-file-at-point)))
 
 (use-package hippie-exp
-  :functions
-  try-complete-with-env-advice
-
-  :commands
-  he-init-string
-  he-file-name-beg
-  he-string-member
-  he-concat-directory-file-name
-  he-substitute-string
-  he-reset-string
+  :functions try-complete-with-env-advice
 
   :bind ([remap dabbrev-expand] . hippie-expand)
 
@@ -417,9 +405,10 @@
                                    (substitute-in-file-name arg)))))
         (apply oldfunc args))))
 
-  (advice-add 'try-complete-file-name :around #'try-complete-with-env-advice)
-  (advice-add 'try-complete-file-name-partially :around
-              #'try-complete-with-env-advice))
+  (advice-add 'try-complete-file-name
+              :around #'try-complete-with-env-advice)
+  (advice-add 'try-complete-file-name-partially
+              :around #'try-complete-with-env-advice))
 
 (use-package tex-mode
   :hook (tex-mode . setup-tex-mode-ispell-parser)
@@ -585,7 +574,6 @@
 
 (use-package ring
   :commands
-  ring-length
   ring-empty-p
   ring-length
   ring-ref)
@@ -1206,14 +1194,14 @@
 (use-package company-c-headers
   :ensure t
 
-  :requires company
+  :after company
 
   :init (add-to-list 'company-backends #'company-c-headers))
 
 (use-package company-shell
   :ensure t
 
-  :requires company
+  :after company
 
   :init
   (dolist (backend (list #'company-shell #'company-shell-env))
@@ -1246,7 +1234,7 @@
                                  (emacs-lisp . t))))
 
 (use-package ox-html
-  :requires org
+  :after org
 
   :custom
   (org-html-htmlize-output-type 'css)
@@ -1311,8 +1299,6 @@
 (use-package rust-mode
   :ensure t
 
-  :mode (rx ".rs" string-end)
-
   :custom (rust-format-on-save t))
 
 ;; Add support for cargo error --> file:line:col
@@ -1364,7 +1350,7 @@
 (use-package company-lsp
   :ensure t
 
-  :requires company
+  :after company
 
   :init (add-to-list 'company-backends #'company-lsp))
 
@@ -1392,16 +1378,11 @@
 (use-package php-mode
   :ensure t
 
-  :commands
-  php-search-documentation
-  run-php
-
-  :mode (rx ".php" string-end)
+  :commands run-php
 
   :hook (php-mode . subword-mode)
 
-  :custom
-  (php-manual-path "~/.cache/php_docs/php-chunked-xhtml")
+  :custom (php-manual-path "~/.cache/php_docs/php-chunked-xhtml")
 
   :config
   (defun run-php ()
@@ -1411,7 +1392,7 @@
 (use-package company-php
   :ensure t
 
-  :requires company
+  :after company php-mode
 
   :demand t
 
@@ -1663,16 +1644,13 @@
 (use-package company-restclient
   :ensure t
 
-  :requires company
+  :after company
 
   :init (add-to-list 'company-backends #'company-restclient))
 
 (use-package calendar :custom (calendar-week-start-day 1))
 
-(use-package csv-mode
-  :ensure t
-
-  :mode (rx ".csv" string-end))
+(use-package csv-mode :ensure t)
 
 (use-package ansi-color
   :commands
@@ -1690,15 +1668,6 @@
     (let ((inhibit-read-only t))
       (ansi-color-apply-on-region
        compilation-filter-start (point)))))
-
-(use-package eshell
-  :bind (:map mode-specific-map ("x e" . eshell))
-
-  :custom (eshell-directory-name "~/.cache/emacs/eshell/")
-
-  :config
-  (add-hook 'eshell-preoutput-filter-functions #'ansi-color-apply)
-  (add-hook 'eshell-preoutput-filter-functions #'ansi-color-filter-apply))
 
 (use-package grep
   :commands
@@ -1743,10 +1712,7 @@
                                                 nil default-directory t)))
                  (rgrep regexp files dir (equal current-prefix-arg '(4)))))))))
 
-(use-package nix-mode
-  :ensure t
-
-  :mode (rx ".nix" string-end))
+(use-package nix-mode :ensure t)
 
 (use-package wgrep
   :ensure t
@@ -1789,17 +1755,9 @@
 (use-package gamegrid
   :custom (gamegrid-user-score-file-directory "~/.cache/emacs/games/"))
 
-(use-package arduino-mode
-  :ensure t
+(use-package arduino-mode :ensure t)
 
-  :mode (rx "." (or "pde" "ino") string-end))
-
-(use-package json-mode
-  :ensure t
-
-  :mode
-  (rx "." (or "json" "jsonld" "babelrc" "bowerrc") string-end)
-  (rx string-start "composer.lock" string-end))
+(use-package json-mode :ensure t)
 
 (use-package autorevert :custom (auto-revert-remote-files t))
 
@@ -2049,9 +2007,7 @@
   (find-function-C-source-directory "~/Downloads/programs/emacs-26.3/src"))
 
 (use-package find-dired
-  :bind
-  (:map ctl-x-map
-        ("F f" . find-dired-interactive))
+  :bind (:map ctl-x-map ("F f" . find-dired-interactive))
 
   :custom (find-ls-option '("-print0 | xargs -0 ls -lahsbdi" . "-lahsbdi"))
 
