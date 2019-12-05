@@ -953,6 +953,7 @@
   :functions
   get-grep-lines
   counsel-switch-to-shell-buffer@unique
+  counsel-set-variable@prin-fix
 
   :commands
   counsel-git-grep-action
