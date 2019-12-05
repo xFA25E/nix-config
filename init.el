@@ -2254,4 +2254,3 @@
 (use-package web-mode :ensure t)
 
 (use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
-"hello test"
