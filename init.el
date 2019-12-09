@@ -705,26 +705,27 @@
   mu4e-maildir
   mu4e-view-actions
 
-  :functions mu4e-action-view-in-browser@check-parens-fix
+  :functions
+  mu4e-action-view-in-browser@check-parens-fix
+  mu4e@with-index
 
-  :secret (start-mu4e "mu4e.el.gpg")
-
-  :hook (after-init . start-mu4e)
+  :secret (mu4e "mu4e.el.gpg")
 
   :bind (:map mode-specific-map ("o m" . mu4e))
 
   :custom
   (mu4e-maildir (or (getenv "MAILDIR") (expand-file-name "~/.mail")))
+  (mu4e-sent-messages-behavior 'sent)
   (mu4e-completing-read-function #'completing-read)
   (mu4e-change-filenames-when-moving t)
-  (mu4e-update-interval 900)
   (mu4e-context-policy 'pick-first)
   (mu4e-compose-context-policy 'always-ask)
   (mu4e-headers-date-format "%Y-%m-%d %H:%M")
   (mu4e-view-show-addresses t)
   (mu4e-attachment-dir "~/Downloads")
   (mu4e-modeline-max-width 100)
-  (mu4e-get-mail-command "mailsync -a")
+  (mu4e-get-mail-command "mailsync work")
+  (mu4e-confirm-quit nil)
   (mu4e-view-attachment-assoc '(("png"  . "sxiv")
                                 ("jpg"  . "sxiv")
                                 ("gif"  . "sxiv")
@@ -734,8 +735,13 @@
                                 ("thm"  . "sxiv")
                                 ("pdf"  . "zathura")
                                 ("epub" . "zathura")
+                                ("djvu" . "zathura")
                                 ("doc"  . "libreoffice")
                                 ("docx" . "libreoffice")
+                                ("xlsx" . "libreoffice")
+                                ("xls"  . "libreoffice")
+                                ("odt"  . "libreoffice")
+                                ("ppt"  . "libreoffice")
                                 ("flac" . "mpv")
                                 ("m4a"  . "mpv")
                                 ("mp3"  . "mpv")
@@ -748,7 +754,8 @@
                                 ("avi"  . "mpv")
                                 ("mpg"  . "mpv")
                                 ("mov"  . "mpv")
-                                ("3gp"  . "mpv")))
+                                ("3gp"  . "mpv")
+                                ("vob"  . "mpv")))
   (mu4e-headers-fields '((:human-date . 16)
                          (:flags      . 6)
                          (:from       . 22)
@@ -767,7 +774,8 @@
           (browse-url-browser-function #'browse-url-firefox))
       (apply oldfunc args)))
 
-  (defun start-mu4e () (interactive) (mu4e t)))
+  (define-advice mu4e (:after (&rest _rest) with-index)
+    (mu4e-update-index)))
 
 (use-package proced :bind (:map mode-specific-map ("o p" . proced)))
 
