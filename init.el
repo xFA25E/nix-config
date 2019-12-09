@@ -19,11 +19,8 @@
 
   (require 'use-package)
 
-  (setq use-package-verbose nil
-        use-package-expand-minimally t
-        use-package-minimum-reported-time 0.1
+  (setq use-package-expand-minimally t
         use-package-enable-imenu-support t
-        use-package-always-demand nil
         use-package-always-defer t)
 
   (use-package diminish :ensure t)
@@ -477,7 +474,6 @@
   :bind (:map ctl-x-map ("C-j" . dired-jump))
 
   :custom
-  (dired-bind-vm t)
   (dired-guess-shell-alist-user
    `((,(rx "." (or "doc" "docx" "xlsx" "xls" "odt" "ppt") string-end)
       "setsid -f libreoffice * >/dev/null 2>&1"
@@ -705,9 +701,11 @@
   (send-mail-function #'message-send-mail-with-sendmail))
 
 (use-package mu4e
-  :defines mu4e-maildir
+  :defines
+  mu4e-maildir
+  mu4e-view-actions
 
-  :commands mu4e~headers-jump-to-maildir
+  :functions mu4e-action-view-in-browser@check-parens-fix
 
   :secret (start-mu4e "mu4e.el.gpg")
 
@@ -726,6 +724,7 @@
   (mu4e-view-show-addresses t)
   (mu4e-attachment-dir "~/Downloads")
   (mu4e-modeline-max-width 100)
+  (mu4e-get-mail-command "mailsync -a")
   (mu4e-view-attachment-assoc '(("png"  . "sxiv")
                                 ("jpg"  . "sxiv")
                                 ("gif"  . "sxiv")
@@ -759,10 +758,14 @@
   (set-face-attribute 'mu4e-modeline-face nil :foreground "yellow")
   (set-face-attribute 'mu4e-context-face nil :foreground "magenta")
 
-  (defun vm-visit-folder (fil &optional _read-only)
-    (if (string-prefix-p mu4e-maildir fil)
-        (mu4e~headers-jump-to-maildir (substring fil (length mu4e-maildir)))
-      (error (format "%s is not a valid mail dir" fil))))
+  (add-to-list 'mu4e-view-actions
+               '("ViewInBrowser" . mu4e-action-view-in-browser-my) t)
+
+  (define-advice mu4e-action-view-in-browser
+      (:around (oldfunc &rest args) check-parens-fix)
+    (let ((prog-mode-hook nil)
+          (browse-url-browser-function #'browse-url-firefox))
+      (apply oldfunc args)))
 
   (defun start-mu4e () (interactive) (mu4e t)))
 
@@ -2254,3 +2257,11 @@
 (use-package web-mode :ensure t)
 
 (use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
+
+;; mood-line
+;; (add-to-list 'global-mode-string "foo")
+
+;; also look good-line
+
+;; remove mingus from mode-line (mingus-status)
+;; or add it to mood-line (mingus-mode-line-object)
