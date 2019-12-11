@@ -724,7 +724,7 @@
   (mu4e-view-show-addresses t)
   (mu4e-attachment-dir "~/Downloads")
   (mu4e-modeline-max-width 100)
-  (mu4e-get-mail-command "mailsync work")
+  (mu4e-get-mail-command "mailsync exys")
   (mu4e-confirm-quit nil)
   (mu4e-view-attachment-assoc '(("png"  . "sxiv")
                                 ("jpg"  . "sxiv")
