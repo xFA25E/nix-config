@@ -40,16 +40,7 @@
 
     :demand t
 
-    :custom (quelpa-use-package-inhibit-loading-quelpa t))
-
-  (use-package use-package-secrets
-    :custom (use-package-secrets-default-directory "~/.emacs.d/secrets")
-
-    :demand t
-
-    :quelpa (use-package-secrets :repo "xFA25E/use-package-secrets"
-                                 :fetcher github
-                                 :version original)))
+    :custom (quelpa-use-package-inhibit-loading-quelpa t)))
 
 (use-package gcmh
   :diminish gcmh-mode
@@ -456,15 +447,16 @@
 (use-package async
   :ensure t
 
-  :demand t
+  :after bytecomp
 
-  :hook (after-init . async-bytecomp-package-mode)
+  :init (async-bytecomp-package-mode))
 
-  :config
-  (use-package dired-async
-    :demand t
+(use-package async
+  :ensure t
 
-    :hook (after-init . dired-async-mode)))
+  :after dired
+
+  :init (dired-async-mode))
 
 (use-package dired-x
   :after dired
@@ -568,14 +560,9 @@
   (defun disable-image-dired ()
     (image-dired-minor-mode -1)))
 
-(use-package ring
-  :commands
-  ring-empty-p
-  ring-length
-  ring-ref)
-
 (use-package comint
-  :commands
+  :functions
+  write-region-with-filter
   comint-strip-ctrl-m
   comint-truncate-buffer
   comint-read-input-ring
@@ -584,17 +571,17 @@
   comint-send-input
 
   :hook
-  (kill-buffer . comint-write-input-ring-append)
+  (kill-buffer . comint-write-input-ring)
   (kill-emacs  . save-buffers-comint-input-ring)
 
   :custom
   (comint-input-ignoredups t)
   (comint-input-ring-size 10000)
-  (comint-write-input-ring-append-hook nil)
 
   :init
   (add-hook 'comint-output-filter-functions #'comint-strip-ctrl-m)
   (add-hook 'comint-output-filter-functions #'comint-truncate-buffer)
+  (defvar-local comint-history-filter-function (lambda (_file)))
 
   :config
   (set-face-attribute 'comint-highlight-input nil :inherit 'highlight)
@@ -602,36 +589,21 @@
 
   (defun save-buffers-comint-input-ring ()
     (dolist (buf (buffer-list))
-      (with-current-buffer buf (comint-write-input-ring-append))))
+      (with-current-buffer buf (comint-write-input-ring))))
 
-  (defun comint-write-input-ring-append ()
-    "Like `comint-write-input-ring', but appends contents."
-    (cond ((or (null comint-input-ring-file-name)
-               (equal comint-input-ring-file-name "")
-               (null comint-input-ring) (ring-empty-p comint-input-ring))
-           nil)
-          ((not (file-writable-p comint-input-ring-file-name))
-           (message "Cannot write history file %s" comint-input-ring-file-name))
-          (t
-           (let* ((history-buf (get-buffer-create " *Temp Input History*"))
-                  (ring comint-input-ring)
-                  (file comint-input-ring-file-name)
-                  (index (ring-length ring)))
-             (with-current-buffer history-buf
-               (erase-buffer)
-               (insert-file-contents file)
-               (while (> index 0)
-                 (setq index (1- index))
-                 (goto-char (point-min))
-                 (when (not (search-forward (ring-ref ring index) nil t))
-                   (goto-char (point-max))
-                   (insert (ring-ref ring index) comint-input-ring-separator)))
-               (run-hooks 'comint-write-input-ring-append-hook)
-               (write-region nil nil file nil 'no-message)
-               (kill-buffer nil)))))))
+  (let ((original-write-region (symbol-function 'write-region)))
+    (defun write-region-with-filter (oldfunc &rest args)
+      (let ((filter-function comint-history-filter-function))
+        (cl-letf (((symbol-function 'write-region)
+                   (lambda (&rest largs)
+                     (funcall filter-function (nth 2 largs))
+                     (apply original-write-region (cons nil (cdr largs))))))
+          (apply oldfunc args)))))
+
+  (advice-add 'comint-write-input-ring :around #'write-region-with-filter))
 
 (use-package shell
-  :functions shell-remove-unwanted-lines
+  :functions shell-history-filter
 
   :commands shell-generate-buffer-name
 
@@ -644,14 +616,39 @@
                             (one-or-more digit) " "
                             alpha
                             (zero-or-more (in ?- ?_ alpha digit)) " "))
-  :hook
-  (shell-mode . shell-enable-comint-history)
-  (shell-mode . shell-enable-save-filter)
+
+  :hook (shell-mode . shell-enable-comint-history)
 
   :config
+  (defun shell-history-filter (file)
+    (goto-char (point-min))
+    (insert-file-contents file)
+    (flush-lines
+     (rx (or
+          (and bol
+               (opt "sudo " (opt "-A "))
+               (or
+                "aria2c" "awk" "bspc" "cat" "cd" "chmod" "chown" "ckbatt" "cp"
+                "cut" "dd" "df" "du" "echo" "em" "env" "exit" "export" "fd"
+                "feh" "file" "find" "gawk" "grep" "gzip" "htop" "ln" "locate"
+                "ls" "man" "mkdir" "mmpv" "mpv" "mpvi" "mv" "myoutube-dl"
+                "notify-send" "pkill" "printf" "python" "rg" "rimer" "rm"
+                "rmdir" "rofi" "runel" "setsidpp" "sleep" "strip" "sxiv" "timer"
+                "top" "touch" "tr" "uname" "uptime" "watch" "wc" "which" "xclip"
+                "xz" "youtube-dl" "ytdl" "ytdla" "ytdlam" "ytdlay" "ytdlp"
+                "ytdlpa" "ytdlpay" "ytdlpy" "ytdly" "ytdli" "emacs" "command"
+                "hash" "quit" "pwgen" "gparted" "host" "mpop" "mbsync" "dh"
+                "time" "base16_theme" "ping" "id" "sh" "dash" "bash" "strings"
+                "read")
+               eow)
+          (not (any print space))))
+     (point-min) (point-max))
+    (delete-duplicate-lines (point-min) (point-max)))
+
   (defun shell-enable-comint-history ()
     (setq-local comint-input-ring-file-name
                 "~/.cache/emacs/comint/shell_history")
+    (setq-local comint-history-filter-function #'shell-history-filter)
     (comint-read-input-ring 'silent))
 
   (defun shell-change-directory ()
@@ -662,29 +659,7 @@
     (let* ((read-dir (read-directory-name "Change directory: "))
            (dir (or (file-remote-p read-dir 'localname) read-dir)))
       (insert (concat "cd " (shell-quote-argument dir))))
-    (comint-send-input))
-
-  (defun shell-remove-unwanted-lines ()
-    (flush-lines
-     (rx (or
-          (and bol
-               (or "aria2c" "awk" "bspc" "cat" "cd" "ckbatt" "cp" "cut" "dd"
-                   "df" "du" "echo" "em" "env" "exit" "export" "fd" "feh" "file"
-                   "find" "gawk" "grep" "gzip" "htop" "ln" "locate" "ls" "man"
-                   "mkdir" "mmpv" "mpv" "mpvi" "mv" "myoutube-dl" "notify-send"
-                   "pkill" "printf" "python" "rg" "rimer" "rm" "rmdir" "rofi"
-                   "runel" "setsid" "sleep" "strip" "sxiv" "timer" "top" "tr"
-                   "uname" "uptime" "watch" "wc" "which" "xclip" "xz"
-                   "youtube-dl" "ytdl" "ytdla" "ytdlam" "ytdlay" "ytdlp"
-                   "ytdlpa" "ytdlpay" "ytdlpy" "ytdly" "ytdli" "emacs")
-               eow)
-          (not (any print space))))
-     (point-min) (point-max)))
-
-  (defun shell-enable-save-filter ()
-    (add-hook 'comint-write-input-ring-append-hook
-              #'shell-remove-unwanted-lines
-              nil t)))
+    (comint-send-input)))
 
 (use-package autoinsert :hook (find-file . auto-insert))
 
@@ -697,7 +672,7 @@
 
 (use-package sendmail
   :custom
-  (sendmail-program   "msmtp")
+  (sendmail-program "msmtp")
   (send-mail-function #'message-send-mail-with-sendmail))
 
 (use-package mu4e
@@ -705,11 +680,10 @@
   mu4e-maildir
   mu4e-view-actions
 
-  :functions
+  :commands
   mu4e-action-view-in-browser@check-parens-fix
   mu4e@with-index
-
-  :secret (mu4e "mu4e.el.gpg")
+  mu4e-update-index
 
   :bind (:map mode-specific-map ("o m" . mu4e))
 
@@ -762,6 +736,8 @@
                          (:subject)))
 
   :config
+  (load-file (expand-file-name "secrets/mu4e.el" user-emacs-directory))
+
   (set-face-attribute 'mu4e-modeline-face nil :foreground "yellow")
   (set-face-attribute 'mu4e-context-face nil :foreground "magenta")
 
@@ -1530,8 +1506,6 @@
 
   :ensure t
 
-  :secret (elfeed "elfeed.el.gpg")
-
   :bind
   (:map mode-specific-map
         ("o e" . elfeed))
@@ -1549,6 +1523,8 @@
   :custom (elfeed-search-filter "+unread")
 
   :config
+  (load-file (expand-file-name "secrets/elfeed.el" user-emacs-directory))
+
   (defun elfeed-switch-to-log-buffer ()
     (interactive)
     (switch-to-buffer (elfeed-log-buffer)))
@@ -1732,11 +1708,10 @@
   :commands wgrep-change-to-wgrep-mode)
 
 (use-package mingus
-  :functions mingus-dired-file@dired-jump
-
   :commands
   mingus-playlistp
   mingus-get-absolute-filename
+  mingus-dired-file@dired-jump
 
   :ensure t
 
@@ -2235,11 +2210,12 @@
 (use-package ivy-youtube
   :ensure t
 
-  :secret (ivy-youtube "ivy-youtube.el.gpg")
-
   :custom
   (ivy-youtube-play-at "mpvi")
-  (ivy-youtube-history-file "~/.cache/emacs/ivy-youtube-history"))
+  (ivy-youtube-history-file "~/.cache/emacs/ivy-youtube-history")
+
+  :config
+  (load-file (expand-file-name "secrets/ivy-youtube.el" user-emacs-directory)))
 
 (use-package request
   :custom (request-storage-directory "~/.cache/emacs/request/"))
