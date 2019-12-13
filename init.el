@@ -4,13 +4,11 @@
   (defvar nsm-settings-file "~/.cache/emacs/network-security.data")
   (defvar package-user-dir "~/.cache/emacs/elpa")
   (defvar gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+  (defvar package-archives '(("gnu"   . "https://elpa.gnu.org/packages/")
+                             ("melpa" . "https://melpa.org/packages/")
+                             ("org"   . "https://orgmode.org/elpa/")))
 
   (require 'package)
-
-  (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                           ("melpa" . "https://melpa.org/packages/")
-                           ("org" . "https://orgmode.org/elpa/")))
-
   (package-initialize)
 
   (unless (package-installed-p 'use-package)
@@ -507,8 +505,8 @@
 (use-package browse-url :custom (browse-url-browser-function #'eww-browse-url))
 
 (use-package cc-mode
-  :custom (c-default-style '((java-mode . "java")
-                             (other     . "awk"))))
+  :custom (c-default-style '((java-mode . "java") (other . "awk"))))
+
 (use-package compile
   :custom
   (compilation-always-kill   t)
@@ -822,11 +820,9 @@
   :mode (rx ".smali" string-end))
 
 (use-package cyrillic-dvorak-im
-  :quelpa (cyrillic-dvorak-im
-           :repo "xFA25E/cyrillic-dvorak-im"
-           :fetcher github
-           :version original)
-
+  :quelpa (cyrillic-dvorak-im :repo "xFA25E/cyrillic-dvorak-im"
+                              :fetcher github
+                              :version original)
   :demand t)
 
 (use-package reverse-im
@@ -841,10 +837,9 @@
   :config (reverse-im-activate "cyrillic-dvorak"))
 
 (use-package always-append-mode
-  :quelpa (always-append-mode
-           :repo "xFA25E/always-append-mode"
-           :fetcher github
-           :version original)
+  :quelpa (always-append-mode :repo "xFA25E/always-append-mode"
+                              :fetcher github
+                              :version original)
 
   :bind ("C-M-w" . always-append-mode))
 
@@ -1725,9 +1720,9 @@
   :custom
   (mingus-mode-line-separator  "|")
   (mingus-mode-line-string-max 100)
-  (mingus-mpd-config-file      "~/.config/mpd/mpd.conf")
-  (mingus-seek-amount          5)
-  (mingus-use-mouse-p          nil)
+  (mingus-mpd-config-file "~/.config/mpd/mpd.conf")
+  (mingus-seek-amount 5)
+  (mingus-use-mouse-p nil)
 
   :config
   (define-advice mingus-dired-file (:override () dired-jump)
@@ -1853,10 +1848,9 @@
 
 (use-package sxhkd-mode
   ;; finish this package
-  :quelpa (sxhkd-mode
-           :repo "xFA25E/sxhkd-mode"
-           :fetcher github
-           :version original)
+  :quelpa (sxhkd-mode :repo "xFA25E/sxhkd-mode"
+                      :fetcher github
+                      :version original)
 
   :mode (rx string-start "sxhkdrc" string-end))
 
@@ -2074,28 +2068,25 @@
 (use-package elfeed-youtube-parser
   :after elfeed
 
-  :quelpa (elfeed-youtube-parser
-           :repo "xFA25E/elfeed-youtube-parser"
-           :fetcher github
-           :version original)
+  :quelpa (elfeed-youtube-parser :repo "xFA25E/elfeed-youtube-parser"
+                                 :fetcher github
+                                 :version original)
 
   :hook (elfeed-new-entry-parse . elfeed-youtube-parser-parse-youtube))
 
 (use-package shell-pwd
-  :quelpa (shell-pwd
-           :repo "xFA25E/shell-pwd"
-           :fetcher github
-           :version original)
+  :quelpa (shell-pwd :repo "xFA25E/shell-pwd"
+                     :fetcher github
+                     :version original)
 
   :hook (shell-mode . shell-pwd-enable)
 
   :commands shell-pwd-generate-buffer-name)
 
 (use-package shell-synopsis
-  :quelpa (shell-synopsis
-           :repo "xFA25E/shell-synopsis"
-           :fetcher github
-           :version original)
+  :quelpa (shell-synopsis :repo "xFA25E/shell-synopsis"
+                          :fetcher github
+                          :version original)
 
   :hook (shell-mode . shell-synopsis-setup))
 
@@ -2136,16 +2127,14 @@
       (aggressive-indent-mode))))
 
 (use-package pcomplete-declare
-  :quelpa (pcomplete-declare
-            :repo "xFA25E/pcomplete-declare"
+  :quelpa (pcomplete-declare :repo "xFA25E/pcomplete-declare"
             :fetcher github
             :version original))
 
 (use-package activity-log
-  :quelpa (activity-log
-           :repo "xFA25E/activity-log"
-           :fetcher github
-           :version original))
+  :quelpa (activity-log :repo "xFA25E/activity-log"
+                        :fetcher github
+                        :version original))
 
 (use-package pp
   :bind
@@ -2241,6 +2230,38 @@
 (use-package web-mode :ensure t)
 
 (use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
+
+(use-package plantuml-mode
+  :ensure t
+
+  :commands plantuml-completion-at-point
+
+  :bind (:map plantuml-mode-map
+              ("C-c C-p" . plantuml-complete-symbol)
+              ("C-c C-o" . plantuml-set-output-type))
+
+  :custom
+  (plantuml-jar-path "/opt/plantuml/plantuml.jar")
+  (plantuml-default-exec-mode 'jar)
+
+  :hook (plantuml-mode . plantuml-enable-completion)
+
+  :config
+  (defun plantuml-enable-completion ()
+    (add-hook 'completion-at-point-functions
+              #'plantuml-completion-at-point nil t))
+
+  (defun plantuml-completion-at-point ()
+    "Function used for `completion-at-point-functions' in `plantuml-mode'."
+    (let ((completion-ignore-case t) ; Not working for company-capf.
+          (bounds (bounds-of-thing-at-point 'symbol))
+          (keywords plantuml-kwdList))
+      (when (and bounds keywords)
+        (list (car bounds)
+              (cdr bounds)
+              keywords
+              :exclusve 'no
+              :company-docsig #'identity)))))
 
 ;; mood-line
 ;; (add-to-list 'global-mode-string "foo")
