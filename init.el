@@ -683,6 +683,8 @@
   mu4e@with-index
   mu4e-update-index
 
+  :hook (after-init . start-mu4e)
+
   :bind (:map mode-specific-map ("o m" . mu4e))
 
   :custom
@@ -696,8 +698,8 @@
   (mu4e-view-show-addresses t)
   (mu4e-attachment-dir "~/Downloads")
   (mu4e-modeline-max-width 100)
-  (mu4e-get-mail-command "mailsync exys")
-  (mu4e-confirm-quit nil)
+  (mu4e-get-mail-command "mailsync")
+  (mu4e-update-interval 900)
   (mu4e-view-attachment-assoc '(("png"  . "sxiv")
                                 ("jpg"  . "sxiv")
                                 ("gif"  . "sxiv")
@@ -748,8 +750,7 @@
           (browse-url-browser-function #'browse-url-firefox))
       (apply oldfunc args)))
 
-  (define-advice mu4e (:after (&rest _rest) with-index)
-    (mu4e-update-index)))
+  (defun start-mu4e () (mu4e t)))
 
 (use-package proced :bind (:map mode-specific-map ("o p" . proced)))
 
@@ -2189,7 +2190,7 @@
 
   :hook ((lisp-mode emacs-lisp-mode scheme-mode) . highlight-parentheses-mode)
 
-  :custom (hl-paren-colors (list "red")))
+  :custom (hl-paren-colors '("red")))
 
 (use-package lisp-extra-font-lock
   :ensure t
