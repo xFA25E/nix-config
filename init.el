@@ -689,6 +689,10 @@
 
   :custom
   (mu4e-maildir (or (getenv "MAILDIR") (expand-file-name "~/.mail")))
+  (mu4e-sent-folder "/SENT")
+  (mu4e-drafts-folder "/DRAFTS")
+  (mu4e-trash-folder "/TRASH")
+  (mu4e-refile-folder "/ARCHIVE")
   (mu4e-sent-messages-behavior 'sent)
   (mu4e-completing-read-function #'completing-read)
   (mu4e-change-filenames-when-moving t)
@@ -700,6 +704,11 @@
   (mu4e-modeline-max-width 100)
   (mu4e-get-mail-command "mailsync")
   (mu4e-update-interval 900)
+  (mu4e-maildir-shortcuts '(("/INBOX"   . ?i)
+                            ("/SENT"    . ?s)
+                            ("/DRAFTS"  . ?d)
+                            ("/TRASH"   . ?t)
+                            ("/ARCHIVE" . ?a)))
   (mu4e-view-attachment-assoc '(("png"  . "sxiv")
                                 ("jpg"  . "sxiv")
                                 ("gif"  . "sxiv")
