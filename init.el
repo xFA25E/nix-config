@@ -2151,7 +2151,7 @@
 
   :custom
   (lsp-java-server-install-dir "~/.cache/emacs/eclipse.jdt.ls/server/")
-  (lsp-java-workspace-dir "/home/val/.cache/emacs/workspace/")
+  (lsp-java-workspace-dir "~/.cache/emacs/workspace/")
 
   :hook (java-mode . lsp))
 
