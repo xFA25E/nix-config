@@ -45,9 +45,7 @@
 
   :ensure t
 
-  :demand t
-
-  :config (gcmh-mode 1))
+  :init (gcmh-mode 1))
 
 (use-package emacs
   :bind ("C-S-SPC" . insert-space-after-point)
@@ -271,10 +269,7 @@
     (electric-indent-mode -1)))
 
 (use-package files
-  :commands
-  read-directory-name
-  rename-this-file
-  custom-backup-enable-predicate
+  :commands read-directory-name rename-this-file custom-backup-enable-predicate
 
   :bind
   ("M-~"         . nil)
@@ -674,9 +669,7 @@
   (send-mail-function #'message-send-mail-with-sendmail))
 
 (use-package mu4e
-  :defines
-  mu4e-maildir
-  mu4e-view-actions
+  :defines mu4e-maildir mu4e-view-actions mu4e-main-mode-map
 
   :commands
   mu4e-action-view-in-browser@check-parens-fix
@@ -685,7 +678,11 @@
 
   :hook (after-init . start-mu4e)
 
-  :bind (:map mode-specific-map ("o m" . mu4e))
+  :bind
+  (:map mode-specific-map ("o m" . mu4e))
+  (:map mu4e-main-mode-map
+        ("q" . quit-window)
+        ("Q" . mu4e-quit))
 
   :custom
   (mu4e-maildir (or (getenv "MAILDIR") (expand-file-name "~/.mail")))
@@ -709,40 +706,20 @@
                             ("/DRAFTS"  . ?d)
                             ("/TRASH"   . ?t)
                             ("/ARCHIVE" . ?a)))
-  (mu4e-view-attachment-assoc '(("png"  . "sxiv")
-                                ("jpg"  . "sxiv")
-                                ("gif"  . "sxiv")
-                                ("jpeg" . "sxiv")
-                                ("bmp"  . "sxiv")
-                                ("tif"  . "sxiv")
-                                ("thm"  . "sxiv")
-                                ("pdf"  . "zathura")
-                                ("epub" . "zathura")
-                                ("djvu" . "zathura")
-                                ("doc"  . "libreoffice")
-                                ("docx" . "libreoffice")
-                                ("xlsx" . "libreoffice")
-                                ("xls"  . "libreoffice")
-                                ("odt"  . "libreoffice")
-                                ("ppt"  . "libreoffice")
-                                ("flac" . "mpv")
-                                ("m4a"  . "mpv")
-                                ("mp3"  . "mpv")
-                                ("ogg"  . "mpv")
-                                ("opus" . "mpv")
-                                ("webm" . "mpv")
-                                ("m4a"  . "mpv")
-                                ("mkv"  . "mpv")
-                                ("mp4"  . "mpv")
-                                ("avi"  . "mpv")
-                                ("mpg"  . "mpv")
-                                ("mov"  . "mpv")
-                                ("3gp"  . "mpv")
-                                ("vob"  . "mpv")))
   (mu4e-headers-fields '((:human-date . 16)
                          (:flags      . 6)
                          (:from       . 22)
                          (:subject)))
+  (mu4e-view-attachment-assoc
+   (eval-when-compile
+     (mapcan (lambda (args)
+               (mapcar (lambda (ext) (cons ext (car args)))
+                       (cdr args)))
+             '(("sxiv"        . ("png" "jpg" "gif" "jpeg" "bmp" "tif" "thm"))
+               ("zathura"     . ("pdf" "epub" "djvu"))
+               ("libreoffice" . ("doc" "docx" "xlsx" "xls" "odt" "ppt"))
+               ("mpv"         . ("m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4"
+                                 "avi" "mpg" "mov" "3gp" "vob"))))))
 
   :config
   (load-file (expand-file-name "secrets/mu4e.el" user-emacs-directory))
@@ -870,9 +847,7 @@
   (avy-keys (string-to-list "aoeuhtns")))
 
 (use-package ace-window
-  :commands
-  aw-switch-to-window
-  aw-flip-window
+  :commands aw-switch-to-window aw-flip-window
 
   :ensure t
 
@@ -1461,9 +1436,7 @@
 (use-package yasnippet-snippets :ensure t)
 
 (use-package lisp
-  :commands
-  check-parens
-  backward-kill-sexp
+  :commands check-parens backward-kill-sexp
 
   :init (provide 'lisp)
 
@@ -1646,10 +1619,7 @@
 (use-package csv-mode :ensure t)
 
 (use-package ansi-color
-  :commands
-  ansi-color-apply-on-region
-  ansi-color-apply
-  ansi-color-filter-apply
+  :commands ansi-color-apply-on-region ansi-color-apply ansi-color-filter-apply
 
   :hook
   (compilation-filter . colorize-compilation)
@@ -1663,9 +1633,7 @@
        compilation-filter-start (point)))))
 
 (use-package grep
-  :commands
-  grep-read-regexp
-  grep-read-files
+  :commands grep-read-regexp grep-read-files
 
   :bind (:map search-map
               ("g" . grep-interactive))
