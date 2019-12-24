@@ -154,6 +154,7 @@
   string-prefix-p
   split-string
   butlast
+  remove-hook
 
   :bind
   (:map mode-specific-map
@@ -669,20 +670,28 @@
   (send-mail-function #'message-send-mail-with-sendmail))
 
 (use-package mu4e
-  :defines mu4e-maildir mu4e-view-actions mu4e-main-mode-map
+  :defines mu4e-maildir mu4e-view-actions mu4e-headers-actions
 
   :commands
+  mu4e-kill-update-mail
+  mu4e-update-mail-and-index
+  mu4e-update-index
   mu4e-action-view-in-browser@check-parens-fix
   mu4e@with-index
-  mu4e-update-index
+  mu4e-update-mail-and-index@kill-update
 
   :hook (after-init . start-mu4e)
 
   :bind
   (:map mode-specific-map ("o m" . mu4e))
   (:map mu4e-main-mode-map
-        ("q" . quit-window)
-        ("Q" . mu4e-quit))
+        ("q"       . quit-window)
+        ("Q"       . mu4e-quit)
+        ("C-c C-e" . mu4e-update-mail-and-index-exys))
+  (:map mu4e-headers-mode-map
+        ("C-c C-e" . mu4e-update-mail-and-index-exys))
+  (:map mu4e-view-mode-map
+        ("C-c C-e" . mu4e-update-mail-and-index-exys))
 
   :custom
   (mu4e-maildir (or (getenv "MAILDIR") (expand-file-name "~/.mail")))
@@ -690,6 +699,7 @@
   (mu4e-drafts-folder "/DRAFTS")
   (mu4e-trash-folder "/TRASH")
   (mu4e-refile-folder "/ARCHIVE")
+  (mu4e-view-show-images t)
   (mu4e-sent-messages-behavior 'sent)
   (mu4e-completing-read-function #'completing-read)
   (mu4e-change-filenames-when-moving t)
@@ -699,13 +709,14 @@
   (mu4e-view-show-addresses t)
   (mu4e-attachment-dir "~/Downloads")
   (mu4e-modeline-max-width 100)
-  (mu4e-get-mail-command "mailsync")
+  (mu4e-get-mail-command "mailsync -a")
   (mu4e-update-interval 900)
   (mu4e-maildir-shortcuts '(("/INBOX"   . ?i)
                             ("/SENT"    . ?s)
                             ("/DRAFTS"  . ?d)
                             ("/TRASH"   . ?t)
-                            ("/ARCHIVE" . ?a)))
+                            ("/ARCHIVE" . ?a)
+                            ("/EXYS"    . ?e)))
   (mu4e-headers-fields '((:human-date . 16)
                          (:flags      . 6)
                          (:from       . 22)
@@ -727,14 +738,23 @@
   (set-face-attribute 'mu4e-modeline-face nil :foreground "yellow")
   (set-face-attribute 'mu4e-context-face nil :foreground "magenta")
 
-  (add-to-list 'mu4e-view-actions
-               '("ViewInBrowser" . mu4e-action-view-in-browser-my) t)
+  (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t)
 
   (define-advice mu4e-action-view-in-browser
       (:around (oldfunc &rest args) check-parens-fix)
     (let ((prog-mode-hook nil)
           (browse-url-browser-function #'browse-url-firefox))
       (apply oldfunc args)))
+
+  (define-advice mu4e-update-mail-and-index
+      (:before (&rest _ignore) kill-update)
+    (mu4e-kill-update-mail))
+
+
+  (defun mu4e-update-mail-and-index-exys ()
+    (interactive)
+    (let ((mu4e-get-mail-command "mailsync exys"))
+      (mu4e-update-mail-and-index nil)))
 
   (defun start-mu4e () (mu4e t)))
 
@@ -1006,7 +1026,8 @@
       (call-interactively #'counsel-file-jump)))
 
   (defun kill-buffer-if-alive (buffer)
-    (if (get-buffer buffer) (kill-buffer buffer)))
+    (when (buffer-live-p (get-buffer buffer))
+      (kill-buffer buffer)))
 
   (defun ivy-dired-jump-action (dir)
     (dired-jump nil (string-trim-right dir "/")))
@@ -1568,6 +1589,8 @@
 (use-package projectile
   :ensure t
 
+  :commands projectile-run-shell@disable-pwd
+
   :bind-keymap ("M-m" . projectile-command-map)
 
   :custom
@@ -1575,7 +1598,12 @@
   (projectile-completion-system 'ivy)
   (projectile-enable-caching t)
   (projectile-known-projects-file "~/.cache/emacs/projectile/projects")
-  (projectile-mode-line-prefix " P"))
+  (projectile-mode-line-prefix " P")
+
+  :config
+  (define-advice projectile-run-shell (:after (&rest _ignore) disable-pwd)
+    (remove-hook 'comint-input-filter-functions
+                 #'shell-pwd-directory-tracker t)))
 
 (use-package counsel-projectile
   :ensure t
@@ -1648,9 +1676,7 @@
     (grep-compute-defaults)
     (let* ((grep-program (completing-read
                           "Grep type: "
-                          (list "grep -E" "grep -F" "grep -G" "grep -P"
-                                "zgrep -E" "zgrep -F" "zgrep -G" "zgrep -P")
-                          nil t))
+                          '("grep -F" "grep -E" "zgrep -F" "zgrep -E")))
            (grep-find-template nil)
            (grep-find-command nil)
            (grep-host-defaults-alist nil)
@@ -1988,12 +2014,9 @@
                    (read-string (concat search-type " pattern: ")))
                   args)))
 
-        (let ((grep-type (completing-read
-                          "Grep type: "
-                          (list "no"
-                                "grep -E" "grep -F" "grep -G" "grep -P"
-                                "zgrep -E" "zgrep -F" "zgrep -G" "zgrep -P")
-                          nil t)))
+        (let ((grep-type (completing-read "Grep type: "
+                                          '("no" "grep -F" "grep -E"
+                                            "zgrep -F" "zgrep -E"))))
           (when (not (string-equal grep-type "no"))
             (push "-type f -exec" args)
             (push grep-type args)
