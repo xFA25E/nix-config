@@ -2264,6 +2264,34 @@
               :exclusve 'no
               :company-docsig #'identity)))))
 
+(defun add-book-to-library (file directory)
+  (interactive
+   (list
+    (read-file-name "Book: " "~/Documents/library/" nil t)
+    (read-directory-name "Directory: " "~/Documents/library/" nil t)))
+
+  (string-match (rx "/" (group (one-or-more (not (any "/"))))
+                    "." (or "pdf" "djvu" "fb2" "epub") string-end)
+                file)
+  (let ((newfile (expand-file-name (substring (match-string 0 file) 1)
+                                   directory))
+        (book (match-string 1 file))
+        (tags (upcase
+               (replace-regexp-in-string
+                (rx "/") ":"
+                (replace-regexp-in-string
+                 (rx (or space "-")) "_"
+                 (substring
+                  directory
+                  (length (expand-file-name "~/Documents/library"))))))))
+    (find-file "~/Documents/library/library_want.org")
+    (goto-char (point-max))
+    (insert
+     (format "* WANT %s %s \n  :PROPERTIES:\n  :FILE:      [[file:%s]]\n  :END:\n"
+             book tags newfile))
+    (save-buffer)
+    (rename-file file newfile)))
+
 ;; mood-line
 ;; (add-to-list 'global-mode-string "foo")
 
