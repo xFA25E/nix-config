@@ -21,8 +21,6 @@
         use-package-enable-imenu-support t
         use-package-always-defer t)
 
-  (use-package diminish :ensure t)
-
   (use-package quelpa
     :ensure t
 
@@ -41,8 +39,6 @@
     :custom (quelpa-use-package-inhibit-loading-quelpa t)))
 
 (use-package gcmh
-  :diminish gcmh-mode
-
   :ensure t
 
   :init (gcmh-mode 1))
@@ -924,8 +920,6 @@
 
   :ensure t
 
-  :diminish ivy-mode
-
   :custom
   (ivy-count-format "%d/%d ")
   (ivy-height 15)
@@ -954,8 +948,6 @@
   counsel--switch-to-shell
 
   :ensure t
-
-  :diminish counsel-mode
 
   :hook (after-init . counsel-mode)
 
@@ -1135,8 +1127,6 @@
 (use-package company
   :ensure t
 
-  :diminish company-mode
-
   :bind
   (:map company-mode-map
         ([tab] . company-indent-or-manual-begin)
@@ -1249,8 +1239,6 @@
 (use-package rainbow-mode
   :ensure t
 
-  :diminish rainbow-mode
-
   :hook (css-mode . rainbow-mode))
 
 (use-package clipmon
@@ -1262,10 +1250,7 @@
 
 (use-package clojure-mode :ensure t)
 
-(use-package eldoc
-  :diminish eldoc-mode
-
-  :hook (after-init . global-eldoc-mode))
+(use-package eldoc :hook (after-init . global-eldoc-mode))
 
 (use-package sudo-edit :ensure t)
 
@@ -1278,8 +1263,6 @@
 
 (use-package which-key
   :ensure t
-
-  :diminish which-key-mode
 
   :hook (after-init . which-key-mode))
 
@@ -1435,8 +1418,6 @@
 
 (use-package yasnippet
   :ensure t
-
-  :diminish yas-minor-mode
 
   :bind
   (:map yas-minor-mode-map
@@ -2120,8 +2101,6 @@
   :bind (:map goto-map ("I" . ivy-imenu-anywhere)))
 
 (use-package whitespace
-  :diminish whitespace-mode
-
   :hook
   (before-save . whitespace-cleanup)
   (prog-mode   . whitespace-mode)
@@ -2132,8 +2111,6 @@
 
 (use-package aggressive-indent
   :ensure t
-
-  :diminish aggressive-indent-mode
 
   :bind (:map aggressive-indent-mode-map
               ("C-c C-q" . nil))
@@ -2203,8 +2180,6 @@
 
 (use-package highlight-parentheses
   :ensure t
-
-  :diminish highlight-parentheses-mode
 
   :hook ((lisp-mode emacs-lisp-mode scheme-mode) . highlight-parentheses-mode)
 
@@ -2291,16 +2266,11 @@
 
   :hook (after-init . mood-line-mode)
 
-  :custom
-  (mood-line-show-eol-style t)
-  (mood-line-show-encoding-information t)
-
   :config
   (set-face-attribute 'mood-line-status-info nil :inherit 'gnus-group-mail-1)
 
   (define-advice mood-line-segment-position (:override () bug-fix)
-    (concat "%l:%c"
-            (propertize " %p%%  of %I  " 'face 'mood-line-unimportant))))
+    (concat "%l:%c %p%%  of %I  ")))
 
 (defun add-book-to-library (file directory)
   (interactive
@@ -2330,12 +2300,3 @@
                         (expand-file-name "~/Documents/library/") newfile)))
     (save-buffer)
     (rename-file file newfile)))
-
-
-;; mood-line
-;; (add-to-list 'global-mode-string "foo")
-
-;; also look good-line
-
-;; remove mingus from mode-line (mingus-status)
-;; or add it to mood-line (mingus-mode-line-object)
