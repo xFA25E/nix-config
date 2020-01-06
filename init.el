@@ -736,9 +736,6 @@
   :config
   (load-file (expand-file-name "secrets/mu4e.el" user-emacs-directory))
 
-  (set-face-attribute 'mu4e-modeline-face nil :foreground "yellow")
-  (set-face-attribute 'mu4e-context-face nil :foreground "magenta")
-
   (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t)
 
   (define-advice mu4e-action-view-in-browser
@@ -2260,17 +2257,14 @@
 (use-package hl-line :hook (dired-mode . hl-line-mode))
 
 (use-package mood-line
-  :commands mood-line-segment-position@bug-fix
-
   :ensure t
 
   :hook (after-init . mood-line-mode)
 
   :config
-  (set-face-attribute 'mood-line-status-info nil :inherit 'gnus-group-mail-1)
-
-  (define-advice mood-line-segment-position (:override () bug-fix)
-    (concat "%l:%c %p%%  of %I  ")))
+  (set-face-attribute 'mode-line nil :foreground "dark cyan" :background "white")
+  (set-face-attribute 'mode-line-buffer-id nil :foreground "black")
+  (set-face-attribute 'mode-line-emphasis nil :foreground "dim grey"))
 
 (defun add-book-to-library (file directory)
   (interactive
