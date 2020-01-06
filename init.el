@@ -510,7 +510,12 @@
 
   :bind (:map ctl-x-map ("c" . compile)))
 
-(use-package sh-script :custom (system-uses-terminfo nil))
+(use-package sh-script
+  :commands sh-show-shell
+
+  :custom (system-uses-terminfo nil)
+
+  :config (advice-add #'sh-show-shell :after #'shell-pwd-disable-advice))
 
 (use-package gdb-mi
   :custom
@@ -1600,10 +1605,7 @@
   (projectile-known-projects-file "~/.cache/emacs/projectile/projects")
   (projectile-mode-line-prefix " P")
 
-  :config
-  (define-advice projectile-run-shell (:after (&rest _ignore) disable-pwd)
-    (remove-hook 'comint-input-filter-functions
-                 #'shell-pwd-directory-tracker t)))
+  :config (advice-add #'projectile-run-shell :after #'shell-pwd-disable-advice))
 
 (use-package counsel-projectile
   :ensure t
@@ -1874,16 +1876,25 @@
 (use-package mwheel :config (mouse-wheel-mode -1))
 
 (use-package remember
+  :commands remember-notes-maybe
+
   :bind (:map remember-notes-mode-map
               ("C-c C-c" . nil)
               ("C-c '"   . remember-notes-save-and-bury-buffer)
               ("C-c \""  . remember-notes-save-and-kill-terminal))
 
   :custom
-  (initial-buffer-choice 'remember-notes)
+  (initial-buffer-choice #'remember-notes-maybe)
   (remember-notes-initial-major-mode 'outline-mode)
 
   :config
+
+  (defun remember-notes-maybe ()
+    (let ((buffer (remember-notes)))
+      (if (zerop (buffer-size buffer))
+          (get-buffer-create "*scratch*")
+        buffer)))
+
   (defun remember-notes-save-and-kill-terminal ()
     (interactive)
     (remember-notes-save-and-bury-buffer)
@@ -2082,7 +2093,14 @@
 
   :hook (shell-mode . shell-pwd-enable)
 
-  :commands shell-pwd-generate-buffer-name)
+  :commands shell-pwd-generate-buffer-name shell-pwd-disable-advice
+
+  :config
+
+  (defun shell-pwd-disable-advice (&rest _ignore)
+    (remove-hook 'comint-input-filter-functions
+                 #'shell-pwd-directory-tracker
+                 t)))
 
 (use-package shell-synopsis
   :quelpa (shell-synopsis :repo "xFA25E/shell-synopsis"
@@ -2264,6 +2282,24 @@
               :exclusve 'no
               :company-docsig #'identity)))))
 
+(use-package hl-line :hook (dired-mode . hl-line-mode))
+
+(use-package mood-line
+  :commands mood-line-segment-position@bug-fix
+
+  :ensure t
+
+  :hook (after-init . mood-line-mode)
+
+  :custom
+  (mood-line-show-eol-style t)
+  (mood-line-show-encoding-information t)
+
+  :config
+  (define-advice mood-line-segment-position (:override () bug-fix)
+    (concat "%l:%c"
+            (propertize " %p%%  of %I  " 'face 'mood-line-unimportant))))
+
 (defun add-book-to-library (file directory)
   (interactive
    (list
@@ -2288,9 +2324,11 @@
     (goto-char (point-max))
     (insert
      (format "* WANT %s %s \n  :PROPERTIES:\n  :FILE:      [[file:%s]]\n  :END:\n"
-             book tags newfile))
+             book tags (string-remove-prefix
+                        (expand-file-name "~/Documents/library/") newfile)))
     (save-buffer)
     (rename-file file newfile)))
+
 
 ;; mood-line
 ;; (add-to-list 'global-mode-string "foo")
