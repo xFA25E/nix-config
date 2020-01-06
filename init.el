@@ -716,12 +716,12 @@
   (mu4e-modeline-max-width 100)
   (mu4e-get-mail-command "mailsync -a")
   (mu4e-update-interval 900)
-  (mu4e-maildir-shortcuts '(("/INBOX"   . ?i)
+  (mu4e-maildir-shortcuts '(("/EXYS"    . ?e)
+                            ("/POLIMI"  . ?p)
                             ("/SENT"    . ?s)
-                            ("/DRAFTS"  . ?d)
                             ("/TRASH"   . ?t)
-                            ("/ARCHIVE" . ?a)
-                            ("/EXYS"    . ?e)))
+                            ("/DRAFTS"  . ?d)
+                            ("/ARCHIVE" . ?a)))
   (mu4e-headers-fields '((:human-date . 16)
                          (:flags      . 6)
                          (:from       . 22)
@@ -2296,6 +2296,8 @@
   (mood-line-show-encoding-information t)
 
   :config
+  (set-face-attribute 'mood-line-status-info nil :inherit 'gnus-group-mail-1)
+
   (define-advice mood-line-segment-position (:override () bug-fix)
     (concat "%l:%c"
             (propertize " %p%%  of %I  " 'face 'mood-line-unimportant))))
