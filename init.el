@@ -711,7 +711,7 @@
   (mu4e-attachment-dir "~/Downloads")
   (mu4e-modeline-max-width 100)
   (mu4e-get-mail-command "mailsync -a")
-  (mu4e-update-interval 900)
+  (mu4e-update-interval 600)
   (mu4e-maildir-shortcuts '(("/EXYS"    . ?e)
                             ("/POLIMI"  . ?p)
                             ("/SENT"    . ?s)
@@ -1196,6 +1196,8 @@
 (use-package org
   :ensure org-plus-contrib
 
+  :commands add-book-to-library
+
   :bind (:map mode-specific-map ("G a a" . org-agenda))
 
   :custom
@@ -1212,7 +1214,36 @@
   :config
   (org-babel-do-load-languages 'org-babel-load-languages
                                '((calc       . t)
-                                 (emacs-lisp . t))))
+                                 (emacs-lisp . t)))
+
+  (defun add-book-to-library (file directory)
+    (interactive
+     (list
+      (read-file-name "Book: " "~/Documents/library/" nil t)
+      (read-directory-name "Directory: " "~/Documents/library/" nil t)))
+
+    (string-match (rx "/" (group (one-or-more (not (any "/"))))
+                      "." (or "pdf" "djvu" "fb2" "epub") string-end)
+                  file)
+    (let ((newfile (expand-file-name (substring (match-string 0 file) 1)
+                                     directory))
+          (book (match-string 1 file))
+          (tags (upcase
+                 (replace-regexp-in-string
+                  (rx "/") ":"
+                  (replace-regexp-in-string
+                   (rx (or space "-")) "_"
+                   (substring
+                    directory
+                    (length (expand-file-name "~/Documents/library"))))))))
+      (find-file "~/Documents/library/library_want.org")
+      (goto-char (point-max))
+      (insert
+       (format "* WANT %s %s \n  :PROPERTIES:\n  :FILE:      [[file:%s]]\n  :END:\n"
+               book tags (string-remove-prefix
+                          (expand-file-name "~/Documents/library/") newfile)))
+      (save-buffer)
+      (rename-file file newfile))))
 
 (use-package ox-html
   :after org
@@ -1994,10 +2025,8 @@
       (let (args)
 
         (let ((search-type (completing-read "Search type: "
-                                            (list "-iname" "-iregex"
-                                                  "-exec grep")
-                                            nil t)))
-          (when (not (string-equal search-type "-exec grep"))
+                                            '("-iname" "-iregex" "no") nil t)))
+          (when (not (string-equal search-type "no"))
             (push search-type args)
             (push (shell-quote-argument
                    (read-string (concat search-type " pattern: ")))
@@ -2254,7 +2283,7 @@
               :exclusve 'no
               :company-docsig #'identity)))))
 
-(use-package hl-line :hook (dired-mode . hl-line-mode))
+(use-package hl-line :hook ((dired-mode csv-mode) . hl-line-mode))
 
 (use-package mood-line
   :ensure t
@@ -2265,32 +2294,3 @@
   (set-face-attribute 'mode-line nil :foreground "dark cyan" :background "white")
   (set-face-attribute 'mode-line-buffer-id nil :foreground "black")
   (set-face-attribute 'mode-line-emphasis nil :foreground "dim grey"))
-
-(defun add-book-to-library (file directory)
-  (interactive
-   (list
-    (read-file-name "Book: " "~/Documents/library/" nil t)
-    (read-directory-name "Directory: " "~/Documents/library/" nil t)))
-
-  (string-match (rx "/" (group (one-or-more (not (any "/"))))
-                    "." (or "pdf" "djvu" "fb2" "epub") string-end)
-                file)
-  (let ((newfile (expand-file-name (substring (match-string 0 file) 1)
-                                   directory))
-        (book (match-string 1 file))
-        (tags (upcase
-               (replace-regexp-in-string
-                (rx "/") ":"
-                (replace-regexp-in-string
-                 (rx (or space "-")) "_"
-                 (substring
-                  directory
-                  (length (expand-file-name "~/Documents/library"))))))))
-    (find-file "~/Documents/library/library_want.org")
-    (goto-char (point-max))
-    (insert
-     (format "* WANT %s %s \n  :PROPERTIES:\n  :FILE:      [[file:%s]]\n  :END:\n"
-             book tags (string-remove-prefix
-                        (expand-file-name "~/Documents/library/") newfile)))
-    (save-buffer)
-    (rename-file file newfile)))
