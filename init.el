@@ -2145,7 +2145,7 @@
 
   :config
   (defun aggressive-indent-enable ()
-    (unless (memq major-mode (list 'web-mode 'php-mode))
+    (unless (memq major-mode '(web-mode php-mode))
       (aggressive-indent-mode))))
 
 (use-package pcomplete-declare
@@ -2247,7 +2247,13 @@
   (dap-breakpoints-file "~/.cache/emacs/dap-breakpoints")
   (dap-utils-extension-path "~/.cache/emacs/extension"))
 
-(use-package web-mode :ensure t)
+(use-package web-mode
+  :ensure t
+
+  :hook (web-mode . web-mode-set-tab-width)
+
+  :config
+  (defun web-mode-set-tab-width () (setq-local tab-width 4)))
 
 (use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
 
