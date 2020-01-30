@@ -460,7 +460,8 @@
    `((,(rx "." (or "doc" "docx" "xlsx" "xls" "odt" "ppt") string-end)
       "setsid -f libreoffice * >/dev/null 2>&1"
       "libreoffice --invisible --headless --convert-to pdf * &"
-      "libreoffice --invisible --headless --convert-to epub * &")
+      "libreoffice --invisible --headless --convert-to epub * &"
+      "libreoffice --invisible --headless --convert-to csv * &")
 
      (,(rx "." (or "jpeg" "jpg" "gif" "png" "bmp" "tif" "thm") string-end)
       "setsid -f sxiv * >/dev/null 2>&1")
@@ -1006,18 +1007,20 @@
         ("v"   . counsel-set-variable))
 
   :config
-  (defun counsel-file-directory-jump ()
-    (interactive)
+  (defun counsel-file-directory-jump (&optional initial-input initial-directory)
+    (interactive (list nil (when current-prefix-arg (counsel-read-directory-name
+                                                     "From directory: "))))
     (let ((counsel-file-jump-args
            (split-string
             ". -name .git -prune -o ( -type f -o -type d ) -print")))
-      (call-interactively #'counsel-file-jump)))
+      (counsel-file-jump initial-input initial-directory)))
 
-  (defun counsel-file-directory-jump-fd ()
-    (interactive)
+  (defun counsel-file-directory-jump-fd (&optional initial-input initial-directory)
+    (interactive (list nil (when current-prefix-arg (counsel-read-directory-name
+                                                     "From directory: "))))
     (let ((find-program "fd")
           (counsel-file-jump-args (split-string "-t d -t f -c never")))
-      (call-interactively #'counsel-file-jump)))
+      (counsel-file-jump initial-input initial-directory)))
 
   (defun kill-buffer-if-alive (buffer)
     (when (buffer-live-p (get-buffer buffer))
@@ -1619,7 +1622,20 @@
 (use-package counsel-projectile
   :ensure t
 
-  :hook (after-init . counsel-projectile-mode))
+  :hook (after-init . counsel-projectile-mode)
+
+  :bind (:map projectile-mode-map
+              ("M-m M-f" . counsel-projectile-file-directory-jump)
+              ("M-m M-d" . counsel-projectile-file-directory-jump-fd))
+
+  :config
+  (defun counsel-projectile-file-directory-jump ()
+    (interactive)
+    (counsel-file-directory-jump nil (projectile-project-root)))
+
+  (defun counsel-projectile-file-directory-jump-fd ()
+    (interactive)
+    (counsel-file-directory-jump-fd nil (projectile-project-root))))
 
 (use-package dumb-jump
   :ensure t
@@ -1627,6 +1643,7 @@
   :bind
   ("C-M-g" . dumb-jump-go)
   ("C-M-m" . dumb-jump-back)
+  ("C-x 4 C-M-g" . dumb-jump-go-other-window)
 
   :custom (dumb-jump-selector 'ivy))
 
@@ -2195,7 +2212,7 @@
               ("C-M-n" . sgml-skip-tag-forward)
               ("C-M-p" . sgml-skip-tag-backward))
 
-  :custom (sgml-basic-offset 4))
+  :custom (sgml-basic-offset 2))
 
 (use-package deadgrep
   :ensure t
@@ -2238,7 +2255,7 @@
   (add-to-list 'shr-external-rendering-functions
                '(pre . shr-tag-pre-highlight)))
 
-(use-package nxml-mode :custom (nxml-child-indent 4))
+(use-package nxml-mode :custom (nxml-child-indent 2))
 
 (use-package dap-mode
   :ensure t
@@ -2250,10 +2267,7 @@
 (use-package web-mode
   :ensure t
 
-  :hook (web-mode . web-mode-set-tab-width)
-
-  :config
-  (defun web-mode-set-tab-width () (setq-local tab-width 4)))
+  :custom (web-mode-markup-indent-offset 2))
 
 (use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
 
