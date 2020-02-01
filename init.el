@@ -368,25 +368,7 @@
 
 (use-package ffap :bind (:map ctl-x-map ("F ." . find-file-at-point)))
 
-(use-package hippie-exp
-  :functions try-complete-with-env-advice
-
-  :bind ([remap dabbrev-expand] . hippie-expand)
-
-  :custom (he-file-name-chars "-a-zA-Z0-9_/.,~^#$+={}")
-
-  :config
-  (let ((original-expand-file-name (symbol-function 'expand-file-name)))
-    (defun try-complete-with-env-advice (oldfunc &rest args)
-      (cl-letf (((symbol-function 'expand-file-name)
-                 (lambda (arg) (funcall original-expand-file-name
-                                   (substitute-in-file-name arg)))))
-        (apply oldfunc args))))
-
-  (advice-add 'try-complete-file-name
-              :around #'try-complete-with-env-advice)
-  (advice-add 'try-complete-file-name-partially
-              :around #'try-complete-with-env-advice))
+(use-package hippie-exp :bind ([remap dabbrev-expand] . hippie-expand))
 
 (use-package tex-mode
   :hook (tex-mode . setup-tex-mode-ispell-parser)
@@ -841,13 +823,6 @@
   :demand t
 
   :config (reverse-im-activate "cyrillic-dvorak"))
-
-(use-package always-append-mode
-  :quelpa (always-append-mode :repo "xFA25E/always-append-mode"
-                              :fetcher github
-                              :version original)
-
-  :bind ("C-M-w" . always-append-mode))
 
 (use-package avy
   :ensure t
@@ -1622,20 +1597,7 @@
 (use-package counsel-projectile
   :ensure t
 
-  :hook (after-init . counsel-projectile-mode)
-
-  :bind (:map projectile-mode-map
-              ("M-m M-f" . counsel-projectile-file-directory-jump)
-              ("M-m M-d" . counsel-projectile-file-directory-jump-fd))
-
-  :config
-  (defun counsel-projectile-file-directory-jump ()
-    (interactive)
-    (counsel-file-directory-jump nil (projectile-project-root)))
-
-  (defun counsel-projectile-file-directory-jump-fd ()
-    (interactive)
-    (counsel-file-directory-jump-fd nil (projectile-project-root))))
+  :hook (after-init . counsel-projectile-mode))
 
 (use-package dumb-jump
   :ensure t
