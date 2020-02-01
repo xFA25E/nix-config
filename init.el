@@ -368,7 +368,10 @@
 
 (use-package ffap :bind (:map ctl-x-map ("F ." . find-file-at-point)))
 
-(use-package hippie-exp :bind ([remap dabbrev-expand] . hippie-expand))
+(use-package hippie-exp
+  :bind ([remap dabbrev-expand] . hippie-expand)
+
+  :custom (he-file-name-chars "-a-zA-Z0-9_/.,~^#$+={}"))
 
 (use-package tex-mode
   :hook (tex-mode . setup-tex-mode-ispell-parser)
@@ -2276,3 +2279,11 @@
   (set-face-attribute 'mode-line nil :foreground "dark cyan" :background "white")
   (set-face-attribute 'mode-line-buffer-id nil :foreground "black")
   (set-face-attribute 'mode-line-emphasis nil :foreground "dim grey"))
+
+(use-package try-complete-file-name-with-env
+  :quelpa (try-complete-file-name-with-env
+           :repo "xFA25E/try-complete-file-name-with-env"
+           :fetcher github
+           :version original)
+
+  :hook (after-init . try-complete-file-name-with-env-mode))
