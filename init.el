@@ -1803,42 +1803,6 @@
               ("t" . traceroute)
               ("w" . iwconfig)))
 
-(use-package pcomplete
-  :commands
-  pcomplete/ls
-  pcomplete-match
-  pcomplete--here
-  pcomplete-opt
-  pcomplete-entries
-
-  :config
-  (defun pcomplete/ls ()
-    (while (pcomplete-match "^-" 'last)
-      (cond ((pcomplete-match "^-\\{2\\}" 'last)
-             (while (pcomplete-here
-                     '("--all" "--almost-all" "--author" "--escape"
-                       "--block-size=" "--ignore-backups" "--color="
-                       "--directory" "--dired" "--classify"
-                       "--file-type" "--format=" "--full-time"
-                       "--group-directories-first" "--no-group"
-                       "--human-readable" "--si"
-                       "--dereference-command-line-symlink-to-dir"
-                       "--hide=" "--indicator-style=" "--inode"
-                       "--ignore=" "--dereference" "--numeric-uid-gid"
-                       "--literal" "--indicator-style="
-                       "--hide-control-chars" "--show-control-chars"
-                       "--quote-name" "--quoting-style=" "--reverse"
-                       "--recursive" "--size" "--sort=" "--time="
-                       "--time-style=" "--tabsize=" "--width="
-                       "--context" "--version" "--help"))))
-            ((pcomplete-match "^-\\{1\\}" 'last)
-             ;; probably in sudo, work-around: increase index
-             ;; otherwise pcomplete-opt returns nil
-             (when (< pcomplete-index pcomplete-last)
-               (pcomplete-next-arg))
-             (pcomplete-opt "aAbBcCdDfFgGhHiIklLmnNopqQrRsStTuUvwxXZ1"))))
-    (while (pcomplete-here (pcomplete-entries) nil 'identity))))
-
 (use-package scheme :custom (scheme-program-name "guile"))
 
 (use-package geiser :ensure t)
@@ -2132,8 +2096,8 @@
 
 (use-package pcomplete-declare
   :quelpa (pcomplete-declare :repo "xFA25E/pcomplete-declare"
-            :fetcher github
-            :version original))
+                             :fetcher github
+                             :version original))
 
 (use-package activity-log
   :quelpa (activity-log :repo "xFA25E/activity-log"
@@ -2287,3 +2251,38 @@
            :version original)
 
   :hook (after-init . try-complete-file-name-with-env-mode))
+
+(use-package bash-completion
+  :ensure t
+
+  :init (dolist (func '(pcomplete/xargs
+                        pcomplete/find
+                        pcomplete/bzip2
+                        pcomplete/chgrp
+                        pcomplete/chown
+                        pcomplete/gdb
+                        pcomplete/kill
+                        pcomplete/gzip
+                        pcomplete/make
+                        pcomplete/mount
+                        pcomplete/rm
+                        pcomplete/rmdir
+                        pcomplete/time
+                        pcomplete/umount
+                        pcomplete/which))
+          (fmakunbound func)))
+
+(use-package bash-completion
+  :ensure t
+
+  :after shell
+
+  :init (when (not (memq 'bash-completion-dynamic-complete
+                         shell-dynamic-complete-functions))
+          (setcar (memq 'pcomplete-completions-at-point
+                        shell-dynamic-complete-functions)
+                  '(pcomplete-completions-at-point
+                    bash-completion-dynamic-complete))
+          (setq shell-dynamic-complete-functions
+                (mapcan (lambda (a) (if (listp a) a (list a)))
+                        shell-dynamic-complete-functions))))
