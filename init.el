@@ -21,6 +21,8 @@
         use-package-enable-imenu-support t
         use-package-always-defer t)
 
+  (use-package diminish :ensure t)
+
   (use-package quelpa
     :ensure t
 
@@ -39,6 +41,8 @@
     :custom (quelpa-use-package-inhibit-loading-quelpa t)))
 
 (use-package gcmh
+  :diminish gcmh-mode
+
   :ensure t
 
   :init (gcmh-mode 1))
@@ -892,6 +896,8 @@
   :hook (after-init . ace-link-setup-default))
 
 (use-package ivy
+  :diminish ivy-mode
+
   :commands ivy-add-actions
 
   :ensure t
@@ -912,6 +918,8 @@
         ("." . swiper-isearch-thing-at-point)))
 
 (use-package counsel
+  :diminish counsel-mode
+
   :functions
   get-grep-lines
   counsel-switch-to-shell-buffer@unique
@@ -1103,6 +1111,8 @@
   :bind ([remap eval-print-last-sexp] . ipretty-last-sexp))
 
 (use-package company
+  :diminish company-mode
+
   :ensure t
 
   :bind
@@ -1246,6 +1256,8 @@
 (use-package css-mode :bind (:map css-mode-map ("C-c m" . css-lookup-symbol)))
 
 (use-package rainbow-mode
+  :diminish rainbow-mode
+
   :ensure t
 
   :hook (css-mode . rainbow-mode))
@@ -1259,7 +1271,10 @@
 
 (use-package clojure-mode :ensure t)
 
-(use-package eldoc :hook (after-init . global-eldoc-mode))
+(use-package eldoc
+  :diminish eldoc-mode
+
+  :hook (after-init . global-eldoc-mode))
 
 (use-package sudo-edit :ensure t)
 
@@ -1271,6 +1286,8 @@
   :init (ivy-add-actions 'counsel-find-file '(("l" vlf "view large file"))))
 
 (use-package which-key
+  :diminish which-key-mode
+
   :ensure t
 
   :hook (after-init . which-key-mode))
@@ -1426,6 +1443,8 @@
 (use-package lua-mode :ensure t)
 
 (use-package yasnippet
+  :diminish yas-minor-mode
+
   :ensure t
 
   :bind
@@ -2073,6 +2092,8 @@
   :bind (:map goto-map ("I" . ivy-imenu-anywhere)))
 
 (use-package whitespace
+  :diminish whitespace-mode
+
   :hook
   (before-save . whitespace-cleanup)
   (prog-mode   . whitespace-mode)
@@ -2082,6 +2103,8 @@
 (use-package make-mode :hook (makefile-mode . indent-tabs-mode))
 
 (use-package aggressive-indent
+  :diminish aggressive-indent-mode
+
   :ensure t
 
   :bind (:map aggressive-indent-mode-map
@@ -2151,6 +2174,8 @@
 (use-package darkroom :ensure t)
 
 (use-package highlight-parentheses
+  :diminish highlight-parentheses-mode
+
   :ensure t
 
   :hook ((lisp-mode emacs-lisp-mode scheme-mode) . highlight-parentheses-mode)
@@ -2234,23 +2259,14 @@
 
 (use-package hl-line :hook ((dired-mode csv-mode) . hl-line-mode))
 
-(use-package mood-line
-  :ensure t
-
-  :hook (after-init . mood-line-mode)
-
-  :config
-  (set-face-attribute 'mode-line nil :foreground "dark cyan" :background "white")
-  (set-face-attribute 'mode-line-buffer-id nil :foreground "black")
-  (set-face-attribute 'mode-line-emphasis nil :foreground "dim grey"))
-
 (use-package try-complete-file-name-with-env
   :quelpa (try-complete-file-name-with-env
            :repo "xFA25E/try-complete-file-name-with-env"
            :fetcher github
            :version original)
+  :demand t
 
-  :hook (after-init . try-complete-file-name-with-env-mode))
+  :after hippie-exp)
 
 (use-package bash-completion
   :ensure t
@@ -2277,12 +2293,11 @@
 
   :after shell
 
-  :init (when (not (memq 'bash-completion-dynamic-complete
-                         shell-dynamic-complete-functions))
-          (setcar (memq 'pcomplete-completions-at-point
-                        shell-dynamic-complete-functions)
-                  '(pcomplete-completions-at-point
-                    bash-completion-dynamic-complete))
-          (setq shell-dynamic-complete-functions
-                (mapcan (lambda (a) (if (listp a) a (list a)))
-                        shell-dynamic-complete-functions))))
+  :init
+  (when (not (memq 'bash-completion-dynamic-complete
+                   shell-dynamic-complete-functions))
+    (let ((rest (memq 'pcomplete-completions-at-point
+                      shell-dynamic-complete-functions)))
+      (setcdr rest (cons 'bash-completion-dynamic-complete (cdr rest))))))
+
+(use-package frame :config (define-advice suspend-frame (:override ()) nil))
