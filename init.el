@@ -248,7 +248,12 @@
 
 (use-package faces
   :config (set-face-attribute
-           'fixed-pitch-serif nil :font "Times New Roman" :height 110))
+           'fixed-pitch-serif nil :font "Times New Roman" :height 110)
+
+  :config
+  (set-face-attribute 'mode-line nil :foreground "dark cyan" :background "white")
+  (set-face-attribute 'mode-line-buffer-id nil :foreground "black")
+  (set-face-attribute 'mode-line-emphasis nil :foreground "dim grey"))
 
 (use-package paren
   :custom (show-paren-style 'parentheses)
