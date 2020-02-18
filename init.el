@@ -2262,7 +2262,8 @@
               :exclusve 'no
               :company-docsig #'identity)))))
 
-(use-package hl-line :hook ((dired-mode csv-mode) . hl-line-mode))
+(use-package hl-line
+  :hook ((dired-mode csv-mode grep-mode ivy-occur-mode) . hl-line-mode))
 
 (use-package try-complete-file-name-with-env
   :quelpa (try-complete-file-name-with-env
