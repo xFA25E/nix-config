@@ -64,7 +64,7 @@
                                      kill-buffer-query-functions))
   (next-screen-context-lines 10)
   (resize-mini-windows t)
-  (tab-width 8)
+  (tab-width 4)
   (truncate-lines t)
   (undo-limit 200000)
   (undo-outer-limit 20000000)
@@ -1241,17 +1241,17 @@
       (save-buffer)
       (rename-file file newfile))))
 
+(use-package org-bullets
+  :ensure t
+
+  :hook (org-mode . org-bullets-mode))
+
 (use-package ox-html
   :after org
 
   :custom
   (org-html-htmlize-output-type 'css)
   (org-html-htmlize-font-prefix "org-"))
-
-(use-package org-bullets
-  :ensure t
-
-  :hook (org-mode . org-bullets-mode))
 
 (use-package htmlize
   :ensure t
@@ -1915,7 +1915,7 @@
       (edit-indirect-region (point) (point) t)))
 
   (defun edit-indirect-guess-mode (buf _beg _end)
-    (case (buffer-local-value 'major-mode buf)
+    (cl-case (buffer-local-value 'major-mode buf)
       ('sh-mode (awk-mode))
       ('php-mode
        (let ((mode (completing-read "Mode: " '("sql" "html") nil t)))
@@ -2174,7 +2174,17 @@
 (use-package deadgrep
   :ensure t
 
-  :bind (:map search-map ("R" . deadgrep)))
+  :bind (:map search-map ("R" . deadgrep))
+
+  :config
+
+  (define-advice deadgrep--buffer-name (:override (term dir) shortened)
+    (generate-new-buffer-name
+     (format "*dgrp %s %s*"
+             (s-truncate 15 term)
+             (concat (file-remote-p dir)
+                     (shell-pwd-shorten-directory
+                      (or (file-remote-p dir 'localname) dir)))))))
 
 (use-package darkroom :ensure t)
 
