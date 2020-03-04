@@ -440,7 +440,9 @@
 
   :after dired
 
-  :init (dired-async-mode))
+  :init (dired-async-mode)
+
+  :config (set-face-attribute 'dired-async-message nil :foreground "red"))
 
 (use-package dired-x
   :after dired
@@ -1608,8 +1610,6 @@
 (use-package projectile
   :ensure t
 
-  :commands projectile-run-shell@disable-pwd
-
   :bind-keymap ("M-m" . projectile-command-map)
 
   :custom
@@ -2169,7 +2169,7 @@
               ("C-M-n" . sgml-skip-tag-forward)
               ("C-M-p" . sgml-skip-tag-backward))
 
-  :custom (sgml-basic-offset 2))
+  :custom (sgml-basic-offset 4))
 
 (use-package deadgrep
   :ensure t
@@ -2224,7 +2224,7 @@
   (add-to-list 'shr-external-rendering-functions
                '(pre . shr-tag-pre-highlight)))
 
-(use-package nxml-mode :custom (nxml-child-indent 2))
+(use-package nxml-mode :custom (nxml-child-indent 4))
 
 (use-package dap-mode
   :ensure t
@@ -2236,7 +2236,7 @@
 (use-package web-mode
   :ensure t
 
-  :custom (web-mode-markup-indent-offset 2))
+  :custom (web-mode-markup-indent-offset 4))
 
 (use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
 
