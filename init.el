@@ -81,8 +81,6 @@
     (interactive)
     (save-excursion (insert " "))))
 
-(use-package custom :config (load-theme 'leuven t))
-
 (use-package minibuffer
   :commands read-file-name
 
@@ -253,7 +251,8 @@
   :config
   (set-face-attribute 'mode-line nil :foreground "dark cyan" :background "white")
   (set-face-attribute 'mode-line-buffer-id nil :foreground "black")
-  (set-face-attribute 'mode-line-emphasis nil :foreground "dim grey"))
+  (set-face-attribute 'mode-line-emphasis nil :foreground "dim grey")
+  (set-face-attribute 'mode-line-highlight nil :foreground "orange"))
 
 (use-package paren
   :custom (show-paren-style 'parentheses)
@@ -442,7 +441,7 @@
 
   :init (dired-async-mode)
 
-  :config (set-face-attribute 'dired-async-message nil :foreground "red"))
+  :config (set-face-attribute 'dired-async-message nil :foreground "goldenrod"))
 
 (use-package dired-x
   :after dired
@@ -469,7 +468,7 @@
       "setsid -f zathura * >/dev/null 2>&1")
 
      (,(rx "." (or "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi"
-                   "mpg" "mov" "3gp" "vob")
+                   "mpg" "mov" "3gp" "vob" "wmv")
            string-end)
       "setsid -f mpv --force-window=yes * >/dev/null 2>&1"
       "mediainfo ? | awk -v s=`?` '$1 == \"Duration\" {$1=s;print;exit}'"
@@ -478,7 +477,10 @@
 
      (,(rx ".torrent" string-end)
       "transmission-show"
-      "transmission-remote --add"))))
+      "transmission-remote --add")
+
+     (,(rx ".rar" string-end)
+      "temp=\"$(basename `?` .rar)\"; mkdir \"${temp}\"; unrar x ? \"${temp}\""))))
 
 (use-package fringe :config (fringe-mode '(3 . 0)))
 
@@ -883,8 +885,7 @@
      (?? aw-show-dispatch-help)))
 
   :config
-  (set-face-attribute 'aw-leading-char-face nil
-                      :foreground "red" :weight 'bold)
+  (set-face-attribute 'aw-leading-char-face nil :foreground "red" :weight 'bold)
 
   (defun aw-find-file-in-window (window)
     "Find file in WINDOW."
@@ -1212,7 +1213,8 @@
   :config
   (org-babel-do-load-languages 'org-babel-load-languages
                                '((calc       . t)
-                                 (emacs-lisp . t)))
+                                 (emacs-lisp . t)
+                                 (shell      . t)))
 
   (defun add-book-to-library (file directory)
     (interactive
@@ -1384,6 +1386,8 @@
   :custom (jdecomp-decompiler-paths '((cfr . "/usr/share/cfr/cfr.jar")))
 
   :mode ((rx ".class" string-end) . jdecomp-mode))
+
+(use-package subword :diminish subword-mode)
 
 (use-package php-mode
   :ensure t
@@ -1804,13 +1808,12 @@
 
   :config
   (defun savehist-filter-file-name-history ()
-    (cl-delete-if (lambda (e)
-                    (not (or (tramp-tramp-file-p e) (file-exists-p e))))
-                  file-name-history)
+    (cl-delete-if-not (lambda (e) (or (tramp-tramp-file-p e) (file-exists-p e)))
+                      file-name-history)
     (cl-delete-duplicates file-name-history
-                          :test (lambda (a b)
-                                  (string-equal (string-trim-left a "/")
-                                                (string-trim-left b "/"))))))
+                          :test (lambda (a b) (string-equal
+                                          (string-trim-left a "/")
+                                          (string-trim-left b "/"))))))
 (use-package net-utils
   :bind (:map mode-specific-map
               :prefix-map net-utils-prefix-map
@@ -1930,7 +1933,9 @@
 (use-package emmet-mode
   :ensure t
 
-  :hook ((nxml-mode html-mode mhtml-mode) . emmet-mode)
+  :diminish emmet-mode
+
+  :hook ((nxml-mode html-mode mhtml-mode web-mode) . emmet-mode)
 
   :custom
   (emmet-preview-default t)
@@ -2119,13 +2124,13 @@
 
   :config
   (defun aggressive-indent-enable ()
-    (unless (memq major-mode '(web-mode php-mode))
+    (unless (memq major-mode '(web-mode php-mode lisp-interaction-mode))
       (aggressive-indent-mode))))
 
 (use-package pcomplete-declare
   :quelpa (pcomplete-declare :repo "xFA25E/pcomplete-declare"
-                             :fetcher github
-                             :version original))
+            :fetcher github
+            :version original))
 
 (use-package activity-log
   :quelpa (activity-log :repo "xFA25E/activity-log"
@@ -2317,3 +2322,7 @@
       (setcdr rest (cons 'bash-completion-dynamic-complete (cdr rest))))))
 
 (use-package frame :config (define-advice suspend-frame (:override ()) nil))
+
+(use-package org-mime :ensure t)
+
+(use-package custom :config (load-theme 'leuven t))
