@@ -77,6 +77,8 @@
   (help-char (aref (kbd "C-?") 0))
 
   :config
+  (setq-default line-spacing 0.2)
+
   (defun insert-space-after-point ()
     (interactive)
     (save-excursion (insert " "))))
@@ -452,7 +454,7 @@
 
   :custom
   (dired-guess-shell-alist-user
-   `((,(rx "." (or "doc" "docx" "xlsx" "xls" "odt" "ppt") string-end)
+   `((,(rx "." (or "doc" "docx" "xlsx" "xls" "odt" "ppt" "pptx") string-end)
       "setsid -f libreoffice * >/dev/null 2>&1"
       "libreoffice --invisible --headless --convert-to pdf * &"
       "libreoffice --invisible --headless --convert-to epub * &"
