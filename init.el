@@ -510,9 +510,7 @@
 (use-package sh-script
   :commands sh-show-shell
 
-  :custom (system-uses-terminfo nil)
-
-  :config (advice-add #'sh-show-shell :after #'shell-pwd-disable-advice))
+  :custom (system-uses-terminfo nil))
 
 (use-package gdb-mi
   :custom
@@ -1069,7 +1067,10 @@
                 (cons (generate-new-buffer-name buffer-name)
                       (counsel--buffers-with-mode 'shell-mode))
                 :action #'counsel--switch-to-shell
-                :caller #'counsel-switch-to-shell-buffer)))
+                :caller #'counsel-switch-to-shell-buffer)
+
+      (when (fboundp #'shell-pwd-enable)
+        (shell-pwd-enable))))
 
   (define-advice counsel-set-variable (:around (c-set-var &rest args) prin-fix)
     (cl-letf (((symbol-function 'prin1-char) #'prin1-to-string))
@@ -1623,9 +1624,7 @@
   (projectile-completion-system 'ivy)
   (projectile-enable-caching t)
   (projectile-known-projects-file "~/.cache/emacs/projectile/projects")
-  (projectile-mode-line-prefix " P")
-
-  :config (advice-add #'projectile-run-shell :after #'shell-pwd-disable-advice))
+  (projectile-mode-line-prefix " P"))
 
 (use-package counsel-projectile
   :ensure t
@@ -2075,16 +2074,7 @@
                      :fetcher github
                      :version original)
 
-  :hook (shell-mode . shell-pwd-enable)
-
-  :commands shell-pwd-generate-buffer-name shell-pwd-disable-advice
-
-  :config
-
-  (defun shell-pwd-disable-advice (&rest _ignore)
-    (remove-hook 'comint-input-filter-functions
-                 #'shell-pwd-directory-tracker
-                 t)))
+  :commands shell-pwd-generate-buffer-name)
 
 (use-package shell-synopsis
   :quelpa (shell-synopsis :repo "xFA25E/shell-synopsis"
