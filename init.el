@@ -669,7 +669,13 @@
   (send-mail-function #'message-send-mail-with-sendmail))
 
 (use-package mu4e
-  :defines mu4e-maildir mu4e-view-actions mu4e-headers-actions
+  :defines
+  mu4e-maildir
+  mu4e-view-actions
+  mu4e-headers-actions
+  mu4e-main-mode-map
+  mu4e-headers-mode-map
+  mu4e-view-mode-map
 
   :commands
   mu4e-kill-update-mail
@@ -2054,7 +2060,7 @@
                      :fetcher github
                      :version original)
 
-  :commands shell-pwd-generate-buffer-name)
+  :commands shell-pwd-generate-buffer-name shell-pwd-shorten-directory)
 
 (use-package shell-synopsis
   :quelpa (shell-synopsis :repo "xFA25E/shell-synopsis"
@@ -2062,11 +2068,6 @@
                           :version original)
 
   :hook (shell-mode . shell-synopsis-setup))
-
-(use-package indent
-  :init (provide 'indent)
-
-  :custom (tab-always-indent 'complete))
 
 (use-package imenu-anywhere
   :ensure t
@@ -2153,14 +2154,15 @@
 (use-package deadgrep
   :ensure t
 
+  :commands deadgrep--buffer-name@shortened
+
   :bind (:map search-map ("R" . deadgrep))
 
   :config
-
   (define-advice deadgrep--buffer-name (:override (term dir) shortened)
     (generate-new-buffer-name
      (format "*dgrp %s %s*"
-             (s-truncate 15 term)
+             (substring term 0 15)
              (concat (file-remote-p dir)
                      (shell-pwd-shorten-directory
                       (or (file-remote-p dir 'localname) dir)))))))
