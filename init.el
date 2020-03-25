@@ -454,7 +454,7 @@
 
   :custom
   (dired-guess-shell-alist-user
-   `((,(rx "." (or "doc" "docx" "xlsx" "xls" "odt" "ppt" "pptx") string-end)
+   `((,(rx "." (or "doc" "docx" "xlsx" "xls" "odt" "ods" "ppt" "pptx") string-end)
       "setsid -f libreoffice * >/dev/null 2>&1"
       "libreoffice --invisible --headless --convert-to pdf * &"
       "libreoffice --invisible --headless --convert-to epub * &"
@@ -571,6 +571,7 @@
   :custom
   (comint-input-ignoredups t)
   (comint-input-ring-size 10000)
+  (comint-buffer-maximum-size 10240)
 
   :init
   (add-hook 'comint-output-filter-functions #'comint-strip-ctrl-m)
@@ -1301,7 +1302,9 @@
 
   :hook (rust-mode . cargo-minor-mode)
 
-  :custom (cargo-process--enable-rust-backtrace t))
+  :custom
+  (cargo-process--enable-rust-backtrace t)
+  (cargo-process--command-flags "--color never"))
 
 (use-package lsp-mode
   :ensure t
@@ -2095,7 +2098,9 @@
 
   :config
   (defun aggressive-indent-enable ()
-    (unless (memq major-mode '(web-mode php-mode lisp-interaction-mode))
+    (unless (memq major-mode
+                  '(web-mode php-mode lisp-interaction-mode
+                             makefile-mode makefile-gmake-mode))
       (aggressive-indent-mode))))
 
 (use-package pcomplete-declare
@@ -2219,6 +2224,8 @@
 (use-package plantuml-mode
   :ensure t
 
+  :mode (rx ".puml" string-end)
+
   :commands plantuml-completion-at-point
 
   :bind (:map plantuml-mode-map
@@ -2228,6 +2235,7 @@
   :custom
   (plantuml-jar-path "/opt/plantuml/plantuml.jar")
   (plantuml-default-exec-mode 'jar)
+  (plantuml-indent-level 4)
 
   :hook (plantuml-mode . plantuml-enable-completion)
 
