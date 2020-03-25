@@ -2307,36 +2307,7 @@
 (use-package magit
   :ensure t
 
-  :bind ("C-x g" . magit)
-  ;; (:map mode-specific-map
-  ;;             :prefix-map magit-prefix-map
-  ;;             :prefix "m"
-  ;;             (("a" . magit-stage-file) ; the closest analog to git add
-  ;;              ("b" . magit-blame)
-  ;;              ("B" . magit-branch)
-  ;;              ("c" . magit-checkout)
-  ;;              ("C" . magit-commit)
-  ;;              ("d" . magit-diff)
-  ;;              ("D" . magit-discard)
-  ;;              ("f" . magit-fetch)
-  ;;              ("g" . vc-git-grep)
-  ;;              ("G" . magit-gitignore)
-  ;;              ("i" . magit-init)
-  ;;              ("l" . magit-log)
-  ;;              ("m" . magit)
-  ;;              ("M" . magit-merge)
-  ;;              ("n" . magit-notes-edit)
-  ;;              ("p" . magit-pull-branch)
-  ;;              ("P" . magit-push-current)
-  ;;              ("r" . magit-reset)
-  ;;              ("R" . magit-rebase)
-  ;;              ("s" . magit-status)
-  ;;              ("S" . magit-stash)
-  ;;              ("t" . magit-tag)
-  ;;              ("T" . magit-tag-delete)
-  ;;              ("u" . magit-unstage)
-  ;;              ("U" . magit-update-index)))
-  )
+  :bind ("C-x g" . magit))
 
 (use-package transient
   :custom
