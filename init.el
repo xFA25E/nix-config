@@ -1127,9 +1127,6 @@
   :ensure t
 
   :bind
-  (:map company-mode-map
-        ([tab] . company-indent-or-manual-begin)
-        ("TAB" . company-indent-or-manual-begin))
   (:map company-active-map
         ("M-o" . company-other-backend)
         ("M-h" . company-show-doc-buffer)
@@ -1154,25 +1151,7 @@
                               help-mode
                               Custom-mode
                               epa-key-list-mode
-                              shell-mode))
-
-  :config
-  (defun company-indent-or-manual-begin ()
-    "Indent the current line or region, or begin company manualy."
-    (interactive)
-    (cond
-     ((use-region-p)
-      (indent-region (region-beginning) (region-end)))
-     ((memq indent-line-function
-            '(indent-relative indent-relative-maybe))
-      (company-manual-begin))
-     ((let ((old-point (point))
-            (old-tick (buffer-chars-modified-tick))
-            (tab-always-indent t))
-        (call-interactively #'indent-for-tab-command)
-        (when (and (eq old-point (point))
-                   (eq old-tick (buffer-chars-modified-tick)))
-          (company-manual-begin)))))))
+                              shell-mode)))
 
 (use-package company-c-headers
   :ensure t
@@ -2318,3 +2297,15 @@
 (use-package org-mime :ensure t)
 
 (use-package custom :config (load-theme 'leuven t))
+
+(use-package magit
+  :ensure t)
+
+(use-package apache-mode :ensure t)
+
+(use-package robots-txt-mode :ensure t)
+
+(use-package company-try-hard
+  :ensure t
+
+  :bind (:map company-mode-map ("M-Z" . company-try-hard)))
