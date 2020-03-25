@@ -1,4 +1,4 @@
 export PAGER=cat
-PS1='$? $(whoami) '
+export PS1='$? $(whoami) '
 
 echo
