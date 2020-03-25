@@ -2324,6 +2324,8 @@
 (use-package company-try-hard
   :ensure t
 
+  :after company
+
   :bind (:map company-mode-map ("M-Z" . company-try-hard)))
 
 (use-package dired-git-info
