@@ -1,0 +1,6 @@
+#+TITLE: dotfiles
+
+use GNU/stow to install dotfiles
+#+BEGIN_SRC sh
+  stow dirname
+#+END_SRC
