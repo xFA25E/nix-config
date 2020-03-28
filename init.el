@@ -789,11 +789,7 @@
 
 (use-package bookmark :custom (bookmark-save-flag 1))
 
-(use-package uniquify
-  :custom
-  (uniquify-after-kill-buffer-p t)
-  (uniquify-buffer-name-style   'post-forward-angle-brackets)
-  (uniquify-ignore-buffers-re   "^\\*"))
+(use-package uniquify :custom (uniquify-ignore-buffers-re   "^\\*"))
 
 (use-package dired-hide-dotfiles
   :ensure t
@@ -968,7 +964,8 @@
         ("F F" . counsel-file-directory-jump)
         ("F D" . counsel-file-directory-jump-fd)
         ("F L" . counsel-find-library)
-        ("F l" . counsel-locate))
+        ("F l" . counsel-locate)
+        ("F Z" . counsel-fzf))
 
   (:map goto-map
         ("i" . counsel-semantic-or-imenu)
@@ -2097,9 +2094,8 @@
 
   :config
   (defun aggressive-indent-enable ()
-    (unless (memq major-mode
-                  '(web-mode php-mode lisp-interaction-mode
-                             makefile-mode makefile-gmake-mode))
+    (unless (derived-mode-p
+             '(web-mode php-mode lisp-interaction-mode makefile-mode))
       (aggressive-indent-mode))))
 
 (use-package pcomplete-declare
@@ -2162,7 +2158,7 @@
   (define-advice deadgrep--buffer-name (:override (term dir) shortened)
     (generate-new-buffer-name
      (format "*dgrp %s %s*"
-             (substring term 0 15)
+             (substring term 0 (min 15 (length term)))
              (concat (file-remote-p dir)
                      (shell-pwd-shorten-directory
                       (or (file-remote-p dir 'localname) dir)))))))
@@ -2257,7 +2253,8 @@
               :company-docsig #'identity)))))
 
 (use-package hl-line
-  :hook ((dired-mode csv-mode grep-mode ivy-occur-mode) . hl-line-mode))
+  :hook ((dired-mode csv-mode grep-mode ivy-occur-mode mingus-browse) . hl-line-mode)
+  :config (add-hook 'mingus-playlist-hooks #'hl-line-mode))
 
 (use-package try-complete-file-name-with-env
   :quelpa (try-complete-file-name-with-env
