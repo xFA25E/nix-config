@@ -13,7 +13,7 @@ menu() {
 # bookmark file. Than print fields 2- (url title). Than print url
 # (field 1)
 select_bookmark() {
-    find "${bm_dir}" \( -type f -o -type l \) -name bookmarks -exec dirname \{\} \; | \
+    find -L "${bm_dir}" \( -type f -o -type l \) -name bookmarks -exec dirname \{\} \; | \
         sort | awk -v rem_len="${#bm_dir}" '
     {
         filename = $0 "/bookmarks";
@@ -30,7 +30,7 @@ select_bookmark() {
 }
 
 select_directory() {
-    find "${bm_dir}" -type d \! -path "${bm_dir}" | \
+    find -L "${bm_dir}" -type d \! -path "${bm_dir}" | \
         awk -v rl="${#bm_dir}" 'BEGIN {print "/"} {print substr($0, rl+1) "/"}' | \
         sort | menu "Select directory"
 }
