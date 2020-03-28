@@ -1,0 +1,196 @@
+windows:
+- active: true
+  geometry: !!binary |
+    AdnQywADAAAAAAAAAAAAEQAABVUAAAL/AAAAAAAAABEAAAVVAAAC/wAAAAAAAAAABVYAAAAAAAAA
+    EQAABVUAAAL/
+  private: true
+  tabs:
+  - history:
+    - pinned: false
+      title: 'Cargo: packages for Rust'
+      url: https://crates.io/
+    - pinned: false
+      title: 'Search Results for ''x21'' - Cargo: packages for Rust'
+      url: https://crates.io/search?q=x21
+    - pinned: false
+      title: 'Search Results for ''x11'' - Cargo: packages for Rust'
+      url: https://crates.io/search?q=x11
+    - pinned: false
+      title: Results for ewmh - Rust
+      url: https://docs.rs/x11/2.18.1/x11/
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 0
+      title: x11 - Rust
+      url: https://docs.rs/x11/2.18.1/x11/?search=
+      zoom: 1.0
+  - active: true
+    history:
+    - pinned: false
+      title: xtitle at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=xtitle
+    - pinned: false
+      title: 'GitHub - baskerville/xtitle: Outputs X window titles'
+      url: https://github.com/baskerville/xtitle
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 5746
+      title: xtitle/xtitle.c at master · baskerville/xtitle · GitHub
+      url: https://github.com/baskerville/xtitle/blob/master/xtitle.c
+      zoom: 1.0
+  - history:
+    - pinned: false
+      title: xtitle at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=xtitle
+    - pinned: false
+      title: 'GitHub - baskerville/xtitle: Outputs X window titles'
+      url: https://github.com/baskerville/xtitle
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 544
+      title: xtitle/xtitle.h at master · baskerville/xtitle · GitHub
+      url: https://github.com/baskerville/xtitle/blob/master/xtitle.h
+      zoom: 1.0
+  - history:
+    - pinned: false
+      title: xcb::ffi::xkb::xcb_xkb_get_names_value_list - Rust
+      url: http://rtbo.github.io/rust-xcb/xcb/ffi/xkb/fn.xcb_xkb_get_names_value_list.html?search=
+    - pinned: false
+      title: Results for ew - Rust
+      url: http://rtbo.github.io/rust-xcb/xcb/index.html
+    - pinned: false
+      title: Results for mh - Rust
+      url: http://rtbo.github.io/rust-xcb/xcb/index.html?search=mh
+    - pinned: false
+      title: x11 - Rust
+      url: http://rtbo.github.io/rust-xcb/x11/index.html
+    - pinned: false
+      title: log - Rust
+      url: http://rtbo.github.io/rust-xcb/log/index.html
+    - pinned: false
+      title: libc - Rust
+      url: http://rtbo.github.io/rust-xcb/libc/index.html
+    - pinned: false
+      title: xcb - Rust
+      url: http://rtbo.github.io/rust-xcb/xcb/index.html
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 0
+      title: xcb::xproto - Rust
+      url: http://rtbo.github.io/rust-xcb/xcb/xproto/index.html
+      zoom: 1.0
+    - pinned: false
+      title: xcb::xproto::Window - Rust
+      url: http://rtbo.github.io/rust-xcb/xcb/xproto/type.Window.html
+  - history:
+    - pinned: false
+      title: xcb difficult - YouTube
+      url: https://www.youtube.com/results?search_query=xcb+difficult
+    - pinned: false
+      title: why x window programming is difficult at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=why%20x%20window%20programming%20is%20difficult
+    - pinned: false
+      title: xcb is hard at DuckDuckGo
+      url: https://duckduckgo.com/lite/
+    - pinned: false
+      title: xcb source code at DuckDuckGo
+      url: https://duckduckgo.com/lite/
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 0
+      title: xcb
+      url: https://xcb.freedesktop.org/
+      zoom: 1.0
+    - pinned: false
+      title: xcb.freedesktop.org
+      url: https://xcb.freedesktop.org/Features/
+  - history:
+    - pinned: false
+      title: about:blank
+      url: about:blank
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 32950
+      title: xcb-util 0.2.0 - Docs.rs
+      url: https://docs.rs/crate/xcb-util/0.2.0/source/src/ewmh.rs
+      zoom: 1.0
+    - pinned: false
+      title: xcb_util - Rust
+      url: https://docs.rs/xcb-util/0.2.0/xcb_util/
+  - history:
+    - pinned: false
+      title: xkbcommon at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=xkbcommon
+    - pinned: false
+      title: xkbcommon - a keyboard handling library
+      url: https://xkbcommon.org/
+    - pinned: false
+      title: 'GitHub - xkbcommon/libxkbcommon: keymap handling library for toolkits
+        and window systems'
+      url: https://github.com/xkbcommon/libxkbcommon
+    - pinned: false
+      title: xkbcommon get current keyboard layout at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=xkbcommon%20get%20current%20keyboard%20layout
+    - pinned: false
+      title: 'Show current keyboard layout using libxkb by Ma27 · Pull Request #170
+        · geommer/yabar · GitHub'
+      url: https://github.com/geommer/yabar/pull/170
+    - pinned: false
+      title: 'Merge pull request #170 from Ma27/keyboard-layout · geommer/yabar@d9f7593
+        · GitHub'
+      url: https://github.com/geommer/yabar/commit/d9f75933f1fdd7bec24bf7db104c7e1df2728b98
+    - pinned: false
+      title: 'Merge pull request #170 from Ma27/keyboard-layout · geommer/yabar@d9f7593
+        · GitHub'
+      url: https://github.com/geommer/yabar/commit/d9f75933f1fdd7bec24bf7db104c7e1df2728b98#diff-973e544e67c436af4c1a99bd39ff25c1
+    - pinned: false
+      title: 'GitHub - geommer/yabar: A modern and lightweight status bar for X window
+        managers.'
+      url: https://github.com/geommer/yabar
+    - pinned: false
+      title: yabar/src at master · geommer/yabar · GitHub
+      url: https://github.com/geommer/yabar/tree/master/src
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 6177
+      title: yabar/ya_draw.c at master · geommer/yabar · GitHub
+      url: https://github.com/geommer/yabar/blob/master/src/ya_draw.c
+      zoom: 1.0
+  - history:
+    - pinned: false
+      title: ватоадмин роботы - YouTube
+      url: https://www.youtube.com/results?search_query=%D0%B2%D0%B0%D1%82%D0%BE%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD+%D1%80%D0%BE%D0%B1%D0%BE%D1%82%D1%8B
+    - pinned: false
+      title: Gridin's Guideline - YouTube
+      url: https://www.youtube.com/channel/UCxOPNqi3_GsjOJ_J-LOGf3A
+    - pinned: false
+      title: Gridin's Guideline - YouTube
+      url: https://www.youtube.com/channel/UCxOPNqi3_GsjOJ_J-LOGf3A/videos
+    - pinned: false
+      title: Gridin's Guideline - YouTube
+      url: https://www.youtube.com/channel/UCxOPNqi3_GsjOJ_J-LOGf3A/videos
+    - pinned: false
+      title: Gridin's Guideline - YouTube
+      url: https://www.youtube.com/channel/UCxOPNqi3_GsjOJ_J-LOGf3A/videos
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 602
+      title: Gridin's Guideline - YouTube
+      url: https://www.youtube.com/channel/UCxOPNqi3_GsjOJ_J-LOGf3A/videos
+      zoom: 1.0

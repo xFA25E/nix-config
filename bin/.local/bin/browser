@@ -8,7 +8,7 @@ else
     session_dir="${HOME:?}/.local/share/qutebrowser/sessions"
     [ ! -d "${session_dir:?}" ] && { echo "cant find sessions directory" >&2 ; exit 1 ; }
 
-    session="$(find "${session_dir}" -maxdepth 1 -type f -name '*.yml' -exec basename \{\} .yml \; | \
+    session="$(find -L "${session_dir}" -maxdepth 1 -type f -name '*.yml' -exec basename \{\} .yml \; | \
                   rofi -dmenu -p "Choose session" )"
     cd "${XDG_CACHE_HOME:-${HOME}/.cache}" && exec qutebrowser --restore "${session:?}" "$(rofi -dmenu -p "Search term")"
 fi

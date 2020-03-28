@@ -1,0 +1,17 @@
+windows:
+- active: true
+  geometry: !!binary |
+    AdnQywADAAAAAAAAAAAAEQAABVUAAAL/AAAAAAAAABEAAAVVAAAC/wAAAAAAAAAABVYAAAAAAAAA
+    EQAABVUAAAL/
+  private: true
+  tabs:
+  - active: true
+    history:
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 0
+      title: about:blank
+      url: about:blank
+      zoom: 1.0

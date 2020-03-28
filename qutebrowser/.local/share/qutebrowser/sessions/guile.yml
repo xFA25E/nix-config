@@ -1,0 +1,259 @@
+windows:
+- active: true
+  geometry: !!binary |
+    AdnQywADAAAAAAAAAAAAEQAABVUAAAL/AAAAAAAAABEAAAVVAAAC/wAAAAAAAAAABVYAAAAAAAAA
+    EQAABVUAAAL/
+  private: true
+  tabs:
+  - history:
+    - pinned: false
+      title: about:blank
+      url: about:blank
+    - pinned: false
+      title: guile pretty print at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=guile%20pretty%20print
+    - pinned: false
+      title: Pretty Printing (Guile Reference Manual)
+      url: https://www.gnu.org/software/guile/manual/html_node/Pretty-Printing.html
+    - pinned: false
+      title: GNU Guile 2.2.4 Reference Manual - GNU Project - Free Software Foundation
+      url: https://www.gnu.org/software/guile/manual/
+    - pinned: false
+      title: Guile Reference Manual
+      url: https://www.gnu.org/software/guile/manual/guile.html
+    - pinned: false
+      title: Guile Reference Manual
+      url: https://www.gnu.org/software/guile/manual/guile.html#Programming-in-C
+    - pinned: false
+      title: Guile Reference Manual
+      url: https://www.gnu.org/software/guile/manual/guile.html#Defining-New-Foreign-Object-Types
+    - pinned: false
+      title: scheme env var at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=scheme%20env%20var
+    - pinned: false
+      title: guile environment variables at DuckDuckGo
+      url: https://duckduckgo.com/lite/
+    - pinned: false
+      title: grab keys at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=grab%20keys
+    - pinned: false
+      title: grab keyboard at DuckDuckGo
+      url: https://duckduckgo.com/lite/
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 0
+      title: 'xgrabkey(3): grab keyboard keys - Linux man page'
+      url: https://linux.die.net/man/3/xgrabkey
+      zoom: 1.0
+  - history:
+    - pinned: false
+      title: guile repl server at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=guile%20repl%20server
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 0
+      title: REPL Servers (Guile Reference Manual)
+      url: https://www.gnu.org/software/guile/manual/html_node/REPL-Servers.html
+      zoom: 1.0
+  - history:
+    - pinned: false
+      title: xungrubkey at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=xungrubkey
+    - pinned: false
+      title: xgrubkey at DuckDuckGo
+      url: https://duckduckgo.com/lite/
+    - pinned: false
+      title: XGrubKey at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=XGrubKey
+    - original-url: https://www.google.com/search?hl=en&q=XGrubKey
+      pinned: false
+      title: XGrubKey - Google Search
+      url: https://www.google.com/search?q=XGrubKey&hl=en&gbv=1&sei=MeTiXPoJiMjBAsfkgbgE
+    - original-url: https://www.google.com/url?q=https://tronche.com/gui/x/xlib/input/XGrabKey.html&sa=U&ved=0ahUKEwil0-Cz0ariAhUQZ1AKHcsgCgIQFggWMAA&usg=AOvVaw1CjoTuoFDGKF5ZCfKQebgO
+      pinned: false
+      title: 'Xlib Programming Manual: XGrabKey'
+      url: https://tronche.com/gui/x/xlib/input/XGrabKey.html
+    - pinned: false
+      title: 'Xlib Programming Manual: Keyboard Grabbing'
+      url: https://tronche.com/gui/x/xlib/input/keyboard-grabbing.html
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 0
+      title: what is keyboard grabbing at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=what%20is%20keyboard%20grabbing
+      zoom: 1.0
+    - pinned: false
+      title: What is a Screen Grab?
+      url: https://www.wisegeek.com/what-is-a-screen-grab.htm
+  - history:
+    - pinned: false
+      title: guile handle errors at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=guile%20handle%20errors
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 0
+      title: Handling Errors (Guile Reference Manual)
+      url: https://www.gnu.org/software/guile/manual/html_node/Handling-Errors.html
+      zoom: 1.0
+  - history:
+    - pinned: false
+      title: what is setsid at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=what%20is%20setsid
+    - pinned: false
+      title: daemon - Why we use setsid() while daemonizing a process? - Unix & Linux
+        Stack Exchange
+      url: https://unix.stackexchange.com/questions/240646/why-we-use-setsid-while-daemonizing-a-process
+    - pinned: false
+      title: scheme error handling at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=scheme%20error%20handling
+    - pinned: false
+      title: guile catch example at DuckDuckGo
+      url: https://duckduckgo.com/lite/
+    - pinned: false
+      title: guile scheme catch example at DuckDuckGo
+      url: https://duckduckgo.com/lite/
+    - pinned: false
+      title: guile scheme check if addres is bind at DuckDuckGo
+      url: https://duckduckgo.com/lite/
+    - pinned: false
+      title: guile scheme check if addres in use at DuckDuckGo
+      url: https://duckduckgo.com/lite/
+    - pinned: false
+      title: guile scheme check if socket already used at DuckDuckGo
+      url: https://duckduckgo.com/lite/
+    - pinned: false
+      title: 'guile scheme ERROR: In procedure bind: In procedure bind: Address already
+        in use at DuckDuckGo'
+      url: https://duckduckgo.com/lite/
+    - pinned: false
+      title: scheme error handling at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=scheme%20error%20handling
+    - pinned: false
+      title: scheme error handling at DuckDuckGo
+      url: https://duckduckgo.com/lite/
+    - pinned: false
+      title: scheme error handling guile at DuckDuckGo
+      url: https://duckduckgo.com/lite/
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 0
+      title: More careful exceptions in Guile -- DustyCloud Brainstorms
+      url: https://dustycloud.org/blog/guile-errors/
+      zoom: 1.0
+  - history:
+    - pinned: false
+      title: guile standard library source code at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=guile%20standard%20library%20source%20code
+    - pinned: false
+      title: Libraries — GNU Guile
+      url: https://www.gnu.org/software/guile/libraries/
+    - pinned: false
+      title: Download — GNU Guile
+      url: https://www.gnu.org/software/guile/download/
+    - pinned: false
+      title: GNU's programming and extension language — GNU Guile
+      url: https://www.gnu.org/software/guile/
+    - pinned: false
+      title: 'GDB: The GNU Project Debugger'
+      url: https://www.gnu.org/software/gdb/
+    - pinned: false
+      title: GDB Documentation
+      url: https://www.gnu.org/software/gdb/documentation/
+    - pinned: false
+      title: gdb scheme at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=gdb%20scheme
+    - pinned: false
+      title: 'Debugging with GDB: GDB Scheme Data Types'
+      url: https://sourceware.org/gdb/onlinedocs/gdb/GDB-Scheme-Data-Types.html
+    - pinned: false
+      title: 'Debugging with GDB: Guile API'
+      url: https://sourceware.org/gdb/onlinedocs/gdb/Guile-API.html#Guile-API
+    - pinned: false
+      title: 'Debugging with GDB: Guile'
+      url: https://sourceware.org/gdb/onlinedocs/gdb/Guile.html#Guile
+    - pinned: false
+      title: 'Debugging with GDB: Guile Introduction'
+      url: https://sourceware.org/gdb/onlinedocs/gdb/Guile-Introduction.html#Guile-Introduction
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 0
+      title: 'Debugging with GDB: Guile Commands'
+      url: https://sourceware.org/gdb/onlinedocs/gdb/Guile-Commands.html#Guile-Commands
+      zoom: 1.0
+  - history:
+    - pinned: false
+      title: guile network at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=guile%20network
+    - pinned: false
+      title: guile socket at DuckDuckGo
+      url: https://duckduckgo.com/lite/
+    - pinned: false
+      title: Network Sockets and Communication (Guile Reference Manual)
+      url: https://www.gnu.org/software/guile/manual/html_node/Network-Sockets-and-Communication.html
+    - pinned: false
+      title: Networking (Guile Reference Manual)
+      url: https://www.gnu.org/software/guile/manual/html_node/Networking.html#Networking
+    - pinned: false
+      title: Network Address Conversion (Guile Reference Manual)
+      url: https://www.gnu.org/software/guile/manual/html_node/Network-Address-Conversion.html#Network-Address-Conversion
+    - pinned: false
+      title: Networking (Guile Reference Manual)
+      url: https://www.gnu.org/software/guile/manual/html_node/Networking.html#Networking
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 0
+      title: POSIX (Guile Reference Manual)
+      url: https://www.gnu.org/software/guile/manual/html_node/POSIX.html#POSIX
+      zoom: 1.0
+  - history:
+    - pinned: false
+      title: geiser emacs at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=geiser%20emacs
+    - pinned: false
+      title: 'Geiser: Top'
+      url: https://www.nongnu.org/geiser/
+    - pinned: false
+      title: 'Geiser: Introduction'
+      url: https://www.nongnu.org/geiser/geiser_1.html#Introduction
+    - pinned: false
+      title: 'Geiser: Installation'
+      url: https://www.nongnu.org/geiser/geiser_2.html#Installation
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 0
+      title: 'Geiser: The REPL'
+      url: https://www.nongnu.org/geiser/geiser_3.html#The-REPL
+      zoom: 1.0
+  - active: true
+    history:
+    - active: true
+      pinned: false
+      scroll-pos:
+        x: 0
+        y: 0
+      title: scheme how to check if socket is in use at DuckDuckGo
+      url: https://duckduckgo.com/lite/?q=scheme%20how%20to%20check%20if%20socket%20is%20in%20use
+      zoom: 1.0
+    - pinned: false
+      title: DuckDuckGo
+      url: https://duckduckgo.com/lite/
+    - pinned: false
+      title: multithreading - How to check if a socket is in use in c, to perform
+        multiple simultaneous writes on single socket - Stack Overflow
+      url: https://stackoverflow.com/questions/24595091/how-to-check-if-a-socket-is-in-use-in-c-to-perform-multiple-simultaneous-writes
