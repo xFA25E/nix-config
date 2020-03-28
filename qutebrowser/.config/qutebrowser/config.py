@@ -877,11 +877,11 @@ for key, val in my_keys.items():
     # with config.pattern(site) as p:
     # p.content.javascript.enabled = True
 
-    js_sites = ["*://vk.com/*", "*://www.youtube.com/*",
-                "*://www.trenord.it/*", "*://duckduckgo.com/*",
+js_sites = ["*://vk.com/*", "*://www.youtube.com/*",
+            "*://www.trenord.it/*", "*://duckduckgo.com/*",
                 "*://klava.org/*", "*://soundcloud.com/*",
                 "*://rutracker.org/*", "*://translate.google.com/*",
                 "*://doc.rust-lang.org/*", "*://crates.io/*",
                 "*://mail.protonmail.com/*"]
-    for site in js_sites:
+for site in js_sites:
     config.set('content.javascript.enabled', True, site)
