@@ -1,0 +1,116 @@
+#!/bin/sh
+
+STORE=~/.password-store
+
+list_passwords() {
+    find "${STORE:?}" -type f -name '*.gpg' | sed 's/\.gpg$//' \
+        | cut -c "$((${#STORE} + 2))-"
+}
+
+list_directories() {
+    find "${STORE:?}" -type d \! -path "${STORE}" | cut -c "$((${#STORE} + 2))-"
+}
+
+get_password() {
+    list_passwords | sort | rofi -dmenu -no-custom -p "${1:?provide prompt}"
+}
+
+get_directory() {
+    list_directories | sort | rofi -dmenu -p "${1:?provide prompt}"
+}
+
+parse_field() {
+    sed -n '/^'"${1:?provide field}"': .*$/ { s/^'"${1:?provide field}"': \(.*\)/\1/p; q }'
+}
+
+parse_password() {
+    printf "autotype\npassword\n";
+    sed -n -E 's/^([a-zA-Z_]+): .*$/\1/p'
+}
+
+type_field() {
+    field="${1:?provide password field}"
+    text="${2:?provide password text}"
+
+    case "${field}" in
+        autotype)
+            type_field login "${text}"
+            xdotool key Tab
+            type_field password "${text}"
+            ;;
+        password)
+            entry="$(printf "%s" "${text}" | head -n 1)"
+            setxkbmap us
+            microsleep 100
+            xdotool type "${entry}"
+            switch_keyboard default
+            ;;
+        *)
+            entry="$(printf "%s" "${text}" | parse_field "${field}")"
+            setxkbmap us
+            microsleep 100
+            xdotool type "${entry}"
+            switch_keyboard default
+    esac
+}
+
+rpass_type() {
+    password="${1:?provide password}"
+    text="$(pass show "${password}")"
+    text="${text:?}"
+    field="$(printf "%s" "${text}" | parse_password | rofi -dmenu -p "Select entry" -no-custom)"
+    type_field "${field:?}" "${text}"
+}
+
+rpass_add() {
+    new_pass="${1:?provide directory}"
+    directory="$(get_directory "Select directory for '${new_pass:?}'")"
+    rpass_edit "${directory%/}/${new_pass}"
+}
+
+rpass_edit() {
+    pass edit "${1:?provide password}"
+}
+
+rpass_show() {
+    p="${1:?provide password}"
+    rofi -e "$(pass show "${p}")"
+}
+
+rpass_ask() {
+    pass show "${1:?provide password}"
+}
+
+rpass_url() {
+    password="${1:?provide password}"
+    url="$(pass show "${password}" | parse_field url)"
+    ${BROWSER:-qutebrowser} "${url:?}"
+}
+
+
+rpass_menu() {
+    printf "type:add:edit:show:url:ask" | rofi -dmenu -no-custom -p "Menu" -sep ':'
+}
+
+case "${1:-$(rpass_menu)}" in
+    type)
+        rpass_type "$(get_password "Select password")"
+        ;;
+    add)
+        rpass_add "$(rofi -dmenu -p "New password name")"
+        ;;
+    edit)
+        rpass_edit "$(get_password "Select password")"
+        ;;
+    show)
+        rpass_show "$(get_password "Select password")"
+        ;;
+    url)
+        rpass_url "$(get_password "Select password")"
+        ;;
+    ask)
+        rpass_ask "$(get_password "Select password")"
+        ;;
+    *)
+        exit 1
+esac

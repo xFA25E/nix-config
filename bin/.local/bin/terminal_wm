@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -o monitor
+
+FIFO="/tmp/dvtm-status.$$"
+
+[ -p "$FIFO" ] || mkfifo -m 600 "$FIFO" || exit 1
+
+while true; do
+    time="C: $( date +%H:%M )"
+    battery="B: $( battery -f "%i" )"
+    volume="$(amixer -D pulse get Master | awk '/Left:/ {gsub(/[\[\]%]/, "", $0); print "V: "$5, $6}')"
+    printf '%s | %s | %s\n' "${battery}" "${volume}" "${time}"
+    sleep 5
+done > "$FIFO" &
+
+STATUS_PID=$!
+dvtm -s "$FIFO" "$@" 2> /dev/null
+kill $STATUS_PID
+wait $STATUS_PID 2> /dev/null
+rm -f "$FIFO"

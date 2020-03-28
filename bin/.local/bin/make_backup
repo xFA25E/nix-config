@@ -1,0 +1,51 @@
+#!/bin/sh
+
+set -o nounset
+
+# You can provide arguments. For example:
+# make_backup ~/.backup_files /dev/sdb1
+
+# Mounting business
+
+exit_error() { echo "${1}" >&2; exit "${2:-1}"; }
+
+get_partition() {
+    lsblk -rpo "name,type,size,mountpoint" | \
+        awk '$2=="part"&&$4==""{printf "%s (%s)\n",$1,$3}' | \
+        rofi -dmenu -p "Select partition" -no-custom | cut -d" " -f1
+}
+
+get_directory() {
+    mktemp --directory '/tmp/backupXXXXX'
+}
+
+check_backup_file() {
+    while read -r line
+    do [ ! -e "${line}" ] && exit_error "Backup file ${line} does not exist"
+    done < "${1:?provide backup file}"
+}
+
+backup_file="${1:-${HOME}/.backup_files}"
+[ ! -f "${backup_file:?provide backup file}" ] && exit_error "${backup_file} does not exist"
+
+partition="${2:-$(get_partition)}"
+[ ! -b "${partition:?provide partition}" ] && exit_error "${partition} is not block special"
+
+directory="$(get_directory)"
+[ ! -d "${directory:?provide directory}" ] && exit_error "${directory} is not a directory"
+
+# Preparing backup
+check_backup_file "${backup_file}"
+sudo -A mount -o 'data=journal' "${partition}" "${directory}" || exit_error "Can't mount"
+sudo -A chown val:users "${directory}" || { sudo -A umount "${directory}"; exit_error "Can't chown"; }
+
+# Making backup
+xargs --arg-file="${backup_file}" --max-args=200 -I{} \
+      rsync --del --archive --verbose --partial --progress --relative \
+      --exclude='clojure/*/target' --exclude='.git*' \
+      --exclude="${HOME}/.TelegramDesktop" --exclude="${HOME}/.cache" \
+      --exclude="${directory}" \
+      "{}" "${directory}"
+
+sudo -A umount "${directory}"
+rmdir "${directory}"

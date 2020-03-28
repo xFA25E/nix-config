@@ -1,0 +1,66 @@
+# Trap: make sure everything started in ~/.config/bspwm/autostart is
+# signalled when this script exits or dies.
+# on_exit() {
+# jobs -p | xargs -I pid kill pid
+# }
+
+# trap on_exit EXIT HUP INT TERM QUIT
+
+userresources=$HOME/.Xresources
+usermodmap=$HOME/.Xmodmap
+sysresources=/etc/X11/xinit/.Xresources
+sysmodmap=/etc/X11/xinit/.Xmodmap
+# merge in defaults and keymaps
+if [ -f $sysresources ]; then
+    xrdb -merge $sysresources
+fi
+if [ -f $sysmodmap ]; then
+    xmodmap $sysmodmap
+fi
+if [ -f "$userresources" ]; then
+    xrdb -merge "$userresources"
+fi
+if [ -f "$usermodmap" ]; then
+    xmodmap "$usermodmap"
+fi
+# start some nice programs
+if [ -d /etc/X11/xinit/xinitrc.d ] ; then
+    for f in /etc/X11/xinit/xinitrc.d/?*.sh ; do
+        [ -x "$f" ] && . "$f"
+    done
+    unset f
+fi
+
+## Ensure that the D-Bus Communication System is running properly to fix
+## File management, authentication, and other essential system processes
+if command -v dbus-launch >/dev/null && [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+    eval "$(dbus-launch --sh-syntax)"
+    echo "D-Bus per-session daemon address is: $DBUS_SESSION_BUS_ADDRESS"
+fi
+
+## Where the default Home folders have not already been created, generate them
+if [ -x /usr/bin/xdg-user-dirs-update ]; then
+    /usr/bin/xdg-user-dirs-update
+fi
+
+# Some autostarts
+# powersaving options
+xset s off
+xset s noblank
+xset s noexpose
+xset c on
+xset -dpms
+
+random_wallpaper
+numlockx
+switch_keyboard default
+
+pkill twmnd; setsid -f twmnd
+pkill sxhkd; setsid -f sxhkd -m 1 -t 1
+pkill ckbatt; setsid -f ckbatt notify_sound
+pidof rimer >/dev/null || setsid -f rimer daemon "${TIMER_UPDATER:-panel_timer}"
+setsid -f panel
+pidof emacs >/dev/null || setsid -f em
+
+exec bspwm
+# exec emacs

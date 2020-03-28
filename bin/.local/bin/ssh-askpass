@@ -1,0 +1,2 @@
+#!/bin/sh
+rpass ask | head -n 1

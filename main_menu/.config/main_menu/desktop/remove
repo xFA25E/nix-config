@@ -1,0 +1,4 @@
+#!/bin/sh
+
+name="$( bspc query --desktops --names | rofi -dmenu -p "Select desktop to remove" )"
+bspc desktop "${name:?}" --remove

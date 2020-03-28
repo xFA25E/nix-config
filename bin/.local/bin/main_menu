@@ -1,0 +1,10 @@
+#!/bin/sh
+
+menu_dir="${XDG_CONFIG_HOME:?}/main_menu"
+
+[ ! -d "${menu_dir}" ] && { echo "${menu_dir} does no exist" >&2; exit 1; }
+
+entry="$(find "${menu_dir}" -type f -executable | cut -c "$((${#menu_dir} + 2))-" | sort | rofi -dmenu -p "Run entry")"
+executable="${menu_dir}/${entry:?entry was not provided}"
+
+[ -x "${executable}" ] && "${executable}"

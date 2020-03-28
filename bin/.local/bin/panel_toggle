@@ -1,0 +1,18 @@
+#!/bin/sh
+
+panel_name="${RUNEL_WM_NAME:?}"
+
+normal_padding="$(bspc config border_width)"
+panel_id="$(xdo id -a "${panel_name}")"
+panel_padding="$(xwininfo -id "${panel_id:?}" -stats | awk '/Height:/ {print $2}')"
+panel_padding="$((${panel_padding:?} + ${normal_padding:?}))"
+current_padding="$( bspc config top_padding )"
+
+if [ "${current_padding:?}" = "${normal_padding:?}" ]
+then bspc config top_padding "${panel_padding:?}"
+else bspc config top_padding "${normal_padding}"
+fi
+
+# Local Variables:
+# Mode: shell-script
+# End:

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+MUSIC_DIRECTORY="${XDG_MUSIC_DIR:-${HOME}/Music}"
+
+[ -d "${MUSIC_DIRECTORY}" ] || exit 1
+
+select_directory() {
+    find "${MUSIC_DIRECTORY}" -type d ! -wholename "${MUSIC_DIRECTORY}" \
+        | cut -c "$((${#MUSIC_DIRECTORY} + 2))-" \
+        | rofi -dmenu -p "Select directory" -select "0unsorted"
+}
+
+selected_dir="$(select_directory)"
+
+mkdir -p "${selected_dir:?}" || exit 1
+
+exec ytdla --output "${MUSIC_DIRECTORY}/${selected_dir}/%(title)s.%(ext)s" \
+     "$@"

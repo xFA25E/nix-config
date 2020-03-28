@@ -1,0 +1,5 @@
+#!/bin/sh
+runel remote quit
+rimer remote quit
+bspc quit
+shutdown now

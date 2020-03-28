@@ -1,0 +1,22 @@
+#!/usr/bin/dash
+
+CFG="%{F\\\\$(xgetres runel.info_fg)}"
+CHD="%{F\\\\$(xgetres runel.info_hd)}"
+
+text="${CHD}F  ${CFG}\${freq}MHz  \
+${CHD}C  ${CFG}\${cpu}%  \
+${CHD}T  ${CFG}\${acpitemp}°C  \
+${CHD}R  ${CFG}\${mem}  \
+${CHD}S  ${CFG}\${swap}  \
+${CHD}FsR  ${CFG}\${fs_free /}  \
+${CHD}FsH  ${CFG}\${fs_free /home}  \
+\${if_mounted ${HOME}/Desktop/files}${CHD}FsW  ${CFG}\${fs_free ${HOME}/Desktop/files}  \${endif}\
+\${if_mounted ${HOME}/Desktop/usb}${CHD}U  ${CFG}\${fs_free ${HOME}/Desktop/usb}  \${endif}\
+\${if_mounted ${HOME}/Desktop/usb1}${CHD}U1  ${CFG}\${fs_free ${HOME}/Desktop/usb1}  \${endif}\
+\${if_mounted ${HOME}/Desktop/usb2}${CHD}U2  ${CFG}\${fs_free ${HOME}/Desktop/usb2}  \${endif}\
+${CHD}IOr  ${CFG}\${diskio_read /dev/sda}  \
+${CHD}IOw  ${CFG}\${diskio_write /dev/sda}  \
+${CHD}P  ${CFG}\${running_processes}/\${processes}\
+\${if_empty \${battery_time}}\${else}  ${CHD}B  ${CFG}\${battery_time}\${endif}"
+
+exec conky -i 60 -t "${text}"

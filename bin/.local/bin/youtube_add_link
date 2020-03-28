@@ -1,0 +1,4 @@
+#!/bin/sh
+link="${1:-$(rofi -dmenu -p "Link")}"
+dir="${XDG_VIDEOS_DIR:-${HOME}/Videos}/youtube"
+mkdir -p "${dir}" && echo "${link:?}" >>"${dir}/download.txt"

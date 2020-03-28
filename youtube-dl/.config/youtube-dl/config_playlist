@@ -1,0 +1,9 @@
+# -*- mode: conf; -*-
+--add-metadata
+--ignore-errors
+--continue
+--no-playlist
+--console-title
+--embed-subs
+--output "%(playlist_uploader)s/%(playlist)s/%(playlist_index)s%(upload_date)s - %(title)s.%(ext)s"
+--format '(bestvideo+bestaudio/best)[height<=?720][width<=?1280]'

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+CUR_WID="$( xdotool getwindowfocus )"
+WID="$( xdotool search --name "192.168.137.1" | head -1 )"
+xdotool windowactivate "$WID"
+microsleep 300
+xdotool key 'r'
+microsleep 300
+xdotool windowactivate "$CUR_WID"
+
+# Local Variables:
+# Mode: shell-script
+# End:

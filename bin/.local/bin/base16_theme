@@ -1,0 +1,102 @@
+#!/bin/sh
+
+if [ "$#" -eq 0 ]; then
+    tee >&2 <<EOF
+Usage:
+  create <theme> [ templates ]
+  apply <theme> [ files ]
+  list_themes
+  list_configs
+  list_templates
+  list_files <theme>
+EOF
+    exit 1
+fi
+
+base16_theme_dir="${XDG_CONFIG_HOME:?}/base16_theme"
+config_file="${base16_theme_dir}/configs/${2}"
+theme_dir="${base16_theme_dir}/themes/${2}"
+template_dir="${base16_theme_dir}/templates"
+operations_dir="${base16_theme_dir}/operations"
+
+create_following() {
+    for template in $@; do
+        location="${template_dir}/${template}"
+        destination="${theme_dir}/${template}"
+        if [ -e "$location" ]; then
+            if . "$location" > "$destination"; then
+                echo "$template file created."
+            else
+                echo "There was some problem with $template"
+            fi
+        else
+            echo "$template template doesn't exist or it's not executable"
+        fi
+    done
+}
+
+create_theme() {
+        if [ ! -e "$config_file" ]; then
+            echo "Color theme file doesn't exist."
+            exit 1
+        fi
+
+        mkdir -p "$theme_dir"
+        . "$config_file"
+
+        if [ "$#" -eq 1 ]; then
+            create_following "$(ls "$template_dir")"
+        else
+            shift && create_following "$@"
+        fi
+}
+
+apply_following() {
+    for file in $@; do
+        operation="${operations_dir}/${file}"
+        theme_file="${theme_dir}/${file}"
+        if [ -f "${theme_file}" ] && [ -x "${operation}" ]; then
+            if "${operation}" "${theme_file}"; then
+                echo "$file config applied."
+            else
+                echo "There was some problem with $operation"
+            fi
+        else
+            echo "$file config doesn't exist or the operation script is not executable."
+        fi
+    done
+}
+
+apply_theme() {
+        if [ ! -d "$theme_dir" ]; then
+            echo "Theme doesn't exist."
+            exit 1
+        fi
+
+        if [ "$#" -eq 1 ]; then
+            apply_following "$(ls "$theme_dir")"
+        else
+            shift && apply_following "$@"
+        fi
+}
+
+case "${1}" in
+    create)
+        shift && create_theme "$@"
+        ;;
+    apply)
+        shift && apply_theme "$@"
+        ;;
+    list_themes)
+        ls "${base16_theme_dir}/themes"
+        ;;
+    list_templates)
+        ls "${base16_theme_dir}/templates"
+        ;;
+    list_configs)
+        ls "${base16_theme_dir}/configs"
+        ;;
+    list_files)
+        ls "${base16_theme_dir}/themes/${2:?provide theme}"
+        ;;
+esac

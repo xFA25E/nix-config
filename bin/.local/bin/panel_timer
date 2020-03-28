@@ -1,0 +1,63 @@
+#!/bin/sh
+
+name="${1:?provide name}"
+kind="${2:?provide kind}"
+elapsed="${3:?provide remain}"
+dur="${4:?provide duration}"
+state="${5:?provide state}"
+
+format_secs() {
+    if [ "${1:?provide seconds}" -lt 60 ]; then
+        echo "${1}s"
+    else
+        minutes="$((${1} / 60))"
+        if [ "${minutes}" -lt 60 ]; then
+            echo "${minutes}m"
+        else
+            echo "$((minutes / 60))h $((minutes % 60))m"
+        fi
+    fi
+}
+
+save_log() {
+    date "+%Y %m %d ${1:?provide activity} ${2:?provide duration}" >> "${3:?provide file}"
+}
+
+case "${state}" in
+    running|paused)
+        case "${kind}" in
+            countdown)
+                time="$(format_secs "$((dur - elapsed))")/$(format_secs "${dur}")"
+                ;;
+            stopwatch)
+                time="$(format_secs "${elapsed}")"
+                ;;
+        esac
+        runel remote set timer "${name} ${time} ${state}"
+    ;;
+    halted)
+        runel remote set timer "off"
+        notify-send "Timer" "\"${name}\" finished"
+
+        if [ "${name}" = eyes ]; then
+            notify_sound "${HOME}/Music/solemn_notification.ogg"
+        else
+            notify_sound
+        fi
+
+        case "${name}" in
+            study)
+                mark_file="${HOME}/org/${name}.marks"
+                log_file="${HOME}/org/${name}.log"
+                selected="$(tail -n 1 "${log_file}" | cut -d" " -f4)"
+                what="$(awk '!$3 && $1 {print $1}' "${mark_file}" | rofi -dmenu -p "What" -select "${selected}")"
+                save_log "${what:?}" "${elapsed}" "${log_file}"
+                ;;
+            eyes)
+                again="$(printf "yes\nno" | rofi -dmenu -p "Again ${name}?")"
+                if [ "${again}" = yes ]; then
+                    rimer remote "${kind}" "${name}" --duration "${dur}"
+                fi
+        esac
+        ;;
+esac

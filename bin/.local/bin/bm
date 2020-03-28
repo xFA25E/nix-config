@@ -1,0 +1,171 @@
+#!/bin/sh
+
+bm_dir="${XDG_CONFIG_HOME:?}/bm"
+bm_name="$(basename "$0")"
+default_browser="${BROWSER:?}"
+editor="${VISUAL:?}"
+
+menu() {
+    rofi -dmenu -p "$1" -lines 30 -width 80 -location 2
+}
+
+# For every bookmarks file in bm_dir, take every line. Print path to
+# bookmark file. Than print fields 2- (url title). Than print url
+# (field 1)
+select_bookmark() {
+    find "${bm_dir}" \( -type f -o -type l \) -name bookmarks -exec dirname \{\} \; | \
+        sort | awk -v rem_len="${#bm_dir}" '
+    {
+        filename = $0 "/bookmarks";
+        subbed_filename = substr($0, rem_len + 1);
+        while (i = getline < filename) {
+            printf "%s/", subbed_filename;
+            for (i=2;i<NF;i++)
+                printf "%s", $i OFS;
+            if(NF)
+                printf "%s ", $NF;
+            print $1;
+        }
+    }' | menu "Select bookmark"
+}
+
+select_directory() {
+    find "${bm_dir}" -type d \! -path "${bm_dir}" | \
+        awk -v rl="${#bm_dir}" 'BEGIN {print "/"} {print substr($0, rl+1) "/"}' | \
+        sort | menu "Select directory"
+}
+
+bm_open() {
+    bm_selected="$(select_bookmark | rev | cut -d " " -f 1 | rev)"
+    "$default_browser" "${bm_selected:?}"
+}
+
+bm_add() {
+    bm_selected="$(select_directory | awk '{print "'"$bm_dir"'" $0 "bookmarks"}')"
+    [ ! -f "${bm_selected:?}" ] && exit 1
+    temp_file="$(mktemp /tmp/XXXXXXX.bm)"
+    echo "<url> <title>" >"${temp_file:?}"
+    "${editor}" "$temp_file"
+    tee <"$temp_file" >>"$bm_selected"
+    rm "$temp_file"
+}
+
+bm_add_dir() {
+    bm_selected="$(select_directory | awk '{print "'"$bm_dir"'" $0}')"
+    [ ! -d "${bm_selected:?}" ] && exit 1
+    new_dir="$(menu "Insert new directory name")"
+    mkdir -p "${bm_selected}/${new_dir:?}"
+}
+
+bm_remove() {
+    bm_selected="$(select_bookmark | awk '{print "'"$bm_dir"'" $0}')"
+
+    rem_dir="$(printf "%s" "${bm_selected:?}" | cut -d " " -f 1 | rev | cut -d "/" -f 2- | rev)"
+    rem_file="${rem_dir}/bookmarks"
+    [ ! -f "$rem_file" ] && exit 1
+
+    m_line="$(printf "%s" "${bm_selected}" | sed 's|'"$rem_dir"'/||' | awk '{printf "%s ", $NF;$NF="";print $0}' | sed 's/^ *//;s/ *$//')"
+
+    yn_answer="$(printf "no\nyes" | menu "Delete ${m_line:?}?")"
+    if [ "$yn_answer" = "yes" ]
+    then
+        lines="$(grep -v -F "$m_line" "$rem_file")"
+        echo "${lines:?}" >"$rem_file"
+    fi
+}
+
+bm_remove_dir() {
+    bm_selected="$(select_directory | awk '{print "'"$bm_dir"'" $0}')"
+    [ ! -d "${bm_selected:?}" ] && exit 1
+    yn_answer="$(printf 'no\nyes' | menu "Delete $(basename "$bm_selected")?")"
+    [ "$yn_answer" = "yes" ] && rm -r "$bm_selected"
+}
+
+bm_edit() {
+    bm_selected="$(select_directory | awk '{print "'"$bm_dir"'" $0}')"
+    [ ! -f "${bm_selected:?}/bookmarks" ] && exit 1
+    "${editor}" "${bm_selected}/bookmarks"
+}
+
+bm_menu() {
+    menu_item="$(printf 'open\nadd\nadd_dir\nremove\nremove_dir\nedit' | menu "Menu")"
+    case "$menu_item" in
+        open)
+            bm_open
+            ;;
+        add)
+           bm_add
+            ;;
+        add_dir)
+            bm_add_dir
+            ;;
+        remove)
+            bm_remove
+            ;;
+        remove_dir)
+            bm_remove_dir
+            ;;
+        edit)
+            bm_edit
+            ;;
+        *)
+            exit 1
+    esac
+}
+
+print_help() {
+    echo \
+    "$bm_name is a bookmark manager program. It can store and open
+    bookmarks using qutebrowser (you can change it in a script). Also,
+    it can delete stored bookmarks. Stored bookmarks can be splitted
+    in different directories (by default in $bm_dir).
+    In every directory it creates automatically a 'bookmarks' file
+    containing bookmark list in the following format: <url> <url
+    title>. It uses rofi -dmenu.
+
+The program accepts following arguments:
+    open            Show list of bookmarks and open the selected one
+    add             Add bookmark to selected directory
+    add_dir         Add directory to selected directory
+    remove          Remove bookmark from selected directory
+    remove_dir      Remove directory from selected directory
+    edit            Open a bookmarks file with \$VISUAL
+    menu            Call graphical menu to choose one of the options above
+    help            Print this help message"
+}
+
+[ "$#" -ne 1 ] && print_help 1>&2 && exit 1
+mkdir -p "$bm_dir" || exit 1
+
+case "$1" in
+    open)
+        bm_open
+        ;;
+    add)
+        bm_add
+        ;;
+    add_dir)
+        bm_add_dir
+        ;;
+    remove)
+        bm_remove
+        ;;
+    remove_dir)
+        bm_remove_dir
+        ;;
+    edit)
+        bm_edit
+        ;;
+    menu)
+        bm_menu
+        ;;
+    help)
+        print_help && exit 0
+        ;;
+    *)
+        print_help 1>&2 && exit 1
+        ;;
+esac
+# Local Variables:
+# Mode: shell-script
+# End:

@@ -1,0 +1,3 @@
+#!/bin/sh
+exec ytdl --config-location "${XDG_CONFIG_HOME:-${HOME}/.config}/youtube-dl/config_audio" \
+     "$@"

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+name="$( bspc query --desktops --names | rofi -dmenu -p "Send to desktop" )"
+bspc node --to-desktop "${name:?}"

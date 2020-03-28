@@ -1,0 +1,16 @@
+#!/usr/bin/dash
+
+CFG="%{F\\\\$(xgetres runel.info_fg)}"
+CHD="%{F\\\\$(xgetres runel.info_hd)}"
+
+text="\${if_mpd_playing}\
+${CHD}S  ${CFG}\${mpd_status}  \
+${CHD}R  ${CFG}\${mpd_random}  \
+\${if_empty \${mpd_artist}}\${else}${CHD}Ar  ${CFG}\${mpd_artist}  \${endif}\
+\${if_empty \${mpd_album}}\${else}${CHD}Al  ${CFG}\${mpd_album}  \${endif}\
+${CHD}\${if_empty \${mpd_title}}F  ${CFG}\${mpd_file}  \${else}T  ${CFG}\${mpd_title}  \${endif}\
+${CHD}B  ${CFG}\${mpd_elapsed} / \${mpd_length}  \
+${CHD}V  ${CFG}\${mpd_vol}\
+\${else}${CHD}mpd  ${CFG}is dead\${endif}"
+
+exec conky -t 60 -t "${text}"

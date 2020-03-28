@@ -1,0 +1,4 @@
+#!/bin/sh
+link="${1:-$(rofi -dmenu -p "Url")}"
+url="$(ytdl --no-color --format bestaudio/best --get-url "${link:?}")"
+mpc add "${url:?}"

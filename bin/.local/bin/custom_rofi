@@ -1,0 +1,13 @@
+#!/bin/sh
+
+layout="$(xkb-switch -p)"
+
+restore() {
+    xkb-switch -s "${layout}"
+}
+
+trap restore EXIT
+
+[ "${layout}" != "dvorak" ] && xkb-switch -s dvorak
+
+rofi "$@"

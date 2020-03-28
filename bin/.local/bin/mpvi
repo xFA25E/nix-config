@@ -1,0 +1,64 @@
+#!/bin/sh
+
+link="${1:-$(rofi -dmenu -p "Link")}"
+link="${link:?}"
+
+get_formats() {
+    columns='format_id,width,height,ext,filesize,vcodec,acodec'
+    jq_format=".formats[] | (\"\(.$(echo "${columns}" | sed 's/,/)|\\(./g'))\")"
+    #                                                     "," -> ")|\(."
+    ytdl --no-color --dump-json "${link}" | \
+        jq --raw-output "${jq_format}" | \
+        column --table --separator '|' --table-columns "${columns}"
+}
+
+select_format() {
+    read -r hd
+    rofi -dmenu -p "Select format" -width 80 -lines 13 -no-custom -mesg "${hd}"
+}
+
+menu='480
+audio only
+720
+1080
+360
+240
+144
+select video'
+format="$( printf "%s" "${menu}" | rofi -dmenu -p "mpv" -no-custom )"
+
+case "${format:?}" in
+    1080)
+        chosen_format='(bestvideo+bestaudio/best)[height<=?1080][width<=?1920]'
+        ;;
+    720)
+        chosen_format='(bestvideo+bestaudio/best)[height<=?720][width<=?1280]'
+        ;;
+    480)
+        chosen_format='(bestvideo+bestaudio/best)[height<=?480][width<=?640]'
+        ;;
+    360)
+        chosen_format='(bestvideo+bestaudio/best)[height<=?360][width<=?480]'
+        ;;
+    240)
+        chosen_format='(bestvideo+bestaudio/best)[height<=?240][width<=?320]'
+        ;;
+    144)
+        chosen_format='(bestvideo+bestaudio/best)[height<=?144][width<=?256]'
+        ;;
+    "audio only")
+        chosen_format='bestaudio/best'
+        ;;
+    "select video")
+        selected_format="$(get_formats | select_format | awk '{print $1}')"
+        chosen_format="${selected_format:?}+bestaudio/${selected_format:?}/best"
+        ;;
+esac
+
+mpv "${link}" \
+    --no-terminal \
+    --ytdl-format="${chosen_format:?}" \
+    --force-window=yes \
+    --load-unsafe-playlists \
+    --pause \
+    --ytdl-raw-options=yes-playlist=

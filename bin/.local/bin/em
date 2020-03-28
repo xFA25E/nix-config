@@ -1,0 +1,2 @@
+#!/bin/sh
+emacsclient -cn "$@" || tms "emacsclient -cna '' $*"

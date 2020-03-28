@@ -1,0 +1,6 @@
+#!/bin/sh
+theme_path="$1"
+cp "${theme_path}" "$HOME/.Xresources.d/Xcolors"
+xrdb -load "$HOME/.Xresources"
+runel remote reload
+~/.config/bspwm/bspwmrc

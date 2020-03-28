@@ -1,0 +1,18 @@
+runel.bg:          base00
+runel.free_fg:     base04
+runel.monitor_fg:  base0E
+runel.occupied_fg: base0D
+runel.urgent_fg:   base09
+runel.state_fg:    base0F
+runel.title_fg:    base0C
+runel.info_fg:     base07
+runel.info_hd:     base0A
+
+runel.free:      base04
+runel.monitor:   base0E
+runel.occupied:  base0D
+runel.urgent:    base09
+runel.state:     base0F
+runel.title:     base0C
+runel.info:      base07
+runel.info_head: base0A

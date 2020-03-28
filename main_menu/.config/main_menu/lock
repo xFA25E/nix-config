@@ -1,0 +1,6 @@
+#!/bin/sh
+xkb-switch -s "dvorak"
+screenshot=/tmp/desktop-lock-scrot.png
+scrot -q 100 "${screenshot}"
+convert "${screenshot}" -blur 5x2 "${screenshot}"
+i3lock --tiling --ignore-empty-password --show-failed-attempts --pointer win --image="${screenshot}"

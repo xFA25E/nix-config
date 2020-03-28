@@ -1,0 +1,12 @@
+# -*- mode: conf; -*-
+--add-metadata
+--ignore-errors
+--continue
+--no-playlist
+--console-title
+--embed-subs
+--output "%(uploader)s/%(upload_date)s - %(title)s.%(ext)s"
+--format 'bestaudio/best'
+--extract-audio
+--embed-thumbnail
+--audio-format mp3

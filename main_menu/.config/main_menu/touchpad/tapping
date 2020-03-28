@@ -1,0 +1,10 @@
+#!/bin/sh
+device="SynPS/2 Synaptics TouchPad"
+prop="libinput Tapping Enabled"
+if xinput list-props "${device}" | grep -E "${prop} \([0-9]+\):\s0" >/dev/null
+then
+    val=1
+else
+    val=0
+fi
+xinput set-prop "${device}" "${prop}" "${val}"

@@ -1,0 +1,167 @@
+#!/bin/sh
+
+show_message() {
+    [ -n "${1}" ] && rofi -e "${1}"
+}
+
+parse_time() {
+    echo "${1:?provide time string}" | awk -F: '
+/^([0-9]+:)?[0-9]+$/ {
+    tot = $NF * 60
+    if (NF == 2) tot += $1 * 3600
+    print tot
+}
+
+/^t[0-9]{2}:[0-9]{2}$/ {
+    $1 = substr($1, 2)
+
+    till_time = mk_till_time(systime(), $1, $2)
+    if (systime() < till_time) {
+        print till_time - systime()
+    } else {
+        day = 60 * 60 * 24
+        till_time = mk_till_time(systime() + day, $1, $2)
+        print till_time - systime()
+    }
+}
+
+function mk_till_time(time, hours, minutes)
+{
+    fmt = strftime("%Y %m %d %%s %%s 00", time)
+    return mktime(sprintf(fmt, hours, minutes))
+}'
+}
+
+filter_kind() {
+    grep '^'"${1:?provide kind}"'\>' | cut -d" " -f 2-
+}
+
+get_new_timer() {
+    printf "%s" "${TIMER_PROFILES}" \
+        | filter_kind "${1:?provide kind}" \
+        | column -t \
+        | rofi -dmenu -p "New timer" -mesg "${2:?provide message}"
+}
+
+map_filter() {
+    case "${1}" in
+        pause)
+            echo running
+            ;;
+        resume)
+            echo paused
+            ;;
+        *)
+    esac
+}
+
+format_report() {
+    awk -v filter="${1}" '!filter || $5 == filter' \
+        | format_duration 3 | format_duration 4 | column -t
+}
+
+get_report() {
+    rimer_remote report | format_duration 3 | format_duration 4 | column -t
+}
+
+get_timer_name() {
+    rimer_report \
+        | format_report "$(map_filter "${1}")" \
+        | rofi -dmenu -no-custom -p "Select timer" \
+        | awk '{print $1}'
+}
+
+rimer_remote() {
+    rimer remote "$@"
+}
+
+rimer_add() {
+    case "${1:?provide kind}" in
+        countdown)
+            rimer_remote "${1}" "${2:?provide name}" --duration "$(parse_time "${3:?provide duration}")"
+            ;;
+        stopwatch)
+            rimer_remote "${1}" "${2:?provide name}"
+            ;;
+    esac
+
+}
+
+rimer_report() {
+    rimer_remote report
+}
+
+rimer_cmd_on_timer() {
+    name="$(get_timer_name "${1}")"
+    show_message "$(rimer_remote "${1:?provide command}" "${name:?}")"
+}
+
+timer_add() {
+    kind="$(printf "countdown\nstopwatch" | rofi -dmenu -p "Kind" -no-custom)"
+    case "${kind}" in
+        countdown)
+            rimer_add "${kind}" $(get_new_timer "${kind}" "NAME [[t]H:]M")
+            ;;
+        stopwatch)
+            rimer_add "${kind}" $(get_new_timer "${kind}" "NAME")
+            ;;
+    esac
+}
+
+timer_pause() {
+    rimer_cmd_on_timer pause
+}
+
+timer_halt() {
+    rimer_cmd_on_timer halt
+}
+
+timer_resume() {
+    rimer_cmd_on_timer resume
+}
+
+timer_report() {
+    show_message "$(rimer_report | format_report "")"
+}
+
+timer_quit() {
+    rimer_remote quit
+}
+
+menu='add
+pause
+resume
+report
+halt
+quit
+daemon'
+
+choice="${1:-$(echo "${menu}" | rofi -dmenu -no-custom -p "Menu")}"
+
+case "${choice:?}" in
+    add)
+        timer_add
+        ;;
+    pause)
+        timer_pause
+        ;;
+    resume)
+        timer_resume
+        ;;
+    report)
+        timer_report
+        ;;
+    halt)
+        timer_halt
+        ;;
+    quit)
+        timer_quit
+        runel remote set timer off
+        ;;
+    daemon)
+        pidof rimer >/dev/null || rimer daemon "${TIMER_UPDATER:-panel_timer}"
+        ;;
+    *)
+        echo "Invalid command" >&2
+        exit 1
+esac

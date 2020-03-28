@@ -1,0 +1,44 @@
+#!/bin/sh
+
+find . -type f | video_duration | awk '
+BEGIN {
+    read_file(sequentials, "sequential.txt")
+    read_file(exclude, "exclude.txt")
+}
+
+!in_seq(exclude, $0) {
+    sequential = in_seq(sequentials, $0)
+    if (sequential) {
+        items[sequential] += $1
+        items_count[sequential] += 1
+        next
+    } else {
+        print $0
+    }
+}
+
+END {
+    for (item in items) {
+        print int(items[item] / items_count[item]), items_count[item], item
+    }
+}
+
+function read_file(arr, name)
+{
+    i = 1
+    while (getline <name) {
+        arr[i] = $0
+        i = i + 1
+    }
+}
+
+function in_seq(seq, line)
+{
+    for (i in seq) {
+        if (match(line, seq[i])) {
+            return seq[i]
+        }
+    }
+    return 0
+}
+' | sort -h | format_duration

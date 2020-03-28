@@ -1,0 +1,12 @@
+#!/bin/sh
+
+url="${1:-$(rofi -dmenu -p "Url")}"
+
+case "$(printf "video\naudio" | rofi -dmenu -p "Download" -no-custom)" in
+    video)
+        emn -e "(youtube-dl \"${url:?}\")"
+        ;;
+    audio)
+        emn -e '(async-shell-command "ytdlam \"'"${url:?}"'\"")'
+        ;;
+esac

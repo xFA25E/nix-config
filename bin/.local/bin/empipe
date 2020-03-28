@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ -n "${1}" ]
+then temp_file="$(mktemp "${1}")";
+else temp_file="$(mktemp)";
+fi
+
+cleanup() {
+    [ -w "${temp_file}" ] && rm -v "${temp_file}"
+}
+
+trap cleanup EXIT
+
+tee >"${temp_file}" || exit 1
+
+emw "${temp_file}"

@@ -1,0 +1,28 @@
+#!/bin/sh
+
+get_duration() {
+    mediainfo "${1:?}" | grep -m 1 '^Duration\>' \
+        | cut -d":" -f 2- \
+        | awk '
+BEGIN {
+    type["h"] = 3600
+    type["min"] = 60
+    type["s"] = 1
+}
+
+{
+    sum = 0
+    for (i = 1; i <= NF; i++) {
+        sum += $i * type[$(++i)]
+    }
+    print sum
+}
+'
+}
+
+while read -r line; do
+    duration="$(get_duration "${line}")"
+    if [ -n "${duration}" ]; then
+        echo "${duration} ${line}"
+    fi
+done

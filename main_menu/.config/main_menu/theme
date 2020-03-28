@@ -1,0 +1,4 @@
+#!/bin/sh
+
+theme="$( base16_theme list | rofi -dmenu -p "Choose theme" )"
+base16_theme apply "${theme:?}"

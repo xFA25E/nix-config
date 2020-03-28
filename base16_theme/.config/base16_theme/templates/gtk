@@ -1,0 +1,21 @@
+#!/bin/dash
+cat <<- _EOF_
+gtk-color-scheme = "background: #${color00}"
+gtk-color-scheme = "foreground: #${color07}"
+gtk-color-scheme = "color0: #${color00}"
+gtk-color-scheme = "color1: #${color01}"
+gtk-color-scheme = "color2: #${color02}"
+gtk-color-scheme = "color3: #${color03}"
+gtk-color-scheme = "color4: #${color04}"
+gtk-color-scheme = "color5: #${color05}"
+gtk-color-scheme = "color6: #${color06}"
+gtk-color-scheme = "color7: #${color07}"
+gtk-color-scheme = "color8: #${color08}"
+gtk-color-scheme = "color9: #${color09}"
+gtk-color-scheme = "color10: #${color10}"
+gtk-color-scheme = "color11: #${color11}"
+gtk-color-scheme = "color12: #${color12}"
+gtk-color-scheme = "color13: #${color13}"
+gtk-color-scheme = "color14: #${color14}"
+gtk-color-scheme = "color15: #${color15}"
+_EOF_

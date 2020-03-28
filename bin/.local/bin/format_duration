@@ -1,0 +1,8 @@
+#!/bin/sh
+
+awk -v pos="${1:-1}" '
+{
+    $pos = sprintf("%02d:%02d:%02d", $pos / 3600, ($pos / 60) % 60, $pos % 60)
+    print $0
+}
+'

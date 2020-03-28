@@ -1,0 +1,2 @@
+#!/bin/sh
+mpv --no-terminal "${1:-${HOME}/Music/bruh_sound_effect.m4a}"

@@ -1,0 +1,19 @@
+#!/bin/sh
+STATE="$(nmcli networking connectivity)"
+
+new_mails() {
+    find "${MAILDIR:?}" -type f \
+         \( -path '*/POLIMI/new/*' -o -path '*/EXYS/new/*' \)
+}
+
+if [ "${STATE}" = 'full' ]; then
+    mpop -Q "$@"
+    res=$?
+    new_messages="$(new_mails | wc -l)"
+    if [ "${new_messages}" != 0 ]; then
+        notify-send "Mail" "You have ${new_messages} new messages"
+    fi
+    exit ${res}
+else
+    exit 1
+fi

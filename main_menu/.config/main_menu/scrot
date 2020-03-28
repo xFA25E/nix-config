@@ -1,0 +1,11 @@
+#!/bin/sh
+scrot_path="${HOME:?}/Pictures/screenshots"
+[ ! -d "${scrot_path}" ] && mkdir -p "${scrot_path}"
+
+name="$(rofi -dmenu -p "Scrot name (without extension)")"
+filename="${scrot_path}/${name:-%Y-%m-%d_%02k:%M:%S}.png"
+
+select="$(printf "\n%s" --select | rofi -dmenu -p "Select?" -no-custom)"
+
+scrot --overwrite --delay 1 ${select} "${filename}" --exec 'image_clipboard $f'
+notify-send "Scrot" "Done screenshot"

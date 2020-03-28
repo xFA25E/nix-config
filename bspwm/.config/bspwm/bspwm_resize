@@ -1,0 +1,22 @@
+#!/bin/dash
+
+size=${2:-'10'}
+dir=$1
+case "$dir" in
+    west)
+        bspc node --resize right "-${size}" 0
+        bspc node --resize left  "+${size}" 0
+        ;;
+    east)
+        bspc node --resize right "+${size}" 0
+        bspc node --resize left  "-${size}" 0
+        ;;
+    north)
+        bspc node --resize top    0 "+${size}"
+        bspc node --resize bottom 0 "-${size}"
+        ;;
+    south)
+        bspc node --resize top    0 "-${size}"
+        bspc node --resize bottom 0 "+${size}"
+        ;;
+esac
