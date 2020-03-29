@@ -1,2 +1,0 @@
-#!/bin/sh
-em -e "(progn (let ((Man-notify-method 'bully)) (call-interactively 'man)))"

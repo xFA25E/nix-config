@@ -1,8 +1,9 @@
 #!/bin/sh
 
-if [ -n "${1}" ]
-then temp_file="$(mktemp "${1}")";
-else temp_file="$(mktemp)";
+if [ -n "${1}" ]; then
+    temp_file="$(mktemp "${1}")";
+else
+    temp_file="$(mktemp)";
 fi
 
 cleanup() {

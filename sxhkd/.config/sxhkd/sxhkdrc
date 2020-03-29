@@ -16,8 +16,8 @@ super + {1-9,0}
  amixer -D pulse sset Master {1-9,10}0% >/dev/null
 
 # open gui programs
-super + o ; super + {b,w,W,M,m,c,C,s,v}
- {browser,rpass type,rpass,bm menu,main_menu,timer add,timer,emmingus,tml pulsemixer}
+super + o ; super + {b,w,W,M,m,c,C,v}
+ {browser,rpass type,rpass,bm menu,main_menu,timer add,timer,tml pulsemixer}
 
 # emacs progs
 super + e; super + {e,r,R}
@@ -42,10 +42,6 @@ super + {_,shift +} + k
 # change panel mode
 super + p ; super + {d,s,h,n,w,c}
  runel remote mode {default,mpd,hardware,network,wifi,corona}
-
-# toggle panel view
-super + p ; super + t
- panel_toggle
 
 ####### nodes (windows) commands ########
 # kill and close
