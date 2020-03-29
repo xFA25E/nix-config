@@ -36,7 +36,7 @@ export GTK_IM_MODULE=ibus
 export XMODIFIERS=ibus
 export QT_IM_MODULE=ibus
 ## Ensure that GTK themes are applied uniformly in the Desktop Environment
-export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
+export GTK2_RC_FILES="${XDG_CONFIG_HOME}/gtk-2.0/gtkrc"
 
 # Rust vars
 export RUSTUP_HOME="${XDG_DATA_HOME}/rustup"
@@ -56,7 +56,7 @@ export LESSHISFILE="/dev/null"
 
 # mu/mu4e mail
 export MU_HOME="${XDG_DATA_HOME}/mu"
-export MAILDIR="${HOME}/.mail"
+export MAILDIR="${XDG_DATA_HOME}/mail"
 
 # abduco
 export ABDUCO_CMD="terminal_wm"
@@ -83,7 +83,7 @@ export SUDO_ASKPASS="${XDG_BIN_HOME}/sudo_askpass"
 export SSH_ASKPASS="ssh-askpass"
 
 # env for posix shell initialization
-export ENV="${HOME}/.shinit"
+export ENV="${XDG_CONFIG_HOME}/sh/init"
 
 # c compiler
 export CFLAGS='-Wall -Wextra -pedantic'
@@ -106,5 +106,18 @@ export NPM_CONFIG_USERCONFIG="${XDG_CONFIG_HOME}/npm/npmrc"
 # gnupg
 export GNUPGHOME="${XDG_DATA_HOME}/gnupg"
 
+# pass
+export PASSWORD_STORE_DIR="${XDG_DATA_HOME}/pass"
+
+# readline
+export INPUTRC="${XDG_CONFIG_HOME}/readline/inputrc"
+
+# xinit
+export XINITRC="${XDG_CONFIG_HOME}/X11/xinitrc"
+
+# xauthority
+export XAUTHORITY="${XDG_RUNTIME_DIR}/Xauthority"
+
 # Following automatically calls "startx" when you login:
-[ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ] && exec startx -- -keeptty -nolisten tcp >"${XDG_RUNTIME_DIR:?}/.xorg.log" 2>&1
+[ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ] && \
+    exec startx "${XINITRC}" -- -keeptty -nolisten tcp >"${XDG_RUNTIME_DIR:?}/xorg.log" 2>&1

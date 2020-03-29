@@ -1,6 +1,6 @@
 #!/bin/sh
 
-STORE=~/.password-store
+STORE=${PASSWORD_STORE_DIR:-${HOME}/.password-store}
 
 list_passwords() {
     find "${STORE:?}" -type f -name '*.gpg' | sed 's/\.gpg$//' \

@@ -1,3 +1,0 @@
-# Get firefox to use emacs keybindings
-include "/usr/share/themes/Emacs/gtk-2.0-key/gtkrc"
-gtk-key-theme-name = "Emacs"
