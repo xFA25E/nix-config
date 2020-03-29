@@ -1,8 +1,10 @@
 ;; -*- flycheck-disabled-checkers: (emacs-lisp-checkdoc); lexical-binding: t -*-
 
 (eval-and-compile
-  (defvar nsm-settings-file "~/.cache/emacs/network-security.data")
-  (defvar package-user-dir "~/.cache/emacs/elpa")
+  (defvar nsm-settings-file (substitute-in-file-name
+                             "${XDG_CACHE_HOME}/emacs/network-security.data"))
+  (defvar package-user-dir (substitute-in-file-name
+                            "${XDG_CACHE_HOME}/emacs/elpa"))
   (defvar gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
   (defvar package-archives '(("gnu"   . "https://elpa.gnu.org/packages/")
                              ("melpa" . "https://melpa.org/packages/")
@@ -29,8 +31,9 @@
     :demand t
 
     :custom
-    (quelpa-build-dir "~/.cache/emacs/quelpa/build")
-    (quelpa-dir "~/.cache/emacs/quelpa")
+    (quelpa-build-dir (substitute-in-file-name
+                       "${XDG_CACHE_HOME}/emacs/quelpa/build"))
+    (quelpa-dir (substitute-in-file-name "${XDG_CACHE_HOME}/emacs/quelpa"))
     (quelpa-update-melpa-p nil))
 
   (use-package quelpa-use-package
@@ -98,8 +101,9 @@
   (inhibit-startup-echo-area-message t)
   (inhibit-startup-screen t)
   (initial-scratch-message nil)
-  (auto-save-list-file-name (format-time-string
-                             "~/.cache/emacs/auto-saves/list/%y-%m-%d~")))
+  (auto-save-list-file-name
+   (format-time-string (substitute-in-file-name
+                        "${XDG_CACHE_HOME}/emacs/auto-saves/list/%y-%m-%d~"))))
 
 (use-package mule
   :config
@@ -219,7 +223,8 @@
   tramp-tramp-file-p
 
   :custom
-  (tramp-persistency-file-name "~/.cache/emacs/tramp/connection-history")
+  (tramp-persistency-file-name
+   (substitute-in-file-name "${XDG_CACHE_HOME}/emacs/tramp/connection-history"))
   (tramp-default-method "ssh")
   (tramp-histfile-override t)
 
@@ -285,10 +290,12 @@
         ("R" . revert-buffer-no-confirm))
 
   :custom
-  (auto-save-file-name-transforms `((".*" "~/.cache/emacs/auto-saves/" t)))
+  (auto-save-file-name-transforms
+   `((".*" ,(substitute-in-file-name "${XDG_CACHE_HOME}/emacs/auto-saves/") t)))
   (backup-by-copying t)
   (backup-directory-alist
-   `((".*" . ,(expand-file-name "~/.cache/emacs/backups"))))
+   `((".*" . ,(expand-file-name (substitute-in-file-name
+                                 "${XDG_DATA_HOME}/emacs/backups")))))
   (confirm-nonexistent-file-or-buffer nil)
   (delete-old-versions t)
   (kept-new-versions 6)
@@ -538,11 +545,16 @@
 
   :custom
   (image-dired-external-viewer "sxiv")
-  (image-dired-db-file "~/.cache/emacs/image-dired/db")
-  (image-dired-dir "~/.cache/emacs/image-dired/thumbnails/")
-  (image-dired-gallery-dir "~/.cache/emacs/image-dired/gallery/")
-  (image-dired-temp-image-file "~/.cache/emacs/image-dired/temp")
-  (image-dired-temp-rotate-image-file "~/.cache/emacs/image-dired/rotate_temp"))
+  (image-dired-db-file (substitute-in-file-name
+                        "${XDG_CACHE_HOME}/emacs/image-dired/db"))
+  (image-dired-dir (substitute-in-file-name
+                    "${XDG_CACHE_HOME}/emacs/image-dired/thumbnails/"))
+  (image-dired-gallery-dir (substitute-in-file-name
+                            "${XDG_CACHE_HOME}/emacs/image-dired/gallery/"))
+  (image-dired-temp-image-file (substitute-in-file-name
+                                "${XDG_CACHE_HOME}/emacs/image-dired/temp"))
+  (image-dired-temp-rotate-image-file
+   (substitute-in-file-name "${XDG_CACHE_HOME}/emacs/image-dired/rotate_temp")))
 
 (use-package wdired
   ;; does not work as expected
@@ -640,7 +652,8 @@
 
   (defun shell-enable-comint-history ()
     (setq-local comint-input-ring-file-name
-                "~/.cache/emacs/comint/shell_history")
+                (substitute-in-file-name
+                 "${XDG_DATA_HOME}/emacs/comint/shell_history"))
     (setq-local comint-history-filter-function #'shell-history-filter)
     (comint-read-input-ring 'silent))
 
@@ -699,7 +712,7 @@
         ("C-c C-e" . mu4e-update-mail-and-index-exys))
 
   :custom
-  (mu4e-maildir (or (getenv "MAILDIR") (expand-file-name "~/.mail")))
+  (mu4e-maildir (getenv "MAILDIR"))
   (mu4e-sent-folder "/SENT")
   (mu4e-drafts-folder "/DRAFTS")
   (mu4e-trash-folder "/TRASH")
@@ -815,7 +828,7 @@
   (auto-package-update-last-update-day-filename "last-package-update-day")
   (auto-package-update-prompt-before-update t)
   (auto-package-update-last-update-day-path
-   "~/.cache/emacs/last-package-update-day"))
+   (substitute-in-file-name "${XDG_CACHE_HOME}/emacs/last-package-update-day")))
 
 (use-package smali-mode
   :quelpa (smali-mode :repo "strazzere/Emacs-Smali"
@@ -1192,7 +1205,8 @@
   (org-refile-allow-creating-parent-nodes 'confirm)
   (org-agenda-skip-additional-timestamps-same-entry nil)
   (org-refile-targets '((org-agenda-files :level . 1)))
-  (org-id-locations-file "~/.cache/emacs/org/id-locations")
+  (org-id-locations-file (substitute-in-file-name
+                          "${XDG_CACHE_HOME}/emacs/org/id-locations"))
 
   :config
   (org-babel-do-load-languages 'org-babel-load-languages
@@ -1329,7 +1343,8 @@
   (lsp-enable-folding nil)
   (lsp-enable-symbol-highlighting nil)
   (lsp-prefer-flymake nil)
-  (lsp-session-file "~/.cache/emacs/lsp/session"))
+  (lsp-session-file (substitute-in-file-name
+                     "${XDG_CACHE_HOME}/emacs/lsp/session")))
 
 (use-package lsp-ui
   :ensure t
@@ -1382,7 +1397,8 @@
 
   :hook (php-mode . subword-mode)
 
-  :custom (php-manual-path "~/.cache/php_docs/php-chunked-xhtml")
+  :custom (php-manual-path (substitute-in-file-name
+                            "${XDG_CACHE_HOME}/php_docs/php-chunked-xhtml"))
 
   :config
   (defun run-php ()
@@ -1399,6 +1415,9 @@
   :bind (:map php-mode-map
               ("M-]" . ac-php-find-symbol-at-point)
               ("M-[" . ac-php-location-stack-back))
+
+  :custom (ac-php-tags-path (substitute-in-file-name
+                             "${XDG_DATA_HOME}/emacs/ac-php"))
 
   :init (add-to-list 'company-backends #'company-ac-php-backend))
 
@@ -1530,7 +1549,10 @@
 
   :custom-face (elfeed-search-filter-face ((t (:foreground "spring green"))))
 
-  :custom (elfeed-search-filter "+unread")
+  :custom
+  (elfeed-search-filter "+unread")
+  (elfeed-db-directory (substitute-in-file-name
+                        "${XDG_DATA_HOME}/emacs/elfeed"))
 
   :config
   (load-file (expand-file-name "secrets/elfeed.el" user-emacs-directory))
@@ -1603,10 +1625,12 @@
   :bind-keymap ("M-m" . projectile-command-map)
 
   :custom
-  (projectile-cache-file "~/.cache/emacs/projectile/cache")
+  (projectile-cache-file (substitute-in-file-name
+                          "${XDG_CACHE_HOME}/emacs/projectile/cache"))
   (projectile-completion-system 'ivy)
   (projectile-enable-caching t)
-  (projectile-known-projects-file "~/.cache/emacs/projectile/projects")
+  (projectile-known-projects-file (substitute-in-file-name
+                                   "${XDG_CACHE_HOME}/emacs/projectile/projects"))
   (projectile-mode-line-prefix " P"))
 
 (use-package counsel-projectile
@@ -1729,7 +1753,8 @@
   :custom
   (mingus-mode-line-separator  "|")
   (mingus-mode-line-string-max 100)
-  (mingus-mpd-config-file "~/.config/mpd/mpd.conf")
+  (mingus-mpd-config-file (substitute-in-file-name
+                           "${XDG_CONFIG_HOME}/mpd/mpd.conf"))
   (mingus-seek-amount 5)
   (mingus-use-mouse-p nil)
 
@@ -1741,10 +1766,12 @@
                       (mingus-get-absolute-filename)))))
 
 (use-package ede/base
-  :custom (ede-project-placeholder-cache-file "~/.cache/emacs/ede/projects.el"))
+  :custom (ede-project-placeholder-cache-file
+           (substitute-in-file-name "${XDG_CACHE_HOME}/emacs/ede/projects.el")))
 
 (use-package gamegrid
-  :custom (gamegrid-user-score-file-directory "~/.cache/emacs/games/"))
+  :custom (gamegrid-user-score-file-directory
+           (substitute-in-file-name "${XDG_CACHE_HOME}/emacs/games/")))
 
 (use-package arduino-mode :ensure t)
 
@@ -1757,7 +1784,8 @@
 (use-package url-util :commands url-get-url-at-point)
 
 (use-package url
-  :custom (url-configuration-directory "~/.cache/emacs/url/")
+  :custom (url-configuration-directory (substitute-in-file-name
+                                        "${XDG_CACHE_HOME}/emacs/url/"))
 
   :config
   (defun insert-image-from-url (&optional url)
@@ -1784,7 +1812,8 @@
   :hook (after-init . elf-setup-default))
 
 (use-package savehist
-  :custom (savehist-file "~/.cache/emacs/savehist")
+  :custom (savehist-file (substitute-in-file-name
+                          "${XDG_DATA_HOME}/emacs/savehist"))
 
   :hook
   (after-init    . savehist-mode)
@@ -1834,7 +1863,7 @@
   :config
   (defun xresources-reload ()
     (interactive)
-    (shell-command "xrdb -load ~/.Xresources; runel remote reload"))
+    (shell-command "xrdb -load ${XDG_CONFIG_HOME}/X11/xresources; runel remote reload"))
 
   (defun setup-xresources-reload ()
     (add-hook 'after-save-hook #'xresources-reload nil t)))
@@ -1928,7 +1957,8 @@
 (use-package nov
   :ensure t
 
-  :custom (nov-save-place-file "~/.cache/emacs/nov-places")
+  :custom (nov-save-place-file (substitute-in-file-name
+                                "${XDG_CACHE_HOME}/emacs/nov-places"))
 
   :mode ((rx ".epub" string-end) . nov-mode))
 
@@ -2095,7 +2125,7 @@
   :config
   (defun aggressive-indent-enable ()
     (unless (derived-mode-p
-             '(web-mode php-mode lisp-interaction-mode makefile-mode))
+             '(web-mode php-mode lisp-interaction-mode makefile-mode python-mode))
       (aggressive-indent-mode))))
 
 (use-package pcomplete-declare
@@ -2121,8 +2151,10 @@
   :ensure t
 
   :custom
-  (lsp-java-server-install-dir "~/.cache/emacs/eclipse.jdt.ls/server/")
-  (lsp-java-workspace-dir "~/.cache/emacs/workspace/")
+  (lsp-java-server-install-dir
+   (substitute-in-file-name "${XDG_CACHE_HOME}/emacs/eclipse.jdt.ls/server/"))
+  (lsp-java-workspace-dir (substitute-in-file-name
+                           "${XDG_CACHE_HOME}/emacs/workspace/"))
 
   :hook (java-mode . lsp))
 
@@ -2184,13 +2216,15 @@
 
   :custom
   (ivy-youtube-play-at "mpvi")
-  (ivy-youtube-history-file "~/.cache/emacs/ivy-youtube-history")
+  (ivy-youtube-history-file (substitute-in-file-name
+                             "${XDG_CACHE_HOME}/emacs/ivy-youtube-history"))
 
   :config
   (load-file (expand-file-name "secrets/ivy-youtube.el" user-emacs-directory)))
 
 (use-package request
-  :custom (request-storage-directory "~/.cache/emacs/request/"))
+  :custom (request-storage-directory (substitute-in-file-name
+                                      "${XDG_CACHE_HOME}/emacs/request/")))
 
 (use-package shr-tag-pre-highlight
   :ensure t
@@ -2207,8 +2241,10 @@
   :ensure t
 
   :custom
-  (dap-breakpoints-file "~/.cache/emacs/dap-breakpoints")
-  (dap-utils-extension-path "~/.cache/emacs/extension"))
+  (dap-breakpoints-file (substitute-in-file-name
+                         "${XDG_CACHE_HOME}/emacs/dap-breakpoints"))
+  (dap-utils-extension-path (substitute-in-file-name
+                             "${XDG_CACHE_HOME}/emacs/extension")))
 
 (use-package web-mode
   :ensure t
@@ -2306,13 +2342,19 @@
 (use-package magit
   :ensure t
 
-  :bind ("C-x g" . magit))
+  :bind ("C-x g" . magit)
+
+  :custom (magit-credential-cache-daemon-socket
+           (substitute-in-file-name "${XDG_CACHE_HOME}/git/credential/socket")))
 
 (use-package transient
   :custom
-  (transient-history-file "~/.cache/emacs/transient/history.el")
-  (transient-levels-file "~/.cache/emacs/transient/levels.el")
-  (transient-values-file "~/.cache/emacs/transient/values.el"))
+  (transient-history-file (substitute-in-file-name
+                           "${XDG_CACHE_HOME}/emacs/transient/history.el"))
+  (transient-levels-file (substitute-in-file-name
+                          "${XDG_CACHE_HOME}/emacs/transient/levels.el"))
+  (transient-values-file (substitute-in-file-name
+                          "${XDG_CACHE_HOME}/emacs/transient/values.el")))
 
 (use-package apache-mode :ensure t)
 
