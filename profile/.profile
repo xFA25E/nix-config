@@ -39,6 +39,8 @@ export QT_IM_MODULE=ibus
 export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
 
 # Rust vars
+export RUSTUP_HOME="${XDG_DATA_HOME}/rustup"
+export CARGO_HOME="${XDG_DATA_HOME}/cargo"
 export PATH="${HOME}/.cargo/bin:${PATH}"
 RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src" && export RUST_SRC_PATH
 export CARGO_TARGET_DIR="${HOME}/.cache/cargo/target"
@@ -53,10 +55,12 @@ export LEMONBAR_ARGS="-n,${RUNEL_WM_NAME},-f,Source Code Pro-8"
 export LESSHISFILE="/dev/null"
 
 # mu/mu4e mail
+export MU_HOME="${XDG_DATA_HOME}/mu"
 export MAILDIR="${HOME}/.mail"
 
 # abduco
 export ABDUCO_CMD="terminal_wm"
+export ABDUCO_SOCKET_DIR="${XDG_RUNTIME_DIR}/abduco"
 
 # rimer
 export TIMER_UPDATER='panel_timer'
@@ -90,12 +94,17 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 # composer
 export PATH="${HOME}/.config/composer/vendor/bin:${PATH}"
 
-if [ -e /home/val/.nix-profile/etc/profile.d/nix.sh ]; then
-    . /home/val/.nix-profile/etc/profile.d/nix.sh
-fi
-
 # urxvt
 export RXVT_SOCKET="${XDG_RUNTIME_DIR}/urxvt"
 
+# cuda
+export CUDA_CACHE_PATH="${XDG_CACHE_HOME}/nv"
+
+# npm
+export NPM_CONFIG_USERCONFIG="${XDG_CONFIG_HOME}/npm/npmrc"
+
+# gnupg
+export GNUPGHOME="${XDG_DATA_HOME}/gnupg"
+
 # Following automatically calls "startx" when you login:
-[ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ] && exec startx -- -keeptty -nolisten tcp >"${HOME:?}/.xorg.log" 2>&1
+[ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ] && exec startx -- -keeptty -nolisten tcp >"${XDG_RUNTIME_DIR:?}/.xorg.log" 2>&1
