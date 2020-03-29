@@ -1,2 +1,2 @@
 #!/bin/sh
-exec tm -e sh -c "terminal_theme && ${1:-zsh}"
+exec tm -e sh -c "terminal_theme && ${1:-sh}"

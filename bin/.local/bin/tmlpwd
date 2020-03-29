@@ -1,2 +1,2 @@
 #!/bin/sh
-exec tml "cd $PWD && ${1:-zsh}"
+exec tml "cd $PWD && ${1:-sh}"
