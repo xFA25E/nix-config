@@ -94,5 +94,8 @@ if [ -e /home/val/.nix-profile/etc/profile.d/nix.sh ]; then
     . /home/val/.nix-profile/etc/profile.d/nix.sh
 fi
 
+# urxvt
+export RXVT_SOCKET="${XDG_RUNTIME_DIR}/urxvt"
+
 # Following automatically calls "startx" when you login:
 [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ] && exec startx -- -keeptty -nolisten tcp >"${HOME:?}/.xorg.log" 2>&1

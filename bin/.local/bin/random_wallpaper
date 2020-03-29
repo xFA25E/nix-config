@@ -1,2 +1,2 @@
 #!/bin/sh
-feh --bg-scale "$(find ~/Pictures/wallpapers/ -type f | shuf --head-count 1)" >/dev/null 2>&1
+feh --no-fehbg --bg-scale "$(find ~/Pictures/wallpapers/ -type f | shuf --head-count 1)" >/dev/null 2>&1
