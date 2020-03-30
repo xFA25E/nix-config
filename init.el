@@ -751,7 +751,7 @@
                                  "avi" "mpg" "mov" "3gp" "vob"))))))
 
   :config
-  (load-file (expand-file-name "secrets/mu4e.el" user-emacs-directory))
+  (load-file (substitute-in-file-name "${XDG_DATA_HOME}/emacs/secrets/mu4e.el"))
 
   (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t)
 
@@ -800,7 +800,11 @@
 
   :config (set-register register-separator "\n"))
 
-(use-package bookmark :custom (bookmark-save-flag 1))
+(use-package bookmark
+  :custom
+  (bookmark-save-flag 1)
+  (bookmark-default-file (substitute-in-file-name
+                          "${XDG_DATA_HOME}/emacs/bookmarks")))
 
 (use-package uniquify :custom (uniquify-ignore-buffers-re   "^\\*"))
 
@@ -1425,7 +1429,7 @@
               ("M-[" . ac-php-location-stack-back))
 
   :custom (ac-php-tags-path (substitute-in-file-name
-                             "${XDG_DATA_HOME}/emacs/ac-php"))
+                             "${XDG_CACHE_HOME}/emacs/ac-php"))
 
   :init (add-to-list 'company-backends #'company-ac-php-backend))
 
@@ -1560,10 +1564,10 @@
   :custom
   (elfeed-search-filter "+unread")
   (elfeed-db-directory (substitute-in-file-name
-                        "${XDG_DATA_HOME}/emacs/elfeed"))
+                        "${XDG_CACHE_HOME}/emacs/elfeed"))
 
   :config
-  (load-file (expand-file-name "secrets/elfeed.el" user-emacs-directory))
+  (load-file (substitute-in-file-name "${XDG_DATA_HOME}/emacs/secrets/elfeed.el"))
 
   (defun elfeed-switch-to-log-buffer ()
     (interactive)
@@ -1887,6 +1891,7 @@
               ("C-c \""  . remember-notes-save-and-kill-terminal))
 
   :custom
+  (remember-data-file (substitute-in-file-name "${XDG_DATA_HOME}/emacs/notes"))
   (initial-buffer-choice #'remember-notes-maybe)
   (remember-notes-initial-major-mode 'outline-mode)
 
@@ -2229,7 +2234,7 @@
                              "${XDG_CACHE_HOME}/emacs/ivy-youtube-history"))
 
   :config
-  (load-file (expand-file-name "secrets/ivy-youtube.el" user-emacs-directory)))
+  (load-file (substitute-in-file-name "${XDG_DATA_HOME}/emacs/secrets/ivy-youtube.el")))
 
 (use-package request
   :custom (request-storage-directory (substitute-in-file-name
