@@ -1,10 +1,11 @@
 ;; -*- flycheck-disabled-checkers: (emacs-lisp-checkdoc); lexical-binding: t -*-
 
+(require 'xdg)
+
 (eval-and-compile
-  (defvar nsm-settings-file (substitute-in-file-name
-                             "${XDG_CACHE_HOME}/emacs/network-security.data"))
-  (defvar package-user-dir (substitute-in-file-name
-                            "${XDG_CACHE_HOME}/emacs/elpa"))
+  (defvar nsm-settings-file (expand-file-name "emacs/network-security.data"
+                                              (xdg-cache-home)))
+  (defvar package-user-dir (expand-file-name "emacs/elpa" (xdg-cache-home)))
   (defvar gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
   (defvar package-archives '(("gnu"   . "https://elpa.gnu.org/packages/")
                              ("melpa" . "https://melpa.org/packages/")
@@ -31,9 +32,8 @@
     :demand t
 
     :custom
-    (quelpa-build-dir (substitute-in-file-name
-                       "${XDG_CACHE_HOME}/emacs/quelpa/build"))
-    (quelpa-dir (substitute-in-file-name "${XDG_CACHE_HOME}/emacs/quelpa"))
+    (quelpa-build-dir (expand-file-name "emacs/quelpa/build" (xdg-cache-home)))
+    (quelpa-dir (expand-file-name "emacs/quelpa" (xdg-cache-home)))
     (quelpa-update-melpa-p nil))
 
   (use-package quelpa-use-package
@@ -101,9 +101,9 @@
   (inhibit-startup-echo-area-message t)
   (inhibit-startup-screen t)
   (initial-scratch-message nil)
-  (auto-save-list-file-name
-   (format-time-string (substitute-in-file-name
-                        "${XDG_CACHE_HOME}/emacs/auto-saves/list/%y-%m-%d~"))))
+  (auto-save-list-file-name (format-time-string
+                             (expand-file-name "emacs/auto-saves/list/%y-%m-%d~"
+                                               (xdg-cache-home)))))
 
 (use-package mule
   :config
@@ -121,6 +121,18 @@
 
   :custom (sentence-end-double-space nil))
 
+(use-package xdg
+  :commands
+  xdg-documents-dir
+  xdg-download-dir
+
+  :config
+  (defun xdg-documents-dir ()
+    (or (getenv "XDG_DOCUMENTS_DIR") "~/Documents"))
+
+  (defun xdg-download-dir ()
+    (or (getenv "XDG_DOWNLOAD_DIR") "~/Downloads")))
+
 (use-package window
   :init (provide 'window)
 
@@ -137,10 +149,11 @@
 
   :config
   (add-to-list 'display-buffer-alist
-               '("\\`\\*Man .*\\*\\'" .
-                 (display-buffer-reuse-mode-window
-                  (inhibit-same-window . nil)
-                  (mode . Man-mode)))))
+               ;; "\\`\\*Man .*\\*\\'"
+               `(,(rx string-start "*Man" (0+ anything) "*" string-end)
+                 . (display-buffer-reuse-mode-window
+                    (inhibit-same-window . nil)
+                    (mode . Man-mode)))))
 
 (use-package subr
   :init (provide 'subr)
@@ -224,7 +237,7 @@
 
   :custom
   (tramp-persistency-file-name
-   (substitute-in-file-name "${XDG_CACHE_HOME}/emacs/tramp/connection-history"))
+   (expand-file-name "emacs/tramp/connection-history" (xdg-cache-home)))
   (tramp-default-method "ssh")
   (tramp-histfile-override t)
 
@@ -291,11 +304,10 @@
 
   :custom
   (auto-save-file-name-transforms
-   `((".*" ,(substitute-in-file-name "${XDG_CACHE_HOME}/emacs/auto-saves/") t)))
+   `((".*" ,(expand-file-name "emacs/auto-saves/" (xdg-cache-home)) t)))
   (backup-by-copying t)
   (backup-directory-alist
-   `((".*" . ,(expand-file-name (substitute-in-file-name
-                                 "${XDG_DATA_HOME}/emacs/backups")))))
+   `((".*" . ,(expand-file-name "emacs/backups" (xdg-data-home)))))
   (confirm-nonexistent-file-or-buffer nil)
   (delete-old-versions t)
   (kept-new-versions 6)
@@ -545,16 +557,15 @@
 
   :custom
   (image-dired-external-viewer "sxiv")
-  (image-dired-db-file (substitute-in-file-name
-                        "${XDG_CACHE_HOME}/emacs/image-dired/db"))
-  (image-dired-dir (substitute-in-file-name
-                    "${XDG_CACHE_HOME}/emacs/image-dired/thumbnails/"))
-  (image-dired-gallery-dir (substitute-in-file-name
-                            "${XDG_CACHE_HOME}/emacs/image-dired/gallery/"))
-  (image-dired-temp-image-file (substitute-in-file-name
-                                "${XDG_CACHE_HOME}/emacs/image-dired/temp"))
+  (image-dired-db-file (expand-file-name "emacs/image-dired/db" (xdg-cache-home)))
+  (image-dired-dir (expand-file-name "emacs/image-dired/thumbnails/"
+                                     (xdg-cache-home)))
+  (image-dired-gallery-dir (expand-file-name "emacs/image-dired/gallery/"
+                                             (xdg-cache-home)))
+  (image-dired-temp-image-file (expand-file-name "emacs/image-dired/temp"
+                                                 (xdg-cache-home)))
   (image-dired-temp-rotate-image-file
-   (substitute-in-file-name "${XDG_CACHE_HOME}/emacs/image-dired/rotate_temp")))
+   (expand-file-name "emacs/image-dired/rotate_temp" (xdg-cache-home))))
 
 (use-package wdired
   ;; does not work as expected
@@ -652,8 +663,7 @@
 
   (defun shell-enable-comint-history ()
     (setq-local comint-input-ring-file-name
-                (substitute-in-file-name
-                 "${XDG_DATA_HOME}/emacs/comint/shell_history"))
+                (expand-file-name "emacs/comint/shell_history" (xdg-data-home)))
     (setq-local comint-history-filter-function #'shell-history-filter)
     (comint-read-input-ring 'silent))
 
@@ -712,7 +722,7 @@
         ("C-c C-e" . mu4e-update-mail-and-index-exys))
 
   :custom
-  (mu4e-maildir (getenv "MAILDIR"))
+  (mu4e-maildir (or (getenv "MAILDIR") (expand-file-name "mail" (xdg-data-home))))
   (mu4e-sent-folder "/SENT")
   (mu4e-drafts-folder "/DRAFTS")
   (mu4e-trash-folder "/TRASH")
@@ -725,7 +735,7 @@
   (mu4e-compose-context-policy 'always-ask)
   (mu4e-headers-date-format "%Y-%m-%d %H:%M")
   (mu4e-view-show-addresses t)
-  (mu4e-attachment-dir (getenv "XDG_DOWNLOAD_DIR"))
+  (mu4e-attachment-dir (expand-file-name (xdg-download-dir)))
   (mu4e-modeline-max-width 100)
   (mu4e-get-mail-command "mailsync -a")
   (mu4e-update-interval 600)
@@ -751,7 +761,7 @@
                                  "avi" "mpg" "mov" "3gp" "vob"))))))
 
   :config
-  (load-file (substitute-in-file-name "${XDG_DATA_HOME}/emacs/secrets/mu4e.el"))
+  (load-file (expand-file-name "emacs/secrets/mu4e.el" (xdg-data-home)))
 
   (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t)
 
@@ -803,8 +813,7 @@
 (use-package bookmark
   :custom
   (bookmark-save-flag 1)
-  (bookmark-default-file (substitute-in-file-name
-                          "${XDG_DATA_HOME}/emacs/bookmarks")))
+  (bookmark-default-file (expand-file-name "emacs/bookmarks" (xdg-data-home))))
 
 (use-package uniquify :custom (uniquify-ignore-buffers-re   "^\\*"))
 
@@ -832,7 +841,7 @@
   (auto-package-update-last-update-day-filename "last-package-update-day")
   (auto-package-update-prompt-before-update t)
   (auto-package-update-last-update-day-path
-   (substitute-in-file-name "${XDG_CACHE_HOME}/emacs/last-package-update-day")))
+   (expand-file-name "emacs/last-package-update-day" (xdg-cache-home))))
 
 (use-package smali-mode
   :quelpa (smali-mode :repo "strazzere/Emacs-Smali"
@@ -1209,8 +1218,8 @@
   (org-refile-allow-creating-parent-nodes 'confirm)
   (org-agenda-skip-additional-timestamps-same-entry nil)
   (org-refile-targets '((org-agenda-files :level . 1)))
-  (org-id-locations-file (substitute-in-file-name
-                          "${XDG_CACHE_HOME}/emacs/org/id-locations"))
+  (org-id-locations-file (expand-file-name "emacs/org/id-locations"
+                                           (xdg-cache-home)))
 
   :config
   (org-babel-do-load-languages 'org-babel-load-languages
@@ -1220,13 +1229,9 @@
 
   (defun add-book-to-library (file directory)
     (interactive
-     (list
-      (read-file-name
-       "Book: "
-       (substitute-in-file-name "${XDG_DOCUMENTS_DIR}/library/") nil t)
-      (read-directory-name
-       "Directory: "
-       (substitute-in-file-name "${XDG_DOCUMENTS_DIR}/library/") nil t)))
+     (let ((lib-dir (expand-file-name "library/" (xdg-documents-dir))))
+       (list (read-file-name "Book: " lib-dir nil t)
+             (read-directory-name "Directory: " lib-dir nil t))))
 
     (string-match (rx "/" (group (one-or-more (not (any "/"))))
                       "." (or "pdf" "djvu" "fb2" "epub") string-end)
@@ -1242,15 +1247,13 @@
                    (substring
                     directory
                     (length
-                     (substitute-in-file-name "${XDG_DOCUMENTS_DIR}/library"))))))))
-      (find-file (substitute-in-file-name
-                  "${XDG_DOCUMENTS_DIR}/library/library_want.org"))
+                     (expand-file-name "library" (xdg-documents-dir)))))))))
+      (find-file (expand-file-name "library/library_want.org" (xdg-documents-dir)))
       (goto-char (point-max))
       (insert
        (format "* WANT %s %s \n  :PROPERTIES:\n  :FILE:      [[file:%s]]\n  :END:\n"
                book tags (string-remove-prefix
-                          (substitute-in-file-name
-                           "${XDG_DOCUMENTS_DIR}/library/")
+                          (expand-file-name "library/" (xdg-documents-dir))
                           newfile)))
       (save-buffer)
       (rename-file file newfile))))
@@ -1355,8 +1358,7 @@
   (lsp-enable-folding nil)
   (lsp-enable-symbol-highlighting nil)
   (lsp-prefer-flymake nil)
-  (lsp-session-file (substitute-in-file-name
-                     "${XDG_CACHE_HOME}/emacs/lsp/session")))
+  (lsp-session-file (expand-file-name "emacs/lsp/session" (xdg-cache-home))))
 
 (use-package lsp-ui
   :ensure t
@@ -1409,8 +1411,8 @@
 
   :hook (php-mode . subword-mode)
 
-  :custom (php-manual-path (substitute-in-file-name
-                            "${XDG_CACHE_HOME}/php_docs/php-chunked-xhtml"))
+  :custom (php-manual-path (expand-file-name "php_docs/php-chunked-xhtml"
+                                             (xdg-cache-home)))
 
   :config
   (defun run-php ()
@@ -1428,8 +1430,7 @@
               ("M-]" . ac-php-find-symbol-at-point)
               ("M-[" . ac-php-location-stack-back))
 
-  :custom (ac-php-tags-path (substitute-in-file-name
-                             "${XDG_CACHE_HOME}/emacs/ac-php"))
+  :custom (ac-php-tags-path (expand-file-name "emacs/ac-php" (xdg-cache-home)))
 
   :init (add-to-list 'company-backends #'company-ac-php-backend))
 
@@ -1563,11 +1564,10 @@
 
   :custom
   (elfeed-search-filter "+unread")
-  (elfeed-db-directory (substitute-in-file-name
-                        "${XDG_CACHE_HOME}/emacs/elfeed"))
+  (elfeed-db-directory (expand-file-name "emacs/elfeed" (xdg-cache-home)))
 
   :config
-  (load-file (substitute-in-file-name "${XDG_DATA_HOME}/emacs/secrets/elfeed.el"))
+  (load-file (expand-file-name "emacs/secrets/elfeed.el" (xdg-data-home)))
 
   (defun elfeed-switch-to-log-buffer ()
     (interactive)
@@ -1637,12 +1637,12 @@
   :bind-keymap ("M-m" . projectile-command-map)
 
   :custom
-  (projectile-cache-file (substitute-in-file-name
-                          "${XDG_CACHE_HOME}/emacs/projectile/cache"))
+  (projectile-cache-file (expand-file-name "emacs/projectile/cache"
+                                           (xdg-cache-home)))
   (projectile-completion-system 'ivy)
   (projectile-enable-caching t)
-  (projectile-known-projects-file (substitute-in-file-name
-                                   "${XDG_CACHE_HOME}/emacs/projectile/projects"))
+  (projectile-known-projects-file (expand-file-name "emacs/projectile/projects"
+                                                    (xdg-cache-home)))
   (projectile-mode-line-prefix " P"))
 
 (use-package counsel-projectile
@@ -1765,8 +1765,7 @@
   :custom
   (mingus-mode-line-separator  "|")
   (mingus-mode-line-string-max 100)
-  (mingus-mpd-config-file (substitute-in-file-name
-                           "${XDG_CONFIG_HOME}/mpd/mpd.conf"))
+  (mingus-mpd-config-file (expand-file-name "mpd/mpd.conf" (xdg-config-home)))
   (mingus-seek-amount 5)
   (mingus-use-mouse-p nil)
 
@@ -1779,11 +1778,11 @@
 
 (use-package ede/base
   :custom (ede-project-placeholder-cache-file
-           (substitute-in-file-name "${XDG_CACHE_HOME}/emacs/ede/projects.el")))
+           (expand-file-name "emacs/ede/projects.el" (xdg-cache-home))))
 
 (use-package gamegrid
   :custom (gamegrid-user-score-file-directory
-           (substitute-in-file-name "${XDG_CACHE_HOME}/emacs/games/")))
+           (expand-file-name "emacs/games/" (xdg-cache-home))))
 
 (use-package arduino-mode :ensure t)
 
@@ -1796,8 +1795,8 @@
 (use-package url-util :commands url-get-url-at-point)
 
 (use-package url
-  :custom (url-configuration-directory (substitute-in-file-name
-                                        "${XDG_CACHE_HOME}/emacs/url/"))
+  :custom (url-configuration-directory (expand-file-name "emacs/url/"
+                                                         (xdg-cache-home)))
 
   :config
   (defun insert-image-from-url (&optional url)
@@ -1824,8 +1823,7 @@
   :hook (after-init . elf-setup-default))
 
 (use-package savehist
-  :custom (savehist-file (substitute-in-file-name
-                          "${XDG_DATA_HOME}/emacs/savehist"))
+  :custom (savehist-file (expand-file-name "emacs/savehist" (xdg-data-home)))
 
   :hook
   (after-init    . savehist-mode)
@@ -1875,7 +1873,8 @@
   :config
   (defun xresources-reload ()
     (interactive)
-    (shell-command "xrdb -load ${XDG_CONFIG_HOME}/X11/xresources; runel remote reload"))
+    (let ((resources (expand-file-name "X11/xresources" (xdg-config-home))))
+      (shell-command (format "xrdb -load %s; runel remote reload" resources))))
 
   (defun setup-xresources-reload ()
     (add-hook 'after-save-hook #'xresources-reload nil t)))
@@ -1891,7 +1890,7 @@
               ("C-c \""  . remember-notes-save-and-kill-terminal))
 
   :custom
-  (remember-data-file (substitute-in-file-name "${XDG_DATA_HOME}/emacs/notes"))
+  (remember-data-file (expand-file-name "emacs/notes" (xdg-data-home)))
   (initial-buffer-choice #'remember-notes-maybe)
   (remember-notes-initial-major-mode 'outline-mode)
 
@@ -1970,8 +1969,8 @@
 (use-package nov
   :ensure t
 
-  :custom (nov-save-place-file (substitute-in-file-name
-                                "${XDG_CACHE_HOME}/emacs/nov-places"))
+  :custom (nov-save-place-file (expand-file-name "emacs/nov-places"
+                                                 (xdg-cache-home)))
 
   :mode ((rx ".epub" string-end) . nov-mode))
 
@@ -2012,7 +2011,7 @@
 (use-package find-func
   :custom
   (find-function-C-source-directory
-   (substitute-env-in-file-name "${XDG_DOWNLOAD_DIR}/programs/emacs-26.3/src")))
+   (expand-file-name "programs/emacs-26.3/src" (xdg-download-dir))))
 
 (use-package find-dired
   :bind (:map ctl-x-map ("F f" . find-dired-interactive))
@@ -2165,10 +2164,9 @@
   :ensure t
 
   :custom
-  (lsp-java-server-install-dir
-   (substitute-in-file-name "${XDG_CACHE_HOME}/emacs/eclipse.jdt.ls/server/"))
-  (lsp-java-workspace-dir (substitute-in-file-name
-                           "${XDG_CACHE_HOME}/emacs/workspace/"))
+  (lsp-java-server-install-dir (expand-file-name "emacs/eclipse.jdt.ls/server/"
+                                                 (xdg-cache-home)))
+  (lsp-java-workspace-dir (expand-file-name "emacs/workspace/" (xdg-cache-home)))
 
   :hook (java-mode . lsp))
 
@@ -2230,15 +2228,15 @@
 
   :custom
   (ivy-youtube-play-at "mpvi")
-  (ivy-youtube-history-file (substitute-in-file-name
-                             "${XDG_CACHE_HOME}/emacs/ivy-youtube-history"))
+  (ivy-youtube-history-file (expand-file-name "emacs/ivy-youtube-history"
+                                              (xdg-cache-home)))
 
   :config
-  (load-file (substitute-in-file-name "${XDG_DATA_HOME}/emacs/secrets/ivy-youtube.el")))
+  (load-file (expand-file-name "emacs/secrets/ivy-youtube.el" (xdg-data-home))))
 
 (use-package request
-  :custom (request-storage-directory (substitute-in-file-name
-                                      "${XDG_CACHE_HOME}/emacs/request/")))
+  :custom (request-storage-directory (expand-file-name "emacs/request/"
+                                                       (xdg-cache-home))))
 
 (use-package shr-tag-pre-highlight
   :ensure t
@@ -2255,10 +2253,10 @@
   :ensure t
 
   :custom
-  (dap-breakpoints-file (substitute-in-file-name
-                         "${XDG_CACHE_HOME}/emacs/dap-breakpoints"))
-  (dap-utils-extension-path (substitute-in-file-name
-                             "${XDG_CACHE_HOME}/emacs/extension")))
+  (dap-breakpoints-file (expand-file-name "emacs/dap-breakpoints"
+                                          (xdg-cache-home)))
+  (dap-utils-extension-path (expand-file-name "emacs/extension"
+                                              (xdg-cache-home))))
 
 (use-package web-mode
   :ensure t
@@ -2303,7 +2301,8 @@
               :company-docsig #'identity)))))
 
 (use-package hl-line
-  :hook ((dired-mode csv-mode grep-mode ivy-occur-mode mingus-browse) . hl-line-mode)
+  :hook ((dired-mode csv-mode grep-mode ivy-occur-mode mingus-browse)
+         . hl-line-mode)
   :config (add-hook 'mingus-playlist-hooks #'hl-line-mode))
 
 (use-package try-complete-file-name-with-env
@@ -2359,16 +2358,16 @@
   :bind ("C-x g" . magit)
 
   :custom (magit-credential-cache-daemon-socket
-           (substitute-in-file-name "${XDG_CACHE_HOME}/git/credential/socket")))
+           (expand-file-name "git/credential/socket" (xdg-cache-home))))
 
 (use-package transient
   :custom
-  (transient-history-file (substitute-in-file-name
-                           "${XDG_CACHE_HOME}/emacs/transient/history.el"))
-  (transient-levels-file (substitute-in-file-name
-                          "${XDG_CACHE_HOME}/emacs/transient/levels.el"))
-  (transient-values-file (substitute-in-file-name
-                          "${XDG_CACHE_HOME}/emacs/transient/values.el")))
+  (transient-history-file (expand-file-name "emacs/transient/history.el"
+                                            (xdg-cache-home)))
+  (transient-levels-file (expand-file-name "emacs/transient/levels.el"
+                                           (xdg-cache-home)))
+  (transient-values-file (expand-file-name "emacs/transient/values.el"
+                                           (xdg-cache-home))))
 
 (use-package apache-mode :ensure t)
 
