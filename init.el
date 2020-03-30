@@ -725,7 +725,7 @@
   (mu4e-compose-context-policy 'always-ask)
   (mu4e-headers-date-format "%Y-%m-%d %H:%M")
   (mu4e-view-show-addresses t)
-  (mu4e-attachment-dir "~/Downloads")
+  (mu4e-attachment-dir (getenv "XDG_DOWNLOAD_DIR"))
   (mu4e-modeline-max-width 100)
   (mu4e-get-mail-command "mailsync -a")
   (mu4e-update-interval 600)
@@ -1217,8 +1217,12 @@
   (defun add-book-to-library (file directory)
     (interactive
      (list
-      (read-file-name "Book: " "~/Documents/library/" nil t)
-      (read-directory-name "Directory: " "~/Documents/library/" nil t)))
+      (read-file-name
+       "Book: "
+       (substitute-in-file-name "${XDG_DOCUMENTS_DIR}/library/") nil t)
+      (read-directory-name
+       "Directory: "
+       (substitute-in-file-name "${XDG_DOCUMENTS_DIR}/library/") nil t)))
 
     (string-match (rx "/" (group (one-or-more (not (any "/"))))
                       "." (or "pdf" "djvu" "fb2" "epub") string-end)
@@ -1233,13 +1237,17 @@
                    (rx (or space "-")) "_"
                    (substring
                     directory
-                    (length (expand-file-name "~/Documents/library"))))))))
-      (find-file "~/Documents/library/library_want.org")
+                    (length
+                     (substitute-in-file-name "${XDG_DOCUMENTS_DIR}/library"))))))))
+      (find-file (substitute-in-file-name
+                  "${XDG_DOCUMENTS_DIR}/library/library_want.org"))
       (goto-char (point-max))
       (insert
        (format "* WANT %s %s \n  :PROPERTIES:\n  :FILE:      [[file:%s]]\n  :END:\n"
                book tags (string-remove-prefix
-                          (expand-file-name "~/Documents/library/") newfile)))
+                          (substitute-in-file-name
+                           "${XDG_DOCUMENTS_DIR}/library/")
+                          newfile)))
       (save-buffer)
       (rename-file file newfile))))
 
@@ -1998,7 +2006,8 @@
 
 (use-package find-func
   :custom
-  (find-function-C-source-directory "~/Downloads/programs/emacs-26.3/src"))
+  (find-function-C-source-directory
+   (substitute-env-in-file-name "${XDG_DOWNLOAD_DIR}/programs/emacs-26.3/src")))
 
 (use-package find-dired
   :bind (:map ctl-x-map ("F f" . find-dired-interactive))
