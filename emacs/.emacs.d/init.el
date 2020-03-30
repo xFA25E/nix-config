@@ -621,8 +621,6 @@
 (use-package shell
   :functions shell-history-filter
 
-  :commands shell-generate-buffer-name
-
   :bind (:map shell-mode-map
               ("C-c M-d" . shell-change-directory)
               ("C-c M-h" . pcomplete-help))
