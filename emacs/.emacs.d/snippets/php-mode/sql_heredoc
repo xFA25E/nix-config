@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: sql_heredoc
+# key: sqlv
+# expand-env: ((yas-indent-line nil))
+# --
+<<<SQL
+$0
+SQL;
