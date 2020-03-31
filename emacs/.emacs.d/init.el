@@ -2396,4 +2396,6 @@
 
 (use-package gitignore-mode :ensure t)
 
+(use-package misc :bind ("C-M-z" . zap-up-to-char))
+
 ;; end
