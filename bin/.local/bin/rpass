@@ -3,7 +3,7 @@
 STORE=${PASSWORD_STORE_DIR:-${HOME}/.password-store}
 
 list_passwords() {
-    find "${STORE:?}" -type f -name '*.gpg' | sed 's/\.gpg$//' \
+    find -L "${STORE:?}" -type f -name '*.gpg' | sed 's/\.gpg$//' \
         | cut -c "$((${#STORE} + 2))-"
 }
 
