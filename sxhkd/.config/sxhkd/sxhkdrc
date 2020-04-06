@@ -23,10 +23,6 @@ super + o ; super + {b,w,W,M,m,c,C,v}
 super + e; super + {e,r,R}
  {em,emremember,emremember-notes}
 
-# emacs scratch
-super + e; super + E
- em -e '(switch-to-buffer "*scratch*")'
-
 # mpd control
 super + s ; super + {n,p,t}
  mpc -q {next,prev,toggle}
