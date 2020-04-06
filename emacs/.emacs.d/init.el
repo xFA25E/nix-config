@@ -1863,7 +1863,7 @@
                       :fetcher github
                       :version original)
 
-  :mode (rx string-start "sxhkdrc" string-end))
+  :mode (rx "sxhkdrc" string-end))
 
 (use-package conf-mode
   :functions xresources-reload
