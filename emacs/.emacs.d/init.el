@@ -823,7 +823,9 @@
 (use-package diredfl
   :ensure t
 
-  :hook (dired-mode . diredfl-mode))
+  :hook (dired-mode . diredfl-mode)
+
+  :config (set-face-attribute 'diredfl-compressed-file-suffix "orange"))
 
 (use-package dired-rsync
   :ensure t
