@@ -265,14 +265,13 @@
 (use-package tooltip :config (tooltip-mode -1))
 
 (use-package faces
-  :config (set-face-attribute
-           'fixed-pitch-serif nil :font "Times New Roman" :height 110)
-
-  :config
-  (set-face-attribute 'mode-line nil :foreground "dark cyan" :background "white")
-  (set-face-attribute 'mode-line-buffer-id nil :foreground "black")
-  (set-face-attribute 'mode-line-emphasis nil :foreground "dim grey")
-  (set-face-attribute 'mode-line-highlight nil :foreground "orange"))
+  :custom-face
+  (mode-line ((t (:inherit mode-line :foreground "dark cyan" :background "white"))))
+  (mode-line-buffer-id ((t (:inherit mode-line-buffer-id :foreground "black"))))
+  (mode-line-emphasis ((t (:inherit mode-line-emphasis :foreground "dim grey"))))
+  (mode-line-highlight ((t (:inherit mode-line-highlight :foreground "orange"))))
+  (fixed-pitch-serif
+   ((t (:inherit fixed-pitch-serif :font "Times New Roman" :height 110)))))
 
 (use-package paren
   :custom (show-paren-style 'parentheses)
@@ -462,7 +461,8 @@
 
   :init (dired-async-mode)
 
-  :config (set-face-attribute 'dired-async-message nil :foreground "goldenrod"))
+  :custom-face
+  (dired-async-message ((t (:inherit dired-async-message :foreground "goldenrod")))))
 
 (use-package dired-x
   :after dired
@@ -599,10 +599,11 @@
   (add-hook 'comint-output-filter-functions #'comint-truncate-buffer)
   (defvar-local comint-history-filter-function (lambda (_file)))
 
-  :config
-  (set-face-attribute 'comint-highlight-input nil :inherit 'highlight)
-  (set-face-attribute 'comint-highlight-prompt nil :inherit 'minibuffer-prompt)
+  :custom-face
+  (comint-highlight-input ((t (:inherit highlight))))
+  (comint-highlight-prompt ((t (:inherit minibuffer-prompt))))
 
+  :config
   (defun save-buffers-comint-input-ring ()
     (dolist (buf (buffer-list))
       (with-current-buffer buf (comint-write-input-ring))))
@@ -825,7 +826,9 @@
 
   :hook (dired-mode . diredfl-mode)
 
-  :config (set-face-attribute 'diredfl-compressed-file-suffix "orange"))
+  :custom-face
+  (diredfl-compressed-file-suffix
+   ((t (:inherit diredfl-compressed-file-suffix :foreground "orange")))))
 
 (use-package dired-rsync
   :ensure t
@@ -911,9 +914,11 @@
      (?K delete-other-windows "Delete Other Windows")
      (?? aw-show-dispatch-help)))
 
-  :config
-  (set-face-attribute 'aw-leading-char-face nil :foreground "red" :weight 'bold)
+  :custom-face
+  (aw-leading-char-face
+   ((t (:inherit aw-leading-char-face :foreground "red" :weight bold))))
 
+  :config
   (defun aw-find-file-in-window (window)
     "Find file in WINDOW."
     (aw-switch-to-window window)
