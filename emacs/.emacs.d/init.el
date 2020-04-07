@@ -2142,8 +2142,8 @@
 
   :config
   (defun aggressive-indent-enable ()
-    (unless (derived-mode-p
-             '(web-mode php-mode lisp-interaction-mode makefile-mode python-mode))
+    (unless (derived-mode-p 'web-mode 'php-mode 'lisp-interaction-mode
+                            'makefile-mode 'python-mode)
       (aggressive-indent-mode))))
 
 (use-package pcomplete-declare
