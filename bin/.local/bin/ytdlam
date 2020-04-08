@@ -12,7 +12,5 @@ select_directory() {
 
 selected_dir="$(select_directory)"
 
-mkdir -p "${selected_dir:?}" || exit 1
-
 exec ytdla --output "${MUSIC_DIRECTORY}/${selected_dir}/%(title)s.%(ext)s" \
      "$@"
