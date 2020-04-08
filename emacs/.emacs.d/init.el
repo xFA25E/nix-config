@@ -492,7 +492,7 @@
                    "mpg" "mov" "3gp" "vob" "wmv")
            string-end)
       "setsid -f mpv --force-window=yes * >/dev/null 2>&1"
-      "mediainfo ? | awk -v s=`?` '$1 == \"Duration\" {$1=s;print;exit}'"
+      "echo ? | video_duration | format_duration"
       "mediainfo"
       "mpv -vo=drm")
 
