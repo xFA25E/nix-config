@@ -1,3 +1,4 @@
 #!/bin/sh
 dir="${2:?provide directory}"
+mkdir -p "${dir}" || exit 1
 ffmpeg -n -i "${1}" -vcodec libx264 -crf 23 "${dir%/}/${1%.*}.mkv"
