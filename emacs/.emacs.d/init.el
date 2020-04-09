@@ -426,9 +426,9 @@
       (cond ((string-equal method "ftp")
              (setq-local dired-actual-switches "-al"))
             ((string-equal method "sftp")
-             (setq-local dired-actual-switches "-alh"))
+             (setq-local dired-actual-switches "-al --si"))
             ((string-equal method "adb")
-             (setq-local dired-actual-switches "-alhDF"))))))
+             (setq-local dired-actual-switches "-alDF --si"))))))
 
 (use-package dired-aux
   :commands dired-do-shell-command
