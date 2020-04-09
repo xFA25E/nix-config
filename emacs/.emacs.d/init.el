@@ -417,7 +417,7 @@
 
   :custom
   (dired-dwim-target t)
-  (dired-listing-switches "-alhDF --group-directories-first")
+  (dired-listing-switches "-alDF --si --group-directories-first")
   (dired-ls-F-marks-symlinks t)
 
   :config
