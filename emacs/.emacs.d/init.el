@@ -28,7 +28,6 @@
 
   (use-package quelpa
     :ensure t
-
     :demand t
 
     :custom
@@ -38,16 +37,12 @@
 
   (use-package quelpa-use-package
     :ensure t
-
     :demand t
-
     :custom (quelpa-use-package-inhibit-loading-quelpa t)))
 
 (use-package gcmh
   :diminish gcmh-mode
-
   :ensure t
-
   :init (gcmh-mode 1))
 
 (use-package emacs
@@ -63,8 +58,6 @@
   (indent-tabs-mode nil)
   (indicate-buffer-boundaries 'left)
   (indicate-empty-lines t)
-  (kill-buffer-query-functions (remq #'process-kill-buffer-query-function
-                                     kill-buffer-query-functions))
   (next-screen-context-lines 10)
   (resize-mini-windows t)
   (tab-width 4)
@@ -78,6 +71,8 @@
   (x-stretch-cursor t)
   (fill-column 80)
   (help-char (aref (kbd "C-?") 0))
+  (kill-buffer-query-functions
+   (remq #'process-kill-buffer-query-function kill-buffer-query-functions))
 
   :config
   (setq-default line-spacing 0.2)
@@ -88,10 +83,8 @@
 
 (use-package minibuffer
   :commands read-file-name
-
-  :bind (:map minibuffer-inactive-mode-map ("C-c M-h" . pcomplete-help))
-
-  :custom (read-file-name-completion-ignore-case t))
+  :custom (read-file-name-completion-ignore-case t)
+  :bind (:map minibuffer-inactive-mode-map ("C-c M-h" . pcomplete-help)))
 
 (use-package startup
   :init (provide 'startup)
@@ -101,9 +94,9 @@
   (inhibit-startup-echo-area-message t)
   (inhibit-startup-screen t)
   (initial-scratch-message nil)
-  (auto-save-list-file-name (format-time-string
-                             (expand-file-name "emacs/auto-saves/list/%y-%m-%d~"
-                                               (xdg-cache-home)))))
+  (auto-save-list-file-name
+   (expand-file-name (format-time-string "emacs/auto-saves/list/%y-%m-%d~")
+                     (xdg-cache-home))))
 
 (use-package mule
   :config
@@ -118,13 +111,10 @@
 
 (use-package paragraphs
   :init (provide 'paragraphs)
-
   :custom (sentence-end-double-space nil))
 
 (use-package xdg
-  :commands
-  xdg-documents-dir
-  xdg-download-dir
+  :commands xdg-documents-dir xdg-download-dir
 
   :config
   (defun xdg-documents-dir ()
@@ -134,9 +124,8 @@
     (or (getenv "XDG_DOWNLOAD_DIR") "~/Downloads")))
 
 (use-package window
-  :init (provide 'window)
-
   :commands pop-to-buffer
+  :init (provide 'window)
 
   :bind
   ("M-V"     . scroll-down-line)
@@ -144,12 +133,10 @@
   ("C-M-S-b" . previous-buffer)
   ("C-M-S-f" . next-buffer)
   ("M-Q"     . quit-window)
-  (:map ctl-x-map
-        ("C-b" . switch-to-buffer))
+  (:map ctl-x-map ("C-b" . switch-to-buffer))
 
   :config
   (add-to-list 'display-buffer-alist
-               ;; "\\`\\*Man .*\\*\\'"
                `(,(rx string-start "*Man" (0+ anything) "*" string-end)
                  . (display-buffer-reuse-mode-window
                     (inhibit-same-window . nil)
@@ -174,10 +161,8 @@
   remove-hook
 
   :bind
-  (:map mode-specific-map
-        ("x t" . terminal-in-path))
-  (:map ctl-x-map
-        ("+" . increment-number-at-point))
+  (:map mode-specific-map ("x t" . terminal-in-path))
+  (:map ctl-x-map ("+" . increment-number-at-point))
 
   :config
   (defalias 'yes-or-no-p 'y-or-n-p)
@@ -259,7 +244,6 @@
 
 (use-package menu-bar
   :bind ("<f10>" . menu-bar-mode)
-
   :config (menu-bar-mode -1))
 
 (use-package tooltip :config (tooltip-mode -1))
@@ -275,22 +259,17 @@
 
 (use-package paren
   :custom (show-paren-style 'parentheses)
-
   :hook (after-init . show-paren-mode))
 
 (use-package highlight-numbers
   :ensure t
-
   :hook (prog-mode . highlight-numbers-mode))
 
 (use-package elec-pair :hook (after-init . electric-pair-mode))
 
 (use-package electric
   :hook (after-init . disable-electric-indent)
-
-  :config
-  (defun disable-electric-indent ()
-    (electric-indent-mode -1)))
+  :config (defun disable-electric-indent () (electric-indent-mode -1)))
 
 (use-package files
   :commands read-directory-name rename-this-file custom-backup-enable-predicate
@@ -298,15 +277,10 @@
   :bind
   ("M-~"         . nil)
   ("C-S-x C-S-c" . save-buffers-kill-emacs)
-  (:map ctl-x-map
-        ("R" . revert-buffer-no-confirm))
+  (:map ctl-x-map ("R" . revert-buffer-no-confirm))
 
   :custom
-  (auto-save-file-name-transforms
-   `((".*" ,(expand-file-name "emacs/auto-saves/" (xdg-cache-home)) t)))
   (backup-by-copying t)
-  (backup-directory-alist
-   `((".*" . ,(expand-file-name "emacs/backups" (xdg-data-home)))))
   (confirm-nonexistent-file-or-buffer nil)
   (delete-old-versions t)
   (kept-new-versions 6)
@@ -314,6 +288,10 @@
   (require-final-newline nil)
   (version-control t)
   (backup-enable-predicate #'custom-backup-enable-predicate)
+  (auto-save-file-name-transforms
+   `((".*" ,(expand-file-name "emacs/auto-saves/" (xdg-cache-home)) t)))
+  (backup-directory-alist
+   `((".*" . ,(expand-file-name "emacs/backups" (xdg-data-home)))))
 
   :config
   (defun rename-this-file ()
@@ -355,6 +333,7 @@
   ("M-SPC" . just-one-space-fast)
   ([remap move-beginning-of-line] . back-to-indentation-or-beginning)
   ([remap newline] . newline-and-indent)
+
   (:map ctl-x-map
         ("K"   . kill-current-buffer)
         ("C-r" . overwrite-mode)
@@ -398,7 +377,6 @@
 
 (use-package hippie-exp
   :bind ([remap dabbrev-expand] . hippie-expand)
-
   :custom (he-file-name-chars "-a-zA-Z0-9_/.,~^#$+={}"))
 
 (use-package tex-mode
@@ -431,12 +409,9 @@
              (setq-local dired-actual-switches "-alDF --si"))))))
 
 (use-package dired-aux
-  :commands dired-do-shell-command
-
-  :after dired
-
   :demand t
-
+  :after dired
+  :commands dired-do-shell-command
   :bind (:map dired-mode-map ("b" . dired-stat))
 
   :config
@@ -449,26 +424,21 @@
 
 (use-package async
   :ensure t
-
   :after bytecomp
-
   :init (async-bytecomp-package-mode))
 
 (use-package async
   :ensure t
-
   :after dired
-
   :init (dired-async-mode)
 
   :custom-face
-  (dired-async-message ((t (:inherit dired-async-message :foreground "goldenrod")))))
+  (dired-async-message
+   ((t (:inherit dired-async-message :foreground "goldenrod")))))
 
 (use-package dired-x
-  :after dired
-
   :demand t
-
+  :after dired
   :bind (:map ctl-x-map ("C-j" . dired-jump))
 
   :custom
@@ -504,9 +474,8 @@
       "temp=\"$(basename `?` .rar)\"; mkdir \"${temp}\"; unrar x ? \"${temp}\""))))
 
 (use-package ibuffer
-  :bind (:map ctl-x-map ("C-S-b" . ibuffer-jump))
-
-  :custom (ibuffer-default-sorting-mode 'major-mode))
+  :custom (ibuffer-default-sorting-mode 'major-mode)
+  :bind (:map ctl-x-map ("C-S-b" . ibuffer-jump)))
 
 (use-package cus-edit :custom (custom-file null-device))
 
@@ -526,7 +495,6 @@
 
 (use-package sh-script
   :commands sh-show-shell
-
   :custom (system-uses-terminfo nil))
 
 (use-package gdb-mi
@@ -538,15 +506,12 @@
   :bind
   ([remap isearch-forward-regexp]  . isearch-forward)
   ([remap isearch-backward-regexp] . isearch-backward)
-  (:map search-map
-        ("p" . isearch-forward-symbol-at-point))
-  (:map isearch-mode-map
-        ("C-h" . isearch-delete-char)))
+  (:map search-map ("p" . isearch-forward-symbol-at-point))
+  (:map isearch-mode-map ("C-h" . isearch-delete-char)))
 
 (use-package man
-  :bind (:map help-map ("M" . man))
-
   :custom (Man-notify-method 'aggressive)
+  :bind (:map help-map ("M" . man))
 
   :custom-face
   (Man-overstrike ((t (:inherit font-lock-variable-name-face :bold t))))
@@ -557,23 +522,21 @@
 
   :custom
   (image-dired-external-viewer "sxiv")
-  (image-dired-db-file (expand-file-name "emacs/image-dired/db" (xdg-cache-home)))
-  (image-dired-dir (expand-file-name "emacs/image-dired/thumbnails/"
-                                     (xdg-cache-home)))
-  (image-dired-gallery-dir (expand-file-name "emacs/image-dired/gallery/"
-                                             (xdg-cache-home)))
-  (image-dired-temp-image-file (expand-file-name "emacs/image-dired/temp"
-                                                 (xdg-cache-home)))
+  (image-dired-db-file
+   (expand-file-name "emacs/image-dired/db" (xdg-cache-home)))
+  (image-dired-dir
+   (expand-file-name "emacs/image-dired/thumbnails/" (xdg-cache-home)))
+  (image-dired-gallery-dir
+   (expand-file-name "emacs/image-dired/gallery/" (xdg-cache-home)))
+  (image-dired-temp-image-file
+   (expand-file-name "emacs/image-dired/temp" (xdg-cache-home)))
   (image-dired-temp-rotate-image-file
    (expand-file-name "emacs/image-dired/rotate_temp" (xdg-cache-home))))
 
 (use-package wdired
   ;; does not work as expected
   :hook (wdired-mode . disable-image-dired)
-
-  :config
-  (defun disable-image-dired ()
-    (image-dired-minor-mode -1)))
+  :config (defun disable-image-dired () (image-dired-minor-mode -1)))
 
 (use-package comint
   :functions
@@ -622,15 +585,17 @@
 (use-package shell
   :functions shell-history-filter
 
-  :bind (:map shell-mode-map
-              ("C-c M-d" . shell-change-directory)
-              ("C-c M-h" . pcomplete-help))
+  :bind
+  (:map shell-mode-map
+        ("C-c M-d" . shell-change-directory)
+        ("C-c M-h" . pcomplete-help))
 
   :custom
-  (shell-prompt-pattern (rx line-start
-                            (one-or-more digit) " "
-                            alpha
-                            (zero-or-more (in ?- ?_ alpha digit)) " "))
+  (shell-prompt-pattern
+   (rx line-start
+       (one-or-more digit) " "
+       alpha
+       (zero-or-more (in ?- ?_ alpha digit)) " "))
 
   :hook (shell-mode . shell-enable-comint-history)
 
@@ -711,17 +676,15 @@
 
   :bind
   (:map mode-specific-map ("o m" . mu4e))
+  (:map mu4e-headers-mode-map ("C-c C-e" . mu4e-update-mail-and-index-exys))
+  (:map mu4e-view-mode-map ("C-c C-e" . mu4e-update-mail-and-index-exys))
+
   (:map mu4e-main-mode-map
         ("q"       . quit-window)
         ("Q"       . mu4e-quit)
         ("C-c C-e" . mu4e-update-mail-and-index-exys))
-  (:map mu4e-headers-mode-map
-        ("C-c C-e" . mu4e-update-mail-and-index-exys))
-  (:map mu4e-view-mode-map
-        ("C-c C-e" . mu4e-update-mail-and-index-exys))
 
   :custom
-  (mu4e-maildir (or (getenv "MAILDIR") (expand-file-name "mail" (xdg-data-home))))
   (mu4e-sent-folder "/SENT")
   (mu4e-drafts-folder "/DRAFTS")
   (mu4e-trash-folder "/TRASH")
@@ -738,16 +701,20 @@
   (mu4e-modeline-max-width 100)
   (mu4e-get-mail-command "mailsync -a")
   (mu4e-update-interval 600)
-  (mu4e-maildir-shortcuts '(("/EXYS"    . ?e)
-                            ("/POLIMI"  . ?p)
-                            ("/SENT"    . ?s)
-                            ("/TRASH"   . ?t)
-                            ("/DRAFTS"  . ?d)
-                            ("/ARCHIVE" . ?a)))
-  (mu4e-headers-fields '((:human-date . 16)
-                         (:flags      . 6)
-                         (:from       . 22)
-                         (:subject)))
+  (mu4e-maildir
+   (or (getenv "MAILDIR") (expand-file-name "mail" (xdg-data-home))))
+  (mu4e-maildir-shortcuts
+   '(("/EXYS"    . ?e)
+     ("/POLIMI"  . ?p)
+     ("/SENT"    . ?s)
+     ("/TRASH"   . ?t)
+     ("/DRAFTS"  . ?d)
+     ("/ARCHIVE" . ?a)))
+  (mu4e-headers-fields
+   '((:human-date . 16)
+     (:flags      . 6)
+     (:from       . 22)
+     (:subject)))
   (mu4e-view-attachment-assoc
    (eval-when-compile
      (mapcan (lambda (args)
@@ -762,7 +729,9 @@
   :config
   (load-file (expand-file-name "emacs/secrets/mu4e.el" (xdg-data-home)))
 
-  (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t)
+  (add-to-list 'mu4e-view-actions
+               '("browser view" . mu4e-action-view-in-browser)
+               t)
 
   (define-advice mu4e-action-view-in-browser
       (:around (oldfunc &rest args) check-parens-fix)
@@ -785,28 +754,26 @@
 (use-package proced :bind (:map mode-specific-map ("o p" . proced)))
 
 (use-package executable
-  :hook (after-save . executable-make-buffer-file-executable-if-script-p)
-
-  :custom (executable-chmod 64))
+  :custom (executable-chmod 64)
+  :hook (after-save . executable-make-buffer-file-executable-if-script-p))
 
 (use-package minibuf-eldef
   :custom (minibuffer-eldef-shorten-default t)
-
   :hook (after-init . minibuffer-electric-default-mode))
 
 (use-package register
-  :bind (:map ctl-x-r-map
-              ("C-@"   . nil)
-              ("C-SPC" . nil)
-              ("g"     . nil)
-              ("x"     . nil)
-              ("v"     . view-register)
-              ("L"     . list-registers)
-              ("p"     . prepend-to-register)
-              ("a"     . append-to-register))
+  :bind
+  (:map ctl-x-r-map
+        ("C-@"   . nil)
+        ("C-SPC" . nil)
+        ("g"     . nil)
+        ("x"     . nil)
+        ("v"     . view-register)
+        ("L"     . list-registers)
+        ("p"     . prepend-to-register)
+        ("a"     . append-to-register))
 
   :custom (register-separator ?\n)
-
   :config (set-register register-separator "\n"))
 
 (use-package bookmark
@@ -818,12 +785,10 @@
 
 (use-package dired-hide-dotfiles
   :ensure t
-
   :bind (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
 
 (use-package diredfl
   :ensure t
-
   :hook (dired-mode . diredfl-mode)
 
   :custom-face
@@ -832,7 +797,6 @@
 
 (use-package dired-rsync
   :ensure t
-
   :bind (:map dired-mode-map ("r" . dired-rsync)))
 
 (use-package auto-package-update
@@ -847,27 +811,24 @@
    (expand-file-name "emacs/last-package-update-day" (xdg-cache-home))))
 
 (use-package smali-mode
-  :quelpa (smali-mode :repo "strazzere/Emacs-Smali"
-                      :fetcher github
-                      :version original)
+  :quelpa
+  (smali-mode :repo "strazzere/Emacs-Smali" :fetcher github :version original)
 
   :mode (rx ".smali" string-end))
 
 (use-package cyrillic-dvorak-im
-  :quelpa (cyrillic-dvorak-im :repo "xFA25E/cyrillic-dvorak-im"
-                              :fetcher github
-                              :version original)
+  :quelpa
+  (cyrillic-dvorak-im :repo "xFA25E/cyrillic-dvorak-im"
+                      :fetcher github
+                      :version original)
+
   :demand t)
 
 (use-package reverse-im
-  :commands reverse-im-activate
-
   :ensure t
-
-  :after cyrillic-dvorak-im
-
   :demand t
-
+  :after cyrillic-dvorak-im
+  :commands reverse-im-activate
   :config (reverse-im-activate "cyrillic-dvorak"))
 
 (use-package avy
@@ -875,6 +836,7 @@
 
   :bind
   ("M-z" . avy-goto-word-0)
+
   (:map goto-map
         ("M-g" . avy-goto-line)
         ("g"   . nil)
@@ -887,10 +849,8 @@
   (avy-keys (string-to-list "aoeuhtns")))
 
 (use-package ace-window
-  :commands aw-switch-to-window aw-flip-window
-
   :ensure t
-
+  :commands aw-switch-to-window aw-flip-window
   :bind ("M-o" . ace-window)
 
   :custom
@@ -932,33 +892,30 @@
 
 (use-package ace-link
   :ensure t
-
   :hook (after-init . ace-link-setup-default))
 
 (use-package ivy
-  :diminish ivy-mode
-
-  :commands ivy-add-actions
-
   :ensure t
+  :diminish ivy-mode
+  :commands ivy-add-actions
+  :hook (after-init . ivy-mode)
 
   :custom
   (ivy-count-format "%d/%d ")
   (ivy-height 15)
-  (ivy-use-selectable-prompt t)
-
-  :hook (after-init . ivy-mode))
+  (ivy-use-selectable-prompt t))
 
 (use-package swiper
   :ensure t
 
   :bind
   ("C-s" . swiper-isearch)
-  (:map search-map
-        ("." . swiper-isearch-thing-at-point)))
+  (:map search-map ("." . swiper-isearch-thing-at-point)))
 
 (use-package counsel
+  :ensure t
   :diminish counsel-mode
+  :hook (after-init . counsel-mode)
 
   :functions
   get-grep-lines
@@ -971,24 +928,17 @@
   counsel--buffers-with-mode
   counsel--switch-to-shell
 
-  :ensure t
-
-  :hook (after-init . counsel-mode)
-
   :bind
   ([remap tmm-menubar] . counsel-tmm)
   ([remap insert-char] . counsel-unicode-char)
-
-  (:map counsel-mode-map
-        ([remap apropos-command] . nil))
+  (:map counsel-mode-map ([remap apropos-command] . nil))
+  (:map search-map ("r" . counsel-rg))
 
   (:map help-map
         ("A"   . counsel-apropos)
         ("F"   . counsel-faces)
         ("z e" . counsel-colors-emacs)
         ("z w" . counsel-colors-web))
-
-  (:map search-map ("r" . counsel-rg))
 
   (:map ctl-x-map
         ("C-f" . counsel-find-file)
@@ -1042,7 +992,8 @@
             ". -name .git -prune -o ( -type f -o -type d ) -print")))
       (counsel-file-jump initial-input initial-directory)))
 
-  (defun counsel-file-directory-jump-fd (&optional initial-input initial-directory)
+  (defun counsel-file-directory-jump-fd
+      (&optional initial-input initial-directory)
     (interactive (list nil (when current-prefix-arg (counsel-read-directory-name
                                                      "From directory: "))))
     (let ((find-program "fd")
@@ -1113,14 +1064,12 @@
 
 (use-package ivy-xref
   :ensure t
-
   :custom (xref-show-xrefs-function #'ivy-xref-show-xrefs))
 
 (use-package mb-depth :hook (after-init . minibuffer-depth-indicate-mode))
 
 (use-package flycheck
   :ensure t
-
   :hook (after-init . global-flycheck-mode)
 
   :custom
@@ -1151,13 +1100,12 @@
 
 (use-package ipretty
   :ensure t
-
   :bind ([remap eval-print-last-sexp] . ipretty-last-sexp))
 
 (use-package company
-  :diminish company-mode
-
   :ensure t
+  :diminish company-mode
+  :hook (after-init . global-company-mode)
 
   :bind
   (:map company-active-map
@@ -1171,11 +1119,9 @@
         ("C-p" . company-select-previous-or-abort)
         ("C-h" . backward-delete-char-untabify))
 
-  :hook (after-init . global-company-mode)
-
   :custom
   (company-idle-delay 0)
-  (company-minimum-prefix-length 2)
+  (company-minimum-prefix-length 1)
   (company-require-match nil)
   (company-selection-wrap-around t)
   (company-transformers '(company-sort-by-occurrence))
@@ -1188,14 +1134,11 @@
 
 (use-package company-c-headers
   :ensure t
-
   :after company
-
   :init (add-to-list 'company-backends #'company-c-headers))
 
 (use-package company-shell
   :ensure t
-
   :after company
 
   :init
@@ -1209,9 +1152,7 @@
 
 (use-package org
   :ensure org-plus-contrib
-
   :commands add-book-to-library
-
   :bind (:map mode-specific-map ("G a a" . org-agenda))
 
   :custom
@@ -1265,7 +1206,6 @@
 
 (use-package org-bullets
   :ensure t
-
   :hook (org-mode . org-bullets-mode))
 
 (use-package ox-html
@@ -1277,21 +1217,17 @@
 
 (use-package htmlize
   :ensure t
-
   :commands htmlize-region-save-screenshot)
 
 (use-package css-mode :bind (:map css-mode-map ("C-c m" . css-lookup-symbol)))
 
 (use-package rainbow-mode
-  :diminish rainbow-mode
-
   :ensure t
-
+  :diminish rainbow-mode
   :hook (css-mode . rainbow-mode))
 
 (use-package clipmon
   :ensure t
-
   :hook (after-init . clipmon-mode))
 
 (use-package cider :ensure t)
@@ -1300,23 +1236,18 @@
 
 (use-package eldoc
   :diminish eldoc-mode
-
   :hook (after-init . global-eldoc-mode))
 
 (use-package sudo-edit :ensure t)
 
 (use-package vlf
   :ensure t
-
   :after counsel
-
   :init (ivy-add-actions 'counsel-find-file '(("l" vlf "view large file"))))
 
 (use-package which-key
-  :diminish which-key-mode
-
   :ensure t
-
+  :diminish which-key-mode
   :hook (after-init . which-key-mode))
 
 (use-package wttrin
@@ -1328,13 +1259,11 @@
 
 (use-package rust-mode
   :ensure t
-
   :custom (rust-format-on-save t))
 
 ;; Add support for cargo error --> file:line:col
 (use-package cargo
   :ensure t
-
   :hook (rust-mode . cargo-minor-mode)
 
   :custom
@@ -1343,19 +1272,6 @@
 
 (use-package lsp-mode
   :ensure t
-
-  :bind (:map lsp-mode-map
-              :prefix-map lsp-prefix-map
-              :prefix "C-c l"
-              ("N" . lsp-rename)
-              ("d" . lsp-describe-thing-at-point)
-              ("g" . lsp-find-definition)
-              ("i" . lsp-find-implementation)
-              ("m" . lsp-format-buffer)
-              ("r" . lsp-find-references)
-              ("t" . lsp-find-type-definition)
-              ("z" . lsp-workspace-restart))
-
   :hook (rust-mode . lsp)
 
   :custom
@@ -1363,13 +1279,24 @@
   (lsp-enable-folding nil)
   (lsp-enable-symbol-highlighting nil)
   (lsp-prefer-flymake nil)
-  (lsp-session-file (expand-file-name "emacs/lsp/session" (xdg-cache-home))))
+  (lsp-session-file (expand-file-name "emacs/lsp/session" (xdg-cache-home)))
+
+  :bind
+  (:map lsp-mode-map
+        :prefix-map lsp-prefix-map
+        :prefix "C-c l"
+        ("N" . lsp-rename)
+        ("d" . lsp-describe-thing-at-point)
+        ("g" . lsp-find-definition)
+        ("i" . lsp-find-implementation)
+        ("m" . lsp-format-buffer)
+        ("r" . lsp-find-references)
+        ("t" . lsp-find-type-definition)
+        ("z" . lsp-workspace-restart)))
 
 (use-package lsp-ui
   :ensure t
-
   :hook (lsp-mode . lsp-ui-mode)
-
   :bind (:map lsp-prefix-map ("e" . lsp-ui-flycheck-list))
 
   :custom
@@ -1381,9 +1308,7 @@
 
 (use-package company-lsp
   :ensure t
-
   :after company
-
   :init (add-to-list 'company-backends #'company-lsp))
 
 (use-package multiple-cursors
@@ -1393,8 +1318,7 @@
   ("C-S-c C-S-c" . mc/edit-lines)
   ("C->"         . mc/mark-next-like-this)
   ("C-<"         . mc/mark-previous-like-this)
-  (:map mode-specific-map
-        ("C-<" . mc/mark-all-like-this))
+  (:map mode-specific-map ("C-<" . mc/mark-all-like-this))
 
   :custom
   (mc/always-run-for-all t)
@@ -1402,22 +1326,19 @@
 
 (use-package jdecomp
   :ensure t
-
-  :custom (jdecomp-decompiler-paths '((cfr . "/usr/share/cfr/cfr.jar")))
-
-  :mode ((rx ".class" string-end) . jdecomp-mode))
+  :mode ((rx ".class" string-end) . jdecomp-mode)
+  :custom (jdecomp-decompiler-paths '((cfr . "/usr/share/cfr/cfr.jar"))))
 
 (use-package subword :diminish subword-mode)
 
 (use-package php-mode
   :ensure t
-
   :commands run-php
-
   :hook (php-mode . subword-mode)
 
-  :custom (php-manual-path (expand-file-name "php_docs/php-chunked-xhtml"
-                                             (xdg-cache-home)))
+  :custom
+  (php-manual-path
+   (expand-file-name "php_docs/php-chunked-xhtml" (xdg-cache-home)))
 
   :config
   (defun run-php ()
@@ -1426,35 +1347,31 @@
 
 (use-package company-php
   :ensure t
-
-  :after company php-mode
-
   :demand t
-
-  :bind (:map php-mode-map
-              ("M-]" . ac-php-find-symbol-at-point)
-              ("M-[" . ac-php-location-stack-back))
-
+  :after company php-mode
   :custom (ac-php-tags-path (expand-file-name "emacs/ac-php" (xdg-cache-home)))
+  :init (add-to-list 'company-backends #'company-ac-php-backend)
 
-  :init (add-to-list 'company-backends #'company-ac-php-backend))
+  :bind
+  (:map php-mode-map
+        ("M-]" . ac-php-find-symbol-at-point)
+        ("M-[" . ac-php-location-stack-back)))
 
 (use-package php-eldoc
   :ensure t
-
   :hook (php-mode . php-eldoc-enable))
 
 (use-package php-beautifier
+  :quelpa
+  (php-beautifier :repo "Sodaware/php-beautifier.el"
+                  :fetcher github
+                  :version original)
+
   :functions
   php-beautifier-phpcbf-valid-standard-p@standard-list
   php-beautifier--create-shell-command@custom-options
 
   :commands php-beautifier-phpcbf-standards
-
-  :quelpa (php-beautifier :repo "Sodaware/php-beautifier.el"
-                          :fetcher github
-                          :version original)
-
   :custom (php-beautifier-phpcbf-standard "PSR12,PSR1,PSR2,PEAR")
 
   :config
@@ -1472,14 +1389,13 @@
             " --filters 'ArrayNested() Pear() NewLines(before=T_FUNCTION)'"
             (string-remove-prefix php-beautifier-executable-path arg))))
 
-;; (use-package js2-mode)
-
 (use-package lua-mode :ensure t)
 
 (use-package yasnippet
-  :diminish yas-minor-mode
-
   :ensure t
+  :diminish yas-minor-mode
+  :custom (yas-wrap-around-region t)
+  :hook (after-init . yas-global-mode)
 
   :bind
   (:map yas-minor-mode-map
@@ -1487,6 +1403,7 @@
         ("TAB"   . nil)
         ("<tab>" . nil)
         ("C-z"   . yas-expand))
+
   (:map yas-keymap
         ([(shift tab)] . nil)
         ([backtab]     . nil)
@@ -1496,29 +1413,22 @@
         ("TAB"         . nil)
         ("<tab>"       . nil)
         ("C-S-z"       . yas-prev-field)
-        ("C-z"         . yas-next-field-or-maybe-expand))
-
-  :hook (after-init . yas-global-mode)
-
-  :custom (yas-wrap-around-region t))
+        ("C-z"         . yas-next-field-or-maybe-expand)))
 
 (use-package yasnippet-snippets :ensure t)
 
 (use-package lisp
   :commands check-parens backward-kill-sexp
-
-  :init (provide 'lisp)
-
   :hook (prog-mode . enable-check-parens)
+  :init (provide 'lisp)
 
   :config
   (defun enable-check-parens ()
     (add-hook 'after-save-hook #'check-parens nil t)))
 
 (use-package ggtags
-  :commands ggtags-eldoc-function
-
   :ensure t
+  :commands ggtags-eldoc-function
 
   :hook
   ((c++-mode c-mode php-mode python-mode) . ggtags-mode)
@@ -1536,36 +1446,36 @@
                       hippie-expand-try-functions-list))))
 
 (use-package youtube-dl
-  :quelpa (youtube-dl :repo "skeeto/youtube-dl-emacs"
-                      :fetcher github
-                      :version original)
+  :quelpa
+  (youtube-dl :repo "skeeto/youtube-dl-emacs" :fetcher github :version original)
 
   :custom
   (youtube-dl-arguments nil)
   (youtube-dl-program "ytdly"))
 
 (use-package elfeed
+  :ensure t
+  :custom-face (elfeed-search-filter-face ((t (:foreground "spring green"))))
+
   :commands
   elfeed-log-buffer
   elfeed-untag
   elfeed-search-selected
   elfeed-search-update-entry
 
-  :ensure t
-
   :bind
   (:map mode-specific-map
         ("o e" . elfeed))
+
   (:map elfeed-search-mode-map
         ("l" . elfeed-switch-to-log-buffer)
         ("d" . elfeed-search-youtube-dl)
         ("L" . youtube-dl-list))
+
   (:map elfeed-show-mode-map
         ("d" . elfeed-show-youtube-dl)
         ("i" . elfeed-show-get-video-duration)
         ("w" . elfeed-show-play-link-in-mpvi))
-
-  :custom-face (elfeed-search-filter-face ((t (:foreground "spring green"))))
 
   :custom
   (elfeed-search-filter "+unread")
@@ -1638,32 +1548,29 @@
 
 (use-package projectile
   :ensure t
-
   :bind-keymap ("M-m" . projectile-command-map)
 
   :custom
-  (projectile-cache-file (expand-file-name "emacs/projectile/cache"
-                                           (xdg-cache-home)))
   (projectile-completion-system 'ivy)
   (projectile-enable-caching t)
-  (projectile-known-projects-file (expand-file-name "emacs/projectile/projects"
-                                                    (xdg-cache-home)))
-  (projectile-mode-line-prefix " P"))
+  (projectile-mode-line-prefix " P")
+  (projectile-cache-file
+   (expand-file-name "emacs/projectile/cache" (xdg-cache-home)))
+  (projectile-known-projects-file
+   (expand-file-name "emacs/projectile/projects" (xdg-cache-home))))
 
 (use-package counsel-projectile
   :ensure t
-
   :hook (after-init . counsel-projectile-mode))
 
 (use-package dumb-jump
   :ensure t
+  :custom (dumb-jump-selector 'ivy)
 
   :bind
   ("C-M-g" . dumb-jump-go)
   ("C-M-m" . dumb-jump-back)
-  ("C-x 4 C-M-g" . dumb-jump-go-other-window)
-
-  :custom (dumb-jump-selector 'ivy))
+  ("C-x 4 C-M-g" . dumb-jump-go-other-window))
 
 (use-package free-keys :ensure t)
 
@@ -1671,21 +1578,16 @@
 
 (use-package multitran
   :ensure t
-
   :custom (multitran-languages '("Russian" . "English"))
-
   :bind (:map mode-specific-map ("o t" . multitran)))
 
 (use-package restclient
   :ensure t
-
   :mode ((rx ".http" string-end) . restclient-mode))
 
 (use-package company-restclient
   :ensure t
-
   :after company
-
   :init (add-to-list 'company-backends #'company-restclient))
 
 (use-package calendar :custom (calendar-week-start-day 1))
@@ -1708,9 +1610,7 @@
 
 (use-package grep
   :commands grep-read-regexp grep-read-files
-
-  :bind (:map search-map
-              ("g" . grep-interactive))
+  :bind (:map search-map ("g" . grep-interactive))
 
   :config
   (add-to-list 'grep-files-aliases '("php" . "*.php *.phtml"))
@@ -1749,20 +1649,19 @@
 
 (use-package wgrep
   :ensure t
-
   :commands wgrep-change-to-wgrep-mode)
 
 (use-package mingus
+  :ensure t
+
   :commands
   mingus-playlistp
   mingus-get-absolute-filename
   mingus-dired-file@dired-jump
 
-  :ensure t
-
   :bind
-  (:map mode-specific-map
-        ("o s" . mingus))
+  (:map mode-specific-map ("o s" . mingus))
+
   (:map dired-mode-map
         ("SPC"   . mingus-dired-add)
         ("S-SPC" . mingus-dired-add-and-play))
@@ -1782,8 +1681,9 @@
                       (mingus-get-absolute-filename)))))
 
 (use-package ede/base
-  :custom (ede-project-placeholder-cache-file
-           (expand-file-name "emacs/ede/projects.el" (xdg-cache-home))))
+  :custom
+  (ede-project-placeholder-cache-file
+   (expand-file-name "emacs/ede/projects.el" (xdg-cache-home))))
 
 (use-package gamegrid
   :custom (gamegrid-user-score-file-directory
@@ -1800,8 +1700,9 @@
 (use-package url-util :commands url-get-url-at-point)
 
 (use-package url
-  :custom (url-configuration-directory (expand-file-name "emacs/url/"
-                                                         (xdg-cache-home)))
+  :custom
+  (url-configuration-directory
+   (expand-file-name "emacs/url/" (xdg-cache-home)))
 
   :config
   (defun insert-image-from-url (&optional url)
@@ -1821,10 +1722,7 @@
 (use-package prog-mode :hook (after-init . global-prettify-symbols-mode))
 
 (use-package elf-mode
-  :quelpa (elf-mode :repo "abo-abo/elf-mode"
-                    :fetcher github
-                    :version original)
-
+  :quelpa (elf-mode :repo "abo-abo/elf-mode" :fetcher github :version original)
   :hook (after-init . elf-setup-default))
 
 (use-package savehist
@@ -1863,16 +1761,13 @@
 (use-package geiser :ensure t)
 
 (use-package sxhkd-mode
-  ;; finish this package
-  :quelpa (sxhkd-mode :repo "xFA25E/sxhkd-mode"
-                      :fetcher github
-                      :version original)
+  :quelpa
+  (sxhkd-mode :repo "xFA25E/sxhkd-mode" :fetcher github :version original)
 
   :mode (rx "sxhkdrc" string-end))
 
 (use-package conf-mode
   :functions xresources-reload
-
   :hook (conf-xdefaults-mode . setup-xresources-reload)
 
   :config
@@ -1889,10 +1784,11 @@
 (use-package remember
   :commands remember-notes-maybe
 
-  :bind (:map remember-notes-mode-map
-              ("C-c C-c" . nil)
-              ("C-c '"   . remember-notes-save-and-bury-buffer)
-              ("C-c \""  . remember-notes-save-and-kill-terminal))
+  :bind
+  (:map remember-notes-mode-map
+        ("C-c C-c" . nil)
+        ("C-c '"   . remember-notes-save-and-bury-buffer)
+        ("C-c \""  . remember-notes-save-and-kill-terminal))
 
   :custom
   (remember-data-file (expand-file-name "emacs/notes" (xdg-data-home)))
@@ -1900,7 +1796,6 @@
   (remember-notes-initial-major-mode 'outline-mode)
 
   :config
-
   (defun remember-notes-maybe ()
     (let ((buffer (remember-notes)))
       (if (zerop (buffer-size buffer))
@@ -1932,13 +1827,10 @@
 (use-package help :bind-keymap ("C-x h" . help-map))
 
 (use-package edit-indirect
-  :functions edit-indirect-guess-mode
-
   :ensure t
-
-  :bind (:map ctl-x-map ("E" . edit-indirect-region-or-at-point))
-
+  :functions edit-indirect-guess-mode
   :custom (edit-indirect-guess-mode-function #'edit-indirect-guess-mode)
+  :bind (:map ctl-x-map ("E" . edit-indirect-region-or-at-point))
 
   :config
   (defun edit-indirect-region-or-at-point ()
@@ -1962,9 +1854,7 @@
 
 (use-package emmet-mode
   :ensure t
-
   :diminish emmet-mode
-
   :hook ((nxml-mode html-mode mhtml-mode web-mode) . emmet-mode)
 
   :custom
@@ -1973,15 +1863,14 @@
 
 (use-package nov
   :ensure t
+  :mode ((rx ".epub" string-end) . nov-mode)
 
-  :custom (nov-save-place-file (expand-file-name "emacs/nov-places"
-                                                 (xdg-cache-home)))
-
-  :mode ((rx ".epub" string-end) . nov-mode))
+  :custom
+  (nov-save-place-file
+   (expand-file-name "emacs/nov-places" (xdg-cache-home))))
 
 (use-package byte-compile
   :functions byte-recompile-current-file
-
   :hook (emacs-lisp-mode . setup-byte-recompile-after-save)
 
   :config
@@ -1993,25 +1882,18 @@
     (add-hook 'after-save-hook #'byte-recompile-current-file nil t)))
 
 (use-package fb2-mode
-  :quelpa (fb2-mode :repo "5k1m1/fb2-mode"
-                    :fetcher github
-                    :version original)
-
+  :quelpa (fb2-mode :repo "5k1m1/fb2-mode" :fetcher github :version original)
   :custom (fb2-replace-hard-space t))
 
 (use-package sql :commands sql-send-region)
 
 (use-package sql-indent
   :ensure t
-
   :hook (sql-mode . sqlind-minor-mode))
 
 (use-package sqlup-mode
   :ensure t
-
-  :hook
-  sql-mode
-  sql-interactive-mode)
+  :hook sql-mode sql-interactive-mode)
 
 (use-package find-func
   :custom
@@ -2029,14 +1911,12 @@
 
 (use-package flycheck-checkbashisms
   :ensure t
-
   :after flycheck
+  :hook (after-init . flycheck-checkbashisms-setup)
 
   :custom
   (flycheck-checkbashisms-newline t)
-  (flycheck-checkbashisms-posix t)
-
-  :hook (after-init . flycheck-checkbashisms-setup))
+  (flycheck-checkbashisms-posix t))
 
 (use-package so-long
   :quelpa
@@ -2051,52 +1931,44 @@
 (use-package lisp-mode :config (put 'use-package #'lisp-indent-function 1))
 
 (use-package elfeed-youtube-parser
+  :quelpa
+  (elfeed-youtube-parser :repo "xFA25E/elfeed-youtube-parser"
+                         :fetcher github
+                         :version original)
+
   :after elfeed
-
-  :quelpa (elfeed-youtube-parser :repo "xFA25E/elfeed-youtube-parser"
-                                 :fetcher github
-                                 :version original)
-
   :hook (elfeed-new-entry-parse . elfeed-youtube-parser-parse-youtube))
 
 (use-package shell-pwd
-  :quelpa (shell-pwd :repo "xFA25E/shell-pwd"
-                     :fetcher github
-                     :version original)
-
+  :quelpa (shell-pwd :repo "xFA25E/shell-pwd" :fetcher github :version original)
   :commands shell-pwd-generate-buffer-name shell-pwd-shorten-directory)
 
 (use-package shell-synopsis
-  :quelpa (shell-synopsis :repo "xFA25E/shell-synopsis"
-                          :fetcher github
-                          :version original)
+  :quelpa
+  (shell-synopsis :repo "xFA25E/shell-synopsis"
+                  :fetcher github
+                  :version original)
 
   :hook (shell-mode . shell-synopsis-setup))
 
 (use-package imenu-anywhere
   :ensure t
-
   :bind (:map goto-map ("I" . ivy-imenu-anywhere)))
 
 (use-package whitespace
   :diminish whitespace-mode
+  :custom (whitespace-style '(face lines-tail))
 
   :hook
   (before-save . whitespace-cleanup)
-  (prog-mode   . whitespace-mode)
-
-  :custom (whitespace-style '(face lines-tail)))
+  (prog-mode   . whitespace-mode))
 
 (use-package make-mode :hook (makefile-mode . indent-tabs-mode))
 
 (use-package aggressive-indent
-  :diminish aggressive-indent-mode
-
   :ensure t
-
-  :bind (:map aggressive-indent-mode-map
-              ("C-c C-q" . nil))
-
+  :diminish aggressive-indent-mode
+  :bind (:map aggressive-indent-mode-map ("C-c C-q" . nil))
   :hook (prog-mode . aggressive-indent-enable)
 
   :config
@@ -2106,14 +1978,14 @@
       (aggressive-indent-mode))))
 
 (use-package pcomplete-declare
-  :quelpa (pcomplete-declare :repo "xFA25E/pcomplete-declare"
-            :fetcher github
-            :version original))
+  :quelpa
+  (pcomplete-declare :repo "xFA25E/pcomplete-declare"
+    :fetcher github
+    :version original))
 
 (use-package activity-log
-  :quelpa (activity-log :repo "xFA25E/activity-log"
-                        :fetcher github
-                        :version original))
+  :quelpa
+  (activity-log :repo "xFA25E/activity-log" :fetcher github :version original))
 
 (use-package pp
   :bind
@@ -2126,40 +1998,36 @@
 
 (use-package lsp-java
   :ensure t
+  :hook (java-mode . lsp)
 
   :custom
-  (lsp-java-server-install-dir (expand-file-name "emacs/eclipse.jdt.ls/server/"
-                                                 (xdg-cache-home)))
-  (lsp-java-workspace-dir (expand-file-name "emacs/workspace/" (xdg-cache-home)))
-
-  :hook (java-mode . lsp))
+  (lsp-java-workspace-dir
+   (expand-file-name "emacs/workspace/" (xdg-cache-home)))
+  (lsp-java-server-install-dir
+   (expand-file-name "emacs/eclipse.jdt.ls/server/" (xdg-cache-home))))
 
 (use-package sly
   :ensure t
-
   :custom (inferior-lisp-program "sbcl"))
 
 (use-package sly-quicklisp :ensure t)
 
 (use-package sly-asdf
   :ensure t
-
   :after sly
-
   :config (add-to-list 'sly-contribs 'sly-asdf 'append))
 
 (use-package sgml-mode
-  :bind (:map sgml-mode-map
-              ("C-M-n" . sgml-skip-tag-forward)
-              ("C-M-p" . sgml-skip-tag-backward))
+  :custom (sgml-basic-offset 4)
 
-  :custom (sgml-basic-offset 4))
+  :bind
+  (:map sgml-mode-map
+        ("C-M-n" . sgml-skip-tag-forward)
+        ("C-M-p" . sgml-skip-tag-backward)))
 
 (use-package deadgrep
   :ensure t
-
   :commands deadgrep--buffer-name@shortened
-
   :bind (:map search-map ("R" . deadgrep))
 
   :config
@@ -2171,20 +2039,14 @@
                      (shell-pwd-shorten-directory
                       (or (file-remote-p dir 'localname) dir)))))))
 
-(use-package darkroom :ensure t)
-
 (use-package highlight-parentheses
-  :diminish highlight-parentheses-mode
-
   :ensure t
-
-  :hook ((lisp-mode emacs-lisp-mode scheme-mode) . highlight-parentheses-mode)
-
-  :custom (hl-paren-colors '("red")))
+  :diminish highlight-parentheses-mode
+  :custom (hl-paren-colors '("red"))
+  :hook ((lisp-mode emacs-lisp-mode scheme-mode) . highlight-parentheses-mode))
 
 (use-package lisp-extra-font-lock
   :ensure t
-
   :hook ((emacs-lisp-mode lisp-mode) . lisp-extra-font-lock-mode))
 
 (use-package ivy-youtube
@@ -2192,19 +2054,19 @@
 
   :custom
   (ivy-youtube-play-at "mpvi")
-  (ivy-youtube-history-file (expand-file-name "emacs/ivy-youtube-history"
-                                              (xdg-cache-home)))
+  (ivy-youtube-history-file
+   (expand-file-name "emacs/ivy-youtube-history" (xdg-cache-home)))
 
   :config
   (load-file (expand-file-name "emacs/secrets/ivy-youtube.el" (xdg-data-home))))
 
 (use-package request
-  :custom (request-storage-directory (expand-file-name "emacs/request/"
-                                                       (xdg-cache-home))))
+  :custom
+  (request-storage-directory
+   (expand-file-name "emacs/request/" (xdg-cache-home))))
 
 (use-package shr-tag-pre-highlight
   :ensure t
-
   :after shr
 
   :config
@@ -2217,35 +2079,32 @@
   :ensure t
 
   :custom
-  (dap-breakpoints-file (expand-file-name "emacs/dap-breakpoints"
-                                          (xdg-cache-home)))
-  (dap-utils-extension-path (expand-file-name "emacs/extension"
-                                              (xdg-cache-home))))
+  (dap-breakpoints-file
+   (expand-file-name "emacs/dap-breakpoints" (xdg-cache-home)))
+  (dap-utils-extension-path
+   (expand-file-name "emacs/extension" (xdg-cache-home))))
 
 (use-package web-mode
   :ensure t
-
   :custom (web-mode-markup-indent-offset 4))
 
 (use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
 
 (use-package plantuml-mode
   :ensure t
-
-  :mode (rx ".puml" string-end)
-
   :commands plantuml-completion-at-point
-
-  :bind (:map plantuml-mode-map
-              ("C-c C-p" . plantuml-complete-symbol)
-              ("C-c C-o" . plantuml-set-output-type))
+  :mode (rx ".puml" string-end)
+  :hook (plantuml-mode . plantuml-enable-completion)
 
   :custom
   (plantuml-jar-path "/opt/plantuml/plantuml.jar")
   (plantuml-default-exec-mode 'jar)
   (plantuml-indent-level 4)
 
-  :hook (plantuml-mode . plantuml-enable-completion)
+  :bind
+  (:map plantuml-mode-map
+        ("C-c C-p" . plantuml-complete-symbol)
+        ("C-c C-o" . plantuml-set-output-type))
 
   :config
   (defun plantuml-enable-completion ()
@@ -2265,42 +2124,44 @@
               :company-docsig #'identity)))))
 
 (use-package hl-line
-  :hook ((dired-mode csv-mode grep-mode ivy-occur-mode mingus-browse)
-         . hl-line-mode)
+  :hook
+  ((dired-mode csv-mode grep-mode ivy-occur-mode mingus-browse) . hl-line-mode)
+
   :config (add-hook 'mingus-playlist-hooks #'hl-line-mode))
 
 (use-package try-complete-file-name-with-env
-  :quelpa (try-complete-file-name-with-env
-           :repo "xFA25E/try-complete-file-name-with-env"
-           :fetcher github
-           :version original)
-  :demand t
+  :quelpa
+  (try-complete-file-name-with-env
+   :repo "xFA25E/try-complete-file-name-with-env"
+   :fetcher github
+   :version original)
 
+  :demand t
   :after hippie-exp)
 
 (use-package bash-completion
   :ensure t
 
-  :init (dolist (func '(pcomplete/xargs
-                        pcomplete/find
-                        pcomplete/bzip2
-                        pcomplete/chgrp
-                        pcomplete/chown
-                        pcomplete/gdb
-                        pcomplete/kill
-                        pcomplete/gzip
-                        pcomplete/make
-                        pcomplete/mount
-                        pcomplete/rm
-                        pcomplete/rmdir
-                        pcomplete/time
-                        pcomplete/umount
-                        pcomplete/which))
-          (fmakunbound func)))
+  :init
+  (dolist (func '(pcomplete/xargs
+                  pcomplete/find
+                  pcomplete/bzip2
+                  pcomplete/chgrp
+                  pcomplete/chown
+                  pcomplete/gdb
+                  pcomplete/kill
+                  pcomplete/gzip
+                  pcomplete/make
+                  pcomplete/mount
+                  pcomplete/rm
+                  pcomplete/rmdir
+                  pcomplete/time
+                  pcomplete/umount
+                  pcomplete/which))
+    (fmakunbound func)))
 
 (use-package bash-completion
   :ensure t
-
   :after shell
 
   :init
@@ -2318,20 +2179,20 @@
 
 (use-package magit
   :ensure t
-
   :bind ("C-x g" . magit)
 
-  :custom (magit-credential-cache-daemon-socket
-           (expand-file-name "git/credential/socket" (xdg-cache-home))))
+  :custom
+  (magit-credential-cache-daemon-socket
+   (expand-file-name "git/credential/socket" (xdg-cache-home))))
 
 (use-package transient
   :custom
-  (transient-history-file (expand-file-name "emacs/transient/history.el"
-                                            (xdg-cache-home)))
-  (transient-levels-file (expand-file-name "emacs/transient/levels.el"
-                                           (xdg-cache-home)))
-  (transient-values-file (expand-file-name "emacs/transient/values.el"
-                                           (xdg-cache-home))))
+  (transient-history-file
+   (expand-file-name "emacs/transient/history.el" (xdg-cache-home)))
+  (transient-levels-file
+   (expand-file-name "emacs/transient/levels.el" (xdg-cache-home)))
+  (transient-values-file
+   (expand-file-name "emacs/transient/values.el" (xdg-cache-home))))
 
 (use-package apache-mode :ensure t)
 
@@ -2339,24 +2200,21 @@
 
 (use-package company-try-hard
   :ensure t
-
   :after company
-
   :bind (:map company-mode-map ("M-Z" . company-try-hard)))
 
 (use-package dired-git-info
   :ensure t
-
   :bind (:map dired-mode-map (")" . dired-git-info-mode)))
 
 (use-package diff-hl
   :ensure t
 
   :hook
-  ((magit-post-refresh . diff-hl-magit-post-refresh)
-   (prog-mode          . diff-hl-mode)
-   (org-mode           . diff-hl-mode)
-   (dired-mode         . diff-hl-dired-mode)))
+  (magit-post-refresh . diff-hl-magit-post-refresh)
+  (prog-mode          . diff-hl-mode)
+  (org-mode           . diff-hl-mode)
+  (dired-mode         . diff-hl-dired-mode))
 
 (use-package gitconfig-mode :ensure t)
 
