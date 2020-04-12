@@ -2019,54 +2019,13 @@
    (expand-file-name "programs/emacs-26.3/src" (xdg-download-dir))))
 
 (use-package find-dired
-  :bind (:map ctl-x-map ("F f" . find-dired-interactive))
-
-  :custom (find-ls-option '("-print0 | xargs -0 ls -lahsbdi" . "-lahsbdi"))
-
-  :config
-  (defun find-dired-interactive ()
-    (interactive)
-    (if (equal current-prefix-arg '(16))
-        (call-interactively #'find-dired)
-
-      (let (args)
-
-        (let ((search-type (completing-read "Search type: "
-                                            '("-iname" "-iregex" "no") nil t)))
-          (when (not (string-equal search-type "no"))
-            (push search-type args)
-            (push (shell-quote-argument
-                   (read-string (concat search-type " pattern: ")))
-                  args)))
-
-        (let ((grep-type (completing-read "Grep type: "
-                                          '("no" "grep -F" "grep -E"
-                                            "zgrep -F" "zgrep -E"))))
-          (when (not (string-equal grep-type "no"))
-            (push "-type f -exec" args)
-            (push grep-type args)
-            (push find-grep-options args)
-            (push "-e" args)
-            (push (shell-quote-argument
-                   (read-string (concat grep-type " pattern: ")))
-                  args)
-            (push (shell-quote-argument "{}") args)
-            (push (shell-quote-argument ";") args)))
-
-        (setq args (string-join (nreverse args) " "))
-
-        (find-dired (read-directory-name "Run find in directory: " nil "" t)
-                    (if (equal current-prefix-arg '(4))
-                        (read-from-minibuffer
-                         "Confirm: " args nil nil '(find-args-history . 1))
-                      args))))))
+  :bind (:map ctl-x-map ("F f" . find-dired))
+  :custom (find-ls-option '("-print0 | xargs -0 ls -labdi --si" . "-labdi --si")))
 
 (use-package fd-dired
   :ensure t
-
   :bind (:map ctl-x-map ("F d" . fd-dired))
-
-  :custom (fd-dired-ls-option '("| xargs -0 ls -lahsbdi" . "-lahsbdi")))
+  :custom (fd-dired-ls-option '("| xargs -0 ls -labdi --si" . "-labdi --si")))
 
 (use-package flycheck-checkbashisms
   :ensure t
