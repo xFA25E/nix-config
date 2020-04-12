@@ -25,10 +25,12 @@ END {
 
 function read_file(arr, name)
 {
-    i = 1
-    while (getline <name) {
-        arr[i] = $0
-        i = i + 1
+    if (system("test -f " name) == 0) {
+       i = 1
+       while (getline <name) {
+           arr[i] = $0
+           i = i + 1
+       }
     }
 }
 
