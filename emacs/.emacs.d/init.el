@@ -1996,16 +1996,6 @@
         ("C-c m" . pp-macroexpand-last-sexp)
         ("C-c M" . emacs-lisp-macroexpand)))
 
-(use-package lsp-java
-  :ensure t
-  :hook (java-mode . lsp)
-
-  :custom
-  (lsp-java-workspace-dir
-   (expand-file-name "emacs/workspace/" (xdg-cache-home)))
-  (lsp-java-server-install-dir
-   (expand-file-name "emacs/eclipse.jdt.ls/server/" (xdg-cache-home))))
-
 (use-package sly
   :ensure t
   :custom (inferior-lisp-program "sbcl"))
