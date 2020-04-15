@@ -484,7 +484,8 @@
 (use-package browse-url :custom (browse-url-browser-function #'eww-browse-url))
 
 (use-package cc-mode
-  :custom (c-default-style '((java-mode . "java") (other . "awk"))))
+  :custom (c-default-style '((java-mode . "java") (other . "awk")))
+  :hook (java-mode . subword-mode))
 
 (use-package compile
   :custom
