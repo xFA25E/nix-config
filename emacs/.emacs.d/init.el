@@ -479,10 +479,6 @@
 
 (use-package cus-edit :custom (custom-file null-device))
 
-(use-package shr :custom (shr-external-browser #'browse-url-firefox))
-
-(use-package browse-url :custom (browse-url-browser-function #'eww-browse-url))
-
 (use-package cc-mode
   :custom (c-default-style '((java-mode . "java") (other . "awk")))
   :hook (java-mode . subword-mode))
@@ -2214,5 +2210,15 @@
 (use-package gitignore-mode :ensure t)
 
 (use-package misc :bind ("C-M-z" . zap-up-to-char))
+
+(use-package shr :custom (shr-external-browser #'browse-url-firefox))
+
+(use-package bruh
+  :after browse-url
+  :quelpa (bruh :repo "a13/bruh" :fetcher github)
+
+  :custom
+  (browse-url-browser-function #'bruh-browse-url)
+  (bruh-default-browser #'eww-browse-url))
 
 ;; end
