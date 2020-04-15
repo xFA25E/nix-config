@@ -1886,7 +1886,9 @@
   :quelpa (fb2-mode :repo "5k1m1/fb2-mode" :fetcher github :version original)
   :custom (fb2-replace-hard-space t))
 
-(use-package sql :commands sql-send-region)
+(use-package sql
+  :commands sql-send-region
+  :custom (sql-mysql-options '("-A")))
 
 (use-package sql-indent
   :ensure t
