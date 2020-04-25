@@ -1,10 +1,10 @@
 #!/bin/sh
 
 name="${1:?provide name}"
-kind="${2:?provide kind}"
-elapsed="${3:?provide remain}"
-dur="${4:?provide duration}"
-state="${5:?provide state}"
+elapsed="${2:?provide remain}"
+duration="${3:?provide duration}"
+state="${4:?provide state}"
+max_duration="$(echo '(2 ^ 64) - 1' | bc)"
 
 format_secs() {
     if [ "${1:?provide seconds}" -lt 60 ]; then
@@ -25,14 +25,11 @@ save_log() {
 
 case "${state}" in
     running|paused)
-        case "${kind}" in
-            countdown)
-                time="$(format_secs "$((dur - elapsed))")/$(format_secs "${dur}")"
-                ;;
-            stopwatch)
-                time="$(format_secs "${elapsed}")"
-                ;;
-        esac
+        if [ "${duration}" = "${max_duration}" ]; then
+            time="$(format_secs "${elapsed}")"
+        else
+            time="$(format_secs "$((duration - elapsed))")/$(format_secs "${duration}")"
+        fi
         runel remote set timer "${name} ${time} ${state}"
     ;;
     halted)
@@ -52,11 +49,16 @@ case "${state}" in
                 selected="$(tail -n 1 "${log_file}" | cut -d" " -f4)"
                 what="$(awk '!$3 && $1 {print $1}' "${mark_file}" | rofi -dmenu -p "What" -select "${selected}")"
                 save_log "${what:?}" "${elapsed}" "${log_file}"
+
+                pause="$(printf "yes\nno" | rofi -dmenu -p "Pause?")"
+                if [ "${pause}" = yes ]; then
+                    rimer add --name pause --duration $((60 * 5))
+                fi
                 ;;
             eyes)
                 again="$(printf "yes\nno" | rofi -dmenu -p "Again ${name}?")"
                 if [ "${again}" = yes ]; then
-                    rimer remote "${kind}" "${name}" --duration "${dur}"
+                    rimer add --name "${name}" --duration "${duration}"
                 fi
         esac
         ;;
