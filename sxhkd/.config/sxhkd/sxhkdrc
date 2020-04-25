@@ -17,7 +17,7 @@ super + {1-9,0}
 
 # open gui programs
 super + o ; super + {b,w,W,M,m,c,C,v}
- {browser,rpass type,rpass,bm menu,main_menu,timer add,timer,tml pulsemixer}
+ {browser,rpass type,rpass,bm menu,main_menu,timer add,timer,tm pulsemixer}
 
 # emacs progs
 super + e; super + {e,r,R}

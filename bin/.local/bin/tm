@@ -1,6 +1,2 @@
 #!/bin/sh
-urxvtc "$@"
-if [ $? -eq 2 ]; then
-    setsid urxvtd -q -o -f
-    urxvtc "$@"
-fi
+exec uxterm -e sh -c "terminal_theme && ${1:-sh}"

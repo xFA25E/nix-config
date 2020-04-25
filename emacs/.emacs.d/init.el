@@ -204,9 +204,9 @@
 
              (t (error "not implemented for method %s" tmethod))))
 
-        (setq term-cmd (format "%s && bash" (format cd-str path))))
+        (setq term-cmd (format "%s && sh" (format cd-str path))))
 
-      (start-process "terminal" nil "tml" term-cmd))))
+      (start-process "terminal" nil "tm" term-cmd))))
 
 (use-package subr-x :commands when-let)
 
