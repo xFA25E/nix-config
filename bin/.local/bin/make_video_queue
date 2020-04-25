@@ -1,6 +1,6 @@
 #!/bin/sh
 
-find . -type f | video_duration | awk '
+find -L "${@:-.}" -type f | video_duration | awk '
 BEGIN {
     read_file(sequentials, "sequential.txt")
     read_file(exclude, "exclude.txt")
