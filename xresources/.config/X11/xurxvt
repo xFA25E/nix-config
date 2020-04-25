@@ -5,7 +5,7 @@ URxvt.borderLess:             false
 URxvt.cursorBlink:            false
 URxvt.cursorUnderline:        false
 URxvt.externalBorder:         0
-URxvt.font:                   xft:Monaco:size=8:antialias=true:hinting=true
+URxvt.font:                   xft:Source Code Pro:size=9:antialias=true:hinting=true
 URxvt.internalBorder:         0
 URxvt.iso14755:               false
 URxvt.letterSpace:            0
