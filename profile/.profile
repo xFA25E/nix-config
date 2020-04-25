@@ -41,9 +41,9 @@ export GTK2_RC_FILES="${XDG_CONFIG_HOME}/gtk-2.0/gtkrc"
 # Rust vars
 export RUSTUP_HOME="${XDG_DATA_HOME}/rustup"
 export CARGO_HOME="${XDG_DATA_HOME}/cargo"
-export PATH="${HOME}/.cargo/bin:${PATH}"
+export PATH="${XDG_DATA_HOME}/cargo/bin:${PATH}"
 RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src" && export RUST_SRC_PATH
-export CARGO_TARGET_DIR="${HOME}/.cache/cargo/target"
+export CARGO_TARGET_DIR="${XDG_CACHE_HOME}/cargo/target"
 
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
