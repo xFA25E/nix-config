@@ -20,9 +20,20 @@ BEGIN {
 '
 }
 
-while read -r line; do
-    duration="$(get_duration "${line}")"
+print_duration() {
+    duration="$(get_duration "${1:?provide video}")"
     if [ -n "${duration}" ]; then
-        echo "${duration} ${line}"
+        echo "${duration} ${1:?provide video}"
     fi
-done
+}
+
+
+if [ "${#}" -eq 0 ]; then
+    while read -r video; do
+        print_duration "${video}"
+    done
+else
+    for video in "${@}"; do
+        print_duration "${video}"
+    done
+fi
