@@ -1,0 +1,10 @@
+#!/bin/sh
+[ "$#" -lt 2 ] && exit 1
+
+dir="${1:?provide directory}"
+mkdir -p "${dir}" || exit 1
+
+shift
+for video in "$@"; do
+    ffmpeg -n -i "${video}" -vn -acodec copy "${dir%/}/${video%.*}.mkv"
+done
