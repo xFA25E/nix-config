@@ -970,6 +970,7 @@
   (:map ctl-x-map
         ("C-f" . counsel-find-file)
         ("F F" . counsel-file-directory-jump)
+        ("F D" . counsel-file-directory-jump-fd)
         ("F L" . counsel-find-library)
         ("F l" . counsel-locate)
         ("F Z" . counsel-fzf))
@@ -1010,31 +1011,32 @@
         ("v"   . counsel-set-variable))
 
   :config
-  (defun counsel-file-directory-jump (&optional initial-input initial-directory)
-    (interactive (list nil (when current-prefix-arg
-                             (counsel-read-directory-name "From directory: "))))
-    (let ((find-program find-program) counsel-file-jump-args)
-      (if (executable-find "fd")
-          (setq find-program "fd"
-                counsel-file-jump-args (split-string "-t d -t f -c never"))
-        (setq counsel-file-jump-args
-              (cl-flet ((entries (entries type f)
-                                 (list* (funcall f (car entries))
-                                        (mapcan
-                                         (lambda (e) (list "-o" type (funcall f e)))
-                                         (cdr entries)))))
-                (append '(".")
-                        (when-let ((entries grep-find-ignored-directories))
-                          (append '("-type" "d" "(" "-path")
-                                  (entries entries "-path" (lambda (d) (concat "*/" d)))
-                                  '(")" "-prune" "-o")))
-                        (when-let ((entries grep-find-ignored-files))
-                          (append '("!" "-type" "d" "(" "-name")
-                                  (entries entries "-name" #'identity)
-                                  '(")" "-prune" "-o")))
-                        '("(" "-type" "f" "-o" "-type" "d" ")" "-print")))))
+  (defun counsel-file-directory-jump ()
+    (interactive)
+    (let* ((find-program find-program)
+           (counsel-file-jump-args
+            (cl-flet ((entries (entries type f)
+                               (list* (funcall f (car entries))
+                                      (mapcan
+                                       (lambda (e) (list "-o" type (funcall f e)))
+                                       (cdr entries)))))
+              (append '(".")
+                      (when-let ((entries grep-find-ignored-directories))
+                        (append '("-type" "d" "(" "-path")
+                                (entries entries "-path" (lambda (d) (concat "*/" d)))
+                                '(")" "-prune" "-o")))
+                      (when-let ((entries grep-find-ignored-files))
+                        (append '("!" "-type" "d" "(" "-name")
+                                (entries entries "-name" #'identity)
+                                '(")" "-prune" "-o")))
+                      '("(" "-type" "f" "-o" "-type" "d" ")" "-print")))))
+      (call-interactively #'counsel-file-jump)))
 
-      (counsel-file-jump initial-input initial-directory)))
+  (defun counsel-file-directory-jump-fd ()
+    (interactive)
+    (let ((find-program "fd")
+          (counsel-file-jump-args (split-string "-t d -t f -c never")))
+      (call-interactively #'counsel-file-jump)))
 
   (defun kill-buffer-if-alive (buffer)
     (when (buffer-live-p (get-buffer buffer))
@@ -1651,6 +1653,7 @@
 (use-package grep
   :commands grep-read-regexp grep-read-files
   :custom (grep-program "pcregrep")
+  :bind (:map search-map ("G" . rgrep))
 
   :config
   (add-to-list 'grep-files-aliases '("php" . "*.php *.phtml"))
@@ -1938,6 +1941,7 @@
 (use-package find-dired
   :commands find-dired-grep-ignore
   :custom (find-ls-option '("| xargs -0 ls -labdi --si" . "-labdi --si"))
+  :bind (:map ctl-x-map ("F f" . find-dired-grep-ignore))
 
   :config
   (defun find-dired-grep-ignore (dir args)
@@ -1969,17 +1973,8 @@
 
 (use-package fd-dired
   :ensure t
-  :bind (:map ctl-x-map ("F f" . fd-or-find-dired))
-  :custom (fd-dired-ls-option '("| xargs -0 ls -labdi --si" . "-labdi --si"))
-
-  :config
-  (defun fd-or-find-dired ()
-    (interactive)
-    (if (executable-find "fd")
-        (fd-dired (read-directory-name "Run fd in directory: " nil "" t)
-                  (read-string "Run fd (with args): " fd-dired-input-fd-args
-                               '(fd-dired-args-history . 1)))
-      (call-interactively 'find-dired-grep-ignore))))
+  :bind (:map ctl-x-map ("F d" . fd-dired))
+  :custom (fd-dired-ls-option '("| xargs -0 ls -labdi --si" . "-labdi --si")))
 
 (use-package flycheck-checkbashisms
   :ensure t
@@ -2090,7 +2085,7 @@
 (use-package deadgrep
   :ensure t
   :commands deadgrep--buffer-name@shortened
-  :bind (:map search-map ("g" . dead-or-grep))
+  :bind (:map search-map ("R" . deadgrep))
 
   :config
   (define-advice deadgrep--buffer-name (:override (term dir) shortened)
@@ -2099,13 +2094,7 @@
              (substring term 0 (min 15 (length term)))
              (concat (file-remote-p dir)
                      (shell-pwd-shorten-directory
-                      (or (file-remote-p dir 'localname) dir))))))
-
-  (defun dead-or-grep ()
-    (interactive)
-    (if (executable-find "rg")
-        (call-interactively 'deadgrep)
-      (call-interactively 'rgrep))))
+                      (or (file-remote-p dir 'localname) dir)))))))
 
 (use-package highlight-parentheses
   :ensure t
