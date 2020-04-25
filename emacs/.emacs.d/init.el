@@ -747,6 +747,10 @@
                ("mpv"         . ("m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4"
                                  "avi" "mpg" "mov" "3gp" "vob"))))))
 
+  :init
+  (dolist (dir '("SENT" "DRAFTS" "TRASH" "ARCHIVE"))
+    (make-directory (expand-file-name dir mu4e-maildir) t))
+
   :config
   (load-file (expand-file-name "emacs/secrets/mu4e.el" (xdg-data-home)))
 
