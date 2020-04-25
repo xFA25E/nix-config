@@ -1,4 +1,10 @@
 #!/bin/sh
-dir="${2:?provide directory}"
+[ "$#" -lt 2 ] && exit 1
+
+dir="${1:?provide directory}"
 mkdir -p "${dir}" || exit 1
-ffmpeg -n -i "${1}" -vcodec libx264 -crf 23 "${dir%/}/${1%.*}.mkv"
+
+shift
+for video in "$@"; do
+    ffmpeg -n -i "${video}" -vcodec libx264 -crf 23 "${dir%/}/${video%.*}.mkv"
+done
