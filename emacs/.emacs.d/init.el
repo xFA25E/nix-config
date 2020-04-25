@@ -256,7 +256,7 @@
   (mode-line-emphasis ((t (:inherit mode-line-emphasis :foreground "dim grey"))))
   (mode-line-highlight ((t (:inherit mode-line-highlight :foreground "orange"))))
   (fixed-pitch-serif
-   ((t (:inherit fixed-pitch-serif :font "Times New Roman" :height 110)))))
+   ((t (:inherit fixed-pitch-serif :font "Liberation Serif" :height 110)))))
 
 (use-package paren
   :custom (show-paren-style 'parentheses)
