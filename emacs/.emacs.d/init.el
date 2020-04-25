@@ -204,7 +204,7 @@
 
              (t (error "not implemented for method %s" tmethod))))
 
-        (setq term-cmd (format "%s && zsh" (format cd-str path))))
+        (setq term-cmd (format "%s && bash" (format cd-str path))))
 
       (start-process "terminal" nil "tml" term-cmd))))
 
@@ -225,6 +225,7 @@
    (expand-file-name "emacs/tramp/connection-history" (xdg-cache-home)))
   (tramp-default-method "ssh")
   (tramp-histfile-override t)
+  (tramp-completion-reread-directory-timeout nil)
 
   :config
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
@@ -406,7 +407,28 @@
             ((string-equal method "sftp")
              (setq-local dired-actual-switches "-al --si"))
             ((string-equal method "adb")
-             (setq-local dired-actual-switches "-alDF --si"))))))
+             (setq-local dired-actual-switches "-alDF --si")))))
+
+  (define-advice dired-copy-filename-as-kill (:override (&optional arg) newline)
+    (interactive "P")
+    (let ((string
+           (or (dired-get-subdir)
+               (mapconcat #'identity
+                          (if arg
+                              (cond ((zerop (prefix-numeric-value arg))
+                                     (dired-get-marked-files))
+                                    ((consp arg)
+                                     (dired-get-marked-files t))
+                                    (t
+                                     (dired-get-marked-files
+                                      'no-dir (prefix-numeric-value arg))))
+                            (dired-get-marked-files 'no-dir))
+                          "\n"))))
+      (unless (string= string "")
+        (if (eq last-command 'kill-region)
+            (kill-append string nil)
+          (kill-new string))
+        (message "%s" string)))))
 
 (use-package dired-aux
   :demand t
@@ -443,13 +465,13 @@
 
   :custom
   (dired-guess-shell-alist-user
-   `((,(rx "." (or "doc" "docx" "xlsx" "xls" "odt" "ods" "ppt" "pptx") string-end)
+   `((,(rx "." (or "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx") string-end)
       "setsid -f libreoffice * >/dev/null 2>&1"
       "libreoffice --invisible --headless --convert-to pdf * &"
       "libreoffice --invisible --headless --convert-to epub * &"
       "libreoffice --invisible --headless --convert-to csv * &")
 
-     (,(rx "." (or "jpeg" "jpg" "gif" "png" "bmp" "tif" "thm") string-end)
+     (,(rx "." (or "jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef") string-end)
       "setsid -f sxiv * >/dev/null 2>&1")
 
      (,(rx ".fb2" string-end)
@@ -462,9 +484,12 @@
                    "mpg" "mov" "3gp" "vob" "wmv")
            string-end)
       "setsid -f mpv --force-window=yes * >/dev/null 2>&1"
-      "echo ? | video_duration | format_duration"
+      "video_duration * | format_duration"
       "mediainfo"
       "mpv -vo=drm")
+
+     (,(rx ".cue" string-end)
+      "setsid -f mpv --force-window=yes * >/dev/null 2>&1")
 
      (,(rx ".torrent" string-end)
       "transmission-show"
@@ -607,16 +632,16 @@
                (or
                 "aria2c" "awk" "bspc" "cat" "cd" "chmod" "chown" "ckbatt" "cp"
                 "cut" "dd" "df" "du" "echo" "em" "env" "exit" "export" "fd"
-                "feh" "file" "find" "gawk" "grep" "gzip" "htop" "ln" "locate"
-                "ls" "man" "mkdir" "mmpv" "mpv" "mpvi" "mv" "myoutube-dl"
-                "notify-send" "pkill" "printf" "python" "rg" "rimer" "rm"
-                "rmdir" "rofi" "runel" "setsidpp" "sleep" "strip" "sxiv" "timer"
-                "top" "touch" "tr" "uname" "uptime" "watch" "wc" "which" "xclip"
-                "xz" "youtube-dl" "ytdl" "ytdla" "ytdlam" "ytdlay" "ytdlp"
-                "ytdlpa" "ytdlpay" "ytdlpy" "ytdly" "ytdli" "emacs" "command"
-                "hash" "quit" "pwgen" "gparted" "host" "mpop" "mbsync" "dh"
-                "time" "base16_theme" "ping" "id" "sh" "dash" "bash" "strings"
-                "read")
+                "feh" "file" "find" "gawk" "gpg" "grep" "gzip" "htop" "ln"
+                "locate" "ls" "man" "mkdir" "mmpv" "mpv" "mpvi" "mv"
+                "myoutube-dl" "notify-send" "pkill" "printf" "python" "rg"
+                "rimer" "rm" "rmdir" "rofi" "runel" "setsidpp" "sleep" "strip"
+                "sxiv" "timer" "top" "touch" "tr" "uname" "uptime" "watch" "wc"
+                "which" "xclip" "xz" "youtube-dl" "ytdl" "ytdla" "ytdlam"
+                "ytdlay" "ytdlp" "ytdlpa" "ytdlpay" "ytdlpy" "ytdly" "ytdli"
+                "emacs" "command" "hash" "quit" "pwgen" "gparted" "host" "mpop"
+                "mbsync" "dh" "time" "base16_theme" "ping" "id" "sh" "dash"
+                "bash" "strings" "read" "stow")
                eow)
           (not (any print space))))
      (point-min) (point-max))
@@ -677,8 +702,7 @@
   (:map mu4e-view-mode-map ("C-c C-e" . mu4e-update-mail-and-index-exys))
 
   (:map mu4e-main-mode-map
-        ("q"       . quit-window)
-        ("Q"       . mu4e-quit)
+        ("q" . quit-window)
         ("C-c C-e" . mu4e-update-mail-and-index-exys))
 
   :custom
@@ -843,6 +867,7 @@
   :custom
   (avy-background t)
   (avy-goto-word-0-regexp (rx symbol-start (or (syntax word) (syntax symbol))))
+  (avy-style 'words)
   (avy-keys (string-to-list "aoeuhtns")))
 
 (use-package ace-window
@@ -873,7 +898,8 @@
 
   :custom-face
   (aw-leading-char-face
-   ((t (:inherit aw-leading-char-face :foreground "red" :weight bold))))
+   ((t (:inherit aw-leading-char-face :foreground "red" :weight bold
+                 :height 1.5))))
 
   :config
   (defun aw-find-file-in-window (window)
@@ -940,7 +966,6 @@
   (:map ctl-x-map
         ("C-f" . counsel-find-file)
         ("F F" . counsel-file-directory-jump)
-        ("F D" . counsel-file-directory-jump-fd)
         ("F L" . counsel-find-library)
         ("F l" . counsel-locate)
         ("F Z" . counsel-fzf))
@@ -982,19 +1007,29 @@
 
   :config
   (defun counsel-file-directory-jump (&optional initial-input initial-directory)
-    (interactive (list nil (when current-prefix-arg (counsel-read-directory-name
-                                                     "From directory: "))))
-    (let ((counsel-file-jump-args
-           (split-string
-            ". -name .git -prune -o ( -type f -o -type d ) -print")))
-      (counsel-file-jump initial-input initial-directory)))
+    (interactive (list nil (when current-prefix-arg
+                             (counsel-read-directory-name "From directory: "))))
+    (let ((find-program find-program) counsel-file-jump-args)
+      (if (executable-find "fd")
+          (setq find-program "fd"
+                counsel-file-jump-args (split-string "-t d -t f -c never"))
+        (setq counsel-file-jump-args
+              (cl-flet ((entries (entries type f)
+                                 (list* (funcall f (car entries))
+                                        (mapcan
+                                         (lambda (e) (list "-o" type (funcall f e)))
+                                         (cdr entries)))))
+                (append '(".")
+                        (when-let ((entries grep-find-ignored-directories))
+                          (append '("-type" "d" "(" "-path")
+                                  (entries entries "-path" (lambda (d) (concat "*/" d)))
+                                  '(")" "-prune" "-o")))
+                        (when-let ((entries grep-find-ignored-files))
+                          (append '("!" "-type" "d" "(" "-name")
+                                  (entries entries "-name" #'identity)
+                                  '(")" "-prune" "-o")))
+                        '("(" "-type" "f" "-o" "-type" "d" ")" "-print")))))
 
-  (defun counsel-file-directory-jump-fd
-      (&optional initial-input initial-directory)
-    (interactive (list nil (when current-prefix-arg (counsel-read-directory-name
-                                                     "From directory: "))))
-    (let ((find-program "fd")
-          (counsel-file-jump-args (split-string "-t d -t f -c never")))
       (counsel-file-jump initial-input initial-directory)))
 
   (defun kill-buffer-if-alive (buffer)
@@ -1025,7 +1060,7 @@
                (shell-quote-argument regex)))
       "\n")))
 
-  (defun counsel-dynamic-grep ()
+  (defun counsel-recursive-grep ()
     (interactive)
     (ivy-read "Grep: "
               #'get-grep-lines
@@ -1235,7 +1270,9 @@
   :diminish eldoc-mode
   :hook (after-init . global-eldoc-mode))
 
-(use-package sudo-edit :ensure t)
+(use-package sudo-edit
+  :ensure t
+  :hook (after-init . sudo-edit-indicator-mode))
 
 (use-package vlf
   :ensure t
@@ -1256,7 +1293,8 @@
 
 (use-package rust-mode
   :ensure t
-  :custom (rust-format-on-save t))
+  :custom (rust-format-on-save t)
+  :hook (rust-mode . subword-mode))
 
 ;; Add support for cargo error --> file:line:col
 (use-package cargo
@@ -1282,6 +1320,7 @@
   (:map lsp-mode-map
         :prefix-map lsp-prefix-map
         :prefix "C-c l"
+        ("." . lsp-execute-code-action)
         ("N" . lsp-rename)
         ("d" . lsp-describe-thing-at-point)
         ("g" . lsp-find-definition)
@@ -1607,40 +1646,12 @@
 
 (use-package grep
   :commands grep-read-regexp grep-read-files
-  :bind (:map search-map ("g" . grep-interactive))
+  :custom (grep-program "pcregrep")
 
   :config
   (add-to-list 'grep-files-aliases '("php" . "*.php *.phtml"))
   (add-to-list 'grep-find-ignored-files "*.min.js" t)
-  (add-to-list 'grep-find-ignored-files "*.min.css" t)
-
-  (defun grep-interactive ()
-    (interactive)
-    (grep-compute-defaults)
-    (let* ((grep-program (completing-read
-                          "Grep type: "
-                          '("grep -F" "grep -E" "zgrep -F" "zgrep -E")))
-           (grep-find-template nil)
-           (grep-find-command nil)
-           (grep-host-defaults-alist nil)
-           (grep-find-ignored-files nil)
-           (grep-find-ignored-directories nil)
-           (grep-use-null-filename-separator
-            (string-prefix-p "grep" grep-program)))
-
-      (grep-compute-defaults)
-
-      (cond ((and grep-find-command (equal current-prefix-arg '(16)))
-             (rgrep (read-from-minibuffer "Run: " grep-find-command
-                                          nil nil 'grep-find-history)))
-            ((not grep-find-template)
-             (error "grep.el: No `grep-find-template' available"))
-
-            (t (let* ((regexp (grep-read-regexp))
-                      (files (grep-read-files regexp))
-                      (dir (read-directory-name "Base directory: "
-                                                nil default-directory t)))
-                 (rgrep regexp files dir (equal current-prefix-arg '(4)))))))))
+  (add-to-list 'grep-find-ignored-files "*.min.css" t))
 
 (use-package nix-mode :ensure t)
 
@@ -1675,7 +1686,12 @@
     (interactive)
     (dired-jump nil (if (mingus-playlistp)
                         mingus-mpd-playlist-dir
-                      (mingus-get-absolute-filename)))))
+                      (mingus-get-absolute-filename))))
+
+  (define-advice mingus-git-out (:override (&optional x) kill)
+    (interactive)
+    (when (mingus-buffer-p)
+      (kill-current-buffer))))
 
 (use-package ede/base
   :custom
@@ -1694,7 +1710,25 @@
 
 (use-package time :custom (display-time-24hr-format t))
 
-(use-package url-util :commands url-get-url-at-point)
+(use-package url-util
+  :commands url-get-url-at-point encode-url-entities decode-url-entities
+
+  :config
+  (defun decode-url-entities (beg end)
+    (interactive "r")
+    (let ((text (url-unhex-string (buffer-substring beg end))))
+      (save-excursion
+        (delete-region beg end)
+        (goto-char beg)
+        (insert text))))
+
+  (defun encode-url-entities (beg end)
+    (interactive "r")
+    (let ((text (url-encode-url (buffer-substring beg end))))
+      (save-excursion
+        (delete-region beg end)
+        (goto-char beg)
+        (insert text)))))
 
 (use-package url
   :custom
@@ -1758,9 +1792,7 @@
 (use-package geiser :ensure t)
 
 (use-package sxhkd-mode
-  :quelpa
-  (sxhkd-mode :repo "xFA25E/sxhkd-mode" :fetcher github :version original)
-
+  :quelpa (sxhkd-mode :repo "xFA25E/sxhkd-mode" :fetcher github :version original)
   :mode (rx "sxhkdrc" string-end))
 
 (use-package conf-mode
@@ -1900,13 +1932,50 @@
    (expand-file-name "programs/emacs-26.3/src" (xdg-download-dir))))
 
 (use-package find-dired
-  :bind (:map ctl-x-map ("F f" . find-dired))
-  :custom (find-ls-option '("-print0 | xargs -0 ls -labdi --si" . "-labdi --si")))
+  :commands find-dired-grep-ignore
+  :custom (find-ls-option '("| xargs -0 ls -labdi --si" . "-labdi --si"))
+
+  :config
+  (defun find-dired-grep-ignore (dir args)
+    (interactive (list (read-directory-name "Run find in directory: " nil "" t)
+                       (read-string "Run find (with args): ")))
+
+    (find-dired
+     dir
+     (cl-flet ((entries (entries type f)
+                        (mapconcat
+                         (lambda (e) (shell-quote-argument (funcall f e)))
+                         (cdr entries)
+                         (concat " -o " type " "))))
+       (concat
+        (when-let ((entries grep-find-ignored-directories))
+          (concat "-type d \\( -path "
+                  (entries entries "-path" (lambda (d) (concat "*/" d)))
+                  " \\) -prune -o "))
+        (when-let ((entries grep-find-ignored-files))
+          (concat "\\! -type d \\( -name "
+                  (entries entries "-name" #'identity)
+                  " \\) -prune -o "))
+
+        "\\( "
+        (if (and args (not (string-empty-p args)))
+            args
+          "-name \\* -o -name .\\[\\!.\\]\\* -o -name ..\\?\\*")
+        " \\) -print0")))))
 
 (use-package fd-dired
   :ensure t
-  :bind (:map ctl-x-map ("F d" . fd-dired))
-  :custom (fd-dired-ls-option '("| xargs -0 ls -labdi --si" . "-labdi --si")))
+  :bind (:map ctl-x-map ("F f" . fd-or-find-dired))
+  :custom (fd-dired-ls-option '("| xargs -0 ls -labdi --si" . "-labdi --si"))
+
+  :config
+  (defun fd-or-find-dired ()
+    (interactive)
+    (if (executable-find "fd")
+        (fd-dired (read-directory-name "Run fd in directory: " nil "" t)
+                  (read-string "Run fd (with args): " fd-dired-input-fd-args
+                               '(fd-dired-args-history . 1)))
+      (call-interactively 'find-dired-grep-ignore))))
 
 (use-package flycheck-checkbashisms
   :ensure t
@@ -2017,7 +2086,7 @@
 (use-package deadgrep
   :ensure t
   :commands deadgrep--buffer-name@shortened
-  :bind (:map search-map ("R" . deadgrep))
+  :bind (:map search-map ("g" . dead-or-grep))
 
   :config
   (define-advice deadgrep--buffer-name (:override (term dir) shortened)
@@ -2026,7 +2095,13 @@
              (substring term 0 (min 15 (length term)))
              (concat (file-remote-p dir)
                      (shell-pwd-shorten-directory
-                      (or (file-remote-p dir 'localname) dir)))))))
+                      (or (file-remote-p dir 'localname) dir))))))
+
+  (defun dead-or-grep ()
+    (interactive)
+    (if (executable-find "rg")
+        (call-interactively 'deadgrep)
+      (call-interactively 'rgrep))))
 
 (use-package highlight-parentheses
   :ensure t
@@ -2166,6 +2241,8 @@
 
 (use-package custom :config (load-theme 'leuven t))
 
+(use-package vc-hooks :custom (vc-handled-backends nil))
+
 (use-package magit
   :ensure t
   :bind ("C-x g" . magit)
@@ -2220,5 +2297,31 @@
   :custom
   (browse-url-browser-function #'bruh-browse-url)
   (bruh-default-browser #'eww-browse-url))
+
+(use-package finder :bind (:map help-map ("M-c" . finder-commentary)))
+
+(use-package xml
+  :commands
+  xml-parse-string
+  xml-escape-string
+  decode-sgml-entities
+  encode-sgml-entities
+
+  :config
+  (defun decode-sgml-entities (beg end)
+    (interactive "r")
+    (save-excursion
+      (narrow-to-region beg end)
+      (goto-char beg)
+      (xml-parse-string)
+      (widen)))
+
+  (defun encode-sgml-entities (beg end)
+    (interactive "r")
+    (let ((text (xml-escape-string (buffer-substring beg end))))
+      (save-excursion
+        (delete-region beg end)
+        (goto-char beg)
+        (insert text)))))
 
 ;; end
