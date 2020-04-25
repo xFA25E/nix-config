@@ -1,3 +1,4 @@
+! -*- mode: conf-xdefaults; -*-
 ! "Enabled modi" Set from: Default
 ! rofi.modi:                           window,run,ssh
 ! "Window width" Set from: XResources
@@ -24,7 +25,7 @@ rofi.fixed-num-lines:                false
 ! "Whether to load and show icons" Set from: Default
 ! rofi.show-icons:                     false
 ! "Terminal to use" Set from: XResources
-rofi.terminal:                       tml
+rofi.terminal:                       tm
 ! "Ssh client to use" Set from: Default
 ! rofi.ssh-client:                     ssh
 ! "Ssh command to execute" Set from: Default

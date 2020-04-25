@@ -1809,8 +1809,9 @@
   :config
   (defun xresources-reload ()
     (interactive)
-    (let ((resources (expand-file-name "X11/xresources" (xdg-config-home))))
-      (shell-command (format "xrdb -load %s; runel remote reload" resources))))
+    (when (yes-or-no-p "Reload xresources?")
+      (let ((resources (expand-file-name "X11/xresources" (xdg-config-home))))
+        (shell-command (format "xrdb -load %s; runel remote reload" resources)))))
 
   (defun setup-xresources-reload ()
     (add-hook 'after-save-hook #'xresources-reload nil t)))

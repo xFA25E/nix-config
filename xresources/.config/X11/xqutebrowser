@@ -1,3 +1,4 @@
+! -*- mode: conf-xdefaults; -*-
 qutebrowser.BG:       base00
 qutebrowser.BGH:      base01
 qutebrowser.SEC:      base02
