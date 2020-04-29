@@ -1,6 +1,6 @@
 ! -*- mode: conf-xdefaults; -*-
 xterm*cursorBlink:      false
-xterm*font:             xft:Source Code Pro:size=10:antialias=true:hinting=true
+xterm*font:             xft:Hack:size=9:antialias=true:hinting=true
 xterm*internalBorder:   0
 xterm*saveLines:        10240
 xterm*scrollTtyOutput:  false

@@ -505,7 +505,7 @@ c.editor.command = ['emw', '{file}', '+{line}:{column}']
 # Encoding to use for the editor.
 c.editor.encoding = "utf-8"
 
-c.fonts.default_family = ['Source Code Pro', 'lucy tewi']
+c.fonts.default_family = ['Iosevka', 'lucy tewi']
 
 # Font variables
 default_font="10pt default_family"

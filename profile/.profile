@@ -50,7 +50,7 @@ export LANG=en_US.UTF-8
 
 # runel conf
 export RUNEL_WM_NAME="runel_panel"
-export LEMONBAR_ARGS="-n,${RUNEL_WM_NAME},-f,Source Code Pro-8"
+export LEMONBAR_ARGS="-n,${RUNEL_WM_NAME},-f,Iosevka-8"
 
 export LESSHISFILE="/dev/null"
 
