@@ -787,6 +787,9 @@
   :hook (after-init . minibuffer-electric-default-mode))
 
 (use-package register
+  :commands save-window-configuration-to-w
+  :custom (register-separator ?\n)
+
   :bind
   (:map ctl-x-r-map
         ("C-@"   . nil)
@@ -798,8 +801,10 @@
         ("p"     . prepend-to-register)
         ("a"     . append-to-register))
 
-  :custom (register-separator ?\n)
-  :config (set-register register-separator "\n"))
+  :config
+  (set-register register-separator "\n")
+  (defun save-window-configuration-to-w (&rest _ignore)
+    (window-configuration-to-register ?w)))
 
 (use-package bookmark
   :custom
@@ -2286,5 +2291,7 @@
         (delete-region beg end)
         (goto-char beg)
         (insert text)))))
+
+(use-package ediff :hook (ediff-before-setup . save-window-configuration-to-w))
 
 ;; end
