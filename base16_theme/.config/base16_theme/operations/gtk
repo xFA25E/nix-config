@@ -1,3 +1,0 @@
-#!/bin/sh
-theme_path="$1"
-cp "${theme_path}" "$HOME/.themes/Flatabulous-wal/gtk-2.0/colors-gtk2.rc"
