@@ -251,12 +251,15 @@
 
 (use-package faces
   :custom-face
-  (mode-line ((t (:inherit mode-line :foreground "dark cyan" :background "white"))))
-  (mode-line-buffer-id ((t (:inherit mode-line-buffer-id :foreground "black"))))
-  (mode-line-emphasis ((t (:inherit mode-line-emphasis :foreground "dim grey"))))
-  (mode-line-highlight ((t (:inherit mode-line-highlight :foreground "orange"))))
-  (fixed-pitch-serif
-   ((t (:inherit fixed-pitch-serif :font "Liberation Serif" :height 110)))))
+  (default ((t (:inherit default :family "Iosevka"))))
+  (mode-line ((t (:box (:line-width 1 :color nil :style nil)
+                       :foreground "black" :background "white"
+                       :font "DejaVu Sans"))))
+  (mode-line-inactive ((t (:box (:line-width 1 :color "grey75" :style nil)
+                                :weight light :inherit mode-line
+                                :foreground "grey20" :background "grey90"))))
+  (header-line ((t (:background "grey90" :foreground "grey20" :box nil))))
+  (fixed-pitch-serif ((t (:inherit fixed-pitch-serif :font "DejaVu Serif")))))
 
 (use-package paren
   :custom (show-paren-style 'parentheses)
@@ -452,11 +455,8 @@
 (use-package async
   :ensure t
   :after dired
-  :init (dired-async-mode)
-
-  :custom-face
-  (dired-async-message
-   ((t (:inherit dired-async-message :foreground "goldenrod")))))
+  :diminish dired-async-mode
+  :init (dired-async-mode))
 
 (use-package dired-x
   :demand t
@@ -585,8 +585,8 @@
   (defvar-local comint-history-filter-function (lambda (_file)))
 
   :custom-face
-  (comint-highlight-input ((t (:inherit highlight))))
-  (comint-highlight-prompt ((t (:inherit minibuffer-prompt))))
+  (comint-highlight-input ((t (:inherit diff-added))))
+  (comint-highlight-prompt ((t (:inherit diff-hl-change))))
 
   :config
   (defun save-buffers-comint-input-ring ()
@@ -902,8 +902,8 @@
 
   :custom-face
   (aw-leading-char-face
-   ((t (:inherit aw-leading-char-face :foreground "red" :weight bold
-                 :height 1.5))))
+   ((t (:inherit aw-leading-char-face
+                 :foreground "red" :weight bold :height 1.5))))
 
   :config
   (defun aw-find-file-in-window (window)
@@ -1497,7 +1497,6 @@
 
 (use-package elfeed
   :ensure t
-  :custom-face (elfeed-search-filter-face ((t (:foreground "spring green"))))
 
   :commands
   elfeed-log-buffer
@@ -2232,8 +2231,6 @@
 (use-package frame :config (define-advice suspend-frame (:override ()) nil))
 
 (use-package org-mime :ensure t)
-
-(use-package custom :config (load-theme 'leuven t))
 
 (use-package vc-hooks :custom (vc-handled-backends nil))
 
