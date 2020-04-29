@@ -1,4 +1,0 @@
-#!/bin/sh
-theme_path="$1"
-cp "${theme_path}" "$HOME/.local/bin/terminal_theme"
-terminal_theme
