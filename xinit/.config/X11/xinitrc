@@ -1,3 +1,4 @@
+# -*- mode: sh; -*-
 resources="${XDG_CONFIG_HOME}/X11/xresources"
 [ -f "${resources}" ] && xrdb -merge "${resources}"
 
@@ -36,7 +37,7 @@ switch_keyboard default
 pkill twmnd; setsid -f twmnd
 pkill sxhkd; setsid -f sxhkd -m 1 -t 1
 pkill ckbatt; setsid -f ckbatt notify_sound
-pidof rimer >/dev/null || setsid -f rimer daemon "${TIMER_UPDATER:-panel_timer}"
+pidof rimer >/dev/null || setsid -f rimer start "${TIMER_UPDATER:-panel_timer}"
 setsid -f panel
 pidof emacs >/dev/null || setsid -f em
 
