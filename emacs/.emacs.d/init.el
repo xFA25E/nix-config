@@ -2037,7 +2037,7 @@
 
   :hook
   (before-save . whitespace-cleanup)
-  (prog-mode   . whitespace-mode))
+  (prog-mode . whitespace-mode))
 
 (use-package make-mode :hook (makefile-mode . indent-tabs-mode))
 
@@ -2045,13 +2045,9 @@
   :ensure t
   :diminish aggressive-indent-mode
   :bind (:map aggressive-indent-mode-map ("C-c C-q" . nil))
-  :hook (prog-mode . aggressive-indent-enable)
-
-  :config
-  (defun aggressive-indent-enable ()
-    (unless (derived-mode-p 'web-mode 'php-mode 'lisp-interaction-mode
-                            'makefile-mode 'python-mode)
-      (aggressive-indent-mode))))
+  :hook ((emacs-lisp-mode lisp-mode scheme-mode clojure-mode sgml-mode
+                          rust-mode sh-mode)
+         . aggressive-indent-mode))
 
 (use-package pcomplete-declare
   :quelpa
