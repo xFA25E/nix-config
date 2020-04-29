@@ -1292,7 +1292,9 @@
 
 (use-package sudo-edit
   :ensure t
-  :hook (after-init . sudo-edit-indicator-mode))
+  :hook
+  (after-init . sudo-edit-indicator-mode)
+  (shell-mode . sudo-edit-set-header))
 
 (use-package vlf
   :ensure t
