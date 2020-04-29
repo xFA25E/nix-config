@@ -1589,11 +1589,16 @@
   :custom
   (projectile-completion-system 'ivy)
   (projectile-enable-caching t)
-  (projectile-mode-line-prefix " P")
+  (projectile-mode-line-prefix "")
   (projectile-cache-file
    (expand-file-name "emacs/projectile/cache" (xdg-cache-home)))
   (projectile-known-projects-file
-   (expand-file-name "emacs/projectile/projects" (xdg-cache-home))))
+   (expand-file-name "emacs/projectile/projects" (xdg-cache-home)))
+
+  :config
+  (define-advice projectile-default-mode-line
+      (:filter-return (project-name) remove-empty)
+    (if (string-equal project-name "[-]") "" (concat " " project-name))))
 
 (use-package counsel-projectile
   :ensure t
