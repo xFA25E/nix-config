@@ -630,19 +630,18 @@
      (rx (or
           (and bol
                (opt "sudo " (opt "-A "))
-               (or
-                "aria2c" "awk" "bspc" "cat" "cd" "chmod" "chown" "ckbatt" "cp"
-                "cut" "dd" "df" "du" "echo" "em" "env" "exit" "export" "fd"
-                "feh" "file" "find" "gawk" "gpg" "grep" "gzip" "htop" "ln"
-                "locate" "ls" "man" "mkdir" "mmpv" "mpv" "mpvi" "mv"
-                "myoutube-dl" "notify-send" "pkill" "printf" "python" "rg"
-                "rimer" "rm" "rmdir" "rofi" "runel" "setsidpp" "sleep" "strip"
-                "sxiv" "timer" "top" "touch" "tr" "uname" "uptime" "watch" "wc"
-                "which" "xclip" "xz" "youtube-dl" "ytdl" "ytdla" "ytdlam"
-                "ytdlay" "ytdlp" "ytdlpa" "ytdlpay" "ytdlpy" "ytdly" "ytdli"
-                "emacs" "command" "hash" "quit" "pwgen" "gparted" "host" "mpop"
-                "mbsync" "dh" "time" "base16_theme" "ping" "id" "sh" "dash"
-                "bash" "strings" "read" "stow")
+               (or "aria2c" "awk" "base16_theme" "bash" "bspc" "cat" "cd"
+                   "chmod" "chown" "ckbatt" "command" "cp" "cut" "dash" "dd"
+                   "df" "dh" "du" "echo" "em" "emacs" "env" "exit" "export" "fd"
+                   "feh" "file" "find" "gawk" "gparted" "gpg" "grep" "gzip"
+                   "hash" "host" "htop" "id" "ln" "locate" "ls" "man" "mbsync"
+                   "mkdir" "mmpv" "mpop" "mpv" "mpvi" "mv" "myoutube-dl"
+                   "notify-send" "ping" "pkill" "printf" "pwgen" "python" "quit"
+                   "read" "rg" "rimer" "rm" "rmdir" "rofi" "runel" "setsid" "sh"
+                   "sleep" "stow" "strings" "strip" "sxiv" "time" "timer" "top"
+                   "touch" "tr" "uname" "uptime" "watch" "wc" "which" "xclip"
+                   "xz" "youtube-dl" "ytdl" "ytdla" "ytdlam" "ytdlay" "ytdli"
+                   "ytdlp" "ytdlpa" "ytdlpay" "ytdlpy" "ytdly")
                eow)
           (not (any print space))))
      (point-min) (point-max))
