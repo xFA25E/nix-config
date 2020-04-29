@@ -1651,7 +1651,7 @@
 
 (use-package grep
   :commands grep-read-regexp grep-read-files
-  :custom (grep-program "pcregrep")
+  :custom (grep-program "grep -P")
   :bind (:map search-map ("G" . rgrep))
 
   :config
@@ -1663,7 +1663,8 @@
 
 (use-package wgrep
   :ensure t
-  :commands wgrep-change-to-wgrep-mode)
+  :commands wgrep-change-to-wgrep-mode
+  :custom (wgrep-auto-save-buffer t))
 
 (use-package mingus
   :ensure t
@@ -1940,8 +1941,12 @@
 
 (use-package find-dired
   :commands find-dired-grep-ignore
-  :custom (find-ls-option '("| xargs -0 ls -labdi --si" . "-labdi --si"))
   :bind (:map ctl-x-map ("F f" . find-dired-grep-ignore))
+
+  :custom
+  (find-ls-option
+   '("| xargs -0 ls -labdi --si --group-directories-first"
+     . "-labdi --si --group-directories-first"))
 
   :config
   (defun find-dired-grep-ignore (dir args)
@@ -1974,7 +1979,11 @@
 (use-package fd-dired
   :ensure t
   :bind (:map ctl-x-map ("F d" . fd-dired))
-  :custom (fd-dired-ls-option '("| xargs -0 ls -labdi --si" . "-labdi --si")))
+
+  :custom
+  (fd-dired-ls-option
+   '("| xargs -0 ls -labdi --si --group-directories-first"
+     . "-labdi --si --group-directories-first")))
 
 (use-package flycheck-checkbashisms
   :ensure t
@@ -2082,19 +2091,18 @@
         ("C-M-n" . sgml-skip-tag-forward)
         ("C-M-p" . sgml-skip-tag-backward)))
 
-(use-package deadgrep
+(use-package rg
   :ensure t
-  :commands deadgrep--buffer-name@shortened
-  :bind (:map search-map ("R" . deadgrep))
 
-  :config
-  (define-advice deadgrep--buffer-name (:override (term dir) shortened)
-    (generate-new-buffer-name
-     (format "*dgrp %s %s*"
-             (substring term 0 (min 15 (length term)))
-             (concat (file-remote-p dir)
-                     (shell-pwd-shorten-directory
-                      (or (file-remote-p dir 'localname) dir)))))))
+  :bind
+  (:map search-map ("R" . rg-menu))
+  (:map rg-mode-map
+        ("C-n" . next-line)
+        ("C-p" . previous-line)
+        ("{" . rg-prev-file)
+        ("M-{" . rg-prev-file)
+        ("}" . rg-next-file)
+        ("M-}" . rg-next-file)))
 
 (use-package highlight-parentheses
   :ensure t
