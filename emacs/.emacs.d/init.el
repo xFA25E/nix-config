@@ -1461,31 +1461,12 @@
 
 (use-package lisp
   :commands check-parens backward-kill-sexp
-  :hook (prog-mode . enable-check-parens)
+  :hook (prog-mode . check-parens-enable)
   :init (provide 'lisp)
 
   :config
-  (defun enable-check-parens ()
+  (defun check-parens-enable ()
     (add-hook 'after-save-hook #'check-parens nil t)))
-
-(use-package ggtags
-  :ensure t
-  :commands ggtags-eldoc-function
-
-  :hook
-  ((c++-mode c-mode php-mode python-mode) . ggtags-mode)
-  (ggtags-mode . setup-ggtags-completion-backends)
-
-  :config
-  (setenv "GTAGSCONF" "/usr/share/gtags/gtags.conf")
-  (setenv "GTAGSLABEL" "new-ctags")
-
-  (defun setup-ggtags-completion-backends ()
-    (setq-local eldoc-documentation-function #'ggtags-eldoc-function)
-    (setq-local imenu-create-index-function #'ggtags-build-imenu-index)
-    (setq-local hippie-expand-try-functions-list
-                (cons #'ggtags-try-complete-tag
-                      hippie-expand-try-functions-list))))
 
 (use-package youtube-dl
   :quelpa
@@ -2131,15 +2112,6 @@
                '(pre . shr-tag-pre-highlight)))
 
 (use-package nxml-mode :custom (nxml-child-indent 4))
-
-(use-package dap-mode
-  :ensure t
-
-  :custom
-  (dap-breakpoints-file
-   (expand-file-name "emacs/dap-breakpoints" (xdg-cache-home)))
-  (dap-utils-extension-path
-   (expand-file-name "emacs/extension" (xdg-cache-home))))
 
 (use-package web-mode
   :ensure t
