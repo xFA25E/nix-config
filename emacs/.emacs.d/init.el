@@ -272,8 +272,8 @@
 (use-package elec-pair :hook (after-init . electric-pair-mode))
 
 (use-package electric
-  :hook (after-init . disable-electric-indent)
-  :config (defun disable-electric-indent () (electric-indent-mode -1)))
+  :hook (after-init . electric-indent-mode-disable)
+  :config (defun electric-indent-mode-disable () (electric-indent-mode -1)))
 
 (use-package files
   :commands read-directory-name rename-this-file custom-backup-enable-predicate
