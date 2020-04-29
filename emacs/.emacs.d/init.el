@@ -964,7 +964,7 @@
   ([remap tmm-menubar] . counsel-tmm)
   ([remap insert-char] . counsel-unicode-char)
   (:map counsel-mode-map ([remap apropos-command] . nil))
-  (:map search-map ("r" . counsel-rg))
+  (:map search-map ("r" . counsel-rg-default-directory))
 
   (:map help-map
         ("A"   . counsel-apropos)
@@ -1016,6 +1016,15 @@
         ("v"   . counsel-set-variable))
 
   :config
+  (defun counsel-rg-default-directory ()
+    (interactive)
+    (counsel-rg
+     nil
+     (if current-prefix-arg
+         (counsel-read-directory-name "rg in directory: ")
+       default-directory)
+     (when current-prefix-arg (read-from-minibuffer "rg args: "))))
+
   (defun counsel-file-directory-jump ()
     (interactive)
     (let* ((find-program find-program)
