@@ -437,7 +437,7 @@
 
   :custom
   (dired-guess-shell-alist-user
-   `((,(rx "." (or "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx") string-end)
+   `((,(rx "." (or "csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx") string-end)
       "setsid -f libreoffice * >/dev/null 2>&1"
       "libreoffice --invisible --headless --convert-to pdf * &"
       "libreoffice --invisible --headless --convert-to epub * &"
@@ -932,21 +932,21 @@
   ([remap tmm-menubar] . counsel-tmm)
   ([remap insert-char] . counsel-unicode-char)
   (:map counsel-mode-map ([remap apropos-command] . nil))
-  (:map search-map ("r" . counsel-rg-default-directory))
+  (:map ctl-x-map ("C-f" . counsel-find-file))
+
+  (:map search-map
+        ("r" . counsel-rg)
+        ("f f" . counsel-file-directory-jump)
+        ("f d" . counsel-file-directory-jump-fd)
+        ("f b" . counsel-find-library)
+        ("f l" . counsel-locate)
+        ("f z" . counsel-fzf))
 
   (:map help-map
         ("A"   . counsel-apropos)
         ("F"   . counsel-faces)
         ("z e" . counsel-colors-emacs)
         ("z w" . counsel-colors-web))
-
-  (:map ctl-x-map
-        ("C-f" . counsel-find-file)
-        ("F F" . counsel-file-directory-jump)
-        ("F D" . counsel-file-directory-jump-fd)
-        ("F L" . counsel-find-library)
-        ("F l" . counsel-locate)
-        ("F Z" . counsel-fzf))
 
   (:map goto-map
         ("i" . counsel-semantic-or-imenu)
@@ -1006,13 +1006,23 @@
                                 (entries entries "-name" #'identity)
                                 '(")" "-prune" "-o")))
                       '("(" "-type" "f" "-o" "-type" "d" ")" "-print")))))
-      (call-interactively #'counsel-file-jump)))
+      (counsel-file-jump
+       nil
+       (or (when current-prefix-arg
+             (counsel-read-directory-name "From directory: "))
+           (counsel--git-root)
+           default-directory))))
 
   (defun counsel-file-directory-jump-fd ()
     (interactive)
     (let ((find-program "fd")
           (counsel-file-jump-args (split-string "-t d -t f -c never")))
-      (call-interactively #'counsel-file-jump)))
+      (counsel-file-jump
+       nil
+       (or (when current-prefix-arg
+             (counsel-read-directory-name "From directory: "))
+           (counsel--git-root)
+           default-directory))))
 
   (defun kill-buffer-if-alive (buffer)
     (when (buffer-live-p (get-buffer buffer))
@@ -1179,8 +1189,8 @@
   (org-refile-allow-creating-parent-nodes 'confirm)
   (org-agenda-skip-additional-timestamps-same-entry nil)
   (org-refile-targets '((org-agenda-files :level . 1)))
-  (org-id-locations-file (expand-file-name "emacs/org/id-locations"
-                                           (xdg-cache-home)))
+  (org-id-locations-file
+   (expand-file-name "emacs/org/id-locations" (xdg-cache-home)))
 
   :config
   (org-babel-do-load-languages 'org-babel-load-languages
@@ -1278,8 +1288,7 @@
 
 (use-package rust-mode
   :ensure t
-  :custom (rust-format-on-save t)
-  :hook (rust-mode . subword-mode))
+  :custom (rust-format-on-save t))
 
 ;; Add support for cargo error --> file:line:col
 (use-package cargo
@@ -1292,7 +1301,7 @@
 
 (use-package lsp-mode
   :ensure t
-  :hook (rust-mode . lsp)
+  :hook (rust-mode-hook . lsp)
 
   :custom
   (lsp-auto-guess-root t)
@@ -1350,12 +1359,13 @@
   :mode ((rx ".class" string-end) . jdecomp-mode)
   :custom (jdecomp-decompiler-paths '((cfr . "/usr/share/cfr/cfr.jar"))))
 
-(use-package subword :diminish subword-mode)
+(use-package subword
+  :diminish subword-mode
+  :hook ((php-mode-hook rust-mode-hook java-mode-hook) . subword-mode))
 
 (use-package php-mode
   :ensure t
   :commands run-php
-  :hook (php-mode . subword-mode)
 
   :custom
   (php-manual-path
@@ -1479,14 +1489,14 @@
        compilation-filter-start (point)))))
 
 (use-package grep
-  :commands grep-read-regexp grep-read-files
-  :custom (grep-program "grep -P")
+  :commands grep-read-regexp grep-read-files grep-expand-template@cut
   :bind (:map search-map ("G" . rgrep))
 
   :config
   (add-to-list 'grep-files-aliases '("php" . "*.php *.phtml"))
-  (add-to-list 'grep-find-ignored-files "*.min.js" t)
-  (add-to-list 'grep-find-ignored-files "*.min.css" t))
+
+  (define-advice grep-expand-template (:filter-return (cmd) cut)
+    (concat cmd " | cut -c-500")))
 
 (use-package nix-mode :ensure t)
 
