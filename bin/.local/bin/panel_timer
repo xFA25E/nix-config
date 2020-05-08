@@ -60,6 +60,13 @@ case "${state}" in
                 if [ "${again}" = yes ]; then
                     rimer add --name "${name}" --duration "${duration}"
                 fi
+                ;;
+            pause)
+                study="$(printf "yes\nno" | rofi -dmenu -p "Study?")"
+                if [ "${study}" = yes ]; then
+                    rimer add --name study --duration $((60 * 25))
+                fi
+                ;;
         esac
         ;;
 esac
