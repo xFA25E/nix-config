@@ -118,6 +118,9 @@ export XINITRC="${XDG_CONFIG_HOME}/X11/xinitrc"
 # xauthority
 export XAUTHORITY="${XDG_RUNTIME_DIR}/Xauthority"
 
+# stardict
+export STARDICT_DATA_DIR="${XDG_DATA_HOME}"
+
 # Following automatically calls "startx" when you login:
 [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ] && \
     exec startx "${XINITRC}" -- -keeptty -nolisten tcp >"${XDG_RUNTIME_DIR:?}/xorg.log" 2>&1
