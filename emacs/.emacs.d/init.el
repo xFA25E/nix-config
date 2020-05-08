@@ -22,7 +22,8 @@
 
   (setq use-package-expand-minimally t
         use-package-enable-imenu-support t
-        use-package-always-defer t)
+        use-package-always-defer t
+        use-package-hook-name-suffix nil)
 
   (use-package diminish :ensure t)
 
@@ -151,7 +152,6 @@
   error
   start-process
   add-to-list
-  add-hook
   eval-after-load
   match-string
   replace-regexp-in-string
@@ -263,16 +263,16 @@
 
 (use-package paren
   :custom (show-paren-style 'parentheses)
-  :hook (after-init . show-paren-mode))
+  :hook (after-init-hook . show-paren-mode))
 
 (use-package highlight-numbers
   :ensure t
-  :hook (prog-mode . highlight-numbers-mode))
+  :hook (prog-mode-hook . highlight-numbers-mode))
 
-(use-package elec-pair :hook (after-init . electric-pair-mode))
+(use-package elec-pair :hook (after-init-hook . electric-pair-mode))
 
 (use-package electric
-  :hook (after-init . electric-indent-mode-disable)
+  :hook (after-init-hook . electric-indent-mode-disable)
   :config (defun electric-indent-mode-disable () (electric-indent-mode -1)))
 
 (use-package files
@@ -323,18 +323,20 @@
 
 (use-package simple
   :hook
-  (before-save . delete-trailing-whitespace)
-  (after-init  . size-indication-mode)
-  (after-init  . column-number-mode)
+  (before-save-hook . delete-trailing-whitespace)
+  (after-init-hook  . size-indication-mode)
+  (after-init-hook  . column-number-mode)
 
   :bind
   ("C-h"   . backward-delete-char-untabify)
   ("C-x w" . mark-whole-buffer)
-  ("C-w"   . backward-kill-word-or-region)
   ("M-K"   . kill-whole-line)
-  ("M-\\"  . delete-indentation)
-  ("C-*"   . delete-region-first-last-chars)
   ("M-SPC" . just-one-space-fast)
+  ("M-\\"  . delete-indentation)
+  ("M-c"   . capitalize-dwim)
+  ("M-l"   . downcase-dwim)
+  ("M-m"   . toggle-truncate-lines)
+  ("M-u"   . upcase-dwim)
   ([remap move-beginning-of-line] . back-to-indentation-or-beginning)
   ([remap newline] . newline-and-indent)
 
@@ -384,7 +386,7 @@
   :custom (he-file-name-chars "-a-zA-Z0-9_/.,~^#$+={}"))
 
 (use-package tex-mode
-  :hook (tex-mode . setup-tex-mode-ispell-parser)
+  :hook (tex-mode-hook . setup-tex-mode-ispell-parser)
 
   :config
   (defun setup-tex-mode-ispell-parser ()
@@ -394,8 +396,8 @@
   :commands dired-get-marked-files
 
   :hook
-  (dired-mode          . dired-hide-details-mode)
-  (dired-before-readin . dired-setup-switches)
+  (dired-mode-hook          . dired-hide-details-mode)
+  (dired-before-readin-hook . dired-setup-switches)
 
   :custom
   (dired-dwim-target t)
@@ -506,8 +508,7 @@
 (use-package cus-edit :custom (custom-file null-device))
 
 (use-package cc-mode
-  :custom (c-default-style '((java-mode . "java") (other . "awk")))
-  :hook (java-mode . subword-mode))
+  :custom (c-default-style '((java-mode . "java") (other . "awk"))))
 
 (use-package compile
   :custom
@@ -541,7 +542,7 @@
   (Man-underline  ((t (:inherit font-lock-negation-char-face :underline t)))))
 
 (use-package image-dired
-  :hook (dired-mode . image-dired-minor-mode)
+  :hook (dired-mode-hook . image-dired-minor-mode)
 
   :custom
   (image-dired-external-viewer "sxiv")
@@ -558,32 +559,29 @@
 
 (use-package wdired
   ;; does not work as expected
-  :hook (wdired-mode . disable-image-dired)
+  :hook (wdired-mode-hook . disable-image-dired)
   :config (defun disable-image-dired () (image-dired-minor-mode -1)))
 
 (use-package comint
   :functions
   write-region-with-filter
-  comint-strip-ctrl-m
-  comint-truncate-buffer
   comint-read-input-ring
   comint-show-maximum-output
   comint-delete-input
   comint-send-input
 
   :hook
-  (kill-buffer . comint-write-input-ring)
-  (kill-emacs  . save-buffers-comint-input-ring)
+  (kill-buffer-hook . comint-write-input-ring)
+  (kill-emacs-hook  . save-buffers-comint-input-ring)
+  (comint-output-filter-functions . comint-strip-ctrl-m)
+  (comint-output-filter-functions . comint-truncate-buffer)
 
   :custom
   (comint-input-ignoredups t)
   (comint-input-ring-size 10000)
   (comint-buffer-maximum-size 10240)
 
-  :init
-  (add-hook 'comint-output-filter-functions #'comint-strip-ctrl-m)
-  (add-hook 'comint-output-filter-functions #'comint-truncate-buffer)
-  (defvar-local comint-history-filter-function (lambda (_file)))
+  :init (defvar-local comint-history-filter-function (lambda (_file)))
 
   :custom-face
   (comint-highlight-input ((t (:inherit diff-added))))
@@ -620,7 +618,7 @@
        alpha
        (zero-or-more (in ?- ?_ alpha digit)) " "))
 
-  :hook (shell-mode . shell-enable-comint-history)
+  :hook (shell-mode-hook . shell-enable-comint-history)
 
   :config
   (defun shell-history-filter (file)
@@ -663,7 +661,7 @@
       (insert (concat "cd " (shell-quote-argument dir))))
     (comint-send-input)))
 
-(use-package autoinsert :hook (find-file . auto-insert))
+(use-package autoinsert :hook (find-file-hook . auto-insert))
 
 (use-package message
   :commands message-send-mail-with-sendmail
@@ -694,7 +692,7 @@
   mu4e@with-index
   mu4e-update-mail-and-index@kill-update
 
-  :hook (after-init . start-mu4e)
+  :hook (after-init-hook . start-mu4e)
 
   :bind
   (:map mode-specific-map ("o m" . mu4e))
@@ -780,11 +778,11 @@
 
 (use-package executable
   :custom (executable-chmod 64)
-  :hook (after-save . executable-make-buffer-file-executable-if-script-p))
+  :hook (after-save-hook . executable-make-buffer-file-executable-if-script-p))
 
 (use-package minibuf-eldef
   :custom (minibuffer-eldef-shorten-default t)
-  :hook (after-init . minibuffer-electric-default-mode))
+  :hook (after-init-hook . minibuffer-electric-default-mode))
 
 (use-package register
   :commands save-window-configuration-to-w
@@ -819,7 +817,7 @@
 
 (use-package diredfl
   :ensure t
-  :hook (dired-mode . diredfl-mode)
+  :hook (dired-mode-hook . diredfl-mode)
 
   :custom-face
   (diredfl-compressed-file-suffix
@@ -924,17 +922,16 @@
 
 (use-package ace-link
   :ensure t
-  :hook (after-init . ace-link-setup-default))
+  :hook (after-init-hook . ace-link-setup-default))
 
 (use-package ivy
   :ensure t
   :diminish ivy-mode
   :commands ivy-add-actions
-  :hook (after-init . ivy-mode)
+  :hook (after-init-hook . ivy-mode)
 
   :custom
   (ivy-count-format "%d/%d ")
-  (ivy-height 15)
   (ivy-use-selectable-prompt t))
 
 (use-package swiper
@@ -947,7 +944,8 @@
 (use-package counsel
   :ensure t
   :diminish counsel-mode
-  :hook (after-init . counsel-mode)
+  :hook (after-init-hook . counsel-mode)
+  :custom (counsel-fzf-dir-function #'counsel-fzf-dir-function-git-root)
 
   :functions
   get-grep-lines
@@ -1118,13 +1116,14 @@
   :ensure t
   :custom (xref-show-xrefs-function #'ivy-xref-show-xrefs))
 
-(use-package mb-depth :hook (after-init . minibuffer-depth-indicate-mode))
+(use-package mb-depth :hook (after-init-hook . minibuffer-depth-indicate-mode))
 
 (use-package flycheck
   :ensure t
-  :hook (after-init . global-flycheck-mode)
+  :hook (after-init-hook . global-flycheck-mode)
 
   :custom
+  (flycheck-mode-line-prefix "FC")
   (flycheck-global-modes '(not lisp-interaction-mode))
   (flycheck-shellcheck-supported-shells '(dash bash ksh88 sh))
   (flycheck-check-syntax-automatically '(save mode-enabled))
@@ -1157,7 +1156,7 @@
 (use-package company
   :ensure t
   :diminish company-mode
-  :hook (after-init . global-company-mode)
+  :hook (after-init-hook . global-company-mode)
 
   :bind
   (:map company-active-map
@@ -1194,8 +1193,8 @@
   :after company
 
   :init
-  (dolist (backend (list #'company-shell #'company-shell-env))
-    (add-to-list 'company-backends backend)))
+  (add-to-list 'company-backends #'company-shell)
+  (add-to-list 'company-backends #'company-shell-env))
 
 (use-package select
   :custom
@@ -1258,7 +1257,7 @@
 
 (use-package org-bullets
   :ensure t
-  :hook (org-mode . org-bullets-mode))
+  :hook (org-mode-hook . org-bullets-mode))
 
 (use-package ox-html
   :after org
@@ -1276,11 +1275,11 @@
 (use-package rainbow-mode
   :ensure t
   :diminish rainbow-mode
-  :hook (css-mode . rainbow-mode))
+  :hook (css-mode-hook . rainbow-mode))
 
 (use-package clipmon
   :ensure t
-  :hook (after-init . clipmon-mode))
+  :hook (after-init-hook . clipmon-mode))
 
 (use-package cider :ensure t)
 
@@ -1288,13 +1287,13 @@
 
 (use-package eldoc
   :diminish eldoc-mode
-  :hook (after-init . global-eldoc-mode))
+  :hook (after-init-hook . global-eldoc-mode))
 
 (use-package sudo-edit
   :ensure t
   :hook
-  (after-init . sudo-edit-indicator-mode)
-  (shell-mode . sudo-edit-set-header))
+  (after-init-hook . sudo-edit-indicator-mode)
+  (shell-mode-hook . sudo-edit-set-header))
 
 (use-package vlf
   :ensure t
@@ -1304,7 +1303,7 @@
 (use-package which-key
   :ensure t
   :diminish which-key-mode
-  :hook (after-init . which-key-mode))
+  :hook (after-init-hook . which-key-mode))
 
 (use-package wttrin
   :ensure t
@@ -1321,7 +1320,7 @@
 ;; Add support for cargo error --> file:line:col
 (use-package cargo
   :ensure t
-  :hook (rust-mode . cargo-minor-mode)
+  :hook (rust-mode-hook . cargo-minor-mode)
 
   :custom
   (cargo-process--enable-rust-backtrace t)
@@ -1354,7 +1353,7 @@
 
 (use-package lsp-ui
   :ensure t
-  :hook (lsp-mode . lsp-ui-mode)
+  :hook (lsp-mode-hook . lsp-ui-mode)
   :bind (:map lsp-prefix-map ("e" . lsp-ui-flycheck-list))
 
   :custom
@@ -1417,8 +1416,6 @@
 
 (use-package php-eldoc
   :ensure t
-  :hook (php-mode . php-eldoc-enable))
-
 (use-package php-beautifier
   :quelpa
   (php-beautifier :repo "Sodaware/php-beautifier.el"
@@ -1446,6 +1443,7 @@
     (concat php-beautifier-executable-path
             " --filters 'ArrayNested() Pear() NewLines(before=T_FUNCTION)'"
             (string-remove-prefix php-beautifier-executable-path arg))))
+  :hook (php-mode-hook . php-eldoc-enable))
 
 (use-package lua-mode :ensure t)
 
@@ -1453,7 +1451,7 @@
   :ensure t
   :diminish yas-minor-mode
   :custom (yas-wrap-around-region t)
-  :hook (after-init . yas-global-mode)
+  :hook (after-init-hook . yas-global-mode)
 
   :bind
   (:map yas-minor-mode-map
@@ -1477,7 +1475,7 @@
 
 (use-package lisp
   :commands check-parens backward-kill-sexp
-  :hook (prog-mode . check-parens-enable)
+  :hook (after-save-hook . check-parens-in-prog-mode)
   :init (provide 'lisp)
 
   :config
@@ -1641,8 +1639,8 @@
   :commands ansi-color-apply-on-region ansi-color-apply ansi-color-filter-apply
 
   :hook
-  (compilation-filter . colorize-compilation)
-  (shell-mode         . ansi-color-for-comint-mode-on)
+  (shell-mode-hook         . ansi-color-for-comint-mode-on)
+  (compilation-filter-hook . colorize-compilation)
 
   :config
   (defun colorize-compilation ()
@@ -1759,18 +1757,18 @@
             (insert-image (create-image data nil t)))
         (kill-buffer buffer)))))
 
-(use-package prog-mode :hook (after-init . global-prettify-symbols-mode))
+(use-package prog-mode :hook (after-init-hook . global-prettify-symbols-mode))
 
 (use-package elf-mode
   :quelpa (elf-mode :repo "abo-abo/elf-mode" :fetcher github :version original)
-  :hook (after-init . elf-setup-default))
+  :hook (after-init-hook . elf-setup-default))
 
 (use-package savehist
   :custom (savehist-file (expand-file-name "emacs/savehist" (xdg-data-home)))
 
   :hook
-  (after-init    . savehist-mode)
-  (savehist-save . savehist-filter-file-name-history)
+  (after-init-hook    . savehist-mode)
+  (savehist-save-hook . savehist-filter-file-name-history)
 
   :config
   (defun savehist-filter-file-name-history ()
@@ -1805,18 +1803,15 @@
   :mode (rx "sxhkdrc" string-end))
 
 (use-package conf-mode
-  :functions xresources-reload
-  :hook (conf-xdefaults-mode . setup-xresources-reload)
+  :hook (after-save-hook . xresources-reload)
 
   :config
   (defun xresources-reload ()
     (interactive)
-    (when (yes-or-no-p "Reload xresources?")
-      (let ((resources (expand-file-name "X11/xresources" (xdg-config-home))))
-        (shell-command (format "xrdb -load %s; runel remote reload" resources)))))
-
-  (defun setup-xresources-reload ()
-    (add-hook 'after-save-hook #'xresources-reload nil t)))
+    (when (and (derived-mode-p 'conf-xdefaults-mode)
+               (yes-or-no-p "Reload xresources?"))
+      (let ((xres (expand-file-name "X11/xresources" (xdg-config-home))))
+        (shell-command (format "xrdb -load %s; runel remote reload" xres))))))
 
 (use-package mwheel :config (mouse-wheel-mode -1))
 
@@ -1894,7 +1889,12 @@
 (use-package emmet-mode
   :ensure t
   :diminish emmet-mode
-  :hook ((nxml-mode html-mode mhtml-mode web-mode) . emmet-mode)
+
+  :hook
+  (nxml-mode-hook  . emmet-mode)
+  (html-mode-hook  . emmet-mode)
+  (mhtml-mode-hook . emmet-mode)
+  (web-mode-hook   . emmet-mode)
 
   :custom
   (emmet-preview-default t)
@@ -1909,16 +1909,13 @@
    (expand-file-name "emacs/nov-places" (xdg-cache-home))))
 
 (use-package byte-compile
-  :functions byte-recompile-current-file
-  :hook (emacs-lisp-mode . setup-byte-recompile-after-save)
+  :hook (after-save-hook . byte-recompile-current-file)
 
   :config
   (defun byte-recompile-current-file ()
     (interactive)
-    (byte-recompile-file (buffer-file-name)))
-
-  (defun setup-byte-recompile-after-save ()
-    (add-hook 'after-save-hook #'byte-recompile-current-file nil t)))
+    (when (derived-mode-p 'emacs-lisp-mode)
+      (byte-recompile-file (buffer-file-name)))))
 
 (use-package fb2-mode
   :quelpa (fb2-mode :repo "5k1m1/fb2-mode" :fetcher github :version original)
@@ -1930,11 +1927,11 @@
 
 (use-package sql-indent
   :ensure t
-  :hook (sql-mode . sqlind-minor-mode))
+  :hook (sql-mode-hook . sqlind-minor-mode))
 
 (use-package sqlup-mode
   :ensure t
-  :hook sql-mode sql-interactive-mode)
+  :hook sql-mode-hook sql-interactive-mode-hook)
 
 (use-package find-func
   :custom
@@ -1990,7 +1987,7 @@
 (use-package flycheck-checkbashisms
   :ensure t
   :after flycheck
-  :hook (after-init . flycheck-checkbashisms-setup)
+  :hook (after-init-hook . flycheck-checkbashisms-setup)
 
   :custom
   (flycheck-checkbashisms-newline t)
@@ -2004,7 +2001,7 @@
    :fetcher url
    :version original)
 
-  :hook (after-init . global-so-long-mode))
+  :hook (after-init-hook . global-so-long-mode))
 
 (use-package lisp-mode :config (put 'use-package #'lisp-indent-function 1))
 
@@ -2027,7 +2024,7 @@
                   :fetcher github
                   :version original)
 
-  :hook (shell-mode . shell-synopsis-setup))
+  :hook (shell-mode-hook . shell-synopsis-setup))
 
 (use-package imenu-anywhere
   :ensure t
@@ -2038,18 +2035,24 @@
   :custom (whitespace-style '(face lines-tail))
 
   :hook
-  (before-save . whitespace-cleanup)
-  (prog-mode . whitespace-mode))
+  (before-save-hook . whitespace-cleanup)
+  (prog-mode-hook . whitespace-mode))
 
-(use-package make-mode :hook (makefile-mode . indent-tabs-mode))
+(use-package make-mode :hook (makefile-mode-hook . indent-tabs-mode))
 
 (use-package aggressive-indent
   :ensure t
   :diminish aggressive-indent-mode
   :bind (:map aggressive-indent-mode-map ("C-c C-q" . nil))
-  :hook ((emacs-lisp-mode lisp-mode scheme-mode clojure-mode sgml-mode
-                          rust-mode sh-mode)
-         . aggressive-indent-mode))
+
+  :hook
+  (emacs-lisp-mode-hook . aggressive-indent-mode)
+  (lisp-mode-hook       . aggressive-indent-mode)
+  (scheme-mode-hook     . aggressive-indent-mode)
+  (clojure-mode-hook    . aggressive-indent-mode)
+  (sgml-mode-hook       . aggressive-indent-mode)
+  (rust-mode-hook       . aggressive-indent-mode)
+  (sh-mode-hook         . aggressive-indent-mode))
 
 (use-package pcomplete-declare
   :quelpa
@@ -2106,22 +2109,15 @@
   :ensure t
   :diminish highlight-parentheses-mode
   :custom (hl-paren-colors '("red"))
-  :hook ((lisp-mode emacs-lisp-mode scheme-mode) . highlight-parentheses-mode))
+
+  :hook
+  (lisp-mode-hook       . highlight-parentheses-mode)
+  (emacs-lisp-mode-hook . highlight-parentheses-mode)
+  (scheme-mode-hook     . highlight-parentheses-mode))
 
 (use-package lisp-extra-font-lock
   :ensure t
-  :hook ((emacs-lisp-mode lisp-mode) . lisp-extra-font-lock-mode))
-
-(use-package ivy-youtube
-  :ensure t
-
-  :custom
-  (ivy-youtube-play-at "mpvi")
-  (ivy-youtube-history-file
-   (expand-file-name "emacs/ivy-youtube-history" (xdg-cache-home)))
-
-  :config
-  (load-file (expand-file-name "emacs/secrets/ivy-youtube.el" (xdg-data-home))))
+  :hook ((emacs-lisp-mode-hook lisp-mode-hook) . lisp-extra-font-lock-mode))
 
 (use-package request
   :custom
@@ -2265,10 +2261,10 @@
   :ensure t
 
   :hook
-  (magit-post-refresh . diff-hl-magit-post-refresh)
-  (prog-mode          . diff-hl-mode)
-  (org-mode           . diff-hl-mode)
-  (dired-mode         . diff-hl-dired-mode))
+  (magit-post-refresh-hook . diff-hl-magit-post-refresh)
+  (prog-mode-hook          . diff-hl-mode)
+  (org-mode-hook           . diff-hl-mode)
+  (dired-mode-hook         . diff-hl-dired-mode))
 
 (use-package gitconfig-mode :ensure t)
 
