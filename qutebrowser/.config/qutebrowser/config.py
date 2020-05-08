@@ -812,7 +812,7 @@ my_searchengines = {
                 'kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&' +
                 'kak=-1&kax=-1&km=l'),
     'yt'     : 'https://www.youtube.com/results?search_query={}',
-    'rt'     : 'https://rutracker.org/forum/tracker.php?nm={}',
+    'rt'     : 'https://rutracker.net/forum/tracker.php?nm={}',
     'gtr'    : 'https://translate.google.com/#view=home&op=translate&sl=auto&tl=ru&text={}',
     'gte'    : 'https://translate.google.com/#view=home&op=translate&sl=auto&tl=en&text={}',
     'gti'    : 'https://translate.google.com/#view=home&op=translate&sl=auto&tl=it&text={}',
@@ -880,7 +880,7 @@ for key, val in my_keys.items():
 js_sites = ["*://vk.com/*", "*://www.youtube.com/*",
             "*://www.trenord.it/*", "*://duckduckgo.com/*",
                 "*://klava.org/*", "*://soundcloud.com/*",
-                "*://rutracker.org/*", "*://translate.google.com/*",
+                "*://rutracker.net/*", "*://translate.google.com/*",
                 "*://doc.rust-lang.org/*", "*://crates.io/*",
                 "*://mail.protonmail.com/*"]
 for site in js_sites:
