@@ -2129,6 +2129,157 @@
         (goto-char beg)
         (insert text)))))
 
-(use-package ediff :hook (ediff-before-setup . save-window-configuration-to-w))
+(use-package ediff
+  :hook (ediff-before-setup-hook . save-window-configuration-to-w))
+
+(use-package saveplace
+  :hook (after-init-hook . save-place-mode)
+
+  :custom
+  (save-place-file (expand-file-name "emacs/saveplace" (xdg-data-home)))
+  (save-place-forget-unreadable-files t))
+
+(use-package smartparens
+  :ensure t
+
+  :bind
+  ("C-M-u"   . sp-backward-up-sexp)
+  ("C-M-d"   . sp-down-sexp)
+  ("M-F"     . sp-forward-symbol)
+  ("M-B"     . sp-backward-symbol)
+  ("C-)"     . sp-forward-slurp-sexp)
+  ("C-M-)"   . sp-forward-barf-sexp)
+  ("C-("     . sp-backward-slurp-sexp)
+  ("C-M-("   . sp-backward-barf-sexp)
+  ("C-M-t"   . sp-transpose-sexp)
+  ("C-M-k"   . sp-kill-sexp)
+  ("C-k"     . sp-kill-hybrid-sexp)
+  ("M-k"     . sp-backward-kill-sexp)
+  ("C-M-w"   . sp-copy-sexp)
+  ("C-w"     . sp-backward-kill-word-or-region)
+  ("M-["     . sp-unwrap-sexp)
+  ("M-]"     . sp-rewrap-sexp)
+  ("C-x C-t" . sp-transpose-hybrid-sexp)
+
+  :config
+  (defun sp-backward-kill-word-or-region (&optional count)
+    (interactive "p")
+    (if (use-region-p)
+        (sp-kill-region (region-beginning) (region-end))
+      (sp-backward-kill-word count)))
+
+  (require 'smartparens-config))
+
+(use-package newst-backend
+  :hook (newsticker-new-item-functions . newsticker-add-youtube-description)
+
+  :custom
+  (newsticker-retrieval-interval 0)
+  (newsticker-retrieval-method 'extern)
+  (newsticker-automatically-mark-items-as-old nil)
+  (newsticker-automatically-mark-visited-items-as-old nil)
+  (newsticker-dir (expand-file-name "emacs/newsticker" (xdg-cache-home)))
+  (newsticker-url-list-defaults nil)
+  (newsticker-url-list
+   '(("Mastering Emacs" "http://www.masteringemacs.org/feed")
+     ("Rust Lang" "https://blog.rust-lang.org/feed.xml")
+     ("Gandalf the Ghost" "https://queryfeed.net/tw?q=%40GandalftheWhi19")
+     ("Protesilaos Stavrou" "https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g")
+     ("young scrolls" "https://www.youtube.com/feeds/videos.xml?channel_id=UCXzmcdy3BVCnLqwOx2JERMg")
+     ("uebermarginal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ10M7ftQN7ylM6NaPiEB6w")
+     ("Atlanta Functional Programming" "https://www.youtube.com/feeds/videos.xml?channel_id=UCYg6qFXDE5SGT_YXhuJPU0A")
+     ("Борис Цацулин" "https://www.youtube.com/feeds/videos.xml?user=CaveMansTech")
+     ("Ben Eater" "https://www.youtube.com/feeds/videos.xml?user=eaterbc")
+     ("itpedia" "https://www.youtube.com/feeds/videos.xml?user=itpediachannel")
+     ("Алексей Шевцов" "https://www.youtube.com/feeds/videos.xml?channel_id=UCM7-8EfoIv0T9cCI4FhHbKQ")
+     ("Izzy Laif" "https://www.youtube.com/feeds/videos.xml?user=EasyyyLife")
+     ("ТОПЛЕС" "https://www.youtube.com/feeds/videos.xml?user=toplesofficial")
+     ("Kurzgesagt" "https://www.youtube.com/feeds/videos.xml?user=Kurzgesagt")
+     ("FlynnFlyTaggart" "https://www.youtube.com/feeds/videos.xml?user=FlynnFlyTaggart")
+     ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg")
+     ("EmacsCast" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEfFUaIkjbI06PhALdcXNVA")
+     ("Primitive Technology" "https://www.youtube.com/feeds/videos.xml?channel_id=UCAL3JXZSzSm8AlZyD3nQdBA")
+     ("Epic History" "https://www.youtube.com/feeds/videos.xml?channel_id=UCvPXiKxH-eH9xq-80vpgmKQ")
+     ("Luke Smith" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA")
+     ("PewDiePie" "https://www.youtube.com/feeds/videos.xml?user=PewDiePie")))
+
+  :config
+  (defun newsticker-add-youtube-description (_feedname item)
+    "Parse youtube description by `ITEM'."
+    (when (and (not (newsticker--desc item))
+               (string-match-p (rx "youtube.com") (newsticker--link item)))
+      (let* ((group (alist-get 'group (newsticker--extra item)))
+             (thumbnail (alist-get 'url (car (alist-get 'thumbnail group))))
+             (description (cadr (alist-get 'description group))))
+        (setcar (nthcdr 1 item)
+                (format "<img src=\"%s\"/><br/><pre>%s</pre>"
+                        thumbnail
+                        (with-temp-buffer
+                          (insert description)
+                          (fill-region (point-min) (point-max))
+                          (buffer-string))))))))
+
+(use-package newst-treeview
+  :bind
+  (:map mode-specific-map ("o n" . newsticker-show-news))
+  (:map newsticker-treeview-mode-map
+        ("d" . newsticker-treeview-youtube-dl)
+        ("r" . newsticker-treeview-show-duration)
+        ("m" . newsticker-treeview-play-in-mpvi)
+        ("c" . newsticker-treeview-copy-link)
+        ("B" . newsticker-treeview-open-in-browser))
+
+  :custom
+  (newsticker-treeview-automatically-mark-displayed-items-as-old nil)
+  (newsticker-treeview-treewindow-width 40)
+  (newsticker--treeview-list-sort-order 'sort-by-time-reverse)
+
+  :config
+  (defun newsticker-treeview-open-in-browser ()
+    (interactive)
+    (select-window (newsticker--treeview-item-window) t)
+    (eww (newsticker--link (newsticker--treeview-get-selected-item))))
+
+  (defun newsticker-treeview-copy-link ()
+    (interactive)
+    (let ((link (newsticker--link (newsticker--treeview-get-selected-item))))
+      (kill-new link)
+      (message "Copied %s" link)))
+
+  (defun newsticker-treeview-play-in-mpvi ()
+    (interactive)
+    (let* ((item (newsticker--treeview-get-selected-item))
+           (title (newsticker--title item))
+           (link (newsticker--link item)))
+      (message "Starting \"%s\" in mpvi" title)
+      (start-process "mpvi" nil "mpvi" link)))
+
+  (defun newsticker-treeview-youtube-dl ()
+    (interactive)
+    (let* ((item (newsticker--treeview-get-selected-item))
+           (title (newsticker--title item))
+           (link (newsticker--link item)))
+      (if (youtube-dl link :title title)
+          (message "Downloading \"%s\"" title)
+        (message "Not youtube item"))))
+
+  (defun newsticker-treeview-show-duration ()
+    (interactive)
+    (let* ((item (newsticker--treeview-get-selected-item))
+           (title (newsticker--title item))
+           (link (newsticker--link item))
+           (duration-buffer "*youtube-duration*"))
+      (message "\"%s\" duration: ..." title)
+      (set-process-sentinel
+       (start-process "youtube-duration" duration-buffer
+                      youtube-dl-program "--no-color" "--get-duration" link)
+       `(lambda (process _change)
+          (when (eq 0 (process-exit-status process))
+            (with-current-buffer ,duration-buffer
+              (message "\"%s\" duration: %s"
+                       ,title (string-trim (buffer-string)))
+              (kill-buffer))))))))
+
+(use-package sdcv :ensure t)
 
 ;; end
