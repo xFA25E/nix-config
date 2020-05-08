@@ -160,21 +160,10 @@
   butlast
   remove-hook
 
-  :bind
-  (:map mode-specific-map ("x t" . terminal-in-path))
-  (:map ctl-x-map ("+" . increment-number-at-point))
+  :bind (:map mode-specific-map ("x t" . terminal-in-path))
 
   :config
   (defalias 'yes-or-no-p 'y-or-n-p)
-
-  (defun increment-number-at-point (arg)
-    "Increment number at point by `ARG'."
-    (interactive "p")
-    (skip-chars-backward "-0-9")
-    (or (looking-at (rx (optional "-") (one-or-more digit)))
-        (error "No number at point"))
-    (replace-match (number-to-string
-                    (+ arg (string-to-number (match-string 0))))))
 
   (defun terminal-in-path (&optional path)
     "Opens an terminal at PATH. If no PATH is given, it uses
@@ -355,31 +344,14 @@
   :config
   (defun back-to-indentation-or-beginning ()
     (interactive)
-    (if (= (point) (progn (back-to-indentation) (point)))
-        (beginning-of-line)))
-
-  (defun delete-region-first-last-chars ()
-    (interactive)
-    (if (use-region-p)
-        (let ((beginning (region-beginning))
-              (end (region-end)))
-          (goto-char end)
-          (delete-char -1)
-          (goto-char beginning)
-          (delete-char 1)
-          (push-mark (- end 2) t))
-      (message "Region is not active")))
+    (when (= (point) (progn (back-to-indentation) (point)))
+      (beginning-of-line)))
 
   (defun just-one-space-fast (&optional n)
     (interactive "*p")
-    (cycle-spacing n nil 'fast))
+    (cycle-spacing n nil 'fast)))
 
-  (defun backward-kill-word-or-region (&optional count)
-    (interactive "p")
-    (if (use-region-p) (kill-region (region-beginning) (region-end))
-      (backward-kill-word count))))
-
-(use-package ffap :bind (:map ctl-x-map ("F ." . find-file-at-point)))
+(use-package ffap :bind (:map search-map ("f ." . find-file-at-point)))
 
 (use-package hippie-exp
   :bind ([remap dabbrev-expand] . hippie-expand)
@@ -406,13 +378,11 @@
 
   :config
   (defun dired-setup-switches ()
-    (when-let (method (file-remote-p default-directory 'method))
-      (cond ((string-equal method "ftp")
-             (setq-local dired-actual-switches "-al"))
-            ((string-equal method "sftp")
-             (setq-local dired-actual-switches "-al --si"))
-            ((string-equal method "adb")
-             (setq-local dired-actual-switches "-alDF --si")))))
+    (pcase (file-remote-p default-directory 'method)
+      ((or "ftp" "sftp")
+       (setq-local dired-actual-switches "-al"))
+      ("adb"
+       (setq-local dired-actual-switches "-alDF"))))
 
   (define-advice dired-copy-filename-as-kill (:override (&optional arg) newline)
     (interactive "P")
@@ -1014,14 +984,8 @@
         ("v"   . counsel-set-variable))
 
   :config
-  (defun counsel-rg-default-directory ()
-    (interactive)
-    (counsel-rg
-     nil
-     (if current-prefix-arg
-         (counsel-read-directory-name "rg in directory: ")
-       default-directory)
-     (when current-prefix-arg (read-from-minibuffer "rg args: "))))
+  (defun counsel-fzf-dir-function-git-root ()
+    (or (counsel--git-root) default-directory))
 
   (defun counsel-file-directory-jump ()
     (interactive)
@@ -1407,42 +1371,10 @@
   :demand t
   :after company php-mode
   :custom (ac-php-tags-path (expand-file-name "emacs/ac-php" (xdg-cache-home)))
-  :init (add-to-list 'company-backends #'company-ac-php-backend)
-
-  :bind
-  (:map php-mode-map
-        ("M-]" . ac-php-find-symbol-at-point)
-        ("M-[" . ac-php-location-stack-back)))
+  :init (add-to-list 'company-backends #'company-ac-php-backend))
 
 (use-package php-eldoc
   :ensure t
-(use-package php-beautifier
-  :quelpa
-  (php-beautifier :repo "Sodaware/php-beautifier.el"
-                  :fetcher github
-                  :version original)
-
-  :functions
-  php-beautifier-phpcbf-valid-standard-p@standard-list
-  php-beautifier--create-shell-command@custom-options
-
-  :commands php-beautifier-phpcbf-standards
-  :custom (php-beautifier-phpcbf-standard "PSR12,PSR1,PSR2,PEAR")
-
-  :config
-  (define-advice php-beautifier-phpcbf-valid-standard-p
-      (:override (standard-name) standard-list)
-    "Check STANDARD-NAME is registered with phpcbf."
-    (unless (string-empty-p standard-name)
-      (let ((standards (php-beautifier-phpcbf-standards)))
-        (cl-every (lambda (standard) (member standard standards))
-                  (split-string standard-name ",")))))
-
-  (define-advice php-beautifier--create-shell-command
-      (:filter-return (arg) custom-options)
-    (concat php-beautifier-executable-path
-            " --filters 'ArrayNested() Pear() NewLines(before=T_FUNCTION)'"
-            (string-remove-prefix php-beautifier-executable-path arg))))
   :hook (php-mode-hook . php-eldoc-enable))
 
 (use-package lua-mode :ensure t)
@@ -1474,104 +1406,23 @@
 (use-package yasnippet-snippets :ensure t)
 
 (use-package lisp
-  :commands check-parens backward-kill-sexp
   :hook (after-save-hook . check-parens-in-prog-mode)
   :init (provide 'lisp)
 
   :config
-  (defun check-parens-enable ()
-    (add-hook 'after-save-hook #'check-parens nil t)))
+  (defun check-parens-in-prog-mode ()
+    (when (derived-mode-p 'prog-mode)
+      (check-parens))))
 
 (use-package youtube-dl
   :quelpa
   (youtube-dl :repo "skeeto/youtube-dl-emacs" :fetcher github :version original)
 
+  :bind (:map mode-specific-map ("o y" . youtube-dl-list))
+
   :custom
   (youtube-dl-arguments nil)
   (youtube-dl-program "ytdly"))
-
-(use-package elfeed
-  :ensure t
-
-  :commands
-  elfeed-log-buffer
-  elfeed-untag
-  elfeed-search-selected
-  elfeed-search-update-entry
-
-  :bind
-  (:map mode-specific-map
-        ("o e" . elfeed))
-
-  (:map elfeed-search-mode-map
-        ("l" . elfeed-switch-to-log-buffer)
-        ("d" . elfeed-search-youtube-dl)
-        ("L" . youtube-dl-list))
-
-  (:map elfeed-show-mode-map
-        ("d" . elfeed-show-youtube-dl)
-        ("i" . elfeed-show-get-video-duration)
-        ("w" . elfeed-show-play-link-in-mpvi))
-
-  :custom
-  (elfeed-search-filter "+unread")
-  (elfeed-db-directory (expand-file-name "emacs/elfeed" (xdg-cache-home)))
-
-  :config
-  (load-file (expand-file-name "emacs/secrets/elfeed.el" (xdg-data-home)))
-
-  (defun elfeed-switch-to-log-buffer ()
-    (interactive)
-    (switch-to-buffer (elfeed-log-buffer)))
-
-  (defun elfeed-show-play-link-in-mpvi ()
-    "Watch current video with mpvi"
-    (interactive)
-    (when (member 'youtube (elfeed-entry-tags elfeed-show-entry))
-      (let ((link (elfeed-entry-link elfeed-show-entry))
-            (title (elfeed-entry-title elfeed-show-entry)))
-        (message "Starting \"%s\" in mpvi" title)
-        (start-process "mpvi" nil "mpvi" link))))
-
-  (defun elfeed-show-get-video-duration ()
-    "Get current video duration"
-    (interactive)
-    (when (member 'youtube (elfeed-entry-tags elfeed-show-entry))
-      (let ((link (elfeed-entry-link elfeed-show-entry))
-            (title (elfeed-entry-title elfeed-show-entry))
-            (buf "*youtube-duration*"))
-        (message "\"%s\" duration: ..." title)
-        (set-process-sentinel
-         (start-process "youtube-duration" buf youtube-dl-program
-                        "--no-color" "--get-duration" link)
-         `(lambda (p _m)
-            (when (eq 0 (process-exit-status p))
-              (with-current-buffer ,buf
-                (message "\"%s\" duration: %s" ,title (string-trim
-                                                       (buffer-string)))
-                (kill-buffer))))))))
-
-  (defun elfeed-show-youtube-dl ()
-    "Download the current entry with youtube-dl."
-    (interactive)
-    (if (null (youtube-dl (elfeed-entry-link elfeed-show-entry)
-                          :title (elfeed-entry-title elfeed-show-entry)))
-        (message "Entry is not a Youtube link!")
-      (message  "Downloading %s" (elfeed-entry-title elfeed-show-entry))))
-
-  (cl-defun elfeed-search-youtube-dl (&key slow)
-    "Download the current entry with youtube-dl."
-    (interactive)
-    (let ((entries (elfeed-search-selected)))
-      (dolist (entry entries)
-        (if (null (youtube-dl (elfeed-entry-link entry)
-                              :title (elfeed-entry-title entry)
-                              :slow slow))
-            (message "Entry is not a YouTube link!")
-          (message "Downloading %s" (elfeed-entry-title entry))
-          (elfeed-untag entry 'unread)
-          (elfeed-search-update-entry entry)
-          (unless (use-region-p) (forward-line)))))))
 
 (use-package transmission
   :ensure t
@@ -1581,28 +1432,6 @@
         ("o r" . transmission))
   (:map transmission-mode-map
         ("M" . transmission-move)))
-
-(use-package projectile
-  :ensure t
-  :bind-keymap ("M-m" . projectile-command-map)
-
-  :custom
-  (projectile-completion-system 'ivy)
-  (projectile-enable-caching t)
-  (projectile-mode-line-prefix "")
-  (projectile-cache-file
-   (expand-file-name "emacs/projectile/cache" (xdg-cache-home)))
-  (projectile-known-projects-file
-   (expand-file-name "emacs/projectile/projects" (xdg-cache-home)))
-
-  :config
-  (define-advice projectile-default-mode-line
-      (:filter-return (project-name) remove-empty)
-    (if (string-equal project-name "[-]") "" (concat " " project-name))))
-
-(use-package counsel-projectile
-  :ensure t
-  :hook (after-init . counsel-projectile-mode))
 
 (use-package dumb-jump
   :ensure t
@@ -1851,7 +1680,7 @@
   :config
   (defun eval-and-replace ()
     (interactive)
-    (backward-kill-sexp)
+    (kill-sexp -1)
     (condition-case nil
         (prin1 (eval (read (current-kill 0)))
                (current-buffer))
@@ -1940,12 +1769,8 @@
 
 (use-package find-dired
   :commands find-dired-grep-ignore
-  :bind (:map ctl-x-map ("F f" . find-dired-grep-ignore))
-
-  :custom
-  (find-ls-option
-   '("| xargs -0 ls -labdi --si --group-directories-first"
-     . "-labdi --si --group-directories-first"))
+  :bind (:map search-map ("f F" . find-dired-grep-ignore))
+  :custom (find-ls-option '("| xargs -0 ls -labdi --si" . "-labdi --si"))
 
   :config
   (defun find-dired-grep-ignore (dir args)
@@ -1977,12 +1802,8 @@
 
 (use-package fd-dired
   :ensure t
-  :bind (:map ctl-x-map ("F d" . fd-dired))
-
-  :custom
-  (fd-dired-ls-option
-   '("| xargs -0 ls -labdi --si --group-directories-first"
-     . "-labdi --si --group-directories-first")))
+  :bind (:map search-map ("f D" . fd-dired))
+  :custom (fd-dired-ls-option '("| xargs -0 ls -labdi --si" . "-labdi --si")))
 
 (use-package flycheck-checkbashisms
   :ensure t
@@ -2004,15 +1825,6 @@
   :hook (after-init-hook . global-so-long-mode))
 
 (use-package lisp-mode :config (put 'use-package #'lisp-indent-function 1))
-
-(use-package elfeed-youtube-parser
-  :quelpa
-  (elfeed-youtube-parser :repo "xFA25E/elfeed-youtube-parser"
-                         :fetcher github
-                         :version original)
-
-  :after elfeed
-  :hook (elfeed-new-entry-parse . elfeed-youtube-parser-parse-youtube))
 
 (use-package shell-pwd
   :quelpa (shell-pwd :repo "xFA25E/shell-pwd" :fetcher github :version original)
@@ -2085,7 +1897,7 @@
   :config (add-to-list 'sly-contribs 'sly-asdf 'append))
 
 (use-package sgml-mode
-  :custom (sgml-basic-offset 4)
+  :custom (sgml-basic-offset 2)
 
   :bind
   (:map sgml-mode-map
@@ -2094,6 +1906,7 @@
 
 (use-package rg
   :ensure t
+  :custom (rg-executable "rg")
 
   :bind
   (:map search-map ("R" . rg-menu))
@@ -2132,19 +1945,18 @@
   (add-to-list 'shr-external-rendering-functions
                '(pre . shr-tag-pre-highlight)))
 
-(use-package nxml-mode :custom (nxml-child-indent 4))
+(use-package nxml-mode :custom (nxml-child-indent 2))
 
 (use-package web-mode
   :ensure t
-  :custom (web-mode-markup-indent-offset 4))
+  :custom (web-mode-markup-indent-offset 2))
 
 (use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
 
 (use-package plantuml-mode
   :ensure t
-  :commands plantuml-completion-at-point
   :mode (rx ".puml" string-end)
-  :hook (plantuml-mode . plantuml-enable-completion)
+  :hook (completion-at-point-functions . plantuml-completion-at-point)
 
   :custom
   (plantuml-jar-path "/opt/plantuml/plantuml.jar")
@@ -2157,27 +1969,30 @@
         ("C-c C-o" . plantuml-set-output-type))
 
   :config
-  (defun plantuml-enable-completion ()
-    (add-hook 'completion-at-point-functions
-              #'plantuml-completion-at-point nil t))
-
   (defun plantuml-completion-at-point ()
     "Function used for `completion-at-point-functions' in `plantuml-mode'."
-    (let ((completion-ignore-case t) ; Not working for company-capf.
-          (bounds (bounds-of-thing-at-point 'symbol))
-          (keywords plantuml-kwdList))
-      (when (and bounds keywords)
-        (list (car bounds)
-              (cdr bounds)
-              keywords
-              :exclusve 'no
-              :company-docsig #'identity)))))
+    (when (derived-mode-p 'plantuml-mode)
+      (let ((completion-ignore-case t) ; Not working for company-capf.
+            (bounds (bounds-of-thing-at-point 'symbol))
+            (keywords plantuml-kwdList))
+        (when (and bounds keywords)
+          (list (car bounds)
+                (cdr bounds)
+                keywords
+                :exclusve 'no
+                :company-docsig #'identity))))))
 
 (use-package hl-line
   :hook
-  ((dired-mode csv-mode grep-mode ivy-occur-mode mingus-browse) . hl-line-mode)
-
-  :config (add-hook 'mingus-playlist-hooks #'hl-line-mode))
+  (dired-mode-hook         . hl-line-mode)
+  (csv-mode-hook           . hl-line-mode)
+  (grep-mode-hook          . hl-line-mode)
+  (ivy-occur-mode-hook     . hl-line-mode)
+  (mingus-browse-hook      . hl-line-mode)
+  (mingus-playlist-hooks   . hl-line-mode)
+  (transmission-mode       . hl-line-mode)
+  (transmission-files-mode . hl-line-mode)
+  (transmission-peers-mode . hl-line-mode))
 
 (use-package try-complete-file-name-with-env
   :quelpa
@@ -2272,15 +2087,11 @@
 
 (use-package misc :bind ("C-M-z" . zap-up-to-char))
 
-(use-package shr :custom (shr-external-browser #'browse-url-firefox))
-
-(use-package bruh
-  :after browse-url
-  :quelpa (bruh :repo "a13/bruh" :fetcher github)
-
+(use-package shr
   :custom
-  (browse-url-browser-function #'bruh-browse-url)
-  (bruh-default-browser #'eww-browse-url))
+  (shr-external-browser #'browse-url-firefox)
+  (shr-max-image-proportion 0.7)
+  (shr-width (current-fill-column)))
 
 (use-package finder :bind (:map help-map ("M-c" . finder-commentary)))
 
