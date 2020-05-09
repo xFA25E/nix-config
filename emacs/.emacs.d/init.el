@@ -1452,7 +1452,7 @@
 
 (use-package free-keys :ensure t)
 
-(use-package eww :custom (eww-search-prefix "https://duckduckgo.com/lite/?q="))
+(use-package eww :custom (eww-search-prefix "https://ddg.co/lite/?q="))
 
 (use-package multitran
   :ensure t
