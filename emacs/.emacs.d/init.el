@@ -351,8 +351,6 @@
     (interactive "*p")
     (cycle-spacing n nil 'fast)))
 
-(use-package ffap :bind (:map search-map ("f ." . find-file-at-point)))
-
 (use-package hippie-exp
   :bind ([remap dabbrev-expand] . hippie-expand)
   :custom (he-file-name-chars "-a-zA-Z0-9_/.,~^#$+={}"))
