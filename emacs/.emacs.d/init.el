@@ -2279,6 +2279,14 @@
                        ,title (string-trim (buffer-string)))
               (kill-buffer))))))))
 
+(use-package bruh
+  :after browse-url
+  :quelpa (bruh :repo "a13/bruh" :fetcher github)
+
+  :custom
+  (bruh-default-browser #'eww-browse-url)
+  (browse-url-browser-function #'bruh-browse-url))
+
 (use-package sdcv :ensure t)
 
 ;; end
