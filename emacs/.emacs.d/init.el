@@ -2183,6 +2183,7 @@
    '(("Mastering Emacs" "http://www.masteringemacs.org/feed")
      ("Rust Lang" "https://blog.rust-lang.org/feed.xml")
      ("Gandalf the Ghost" "https://queryfeed.net/tw?q=%40GandalftheWhi19")
+     ("Tsoding" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEbYhDd6c6vngsF5PQpFVWg")
      ("Protesilaos Stavrou" "https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g")
      ("young scrolls" "https://www.youtube.com/feeds/videos.xml?channel_id=UCXzmcdy3BVCnLqwOx2JERMg")
      ("uebermarginal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ10M7ftQN7ylM6NaPiEB6w")
