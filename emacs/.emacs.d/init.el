@@ -2153,12 +2153,12 @@
   ("C-M-t"   . sp-transpose-sexp)
   ("C-M-k"   . sp-kill-sexp)
   ("C-k"     . sp-kill-hybrid-sexp)
-  ("M-k"     . sp-backward-kill-sexp)
   ("C-M-w"   . sp-copy-sexp)
   ("C-w"     . sp-backward-kill-word-or-region)
   ("M-["     . sp-unwrap-sexp)
   ("M-]"     . sp-rewrap-sexp)
-  ("C-x C-t" . sp-transpose-hybrid-sexp)
+  ;; ("M-k"     . sp-backward-kill-sexp)
+  ;; ("C-x C-t" . sp-transpose-hybrid-sexp)
 
   :config
   (defun sp-backward-kill-word-or-region (&optional count)
