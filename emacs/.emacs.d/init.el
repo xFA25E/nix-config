@@ -1866,7 +1866,7 @@
   :bind (:map aggressive-indent-mode-map ("C-c C-q" . nil))
 
   :hook
-  (c-mode . aggressive-indent-mode)
+  (c-mode-hook          . aggressive-indent-mode)
   (emacs-lisp-mode-hook . aggressive-indent-mode)
   (lisp-mode-hook       . aggressive-indent-mode)
   (scheme-mode-hook     . aggressive-indent-mode)
