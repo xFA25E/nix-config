@@ -452,7 +452,7 @@
       "setsid -f zathura * >/dev/null 2>&1")
 
      (,(rx "." (or "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi"
-                   "mpg" "mov" "3gp" "vob" "wmv")
+                   "mpg" "mov" "3gp" "vob" "wmv" "aiff")
            string-end)
       "setsid -f mpv --force-window=yes * >/dev/null 2>&1"
       "video_duration * | format_duration"
