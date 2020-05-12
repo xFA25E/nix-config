@@ -473,7 +473,7 @@ c.content.webgl = False
 c.content.webrtc_ip_handling_policy = "default-public-interface-only"
 
 # Watch fullscreen video not in a fullscreen window
-c.content.windowed_fullscreen = c.content.windowed_fullscreen
+# c.content.fullscreen.window = c.content.fullscreen.window
 
 # Whether load requests should be monitored for cross-site scripting attempts.
 c.content.xss_auditing = False
