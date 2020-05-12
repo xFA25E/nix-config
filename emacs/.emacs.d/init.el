@@ -324,7 +324,6 @@
   ("M-\\"  . delete-indentation)
   ("M-c"   . capitalize-dwim)
   ("M-l"   . downcase-dwim)
-  ("M-m"   . toggle-truncate-lines)
   ("M-u"   . upcase-dwim)
   ([remap move-beginning-of-line] . back-to-indentation-or-beginning)
   ([remap newline] . newline-and-indent)
@@ -2288,6 +2287,27 @@
   (bruh-default-browser #'eww-browse-url)
   (browse-url-browser-function #'bruh-browse-url))
 
+(use-package projectile
+  :ensure t
+  :bind-keymap ("M-m" . projectile-command-map)
+
+  :custom
+  (projectile-completion-system 'ivy)
+  (projectile-enable-caching t)
+  (projectile-mode-line-prefix "")
+  (projectile-cache-file
+   (expand-file-name "emacs/projectile/cache" (xdg-cache-home)))
+  (projectile-known-projects-file
+   (expand-file-name "emacs/projectile/projects" (xdg-cache-home)))
+
+  :config
+  (define-advice projectile-default-mode-line
+      (:filter-return (project-name) remove-empty)
+    (if (string-equal project-name "[-]") "" (concat " " project-name))))
+
+(use-package counsel-projectile
+  :ensure t
+  :hook (after-init-hook . counsel-projectile-mode))
 (use-package sdcv :ensure t)
 
 ;; end
