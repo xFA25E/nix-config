@@ -447,7 +447,11 @@
      (,(rx ".fb2" string-end)
       "ebook-convert ? .epub &")
 
-     (,(rx "." (or "pdf" "epub" "djvu") string-end)
+     (,(rx ".pdf" string-end)
+      "setsid -f zathura * >/dev/null 2>&1"
+      "setsid -f libreoffice * >/dev/null 2>&1")
+
+     (,(rx "." (or "epub" "djvu") string-end)
       "setsid -f zathura * >/dev/null 2>&1")
 
      (,(rx "." (or "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi"
