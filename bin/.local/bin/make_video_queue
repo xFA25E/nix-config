@@ -19,7 +19,7 @@ BEGIN {
 
 END {
     for (item in items) {
-        print items[item], int(items[item] / items_count[item]), items_count[item], item | "format_duration 2"
+        print int(items[item] / items_count[item]), items_count[item], items[item], item | "format_duration 3"
     }
 }
 
