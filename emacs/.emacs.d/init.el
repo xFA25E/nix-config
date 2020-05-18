@@ -639,7 +639,15 @@
 
   :custom
   (message-kill-buffer-on-exit t)
-  (message-send-mail-function  #'message-send-mail-with-sendmail))
+  (message-send-mail-function  #'message-send-mail-with-sendmail)
+  (message-subject-re-regexp (rx bol
+                                 (* (any " " "\t"))
+                                 (* (any "R" "r")
+                                    (? (any "E" "e"))
+                                    (* "[" (* digit) "]")
+                                    (? " ") ":"
+                                    (* (any " " "\t")))
+                                 (* (any " " "\t")))))
 
 (use-package sendmail
   :custom
