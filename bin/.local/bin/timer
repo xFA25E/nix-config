@@ -59,17 +59,23 @@ map_filter() {
 
 format_report() {
     awk -v filter="${1}" '!filter || $4 == filter' \
-        | format_duration 2 | format_duration 3 | column -t
+        | format_duration 2 | format_duration 3 \
+        | column -t -N 'name,elapsed,duration,status'
 }
 
 get_report() {
-    rimer report | format_duration 2 | format_duration 3 | column -t
+    rimer report | format_report
+}
+
+select_with_header() {
+    read -r hd
+    rofi -dmenu -no-custom -p "Select timer" -mesg "${hd}"
 }
 
 get_timer_name() {
     rimer report \
         | format_report "$(map_filter "${1}")" \
-        | rofi -dmenu -no-custom -p "Select timer" \
+        | select_with_header \
         | awk '{print $1}'
 }
 
