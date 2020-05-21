@@ -1922,7 +1922,8 @@
   :bind
   (:map sgml-mode-map
         ("C-M-n" . sgml-skip-tag-forward)
-        ("C-M-p" . sgml-skip-tag-backward)))
+        ("C-M-p" . sgml-skip-tag-backward)
+        ("C-c C-r" . sgml-namify-char)))
 
 (use-package rg
   :ensure t
