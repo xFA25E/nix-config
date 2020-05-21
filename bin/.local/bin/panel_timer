@@ -26,9 +26,9 @@ save_log() {
 case "${state}" in
     running|paused)
         if [ "${duration}" = "${max_duration}" ]; then
-            time="$(format_secs "${elapsed}")"
+            time="+$(format_secs "${elapsed}")"
         else
-            time="$(format_secs "$((duration - elapsed))")/$(format_secs "${duration}")"
+            time="-$(format_secs "$((duration - elapsed))")"
         fi
         runel remote set timer "${name} ${time} ${state}"
     ;;
