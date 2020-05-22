@@ -1445,12 +1445,7 @@
 
 (use-package transmission
   :ensure t
-
-  :bind
-  (:map mode-specific-map
-        ("o r" . transmission))
-  (:map transmission-mode-map
-        ("M" . transmission-move)))
+  :bind (:map transmission-mode-map ("M" . transmission-move)))
 
 (use-package dumb-jump
   :ensure t
