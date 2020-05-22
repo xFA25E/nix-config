@@ -2196,7 +2196,6 @@
      ("young scrolls" "https://www.youtube.com/feeds/videos.xml?channel_id=UCXzmcdy3BVCnLqwOx2JERMg")
      ("uebermarginal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ10M7ftQN7ylM6NaPiEB6w")
      ("Atlanta Functional Programming" "https://www.youtube.com/feeds/videos.xml?channel_id=UCYg6qFXDE5SGT_YXhuJPU0A")
-     ("Борис Цацулин" "https://www.youtube.com/feeds/videos.xml?user=CaveMansTech")
      ("Ben Eater" "https://www.youtube.com/feeds/videos.xml?user=eaterbc")
      ("itpedia" "https://www.youtube.com/feeds/videos.xml?user=itpediachannel")
      ("Алексей Шевцов" "https://www.youtube.com/feeds/videos.xml?channel_id=UCM7-8EfoIv0T9cCI4FhHbKQ")
