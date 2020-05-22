@@ -2193,7 +2193,6 @@
    '(("Mastering Emacs" "http://www.masteringemacs.org/feed")
      ("Rust Lang" "https://blog.rust-lang.org/feed.xml")
      ("WargarW" "https://queryfeed.net/tw?q=%40WargarW")
-     ("Gandalf the Ghost" "https://queryfeed.net/tw?q=%40GandalftheWhi19")
      ("Marie Cachet" "https://www.youtube.com/feeds/videos.xml?channel_id=UCLM6JlQkQ9tltBL9Bipci9g")
      ("Justus Walker" "https://www.youtube.com/feeds/videos.xml?user=senttosiberia")
      ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
