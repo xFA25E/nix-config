@@ -2097,7 +2097,9 @@
 
 (use-package gitignore-mode :ensure t)
 
-(use-package misc :bind ("C-M-z" . zap-up-to-char))
+(use-package avy-zap
+  :ensure t
+  :bind ("C-M-z" . avy-zap-up-to-char-dwim))
 
 (use-package shr
   :custom
