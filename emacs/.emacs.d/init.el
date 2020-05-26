@@ -2310,7 +2310,8 @@
   :config
   (define-advice projectile-default-mode-line
       (:filter-return (project-name) remove-empty)
-    (if (string-equal project-name "[-]") "" (concat " " project-name))))
+    (when (not (string-equal project-name "[-]"))
+      (concat " " project-name))))
 
 (use-package counsel-projectile
   :ensure t
@@ -2325,7 +2326,6 @@
    (expand-file-name "emacs/workspace/" (xdg-cache-home)))
   (lsp-java-server-install-dir
    (expand-file-name "emacs/eclipse.jdt.ls/server/" (xdg-cache-home))))
-
 
 (use-package sdcv :ensure t)
 
