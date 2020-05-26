@@ -110,10 +110,6 @@
   (ispell-program-name "aspell")
   (ispell-extra-args (list "--sug-mode=ultra")))
 
-(use-package paragraphs
-  :init (provide 'paragraphs)
-  :custom (sentence-end-double-space nil))
-
 (use-package xdg
   :commands xdg-documents-dir xdg-download-dir
 
