@@ -18,10 +18,9 @@
     (package-refresh-contents)
     (package-install 'use-package))
 
+  (setq use-package-enable-imenu-support t)
   (require 'use-package)
-
   (setq use-package-expand-minimally t
-        use-package-enable-imenu-support t
         use-package-always-defer t
         use-package-hook-name-suffix nil)
 
