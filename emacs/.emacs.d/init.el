@@ -436,7 +436,8 @@
       "libreoffice --invisible --headless --convert-to epub * &"
       "libreoffice --invisible --headless --convert-to csv * &")
 
-     (,(rx "." (or "jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif") string-end)
+     (,(rx "." (or "jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp")
+           string-end)
       "setsid -f sxiv * >/dev/null 2>&1"
       "setsid -f gimp * >/dev/null 2>&1")
 
