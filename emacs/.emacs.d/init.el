@@ -1856,6 +1856,9 @@
   :diminish whitespace-mode
   :custom (whitespace-style '(face lines-tail))
 
+  :custom-face
+  (whitespace-line ((t (:foreground "dark violet" :background "grey90"))))
+
   :hook
   (before-save-hook . whitespace-cleanup)
   (prog-mode-hook . whitespace-mode))
