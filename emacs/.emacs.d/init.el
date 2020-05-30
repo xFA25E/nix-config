@@ -1539,6 +1539,21 @@
     (when (mingus-buffer-p)
       (kill-current-buffer))))
 
+(use-package mingus
+  :ensure t
+  :after counsel
+  :commands mingus-add-file
+  :config (defun mingus-add-file (file) (mingus-add-files (list file)))
+
+  :init
+  (ivy-add-actions
+   'counsel-find-file
+   '(("m" mingus-add-file "add file to mpd queue")))
+
+  (ivy-add-actions
+   'counsel-file-jump
+   '(("m" mingus-add-file "add file to mpd queue"))))
+
 (use-package ede/base
   :custom
   (ede-project-placeholder-cache-file
