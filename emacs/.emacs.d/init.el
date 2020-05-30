@@ -2329,4 +2329,6 @@
 
 (use-package sdcv :ensure t)
 
+(use-package ledger-mode :ensure t)
+
 ;; end
