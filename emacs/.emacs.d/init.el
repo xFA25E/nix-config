@@ -113,11 +113,12 @@
   :commands xdg-documents-dir xdg-download-dir
 
   :config
-  (defun xdg-documents-dir ()
-    (or (getenv "XDG_DOCUMENTS_DIR") "~/Documents"))
+  (defmacro xdg-define-env-dir (name env-var dir)
+    `(defun ,name () (or (getenv ,env-var) ,dir)))
 
-  (defun xdg-download-dir ()
-    (or (getenv "XDG_DOWNLOAD_DIR") "~/Downloads")))
+  (xdg-define-env-dir xdg-documents-dir "XDG_DOCUMENTS_DIR" "~/Documents")
+  (xdg-define-env-dir xdg-download-dir "XDG_DOWNLOAD_DIR" "~/Downloads")
+  (xdg-define-env-dir xdg-music-dir "XDG_MUSIC_DIR" "~/Music"))
 
 (use-package window
   :commands pop-to-buffer
