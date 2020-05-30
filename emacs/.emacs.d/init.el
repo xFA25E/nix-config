@@ -1543,17 +1543,23 @@
 (use-package mingus
   :ensure t
   :after counsel
-  :commands mingus-add-file
-  :config (defun mingus-add-file (file) (mingus-add-files (list file)))
+  :bind (:map mode-specific-map ("o S" . mingus-find-and-add-file))
 
-  :init
-  (ivy-add-actions
-   'counsel-find-file
-   '(("m" mingus-add-file "add file to mpd queue")))
-
-  (ivy-add-actions
-   'counsel-file-jump
-   '(("m" mingus-add-file "add file to mpd queue"))))
+  :config
+  (defun mingus-find-and-add-file ()
+    (interactive)
+    (counsel-require-program find-program)
+    (let ((default-directory (xdg-music-dir)))
+      (mingus-add-files
+       (list
+        (expand-file-name
+         (ivy-read
+          "Add file to mpd: "
+          (counsel--find-return-list (split-string ". -type f -o -type d"))
+          :require-match t)
+         (xdg-music-dir))))
+      (mpd-play mpd-inter-conn)
+      (kill-buffer-if-alive (get-buffer "*Mingus*")))))
 
 (use-package ede/base
   :custom
