@@ -942,6 +942,7 @@
 
   (:map search-map
         ("r" . counsel-rg)
+        ("g" . counsel-rgrep)
         ("f f" . counsel-file-directory-jump)
         ("f d" . counsel-file-directory-jump-fd)
         ("f b" . counsel-find-library)
@@ -998,10 +999,10 @@
     (let* ((find-program find-program)
            (counsel-file-jump-args
             (cl-flet ((entries (entries type f)
-                               (list* (funcall f (car entries))
-                                      (mapcan
-                                       (lambda (e) (list "-o" type (funcall f e)))
-                                       (cdr entries)))))
+                               (cl-list* (funcall f (car entries))
+                                         (mapcan
+                                          (lambda (e) (list "-o" type (funcall f e)))
+                                          (cdr entries)))))
               (append '(".")
                       (when-let ((entries grep-find-ignored-directories))
                         (append '("-type" "d" "(" "-path")
@@ -1050,21 +1051,45 @@
    'counsel-switch-to-shell-buffer
    '(("k" kill-buffer-if-alive "kill buffer")))
 
-  (defun get-grep-lines (regex)
-    (butlast
-     (split-string
-      (shell-command-to-string
-       (format "grep -E -Hn --color=never -r -e %s"
-               (shell-quote-argument regex)))
-      "\n")))
-
-  (defun counsel-recursive-grep ()
+  (defun counsel-rgrep (&optional initial-input initial-directory extra-rgrep-args)
     (interactive)
-    (ivy-read "Grep: "
-              #'get-grep-lines
-              :dynamic-collection t
-              :action #'counsel-git-grep-action
-              :caller 'counsel-dynamic-grep))
+    (let ((counsel-ag-base-command
+           (concat
+            "find "
+            (mapconcat
+             #'shell-quote-argument
+             (cl-flet ((entries (entries type f)
+                                (cl-list* (funcall f (car entries))
+                                          (mapcan
+                                           (lambda (e) (list "-o" type (funcall f e)))
+                                           (cdr entries)))))
+               (append '(".")
+                       (when-let ((entries grep-find-ignored-directories))
+                         (append '("-type" "d" "(" "-path")
+                                 (entries entries "-path" (lambda (d) (concat "*/" d)))
+                                 '(")" "-prune" "-o")))
+                       (when-let ((entries grep-find-ignored-files))
+                         (append '("!" "-type" "d" "(" "-name")
+                                 (entries entries "-name" #'identity)
+                                 '(")" "-prune" "-o")))
+                       '("-type" "f" "(" "-iname" "*" "-o" "-iname" ".[!.]*" "-o" "-iname" "..?*" ")"
+                         "-exec" "grep" "--color=never" "-P" "-nH")))
+             " ")
+            " %s "
+            (shell-quote-argument "{}")
+            " "
+            (shell-quote-argument "+")
+            " | cut -c-500"))
+          (counsel--grep-tool-look-around nil))
+
+      (counsel-ag initial-input initial-directory extra-rgrep-args "rgrep: "
+                  :caller 'counsel-rgrep)))
+
+  (ivy-configure 'counsel-rgrep
+    :occur #'counsel-ag-occur
+    :unwind-fn #'counsel--grep-unwind
+    :display-transformer-fn #'counsel-git-grep-transformer
+    :grep-p t)
 
   (define-advice counsel-switch-to-shell-buffer (:override () unique)
     (interactive)
