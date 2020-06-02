@@ -807,8 +807,8 @@ c.url.open_base_url = True
 
 # Definitions of search engines which can be used via the address bar.
 my_searchengines = {
-    'DEFAULT': 'https://duckduckgo.com/lite/?q={}',
-    'd'      : ('https://duckduckgo.com/?q={}&kk=-1&kah=it-it&' +
+    'DEFAULT': 'https://ddg.co/lite/?q={}',
+    'd'      : ('https://ddg.co/?q={}&kk=-1&kah=it-it&' +
                 'kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&' +
                 'kak=-1&kax=-1&km=l'),
     'yt'     : 'https://www.youtube.com/results?search_query={}',
