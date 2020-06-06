@@ -24,17 +24,17 @@ rofi.fixed-num-lines:                false
 ! "Whether to load and show icons" Set from: Default
 ! rofi.show-icons:                     false
 ! "Terminal to use" Set from: XResources
-rofi.terminal:                       tm
+! rofi.terminal:                       rofi-sensible-terminal
 ! "Ssh client to use" Set from: Default
 ! rofi.ssh-client:                     ssh
 ! "Ssh command to execute" Set from: Default
-rofi.ssh-command:                    {terminal} "{ssh-client} {host}"
+! rofi.ssh-command:                    {terminal} -e {ssh-client} {host} [-p {port}]
 ! "Run command to execute" Set from: Default
 ! rofi.run-command:                    {cmd}
 ! "Command to get extra run targets" Set from: Default
 ! rofi.run-list-command:
 ! "Run command to execute that runs in shell" Set from: Default
-rofi.run-shell-command:              {terminal} "{cmd}"
+! rofi.run-shell-command:              {terminal} -e {cmd}
 ! "Command executed on accep-entry-custom for window modus" Set from: Default
 ! rofi.window-command:                 xkill -id {window}
 ! "Window fields to match in window mode" Set from: Default

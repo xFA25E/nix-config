@@ -6,7 +6,7 @@ export EDITOR="emw"
 export VISUAL="${EDITOR}"
 export MANPATH="/usr/local/man:${MANPATH}"
 export BROWSER="qutebrowser"
-export TERMINAL="urxvt"
+export TERMINAL="uxterm"
 
 # xdg dirs
 export XDG_CONFIG_HOME="${HOME}/.config"

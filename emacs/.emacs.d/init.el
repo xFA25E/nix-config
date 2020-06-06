@@ -191,7 +191,7 @@
 
         (setq term-cmd (format "%s && sh" (format cd-str path))))
 
-      (start-process "terminal" nil "tm" term-cmd))))
+      (start-process "terminal" nil (getenv "TERMINAL") term-cmd))))
 
 (use-package subr-x :commands when-let)
 

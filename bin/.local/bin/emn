@@ -1,2 +1,2 @@
 #!/bin/sh
-emacsclient -n "$@" || tm "emacsclient -na '' $*"
+emacsclient -n "$@" || ${TERMINAL} "emacsclient -na '' $*"

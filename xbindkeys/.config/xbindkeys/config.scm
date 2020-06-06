@@ -94,7 +94,7 @@ command may be a string or a function"
 (global-set-key '((Mod2 Mod4 o) (Mod2 Mod4 m)) "main_menu")
 (global-set-key '((Mod2 Mod4 o) (Mod2 Mod4 s)) "emmingus")
 (global-set-key '((Mod2 Mod4 o) (Mod2 Mod4 t)) "emshell")
-(global-set-key '((Mod2 Mod4 o) (Mod2 Mod4 v)) "tm pulsemixer")
+(global-set-key '((Mod2 Mod4 o) (Mod2 Mod4 v)) "uxterm -e pulsemixer")
 (global-set-key '((Mod2 Mod4 o) (Mod2 Mod4 w)) "rpass type")
 (global-set-key '((Mod2 Mod4 o) (Shift Mod2 Mod4 c)) "timer")
 (global-set-key '((Mod2 Mod4 o) (Shift Mod2 Mod4 m)) "bm menu")
