@@ -62,10 +62,10 @@ super + {c,t,h,n,shift + Tab,Tab}
 
 # euclid mover
 super + shift + {c,t,h,n}
- $XDG_CONFIG_HOME/bspwm/euclid_mover {north,south,west,east} 10
+ bspwm_move {north,south,west,east} 10
 
 super + {_,shift +}bracket{left,right}
- $XDG_CONFIG_HOME/bspwm/bspwm_resize {west,north,east,south} 5
+ bspwm_resize {west,north,east,south} 5
 
 ######## desktop commands #########
 # alternate monocle layout
