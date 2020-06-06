@@ -38,24 +38,24 @@ export QT_IM_MODULE=ibus
 ## Ensure that GTK themes are applied uniformly in the Desktop Environment
 export GTK2_RC_FILES="${XDG_CONFIG_HOME}/gtk-2.0/gtkrc"
 
-# Rust vars
-export RUSTUP_HOME="${XDG_DATA_HOME}/rustup"
-export CARGO_HOME="${XDG_DATA_HOME}/cargo"
-export PATH="${XDG_DATA_HOME}/cargo/bin:${PATH}"
+# Rust
+export RUSTUP_HOME="${XDG_CACHE_HOME}/rustup"
+export CARGO_HOME="${XDG_CACHE_HOME}/cargo"
+export PATH="${CARGO_HOME}/bin:${PATH}"
 RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src" && export RUST_SRC_PATH
-export CARGO_TARGET_DIR="${XDG_CACHE_HOME}/cargo/target"
+export CARGO_TARGET_DIR="${CARGO_HOME}/target"
 
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
 
-# runel conf
+# runel
 export RUNEL_WM_NAME="runel_panel"
 export LEMONBAR_ARGS="-n,${RUNEL_WM_NAME},-f,Iosevka-8"
 
 export LESSHISFILE="/dev/null"
 
 # mu/mu4e mail
-export MU_HOME="${XDG_DATA_HOME}/mu"
+export MU_HOME="${XDG_CACHE_HOME}/mu"
 export MAILDIR="${XDG_DATA_HOME}/mail"
 
 # abduco
@@ -94,9 +94,6 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 # composer
 export PATH="${HOME}/.config/composer/vendor/bin:${PATH}"
 
-# urxvt
-export RXVT_SOCKET="${XDG_RUNTIME_DIR}/urxvt"
-
 # cuda
 export CUDA_CACHE_PATH="${XDG_CACHE_HOME}/nv"
 
@@ -120,6 +117,11 @@ export XAUTHORITY="${XDG_RUNTIME_DIR}/Xauthority"
 
 # stardict
 export STARDICT_DATA_DIR="${XDG_DATA_HOME}"
+
+# history
+export HISTFILESIZE=0
+export HISTSIZE=0
+export HISTFILE=
 
 # Following automatically calls "startx" when you login:
 [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ] && \
