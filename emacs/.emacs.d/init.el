@@ -1340,6 +1340,7 @@
   (lsp-enable-symbol-highlighting nil)
   (lsp-prefer-flymake nil)
   (lsp-session-file (expand-file-name "emacs/lsp/session" (xdg-cache-home)))
+  (lsp-xml-server-work-dir (expand-file-name "emacs/lsp/xml" (xdg-cache-home)))
 
   :bind
   (:map lsp-mode-map
@@ -1682,7 +1683,11 @@
 
 (use-package scheme :custom (scheme-program-name "guile"))
 
-(use-package geiser :ensure t)
+(use-package geiser
+  :ensure t
+  :custom
+  (geiser-repl-history-filename
+   (expand-file-name "geiser/history" (xdg-cache-home))))
 
 (use-package sxhkd-mode
   :quelpa (sxhkd-mode :repo "xFA25E/sxhkd-mode" :fetcher github :version original)
