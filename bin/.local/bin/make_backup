@@ -25,11 +25,11 @@ check_backup_file() {
     done < "${1:?provide backup file}"
 }
 
-backup_file="${1:-${HOME}/.backup_files}"
-[ ! -f "${backup_file:?provide backup file}" ] && exit_error "${backup_file} does not exist"
-
-partition="${2:-$(get_partition)}"
+partition="${1:-$(get_partition)}"
 [ ! -b "${partition:?provide partition}" ] && exit_error "${partition} is not block special"
+
+backup_file="${2:-${HOME}/.backup_files}"
+[ ! -f "${backup_file:?provide backup file}" ] && exit_error "${backup_file} does not exist"
 
 directory="$(get_directory)"
 [ ! -d "${directory:?provide directory}" ] && exit_error "${directory} is not a directory"
@@ -41,11 +41,13 @@ sudo -A chown val:users "${directory}" || { sudo -A umount "${directory}"; exit_
 
 # Making backup
 xargs --arg-file="${backup_file}" --max-args=200 -I{} \
-      rsync --del --archive --verbose --partial --progress --relative \
-      --exclude='clojure/*/target' --exclude='.git*' \
-      --exclude="${HOME}/.TelegramDesktop" --exclude="${HOME}/.cache" \
+      rsync --delete --delete-excluded --archive --verbose --partial --progress --relative \
+      --backup --backup-dir="${directory%/}/backup" --suffix="$(date '+.~%Y%m%d~')" \
+      --filter='dir-merge,- .gitignore' --exclude='.git' \
+      --exclude="${HOME}/.cache" --exclude='lost+found' \
+      --exclude='*TelegramDesktop/' \
       --exclude="${directory}" \
-      "{}" "${directory}"
+      "{}" "${directory%/}/current"
 
 sudo -A umount "${directory}"
 rmdir "${directory}"
