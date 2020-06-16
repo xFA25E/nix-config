@@ -2239,7 +2239,8 @@
   (newsticker-dir (expand-file-name "emacs/newsticker" (xdg-cache-home)))
   (newsticker-url-list-defaults nil)
   (newsticker-url-list
-   '(("Mastering Emacs" "http://www.masteringemacs.org/feed")
+   '(("Stallman Was Right" "https://reddit.com/r/StallmanWasRight.rss")
+     ("Mastering Emacs" "http://www.masteringemacs.org/feed")
      ("Rust Lang" "https://blog.rust-lang.org/feed.xml")
      ("WargarW" "https://queryfeed.net/tw?q=%40WargarW")
      ("Ancestral Cult" "https://www.youtube.com/feeds/videos.xml?channel_id=UCDgSHG640xfj5BAaztJcxVg")
