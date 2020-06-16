@@ -2385,6 +2385,8 @@
 
 (use-package sdcv :ensure t)
 
-(use-package ledger-mode :ensure t)
+(use-package ledger-mode
+  :ensure t
+  :custom (ledger-default-date-format "%Y-%m-%d"))
 
 ;; end
