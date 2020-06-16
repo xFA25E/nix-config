@@ -1951,9 +1951,7 @@
         ("C-c m" . pp-macroexpand-last-sexp)
         ("C-c M" . emacs-lisp-macroexpand)))
 
-(use-package sly
-  :ensure t
-  :custom (inferior-lisp-program "sbcl"))
+(use-package sly :ensure t)
 
 (use-package sly-quicklisp :ensure t)
 
