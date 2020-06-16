@@ -52,6 +52,7 @@ export LANG=en_US.UTF-8
 export RUNEL_WM_NAME="runel_panel"
 export LEMONBAR_ARGS="-n,${RUNEL_WM_NAME},-f,Iosevka-8"
 
+# less
 export LESSHISFILE="/dev/null"
 
 # mu/mu4e mail
@@ -117,11 +118,36 @@ export XAUTHORITY="${XDG_RUNTIME_DIR}/Xauthority"
 
 # stardict
 export STARDICT_DATA_DIR="${XDG_DATA_HOME}"
+export SDCV_HISTSIZE=0
 
 # history
 export HISTFILESIZE=0
 export HISTSIZE=0
 export HISTFILE=
+
+# zoom
+export SSB_HOME="${XDG_CACHE_HOME}/zoom"
+
+# MySQL
+export MYSQL_HISTFILE="${XDG_CACHE_HOME}/mysql_history"
+
+# vagrant
+export VAGRANT_HOME="${XDG_DATA_HOME}/vagrant"
+export VAGRANT_ALIAS_FILE="${XDG_DATA_HOME}/vagrant/aliases"
+
+# lein
+export LEIN_HOME="${XDG_CACHE_HOME}/lein"
+
+# gem
+export GEM_HOME="${XDG_DATA_HOME}/gem"
+export GEM_SPEC_CACHE="${XDG_CACHE_HOME}/gem"
+
+# adb
+export ANDROID_SDK_HOME="${XDG_CONFIG_HOME}/android"
+export ADB_VENDOR_KEY="${XDG_CONFIG_HOME}/android"
+
+# boot
+export BOOT_HOME="${XDG_CACHE_HOME}/boot"
 
 # Following automatically calls "startx" when you login:
 [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ] && \
