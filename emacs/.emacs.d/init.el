@@ -314,7 +314,6 @@
 
   :bind
   ("C-h"   . backward-delete-char-untabify)
-  ("C-x w" . mark-whole-buffer)
   ("M-K"   . kill-whole-line)
   ("M-SPC" . just-one-space-fast)
   ("M-\\"  . delete-indentation)
@@ -1748,8 +1747,6 @@
                (current-buffer))
       (error (message "Invalid expression")
              (insert (current-kill 0))))))
-
-(use-package help :bind-keymap ("C-x h" . help-map))
 
 (use-package edit-indirect
   :ensure t
