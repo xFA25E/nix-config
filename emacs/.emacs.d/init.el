@@ -2366,4 +2366,20 @@
   :ensure t
   :custom (ledger-default-date-format "%Y-%m-%d"))
 
+(use-package ytel
+  :ensure t
+  :bind
+  (:map mode-specific-map ("o Y" . ytel))
+  (:map ytel-mode-map ("m" . ytel-play-in-mpvi))
+
+  :config
+  (defun ytel-play-in-mpvi ()
+    (interactive)
+    (let* ((video (ytel-get-current-video))
+           (title (ytel-video-title video))
+           (id (ytel-video-id video))
+           (link (concat "https://www.youtube.com/watch?v=" id)))
+      (message "Starting \"%s\" in mpvi" title)
+      (start-process "mpvi" nil "mpvi" link))))
+
 ;; end
