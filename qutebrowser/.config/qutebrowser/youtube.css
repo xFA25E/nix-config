@@ -1,0 +1,4 @@
+html>body>ytd-app>div#content>ytd-page-manager#page-manager>ytd-watch-flexy>div#columns>div#secondary,
+html>body>ytd-app>div#content>ytd-page-manager#page-manager>ytd-watch-flexy>div#columns>div#primary>div#primary-inner>div#related {
+    display: none;
+}

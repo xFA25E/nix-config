@@ -461,7 +461,7 @@ c.content.proxy = "system"
 c.content.ssl_strict = "ask"
 
 # A list of user stylesheet filenames to use.
-c.content.user_stylesheets = c.content.user_stylesheets
+c.content.user_stylesheets = ["youtube.css"]
 
 # Enables or disables WebGL.
 c.content.webgl = False
