@@ -1,3 +1,3 @@
 #!/bin/sh
-res="$(seq 100 -10 10 | rofi -dmenu -p "Number (0 - 100)")"
+res="$(seq 100 -10 10 | rofi -dmenu -p "Number (0 - 100)" -select 60)"
 xbacklight -set "${res:?}"
