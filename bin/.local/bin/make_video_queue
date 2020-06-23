@@ -13,13 +13,13 @@ BEGIN {
         items_count[sequential] += 1
         next
     } else {
-        print $0
+        print $0 | "sed -E \"s/^([0-9]+) /\\1|||/\""
     }
 }
 
 END {
     for (item in items) {
-        print int(items[item] / items_count[item]), items_count[item], items[item], item | "format_duration 3"
+        print int(items[item] / items_count[item]) "|" items_count[item] "|" items[item] "|" item | "format_duration 3 \"|\""
     }
 }
 
@@ -43,4 +43,4 @@ function in_seq(seq, line)
     }
     return 0
 }
-' | sort -h | format_duration
+' | sort -n -t "|" | format_duration 1 "|" | column -t -s "|" -R '1,2,3' -N "DUR,QT,PLIST,NAME"
