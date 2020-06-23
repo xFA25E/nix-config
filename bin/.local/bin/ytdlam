@@ -13,15 +13,12 @@ select_directory() {
 
 selected_dir="$(select_directory)"
 
+output="${MUSIC_DIRECTORY}/${selected_dir}/%(title)s.%(ext)s"
+args="--audio-format mp3 --embed-thumbnail"
+
 if [ "$(printf 'no\nyes' | rofi -dmenu -p 'Playlist?' -select no)" = yes ]; then
-    exec ytdla --output "${MUSIC_DIRECTORY}/${selected_dir}/%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s" \
-         --audio-format mp3 \
-         --yes-playlist \
-         "$@"
-    # --embed-thumbnail
-else
-    exec ytdla --output "${MUSIC_DIRECTORY}/${selected_dir}/%(title)s.%(ext)s" \
-         --audio-format mp3 \
-         "$@"
-    # --embed-thumbnail
+    output="${MUSIC_DIRECTORY}/${selected_dir}/%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
+    args="${args} --yes-playlist"
 fi
+
+exec ytdla --output "${output}" ${args} "$@"
