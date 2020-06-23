@@ -1,2 +1,0 @@
-#!/bin/sh
-cd "${XDG_VIDEOS_DIR:-${HOME}/Videos}/youtube" || exit 1

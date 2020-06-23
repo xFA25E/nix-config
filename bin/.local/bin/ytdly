@@ -1,2 +1,3 @@
 #!/bin/sh
-. cdytdir && exec ytdl "$@"
+YTDIR="${XDG_VIDEOS_DIR:-${HOME}/Videos}/youtube"
+exec ytdl --output "${YTDIR}/%(uploader)s/%(upload_date)s - %(title)s.%(ext)s" "$@"

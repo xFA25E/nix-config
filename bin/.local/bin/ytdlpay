@@ -1,2 +1,5 @@
 #!/bin/sh
-. cdytdir && exec ytdlpa "$@"
+YTDIR="${XDG_VIDEOS_DIR:-${HOME}/Videos}/youtube"
+exec ytdla --output "${YTDIR}/%(playlist_uploader)s/%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s" \
+     --yes-playlist \
+     "$@"

@@ -1,3 +1,4 @@
 #!/bin/sh
-exec ytdl --config-location "${XDG_CONFIG_HOME:-${HOME}/.config}/youtube-dl/config_playlist" \
+exec ytdl --output "%(playlist_uploader)s/%(playlist)s/%(playlist_index)s%(upload_date)s - %(title)s.%(ext)s" \
+     --yes-playlist \
      "$@"
