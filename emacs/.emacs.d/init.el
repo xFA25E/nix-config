@@ -2234,7 +2234,7 @@
   (newsticker-dir (expand-file-name "emacs/newsticker" (xdg-cache-home)))
   (newsticker-url-list-defaults nil)
   (newsticker-url-list
-   '(("Justus Walker" "https://www.youtube.com/feeds/videos.xml?playlist_id=PLz2be7z5MhMfwUChssviBq180kVF3QRua")
+   '(("Justus Walker" "https://www.youtube.com/feeds/videos.xml?user=senttosiberia")
      ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
      ("Luke Smith" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA")
      ("Tsoding" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEbYhDd6c6vngsF5PQpFVWg")
