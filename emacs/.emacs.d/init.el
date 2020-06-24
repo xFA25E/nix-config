@@ -1765,11 +1765,9 @@
     (cl-case (buffer-local-value 'major-mode buf)
       ('sh-mode (awk-mode))
       ('php-mode
-       (let ((mode (completing-read "Mode: " '("sql" "html") nil t)))
-         (cond ((string-equal mode "sql")
-                (sql-mode))
-               ((string-equal mode "html")
-                (html-mode)))))
+       (pcase (completing-read "Mode: " '("sql" "html") nil t)
+         ("sql" (sql-mode))
+         ("html" (html-mode))))
       (t (normal-mode)))))
 
 (use-package web-beautify :ensure t)
