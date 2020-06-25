@@ -3,8 +3,8 @@
 (require 'xdg)
 
 (eval-and-compile
-  (defvar nsm-settings-file (expand-file-name "emacs/network-security.data"
-                                              (xdg-cache-home)))
+  (defvar nsm-settings-file
+    (expand-file-name "emacs/network-security.data" (xdg-cache-home)))
   (defvar package-user-dir (expand-file-name "emacs/elpa" (xdg-cache-home)))
   (defvar gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
   (defvar package-archives '(("gnu"   . "https://elpa.gnu.org/packages/")
@@ -2368,7 +2368,9 @@
   :ensure t
   :bind
   (:map mode-specific-map ("o Y" . ytel))
-  (:map ytel-mode-map ("m" . ytel-play-in-mpvi))
+  (:map ytel-mode-map
+        ("m" . ytel-play-in-mpvi)
+        ("c" . ytel-copy-link))
 
   :config
   (defun ytel-play-in-mpvi ()
@@ -2378,6 +2380,14 @@
            (id (ytel-video-id video))
            (link (concat "https://www.youtube.com/watch?v=" id)))
       (message "Starting \"%s\" in mpvi" title)
-      (start-process "mpvi" nil "mpvi" link))))
+      (start-process "mpvi" nil "mpvi" link)))
+
+  (defun ytel-copy-link ()
+    (interactive)
+    (let* ((video (ytel-get-current-video))
+           (id (ytel-video-id video))
+           (link (concat "https://www.youtube.com/watch?v=" id)))
+      (kill-new link)
+      (message "Copied %s" link))))
 
 ;; end
