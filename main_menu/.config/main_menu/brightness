@@ -1,3 +1,4 @@
 #!/bin/sh
-res="$(seq 100 -10 10 | rofi -dmenu -p "Number (0 - 100)" -select 60)"
+current="$(xbacklight -get | awk '{num = sprintf("%.0f", $0); mod = num % 10} mod >= 5 { print num + (10 - mod)} mod < 5 { print num - mod}')"
+res="$(seq 100 -10 10 | rofi -dmenu -p "Number (0 - 100)" -select "${current}")"
 xbacklight -set "${res:?}"
