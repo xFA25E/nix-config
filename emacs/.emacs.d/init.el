@@ -923,7 +923,6 @@
   :custom (counsel-fzf-dir-function #'counsel-fzf-dir-function-git-root)
 
   :functions
-  get-grep-lines
   counsel-switch-to-shell-buffer@unique
   counsel-set-variable@prin-fix
 
