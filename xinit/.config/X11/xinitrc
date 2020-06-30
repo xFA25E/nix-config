@@ -40,6 +40,7 @@ pkill ckbatt; setsid -f ckbatt notify_sound
 pidof rimer >/dev/null || setsid -f rimer start "${TIMER_UPDATER:-panel_timer}"
 setsid -f panel
 pidof emacs >/dev/null || setsid -f em
+pidof sctd >/dev/null || setsid -f sctd --longitude 47.339 --latitude 8.877
 
 exec bspwm
 # exec emacs
