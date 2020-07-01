@@ -41,14 +41,14 @@ type_field() {
         password)
             entry="$(printf "%s" "${text}" | head -n 1)"
             setxkbmap us
-            microsleep 100
+            millisleep 100
             xdotool type "${entry}"
             switch_keyboard default
             ;;
         *)
             entry="$(printf "%s" "${text}" | parse_field "${field}")"
             setxkbmap us
-            microsleep 100
+            millisleep 100
             xdotool type "${entry}"
             switch_keyboard default
     esac
