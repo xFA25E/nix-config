@@ -61,4 +61,5 @@ mpv "${link}" \
     --force-window=yes \
     --load-unsafe-playlists \
     --pause \
-    --ytdl-raw-options=yes-playlist=
+    --ytdl-raw-options=yes-playlist= \
+    --loop-file=inf
