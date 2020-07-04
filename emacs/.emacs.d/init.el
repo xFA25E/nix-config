@@ -426,6 +426,7 @@
   :demand t
   :after dired
   :bind (:map ctl-x-map ("C-j" . dired-jump))
+  :hook (dired-mode-hook . dired-omit-mode)
 
   :custom
   (dired-guess-shell-alist-user
