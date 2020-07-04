@@ -55,11 +55,21 @@ case "${format:?}" in
         ;;
 esac
 
+if [ "${chosen_format}" = "bestaudio/best" ]; then
+    mpd="$(printf 'no\nyes\n' | rofi -dmenu -p "Add to mpd?" -no-custom)"
+    if [ "${mpd}" = yes ]; then
+        mpc_add_link "${link}"
+        exit 0
+    fi
+fi
+
+pause="$(printf '%s\n\n' --pause | rofi -dmenu -p "Start paused?" -no-custom)"
+
 mpv "${link}" \
     --no-terminal \
     --ytdl-format="${chosen_format:?}" \
     --force-window=yes \
     --load-unsafe-playlists \
-    --pause \
+    ${pause} \
     --ytdl-raw-options=yes-playlist= \
-    --loop-file=inf
+    --loop-playlist=inf
