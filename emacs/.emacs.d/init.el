@@ -110,15 +110,12 @@
   (ispell-extra-args (list "--sug-mode=ultra")))
 
 (use-package xdg
-  :commands xdg-documents-dir xdg-download-dir
+  :commands xdg-documents-dir xdg-download-dir xdg-music-dir
 
   :config
-  (defmacro xdg-define-env-dir (name env-var dir)
-    `(defun ,name () (or (getenv ,env-var) ,dir)))
-
-  (xdg-define-env-dir xdg-documents-dir "XDG_DOCUMENTS_DIR" "~/Documents")
-  (xdg-define-env-dir xdg-download-dir "XDG_DOWNLOAD_DIR" "~/Downloads")
-  (xdg-define-env-dir xdg-music-dir "XDG_MUSIC_DIR" "~/Music"))
+  (defun xdg-documents-dir () (or (getenv "XDG_DOCUMENTS_DIR") "~/Documents"))
+  (defun xdg-download-dir () (or (getenv "XDG_DOWNLOAD_DIR") "~/Downloads"))
+  (defun xdg-music-dir () (or (getenv "XDG_MUSIC_DIR") "~/Music")))
 
 (use-package window
   :commands pop-to-buffer
