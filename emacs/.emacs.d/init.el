@@ -235,12 +235,14 @@
   :custom-face
   (default ((t (:inherit default :family "Iosevka"))))
   (mode-line ((t (:box (:line-width 1 :color nil :style nil)
-                       :foreground "black" :background "white"
+                       ;; :foreground "black" :background "white"
                        :font "DejaVu Sans"))))
   (mode-line-inactive ((t (:box (:line-width 1 :color "grey75" :style nil)
                                 :weight light :inherit mode-line
-                                :foreground "grey20" :background "grey90"))))
-  (header-line ((t (:background "grey90" :foreground "grey20" :box nil))))
+                                ;; :foreground "grey20" :background "grey90"
+                                ))))
+  ;; (header-line ((t (:background "grey90" :foreground "grey20"
+  ;;                               :box nil))))
   (fixed-pitch-serif ((t (:inherit fixed-pitch-serif :font "DejaVu Serif")))))
 
 (use-package paren
@@ -1902,8 +1904,8 @@
   :diminish whitespace-mode
   :custom (whitespace-style '(face lines-tail))
 
-  :custom-face
-  (whitespace-line ((t (:foreground "dark violet" :background "grey90"))))
+  ;; :custom-face
+  ;; (whitespace-line ((t (:foreground "dark violet" :background "grey90"))))
 
   :hook
   (before-save-hook . whitespace-cleanup)
@@ -2389,6 +2391,10 @@
            (link (concat "https://www.youtube.com/watch?v=" id)))
       (kill-new link)
       (message "Copied %s" link))))
+
+(use-package parchment-theme
+  :ensure t
+  :init (load-theme 'parchment t))
 
 ;; Local Variables:
 ;; eval: (cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
