@@ -1,4 +1,4 @@
-;; -*- flycheck-disabled-checkers: (emacs-lisp-checkdoc); lexical-binding: t -*-
+;; -*- lexical-binding: t; -*-
 
 (require 'xdg)
 
@@ -277,6 +277,8 @@
   (require-final-newline nil)
   (version-control t)
   (backup-enable-predicate #'custom-backup-enable-predicate)
+  (safe-local-variable-values
+   '((eval cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)))
   (auto-save-file-name-transforms
    `((".*" ,(expand-file-name "emacs/auto-saves/" (xdg-cache-home)) t)))
   (backup-directory-alist
@@ -2391,4 +2393,6 @@
       (kill-new link)
       (message "Copied %s" link))))
 
-;; end
+;; Local Variables:
+;; eval: (cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
+;; End:
