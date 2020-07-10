@@ -2338,16 +2338,6 @@
   :ensure t
   :hook (after-init-hook . counsel-projectile-mode))
 
-(use-package lsp-java
-  :ensure t
-  :hook (java-mode-hook . lsp)
-
-  :custom
-  (lsp-java-workspace-dir
-   (expand-file-name "emacs/workspace/" (xdg-cache-home)))
-  (lsp-java-server-install-dir
-   (expand-file-name "emacs/eclipse.jdt.ls/server/" (xdg-cache-home))))
-
 (use-package sdcv :ensure t)
 
 (use-package ledger-mode
