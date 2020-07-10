@@ -787,10 +787,6 @@
   :ensure t
   :bind (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
 
-(use-package diredfl
-  :ensure t
-  :hook (dired-mode-hook . diredfl-mode))
-
 (use-package dired-rsync
   :ensure t
   :bind (:map dired-mode-map ("r" . dired-rsync)))
