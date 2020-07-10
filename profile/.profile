@@ -91,6 +91,7 @@ export CFLAGS='-Wall -Wextra -pedantic'
 
 # java
 export _JAVA_AWT_WM_NONREPARENTING=1
+export JAVA_HOME=/usr/lib/jvm/default
 
 # composer
 export PATH="${HOME}/.config/composer/vendor/bin:${PATH}"
