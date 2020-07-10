@@ -235,14 +235,9 @@
   :custom-face
   (default ((t (:inherit default :family "Iosevka"))))
   (mode-line ((t (:box (:line-width 1 :color nil :style nil)
-                       ;; :foreground "black" :background "white"
                        :font "DejaVu Sans"))))
-  (mode-line-inactive ((t (:box (:line-width 1 :color "grey75" :style nil)
-                                :weight light :inherit mode-line
-                                ;; :foreground "grey20" :background "grey90"
-                                ))))
-  ;; (header-line ((t (:background "grey90" :foreground "grey20"
-  ;;                               :box nil))))
+  (mode-line-inactive ((t (:box (:line-width 1 :style nil)
+                                :weight light :inherit mode-line))))
   (fixed-pitch-serif ((t (:inherit fixed-pitch-serif :font "DejaVu Serif")))))
 
 (use-package paren
@@ -794,11 +789,7 @@
 
 (use-package diredfl
   :ensure t
-  :hook (dired-mode-hook . diredfl-mode)
-
-  :custom-face
-  (diredfl-compressed-file-suffix
-   ((t (:inherit diredfl-compressed-file-suffix :foreground "orange")))))
+  :hook (dired-mode-hook . diredfl-mode))
 
 (use-package dired-rsync
   :ensure t
@@ -1903,9 +1894,6 @@
 (use-package whitespace
   :diminish whitespace-mode
   :custom (whitespace-style '(face lines-tail))
-
-  ;; :custom-face
-  ;; (whitespace-line ((t (:foreground "dark violet" :background "grey90"))))
 
   :hook
   (before-save-hook . whitespace-cleanup)
