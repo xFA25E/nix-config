@@ -437,6 +437,9 @@
       "setsid -f sxiv * >/dev/null 2>&1"
       "setsid -f gimp * >/dev/null 2>&1")
 
+     (,(rx ".ai" string-end)
+      "setsid -f gimp * >/dev/null 2>&1")
+
      (,(rx ".fb2" string-end)
       "ebook-convert ? .epub &")
 
