@@ -669,6 +669,10 @@
 
   :hook (after-init-hook . start-mu4e)
 
+  :custom-face
+  (mu4e-header-highlight-face
+   ((t (:underline (:color foreground-color :style line) :inherit (region)))))
+
   :bind
   (:map mode-specific-map ("o m" . mu4e))
   (:map mu4e-headers-mode-map ("C-c C-e" . mu4e-update-mail-and-index-exys))
