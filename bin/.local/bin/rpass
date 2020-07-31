@@ -77,6 +77,15 @@ rpass_show() {
     rofi -e "$(pass show "${p}")"
 }
 
+rpass_otp() {
+    p="${1:?provide password}"
+    code="$(pass otp "${p}")"
+    setxkbmap us
+    millisleep 100
+    xdotool type "${code}"
+    switch_keyboard default
+}
+
 rpass_ask() {
     pass show "${1:?provide password}"
 }
@@ -89,7 +98,7 @@ rpass_url() {
 
 
 rpass_menu() {
-    printf "type:add:edit:show:url:ask" | rofi -dmenu -no-custom -p "Menu" -sep ':'
+    printf "type:add:edit:show:url:otp:ask" | rofi -dmenu -no-custom -p "Menu" -sep ':'
 }
 
 case "${1:-$(rpass_menu)}" in
@@ -107,6 +116,9 @@ case "${1:-$(rpass_menu)}" in
         ;;
     url)
         rpass_url "$(get_password "Select password")"
+        ;;
+    otp)
+        rpass_otp "$(get_password "Select password")"
         ;;
     ask)
         rpass_ask "$(get_password "Select password")"
