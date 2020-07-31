@@ -2341,7 +2341,16 @@
   (define-advice projectile-default-mode-line
       (:filter-return (project-name) remove-empty)
     (when (not (string-equal project-name "[-]"))
-      (concat " " project-name))))
+      (concat " " project-name)))
+
+  (defun delete-file-projectile-remove-from-cache (filename &optional _trash)
+    (unless (string-equal (file-remote-p default-directory 'method) "ftp")
+      (if (and projectile-enable-caching projectile-auto-update-cache (projectile-project-p))
+          (let* ((project-root (projectile-project-root))
+                 (true-filename (file-truename filename))
+                 (relative-filename (file-relative-name true-filename project-root)))
+            (if (projectile-file-cached-p relative-filename project-root)
+                (projectile-purge-file-from-cache relative-filename)))))))
 
 (use-package counsel-projectile
   :ensure t
