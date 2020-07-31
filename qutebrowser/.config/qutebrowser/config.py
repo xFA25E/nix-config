@@ -340,7 +340,7 @@ c.content.default_encoding = "iso-8859-1"
 c.content.desktop_capture = "ask"
 
 # Try to pre-fetch DNS entries to speed up browsing.
-# c.content.dns_prefetch = # webkit only
+c.content.dns_prefetch = True
 
 # Expand each subframe to its contents.
 # c.content.frame_flattening = # webkit only
@@ -544,8 +544,11 @@ c.fonts.prompts = default_font
 # Font used in the statusbar.
 c.fonts.statusbar = default_font
 
-# Font used in the tab bar.
-c.fonts.tabs = default_font
+# Font used in the tab bar selected.
+c.fonts.tabs.selected = "bold " + default_font
+
+# Font used in the tab bar unselected.
+c.fonts.tabs.unselected = default_font
 
 # Font family for cursive fonts.
 c.fonts.web.family.cursive = c.fonts.web.family.cursive
@@ -638,7 +641,7 @@ c.input.links_included_in_focus_chain = True
 c.input.partial_timeout = 1000
 
 # Enable Opera-like mouse rocker gestures.
-c.input.rocker_gestures = False
+c.input.mouse.rocker_gestures = False
 
 # Enable Spatial Navigation.
 c.input.spatial_navigation = False
@@ -704,7 +707,7 @@ c.session.lazy_restore = True
 c.spellcheck.languages = ["en-US", "ru-RU", "it-IT"]
 
 # Hide the statusbar unless a message is shown.
-c.statusbar.hide = False
+c.statusbar.show = "always"
 
 # Padding for the statusbar.
 for key in ("top", "bottom", "left", "right"):
@@ -855,7 +858,7 @@ c.zoom.mouse_divider = 512
 # Keybindings
 my_keys = {
     # '.m': ('hint links spawn python3 /home/val/Documents/it_projects/python_projects' +
-           # '/download_tool/download_tool.py --add {hint-url}'),
+    # '/download_tool/download_tool.py --add {hint-url}'),
     ',w'      : 'spawn --detach mpvi {url}',
     ',W'      : 'hint links spawn --detach mpvi {hint-url}',
     ',d'      : 'spawn --detach ytdli {url}',
@@ -879,9 +882,10 @@ for key, val in my_keys.items():
 
 js_sites = ["*://vk.com/*", "*://www.youtube.com/*",
             "*://www.trenord.it/*", "*://duckduckgo.com/*",
-                "*://klava.org/*", "*://soundcloud.com/*",
-                "*://rutracker.net/*", "*://translate.google.com/*",
-                "*://doc.rust-lang.org/*", "*://crates.io/*",
-                "*://mail.protonmail.com/*"]
+            "*://klava.org/*", "*://soundcloud.com/*",
+            "*://rutracker.net/*", "*://translate.google.com/*",
+            "*://doc.rust-lang.org/*", "*://crates.io/*",
+            "*://mail.protonmail.com/*", "*://github.com/*"]
+
 for site in js_sites:
     config.set('content.javascript.enabled', True, site)
