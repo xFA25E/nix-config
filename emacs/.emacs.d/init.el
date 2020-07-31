@@ -73,6 +73,7 @@
   (help-char (aref (kbd "C-?") 0))
   (kill-buffer-query-functions
    (remq #'process-kill-buffer-query-function kill-buffer-query-functions))
+  (user-full-name "Valeriy Litkovskyy")
 
   :config
   (setq-default line-spacing 0.2)
@@ -272,7 +273,8 @@
   (version-control t)
   (backup-enable-predicate #'custom-backup-enable-predicate)
   (safe-local-variable-values
-   '((eval cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)))
+   '((eval cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
+     (eval web-mode-set-engine "django")))
   (auto-save-file-name-transforms
    `((".*" ,(expand-file-name "emacs/auto-saves/" (xdg-cache-home)) t)))
   (backup-directory-alist
@@ -437,7 +439,11 @@
       "setsid -f sxiv * >/dev/null 2>&1"
       "setsid -f gimp * >/dev/null 2>&1")
 
+     (,(rx ".eps" string-end)
+      "setsid -f inkscape * >/dev/null 2>&1")
+
      (,(rx ".ai" string-end)
+      "setsid -f inkscape * >/dev/null 2>&1"
       "setsid -f gimp * >/dev/null 2>&1")
 
      (,(rx ".fb2" string-end)
@@ -639,7 +645,8 @@
   (message-subject-re-regexp (rx bol
                                  (* (any " " "\t"))
                                  (* (any "R" "r")
-                                    (? (any "E" "e"))
+                                    (? (any "E" "e" "i" "I"))
+                                    (? (any "s" "S"))
                                     (* "[" (* digit) "]")
                                     (? " ") ":"
                                     (* (any " " "\t")))
@@ -1406,10 +1413,13 @@
   :ensure t
   :demand t
   :after company php-mode
+  :init (add-to-list 'company-backends #'company-ac-php-backend)
+  :bind (:map php-mode-map ("M-." . ac-php-find-symbol-at-point))
   :custom (ac-php-tags-path (expand-file-name "emacs/ac-php" (xdg-cache-home)))
-  :init (add-to-list 'company-backends #'company-ac-php-backend))
+  :hook (php-mode-hook . ac-php-core-eldoc-setup))
 
 (use-package php-eldoc
+  :disabled
   :ensure t
   :hook (php-mode-hook . php-eldoc-enable))
 
@@ -1803,8 +1813,20 @@
   :custom (fb2-replace-hard-space t))
 
 (use-package sql
-  :commands sql-send-region
-  :custom (sql-mysql-options '("-A")))
+  :hook (sql-interactive-mode-hook . sql-interactive-set-history)
+
+  :custom
+  (sql-mysql-options '("-A"))
+  (sql-sqlite-options `("-column" "-header" "-cmd" "PRAGMA foreign_keys = ON;"))
+
+  :config
+  (defun sql-interactive-set-history ()
+    (let ((file (expand-file-name
+                 (format "emacs/sqli/%s_history" sql-interactive-product)
+                 (xdg-cache-home))))
+      (make-directory (file-name-directory file) t)
+      (write-region "" nil file t)
+      (setq sql-input-ring-file-name file))))
 
 (use-package sql-indent
   :ensure t
@@ -1812,7 +1834,7 @@
 
 (use-package sqlup-mode
   :ensure t
-  :hook sql-mode-hook sql-interactive-mode-hook)
+  :hook sql-mode-hook)
 
 (use-package find-func
   :custom
@@ -1822,7 +1844,7 @@
 (use-package find-dired
   :commands find-dired-grep-ignore
   :bind (:map search-map ("f F" . find-dired-grep-ignore))
-  :custom (find-ls-option '("| xargs -0 ls -labdi --si" . "-labdi --si"))
+  :custom (find-ls-option '("| xargs -0 ls -ldb" . "-ldb"))
 
   :config
   (defun find-dired-grep-ignore (dir args)
@@ -1901,8 +1923,6 @@
   :hook
   (before-save-hook . whitespace-cleanup)
   (prog-mode-hook . whitespace-mode))
-
-(use-package make-mode :hook (makefile-mode-hook . indent-tabs-mode))
 
 (use-package aggressive-indent
   :ensure t
@@ -2253,7 +2273,12 @@
                         (with-temp-buffer
                           (insert description)
                           (fill-region (point-min) (point-max))
-                          (buffer-string))))))))
+                          (buffer-string)))))))
+
+  ;; (defun newsticker-add-peertube-description (_feedname item)
+  ;;   "Parse youtube description by `ITEM'."
+  ;;   (message "%S" item))
+  )
 
 (use-package newst-treeview
   :bind
