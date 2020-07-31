@@ -2,9 +2,14 @@
 [ "$#" -lt 2 ] && exit 1
 
 dir="${1:?provide directory}"
+ext="opus"
 mkdir -p "${dir}" || exit 1
 
 shift
 for video in "$@"; do
-    ffmpeg -n -i "${video}" -vn -acodec copy "${dir%/}/${video%.*}.mkv"
+    audio="${dir%/}/${video%.*}.${ext}"
+    mkdir -p "$(dirname "${audio}")"
+    ffmpeg -n -i "${video}" -vn -acodec copy "${audio}"
 done
+
+# ffmpeg -y -loglevel repeat+info -i file:f.webm -vn -acodec libmp3lame -q:a 5 file:f.mp3
