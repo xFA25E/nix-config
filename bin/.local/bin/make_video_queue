@@ -1,28 +1,21 @@
 #!/bin/sh
 
-find -L "${@:-.}" -type f | sort | video_duration | awk '
+find -L "${@:-.}" -regextype egrep \
+     -regex ".*($(paste -s -d'|' exclude.txt 2>/dev/null || printf "^$")).*" -prune \
+     -o -type f -print | sort | awk '
 BEGIN {
     read_file(sequentials, "sequential.txt")
-    read_file(exclude, "exclude.txt")
 }
 
-!in_seq(exclude, $0) {
+{
     sequential = in_seq(sequentials, $0)
     if (sequential) {
-        items[sequential] += $1
-        items_count[sequential] += 1
-        if (!(sequential in items_first)) {
-            items_first[sequential] = $1
+        if (!(sequential in printed)) {
+            printed[sequential] = 0
+            print
         }
-        next
     } else {
-        print $0 | "sed -E \"s/^([0-9]+) /\\1|||/\""
-    }
-}
-
-END {
-    for (item in items) {
-        print items_first[item] "|" items_count[item] "|" items[item] "|" item | "format_duration 3 \"|\""
+        print
     }
 }
 
@@ -46,4 +39,5 @@ function in_seq(seq, line)
     }
     return 0
 }
-' | sort -n -t "|" | format_duration 1 "|" | column -t -s "|" -R '1,2,3' -N "DUR,QT,PLIST,NAME"
+' | video_duration | sed -E 's/^([0-9]+) /\1|/' | sort -n \
+    | format_duration 1 '|' | column -t -s "|" -R '1'
