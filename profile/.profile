@@ -129,8 +129,11 @@ export HISTFILE=
 # zoom
 export SSB_HOME="${XDG_CACHE_HOME}/zoom"
 
+# sqlite
+export SQLITE_HISTORY=/dev/null
+
 # MySQL
-export MYSQL_HISTFILE="${XDG_CACHE_HOME}/mysql_history"
+export MYSQL_HISTFILE=/dev/null
 
 # vagrant
 export VAGRANT_HOME="${XDG_DATA_HOME}/vagrant"
