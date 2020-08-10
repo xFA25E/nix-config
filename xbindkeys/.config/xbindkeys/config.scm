@@ -19,186 +19,229 @@
 
 (use-modules (srfi srfi-1))
 
-;; should be higher than 1
-(define timeout 3)
+(define chain "")
+(define global-map (make-hash-table))
+(define current global-map)
 
-(define global-map '())
-(define current '())
-(define time (current-time))
+(define (kbd kstring)
+  "Similar to emacs's kbd function, but it does not handle sequences."
+
+  (define (kbd-modifier modifier)
+    (cond ((string= modifier "s") "Mod4")
+          ((string= modifier "S") "Shift")
+          ((string= modifier "M") "Alt")
+          ((string= modifier "C") "Control")
+          (else (error (format #f "Unknown kdb string \"~A\"" modifier)))))
+
+  (when (string-contains kstring " ")
+    (error (format #f "String \"~A\" has spaces!" kstring)))
+
+  (let loop ((s (string-split kstring #\-)) (result '()))
+    (if (null? (cdr s))
+        (reverse! (cons (car s) result))
+        (loop (cdr s) (cons (kbd-modifier (car s)) result)))))
 
 (define (set-key key-map key-path command)
-  (if (null? key-path)
-      command
-      (assoc-set! key-map
-                  (car key-path)
-                  (set-key (or (assoc-ref key-map (car key-path)) '())
-                           (cdr key-path)
-                           command))))
+  (let ((next-key (car key-path))
+        (rest-path (cdr key-path)))
+    (if (null? rest-path)
+        (hash-set! key-map next-key command)
+        (let ((ref (hash-ref key-map next-key)))
+          (when (not ref)
+            (hash-set! key-map next-key (make-hash-table))
+            (set! ref (hash-ref key-map next-key)))
+          (set-key ref rest-path command)))))
 
 (define (global-set-key key-path command)
-    "key-path is a list of form '(key1 key2..);
+  "key-path is a list of form '(key1 key2..);
 command may be a string or a function"
-  (set! global-map (set-key global-map key-path command)))
-
-(define (update-current val)
-  (set! current val)
-  (set! time (current-time)))
-
-(define (execute-key-on-global-map key)
-  (let ((val (assoc-ref global-map key)))
-    (cond ((not val)
-           (update-current global-map))
-          ((string? val)
-           (run-command val)
-           (update-current global-map))
-          ((procedure? val)
-           (apply val '())
-           (update-current global-map))
-          (else
-           (update-current val)))))
+  (set-key global-map (string-split key-path #\space) command))
 
 (define (execute-key key)
-  (let ((val (assoc-ref current key)))
-    (cond ((not (and val (< (- (current-time) time) timeout)))
-           (execute-key-on-global-map key))
-          ((string? val)
-           (run-command val)
-           (update-current global-map))
-          ((procedure? val)
-           (apply val '())
-           (update-current global-map))
-          (else
-           (update-current val)))))
+  (let* ((val (hash-ref current key)))
+    (cond ((string? val) (run-command val))
+          ((procedure? val) (val)))
+    (set! current (if (hash-table? val) val global-map))))
 
-(define (alist-keys alst)
-  (append-map (lambda (elm)
-                (let ((rest (cdr elm)))
-                  (cons (car elm)
-                        (if (or (string? rest) (procedure? rest))
-                            '()
-                            (alist-keys rest)))))
-              alst))
+(define (hash-map-keys hm)
+  (define (hash-map-keys-inner hm)
+    (apply
+     append!
+     (hash-map->list
+      (lambda (key value)
+        (cons key (if (hash-table? value) (hash-map-keys-inner value) '())))
+      hm)))
 
-(global-set-key '((Mod2 Mod4 space)) "rofi -show run")
-(global-set-key '((Shift Mod2 Mod4 space)) "rofi -show window")
+  (delete-duplicates! (hash-map-keys-inner hm)))
 
-(global-set-key '((Mod2 XF86MonBrightnessDown)) "xbacklight -dec 3")
-(global-set-key '((Mod2 XF86MonBrightnessUp)) "xbacklight -inc 3")
+;; bspwm indipendent keys ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; run launcher
+(global-set-key "s-space" "rofi -show run")
+(global-set-key "s-S-space" "rofi -show window")
 
-(global-set-key '((Mod2 XF86AudioLowerVolume)) "amixer -D pulse sset Master 2%- >/dev/null")
-(global-set-key '((Mod2 XF86AudioMute)) "amixer -D pulse sset Master toggle >/dev/null")
-(global-set-key '((Mod2 XF86AudioRaiseVolume)) "amixer -D pulse sset Master 2%+ >/dev/null")
+;; change brightness
+(global-set-key "XF86MonBrightnessDown" "xbacklight -dec 3")
+(global-set-key "XF86MonBrightnessUp" "xbacklight -inc 3")
 
-(global-set-key '((Mod2 Mod4 o) (Mod2 Mod4 b)) "browser")
-(global-set-key '((Mod2 Mod4 o) (Mod2 Mod4 c)) "timer add")
-(global-set-key '((Mod2 Mod4 o) (Mod2 Mod4 m)) "main_menu")
-(global-set-key '((Mod2 Mod4 o) (Mod2 Mod4 s)) "emmingus")
-(global-set-key '((Mod2 Mod4 o) (Mod2 Mod4 t)) "emshell")
-(global-set-key '((Mod2 Mod4 o) (Mod2 Mod4 v)) (string-append (getenv "TERMINAL") " -e pulsemixer"))
-(global-set-key '((Mod2 Mod4 o) (Mod2 Mod4 w)) "rpass type")
-(global-set-key '((Mod2 Mod4 o) (Shift Mod2 Mod4 c)) "timer")
-(global-set-key '((Mod2 Mod4 o) (Shift Mod2 Mod4 m)) "bm menu")
-(global-set-key '((Mod2 Mod4 o) (Shift Mod2 Mod4 w)) "rpass")
+;; change volume
+(global-set-key "XF86AudioLowerVolume" "amixer -D pulse sset Master 2%- >/dev/null")
+(global-set-key "XF86AudioMute" "amixer -D pulse sset Master toggle >/dev/null")
+(global-set-key "XF86AudioRaiseVolume" "amixer -D pulse sset Master 2%+ >/dev/null")
 
-(global-set-key '((Mod2 Mod4 e) (Mod2 Mod4 b)) "emswitch-to-buffer")
-(global-set-key '((Mod2 Mod4 e) (Mod2 Mod4 e)) "em")
-(global-set-key '((Mod2 Mod4 e) (Mod2 Mod4 f)) "emfind-file")
-(global-set-key '((Mod2 Mod4 e) (Mod2 Mod4 m)) "emman")
-(global-set-key '((Mod2 Mod4 e) (Mod2 Mod4 p)) "emproced")
-(global-set-key '((Mod2 Mod4 e) (Mod2 Mod4 r)) "emtransmission")
-(global-set-key '((Mod2 Mod4 e) (Mod2 Mod4 s)) "emeshell")
-(global-set-key '((Mod2 Mod4 e) (Shift Mod2 Mod4 s)) "emeshell t")
+;; change volume
+(global-set-key "s-1" "amixer -D pulse sset Master 10% >/dev/null")
+(global-set-key "s-2" "amixer -D pulse sset Master 20% >/dev/null")
+(global-set-key "s-3" "amixer -D pulse sset Master 30% >/dev/null")
+(global-set-key "s-4" "amixer -D pulse sset Master 40% >/dev/null")
+(global-set-key "s-5" "amixer -D pulse sset Master 50% >/dev/null")
+(global-set-key "s-6" "amixer -D pulse sset Master 60% >/dev/null")
+(global-set-key "s-7" "amixer -D pulse sset Master 70% >/dev/null")
+(global-set-key "s-8" "amixer -D pulse sset Master 80% >/dev/null")
+(global-set-key "s-9" "amixer -D pulse sset Master 90% >/dev/null")
+(global-set-key "s-0" "amixer -D pulse sset Master 100% >/dev/null")
 
-(global-set-key '((Mod2 Mod4 s) (Mod2 Mod4 "1")) "mpc -q volume 10")
-(global-set-key '((Mod2 Mod4 s) (Mod2 Mod4 "2")) "mpc -q volume 20")
-(global-set-key '((Mod2 Mod4 s) (Mod2 Mod4 "3")) "mpc -q volume 30")
-(global-set-key '((Mod2 Mod4 s) (Mod2 Mod4 "4")) "mpc -q volume 40")
-(global-set-key '((Mod2 Mod4 s) (Mod2 Mod4 "5")) "mpc -q volume 50")
-(global-set-key '((Mod2 Mod4 s) (Mod2 Mod4 "6")) "mpc -q volume 60")
-(global-set-key '((Mod2 Mod4 s) (Mod2 Mod4 "7")) "mpc -q volume 70")
-(global-set-key '((Mod2 Mod4 s) (Mod2 Mod4 "8")) "mpc -q volume 80")
-(global-set-key '((Mod2 Mod4 s) (Mod2 Mod4 "9")) "mpc -q volume 90")
-(global-set-key '((Mod2 Mod4 s) (Mod2 Mod4 "0")) "mpc -q volume 100")
-(global-set-key '((Mod2 Mod4 s) (Mod2 Mod4 comma)) "mpc -q volume -1")
-(global-set-key '((Mod2 Mod4 s) (Mod2 Mod4 n)) "mpc -q next")
-(global-set-key '((Mod2 Mod4 s) (Mod2 Mod4 p)) "mpc -q prev")
-(global-set-key '((Mod2 Mod4 s) (Mod2 Mod4 period)) "mpc -q volume +1")
-(global-set-key '((Mod2 Mod4 s) (Mod2 Mod4 t)) "mpc -q toggle")
+;; open programs
+(global-set-key "s-o s-b" "browser")
+(global-set-key "s-o s-w" "rpass type")
+(global-set-key "s-o s-S-w" "rpass")
+(global-set-key "s-o s-S-m" "bm menu")
+(global-set-key "s-o s-m" "main_menu")
+(global-set-key "s-o s-c" "timer add")
+(global-set-key "s-o s-S-c" "timer")
+(global-set-key "s-o s-v" "$TERMINAL -e pulsemixer")
 
-(global-set-key '((Mod2 Mod4 k)) "switch_keyboard next")
-(global-set-key '((Shift Mod2 Mod4 k)) "switch_keyboard full-next")
+;; emacs progs
+(global-set-key "s-e s-e" "em")
+(global-set-key "s-e s-r" "emremember")
+(global-set-key "s-e s-S-r" "emremember-notes")
 
-(global-set-key '((Mod2 Mod4 p) (Mod2 Mod4 d)) "runel remote mode default")
-(global-set-key '((Mod2 Mod4 p) (Mod2 Mod4 h)) "runel remote mode hardware")
-(global-set-key '((Mod2 Mod4 p) (Mod2 Mod4 n)) "runel remote mode network")
-(global-set-key '((Mod2 Mod4 p) (Mod2 Mod4 s)) "runel remote mode mpd")
-(global-set-key '((Mod2 Mod4 p) (Mod2 Mod4 t)) "panel_toggle")
-(global-set-key '((Mod2 Mod4 p) (Mod2 Mod4 w)) "runel remote mode wifi")
+;; mpd control
+(global-set-key "s-s s-n" "mpc -q next")
+(global-set-key "s-s s-p" "mpc -q prev")
+(global-set-key "s-s s-t" "mpc -q toggle")
 
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 c)) "bspc node --close")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 k)) "bspc node --kill")
+;; mpd volume
+(global-set-key "s-s s-comma" "mpc -q volume -1")
+(global-set-key "s-s s-period" "mpc -q volume +1")
+(global-set-key "s-s s-1" "mpc -q volume 10")
+(global-set-key "s-s s-2" "mpc -q volume 20")
+(global-set-key "s-s s-3" "mpc -q volume 30")
+(global-set-key "s-s s-4" "mpc -q volume 40")
+(global-set-key "s-s s-5" "mpc -q volume 50")
+(global-set-key "s-s s-6" "mpc -q volume 60")
+(global-set-key "s-s s-7" "mpc -q volume 70")
+(global-set-key "s-s s-8" "mpc -q volume 80")
+(global-set-key "s-s s-9" "mpc -q volume 90")
+(global-set-key "s-s s-0" "mpc -q volume 100")
 
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 a)) "bspc node --state tiled")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 e)) "bspc node --state floating")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 o)) "bspc node --state pseudo_tiled")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 u)) "bspc node --state fullscreen")
+;; keyboard layouts control
+(global-set-key "s-k" "switch_keyboard next")
+(global-set-key "s-S-k" "switch_keyboard full-next")
 
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 comma)) "bspc node --flag locked")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 p)) "bspc node --flag private")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 period)) "bspc node --flag sticky")
+;; change panel mode
+(global-set-key "s-p s-d" "runel remote mode default")
+(global-set-key "s-p s-s" "runel remote mode mpd")
+(global-set-key "s-p s-h" "runel remote mode hardware")
+(global-set-key "s-p s-n" "runel remote mode network")
+(global-set-key "s-p s-w" "runel remote mode wifi")
+(global-set-key "s-p s-c" "runel remote mode corona")
 
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Mod2 Mod4 b)) "bspc node --to-desktop B")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Mod2 Mod4 c)) "bspc node --to-desktop C")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Mod2 Mod4 h)) "bspc node --to-desktop H")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Mod2 Mod4 m)) "bspc node --to-desktop M")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Mod2 Mod4 r)) "bspc node --to-desktop R")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Mod2 Mod4 s)) "bspc node --to-desktop S")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Mod2 Mod4 t)) "bspc node --to-desktop T")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Mod2 Mod4 v)) "bspc node --to-desktop V")
+;; nodes (windows) commands ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; kill and close
+(global-set-key "s-w s-k" "bspc node --kill")
+(global-set-key "s-w s-c" "bspc node --close")
 
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Shift Mod2 Mod4 b)) "bspc node --to-desktop B --follow")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Shift Mod2 Mod4 c)) "bspc node --to-desktop C --follow")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Shift Mod2 Mod4 h)) "bspc node --to-desktop H --follow")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Shift Mod2 Mod4 m)) "bspc node --to-desktop M --follow")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Shift Mod2 Mod4 r)) "bspc node --to-desktop R --follow")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Shift Mod2 Mod4 s)) "bspc node --to-desktop S --follow")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Shift Mod2 Mod4 t)) "bspc node --to-desktop T --follow")
-(global-set-key '((Mod2 Mod4 w) (Mod2 Mod4 t) (Shift Mod2 Mod4 v)) "bspc node --to-desktop V --follow")
+;; states
+(global-set-key "s-w s-a" "bspc node --state tiled")
+(global-set-key "s-w s-o" "bspc node --state pseudo_tiled")
+(global-set-key "s-w s-e" "bspc node --state floating")
+(global-set-key "s-w s-u" "bspc node --state fullscreen")
 
-(global-set-key '((Mod2 Mod4 c)) "bspc node --focus north")
-(global-set-key '((Mod2 Mod4 h)) "bspc node --focus west")
-(global-set-key '((Mod2 Mod4 n)) "bspc node --focus east")
-(global-set-key '((Mod2 Mod4 t)) "bspc node --focus south")
-(global-set-key '((Mod2 Mod4 Tab)) "bspc node --focus prev.local")
-(global-set-key '((Shift Mod2 Mod4 Tab)) "bspc node --focus next.local")
+;; flags
+(global-set-key "s-w s-comma" "bspc node --flag locked")
+(global-set-key "s-w s-period" "bspc node --flag sticky")
+(global-set-key "s-w s-p" "bspc node --flag private")
 
-(global-set-key '((Shift Mod2 Mod4 c)) "$XDG_CONFIG_HOME/bspwm/euclid_mover north 10")
-(global-set-key '((Shift Mod2 Mod4 h)) "$XDG_CONFIG_HOME/bspwm/euclid_mover west 10")
-(global-set-key '((Shift Mod2 Mod4 n)) "$XDG_CONFIG_HOME/bspwm/euclid_mover east 10")
-(global-set-key '((Shift Mod2 Mod4 t)) "$XDG_CONFIG_HOME/bspwm/euclid_mover south 10")
+;; send to desktop by name
+(global-set-key "s-w s-t s-b" "bspc node --to-desktop B")
+(global-set-key "s-w s-t s-c" "bspc node --to-desktop C")
+(global-set-key "s-w s-t s-h" "bspc node --to-desktop H")
+(global-set-key "s-w s-t s-m" "bspc node --to-desktop M")
+(global-set-key "s-w s-t s-r" "bspc node --to-desktop R")
+(global-set-key "s-w s-t s-s" "bspc node --to-desktop S")
+(global-set-key "s-w s-t s-t" "bspc node --to-desktop T")
+(global-set-key "s-w s-t s-v" "bspc node --to-desktop V")
 
-(global-set-key '((Mod2 Mod4 bracketleft)) "$XDG_CONFIG_HOME/bspwm/bspwm_resize north 5")
-(global-set-key '((Mod2 Mod4 bracketright)) "$XDG_CONFIG_HOME/bspwm/bspwm_resize south 5")
-(global-set-key '((Shift Mod2 Mod4 bracketleft)) "$XDG_CONFIG_HOME/bspwm/bspwm_resize west 5")
-(global-set-key '((Shift Mod2 Mod4 bracketright)) "$XDG_CONFIG_HOME/bspwm/bspwm_resize east 5")
+(global-set-key "s-w s-t s-S-b" "bspc node --to-desktop B --follow")
+(global-set-key "s-w s-t s-S-c" "bspc node --to-desktop C --follow")
+(global-set-key "s-w s-t s-S-h" "bspc node --to-desktop H --follow")
+(global-set-key "s-w s-t s-S-m" "bspc node --to-desktop M --follow")
+(global-set-key "s-w s-t s-S-r" "bspc node --to-desktop R --follow")
+(global-set-key "s-w s-t s-S-s" "bspc node --to-desktop S --follow")
+(global-set-key "s-w s-t s-S-t" "bspc node --to-desktop T --follow")
+(global-set-key "s-w s-t s-S-v" "bspc node --to-desktop V --follow")
 
-(global-set-key '((Mod2 Mod4 d) (Mod2 Mod4 Tab)) "bspc desktop --layout next")
+;; focus by direction
+(global-set-key "s-c" "bspc node --focus north")
+(global-set-key "s-h" "bspc node --focus west")
+(global-set-key "s-n" "bspc node --focus east")
+(global-set-key "s-t" "bspc node --focus south")
+(global-set-key "s-Tab" "bspc node --focus prev.local")
+(global-set-key "s-S-Tab" "bspc node --focus next.local")
 
-(global-set-key '((Mod2 Mod4 d) (Mod2 Mod4 b)) "bspc desktop --focus B")
-(global-set-key '((Mod2 Mod4 d) (Mod2 Mod4 c)) "bspc desktop --focus C")
-(global-set-key '((Mod2 Mod4 d) (Mod2 Mod4 h)) "bspc desktop --focus H")
-(global-set-key '((Mod2 Mod4 d) (Mod2 Mod4 m)) "bspc desktop --focus M")
-(global-set-key '((Mod2 Mod4 d) (Mod2 Mod4 n)) "bspc desktop --focus next")
-(global-set-key '((Mod2 Mod4 d) (Mod2 Mod4 p)) "bspc desktop --focus prev")
-(global-set-key '((Mod2 Mod4 d) (Mod2 Mod4 r)) "bspc desktop --focus R")
-(global-set-key '((Mod2 Mod4 d) (Mod2 Mod4 s)) "bspc desktop --focus S")
-(global-set-key '((Mod2 Mod4 d) (Mod2 Mod4 t)) "bspc desktop --focus T")
-(global-set-key '((Mod2 Mod4 d) (Mod2 Mod4 v)) "bspc desktop --focus V")
+;; euclid mover
+(global-set-key "s-S-c" "bspwm_move north 10")
+(global-set-key "s-S-h" "bspwm_move west 10")
+(global-set-key "s-S-n" "bspwm_move east 10")
+(global-set-key "s-S-t" "bspwm_move south 10")
+
+(global-set-key "s-bracketleft" "bspwm_resize north 5")
+(global-set-key "s-bracketright" "bspwm_resize south 5")
+(global-set-key "s-S-bracketleft" "bspwm_resize west 5")
+(global-set-key "s-S-bracketright" "bspwm_resize east 5")
+
+;; desktop commands ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; alternate monocle layout
+(global-set-key "s-d s-Tab" "bspc desktop --layout next")
+
+;; focus desktop
+(global-set-key "s-d s-b" "bspc desktop --focus B")
+(global-set-key "s-d s-c" "bspc desktop --focus C")
+(global-set-key "s-d s-h" "bspc desktop --focus H")
+(global-set-key "s-d s-m" "bspc desktop --focus M")
+(global-set-key "s-d s-r" "bspc desktop --focus R")
+(global-set-key "s-d s-s" "bspc desktop --focus S")
+(global-set-key "s-d s-t" "bspc desktop --focus T")
+(global-set-key "s-d s-v" "bspc desktop --focus V")
+(global-set-key "s-d s-n" "bspc desktop --focus next")
+(global-set-key "s-d s-p" "bspc desktop --focus prev")
 
 ;; This one creates all bindings from global-map.
 ;; Should run at the end
-(update-current global-map)
 (set-numlock! #t)
+
 (for-each
- (lambda (key) (xbindkey-function key (lambda () (execute-key key))))
- (delete-duplicates (alist-keys global-map)))
+ (lambda (key)
+   (xbindkey-function
+    (kbd key)
+    (lambda ()
+      (execute-key key)
+      (set! chain (string-append chain (if (string-null? chain) "" " ") key))
+      (if (eq? current global-map)
+          (begin  ;; (sleep 1)
+            (run-command (format #f "runel remote set timer \"~a\" && millisleep 200 && runel remote set timer \" \"" chain))
+            (set! chain ""))
+          (run-command (format #f "runel remote set timer \"~a\"" chain))))))
+
+ (delete! "s-g" (hash-map-keys global-map)))
+
+(xbindkey-function
+ (kbd "s-g")
+ (λ ()
+   (set! current global-map)
+   (set! chain "")
+   (run-command "runel remote set timer \" \"")))
+
+;; Local Variables:
+;; eval: (add-hook 'after-save-hook (lambda () (call-process "pkill" nil 0 nil "-HUP" "--exact" "xbindkeys")) nil t)
+;; End:
