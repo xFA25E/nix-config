@@ -273,7 +273,8 @@
   (version-control t)
   (backup-enable-predicate #'custom-backup-enable-predicate)
   (safe-local-variable-values
-   '((eval cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
+   '((eval add-hook 'after-save-hook (lambda nil (call-process "pkill" nil 0 nil "-HUP" "--exact" "xbindkeys")) nil t)
+     (eval cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
      (eval web-mode-set-engine "django")))
   (auto-save-file-name-transforms
    `((".*" ,(expand-file-name "emacs/auto-saves/" (xdg-cache-home)) t)))
@@ -687,6 +688,7 @@
 
   (:map mu4e-main-mode-map
         ("q" . quit-window)
+        ("Q" . mu4e-quit)
         ("C-c C-e" . mu4e-update-mail-and-index-exys))
 
   :custom
@@ -737,6 +739,7 @@
 
   :config
   (load-file (expand-file-name "emacs/secrets/mu4e.el" (xdg-data-home)))
+  (load-library "org-mu4e")
 
   (add-to-list 'mu4e-view-actions
                '("browser view" . mu4e-action-view-in-browser)
@@ -1401,6 +1404,7 @@
   :commands run-php
 
   :custom
+  (php-mode-coding-style 'php)
   (php-manual-path
    (expand-file-name "php_docs/php-chunked-xhtml" (xdg-cache-home)))
 
@@ -2025,6 +2029,7 @@
 
 (use-package web-mode
   :ensure t
+  :mode (rx ".twig" string-end)
   :custom (web-mode-markup-indent-offset 2))
 
 (use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
