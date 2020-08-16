@@ -273,8 +273,7 @@
   (version-control t)
   (backup-enable-predicate #'custom-backup-enable-predicate)
   (safe-local-variable-values
-   '((eval add-hook 'after-save-hook (lambda nil (call-process "pkill" nil 0 nil "-HUP" "--exact" "xbindkeys")) nil t)
-     (eval cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
+   '((eval cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
      (eval web-mode-set-engine "django")))
   (auto-save-file-name-transforms
    `((".*" ,(expand-file-name "emacs/auto-saves/" (xdg-cache-home)) t)))
@@ -2253,11 +2252,12 @@
   (newsticker-dir (expand-file-name "emacs/newsticker" (xdg-cache-home)))
   (newsticker-url-list-defaults nil)
   (newsticker-url-list
-   '(("Justus Walker" "https://www.youtube.com/feeds/videos.xml?user=senttosiberia")
+   '(("Uebermarginal Twitch" "https://twitchrss.appspot.com/vod/uebermarginal")
+     ("Uebermarginal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ10M7ftQN7ylM6NaPiEB6w")
+     ("Justus Walker" "https://www.youtube.com/feeds/videos.xml?user=senttosiberia")
      ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
      ("Luke Smith PeerTube" "https://videos.lukesmith.xyz/feeds/videos.xml?videoChannelId=2")
      ("Luke Smith" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA")
-     ("Sean Talk" "https://www.youtube.com/feeds/videos.xml?user=spawktalk")
      ("Tsoding" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEbYhDd6c6vngsF5PQpFVWg")
      ("Protesilaos Stavrou" "https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g")
      ("Atlanta Functional Programming" "https://www.youtube.com/feeds/videos.xml?channel_id=UCYg6qFXDE5SGT_YXhuJPU0A")
