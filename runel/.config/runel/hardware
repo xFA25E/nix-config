@@ -10,10 +10,7 @@ ${CHD}R  ${CFG}\${mem}  \
 ${CHD}S  ${CFG}\${swap}  \
 ${CHD}FsR  ${CFG}\${fs_free /}  \
 ${CHD}FsH  ${CFG}\${fs_free /home}  \
-\${if_mounted ${HOME}/Desktop/files}${CHD}FsW  ${CFG}\${fs_free ${HOME}/Desktop/files}  \${endif}\
-\${if_mounted ${HOME}/Desktop/usb}${CHD}U  ${CFG}\${fs_free ${HOME}/Desktop/usb}  \${endif}\
-\${if_mounted ${HOME}/Desktop/usb1}${CHD}U1  ${CFG}\${fs_free ${HOME}/Desktop/usb1}  \${endif}\
-\${if_mounted ${HOME}/Desktop/usb2}${CHD}U2  ${CFG}\${fs_free ${HOME}/Desktop/usb2}  \${endif}\
+\${if_mounted /mnt/second_partition}${CHD}FsW  ${CFG}\${fs_free /mnt/second_partition}  \${endif}\
 ${CHD}IOr  ${CFG}\${diskio_read /dev/sda}  \
 ${CHD}IOw  ${CFG}\${diskio_write /dev/sda}  \
 ${CHD}P  ${CFG}\${running_processes}/\${processes}\
