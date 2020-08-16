@@ -74,7 +74,24 @@ command may be a string or a function"
 
   (delete-duplicates! (hash-map-keys-inner hm)))
 
-;; bspwm indipendent keys ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (with-prefix
+;;  ""
+;;  (define-key "s-s" "shell command")
+;;  (with-prefix
+;;   "s-t"
+;;   (define-key "s-t" "cool")))
+
+;; (let* ((prefix (string-trim (string-append prefix "s-s ")))
+;;        (define-key (λ (key cmd)
+;;                      (format #t "~a ~a~%" (string-append prefix key) cmd))))
+;;   (define-key "s-t" "hello world")
+;;   (let* ((prefix (string-append prefix " s-s"))
+;;          (define-key (λ (key cmd)
+;;                        (format #t "~a ~a~%"
+;;                                (string-trim (string-append prefix " " key)) cmd))))
+;;     (define-key "s-t" "hello boomer")))
+
+;;; bspwm indipendent keys ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; run launcher
 (global-set-key "s-space" "rofi -show run")
 (global-set-key "s-S-space" "rofi -show window")
@@ -146,7 +163,7 @@ command may be a string or a function"
 (global-set-key "s-p s-w" "runel remote mode wifi")
 (global-set-key "s-p s-c" "runel remote mode corona")
 
-;; nodes (windows) commands ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; nodes (windows) commands ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; kill and close
 (global-set-key "s-w s-k" "bspc node --kill")
 (global-set-key "s-w s-c" "bspc node --close")
@@ -156,11 +173,6 @@ command may be a string or a function"
 (global-set-key "s-w s-o" "bspc node --state pseudo_tiled")
 (global-set-key "s-w s-e" "bspc node --state floating")
 (global-set-key "s-w s-u" "bspc node --state fullscreen")
-
-;; flags
-(global-set-key "s-w s-comma" "bspc node --flag locked")
-(global-set-key "s-w s-period" "bspc node --flag sticky")
-(global-set-key "s-w s-p" "bspc node --flag private")
 
 ;; send to desktop by name
 (global-set-key "s-w s-t s-b" "bspc node --to-desktop B")
@@ -200,7 +212,7 @@ command may be a string or a function"
 (global-set-key "s-S-bracketleft" "bspwm_resize west 5")
 (global-set-key "s-S-bracketright" "bspwm_resize east 5")
 
-;; desktop commands ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; desktop commands ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; alternate monocle layout
 (global-set-key "s-d s-Tab" "bspc desktop --layout next")
 
@@ -213,8 +225,6 @@ command may be a string or a function"
 (global-set-key "s-d s-s" "bspc desktop --focus S")
 (global-set-key "s-d s-t" "bspc desktop --focus T")
 (global-set-key "s-d s-v" "bspc desktop --focus V")
-(global-set-key "s-d s-n" "bspc desktop --focus next")
-(global-set-key "s-d s-p" "bspc desktop --focus prev")
 
 ;; This one creates all bindings from global-map.
 ;; Should run at the end
@@ -228,10 +238,11 @@ command may be a string or a function"
       (execute-key key)
       (set! chain (string-append chain (if (string-null? chain) "" " ") key))
       (if (eq? current global-map)
-          (begin  ;; (sleep 1)
-            (run-command (format #f "runel remote set timer \"~a\" && millisleep 200 && runel remote set timer \" \"" chain))
+          (begin
+            ;; (run-command (format #f "runel remote set timer \"~a\" && millisleep 200 && runel remote set timer \" \"" chain))
             (set! chain ""))
-          (run-command (format #f "runel remote set timer \"~a\"" chain))))))
+          ;; (run-command (format #f "runel remote set timer \"~a\"" chain))
+          ))))
 
  (delete! "s-g" (hash-map-keys global-map)))
 
@@ -240,8 +251,5 @@ command may be a string or a function"
  (λ ()
    (set! current global-map)
    (set! chain "")
-   (run-command "runel remote set timer \" \"")))
-
-;; Local Variables:
-;; eval: (add-hook 'after-save-hook (lambda () (call-process "pkill" nil 0 nil "-HUP" "--exact" "xbindkeys")) nil t)
-;; End:
+   ;; (run-command "runel remote set timer \" \"")
+   ))
