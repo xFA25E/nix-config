@@ -857,14 +857,12 @@ c.zoom.mouse_divider = 512
 
 # Keybindings
 my_keys = {
-    # '.m': ('hint links spawn python3 /home/val/Documents/it_projects/python_projects' +
-    # '/download_tool/download_tool.py --add {hint-url}'),
     ',w'      : 'spawn --detach mpvi {url}',
     ',W'      : 'hint links spawn --detach mpvi {hint-url}',
     ',d'      : 'spawn --detach ytdli {url}',
     ',D'      : 'hint links spawn --detach ytdli {hint-url}',
-    ',a'      : 'hint links spawn youtube_add_link {hint-url}',
-    ',m'      : 'hint links spawn mpc_add_link {hint-url}',
+    ',a'      : 'spawn youtube_add_link "# {title} {url}"',
+    ',A'      : 'hint links spawn youtube_add_link "# {hint-url}"',
     ',t'      : 'hint links spawn transmission-remote --add {hint-url}',
     'tjt'     : 'set content.javascript.enabled true',
     'tjf'     : 'set content.javascript.enabled false',
@@ -876,9 +874,9 @@ my_keys = {
 for key, val in my_keys.items():
     config.bind(key, val)
 
-    # Per domain settings! Finally!
-    # with config.pattern(site) as p:
-    # p.content.javascript.enabled = True
+# Per domain settings! Finally!
+# with config.pattern(site) as p:
+# p.content.javascript.enabled = True
 
 js_sites = ["*://vk.com/*", "*://www.youtube.com/*",
             "*://www.trenord.it/*", "*://duckduckgo.com/*",
