@@ -1330,8 +1330,29 @@
   :hook (rust-mode-hook . cargo-minor-mode)
 
   :custom
-  (cargo-process--enable-rust-backtrace t)
-  (cargo-process--command-flags "--color never"))
+  (cargo-process--command-add "add")
+  (cargo-process--command-audit "audit -f")
+  (cargo-process--command-bench "bench")
+  (cargo-process--command-build "build --color never")
+  (cargo-process--command-check "check --color never")
+  (cargo-process--command-clean "clean")
+  (cargo-process--command-clippy "clippy --color never")
+  (cargo-process--command-current-file-tests "test --color never")
+  (cargo-process--command-current-test "test --color never")
+  (cargo-process--command-doc "doc")
+  (cargo-process--command-doc-open "doc --open")
+  (cargo-process--command-fmt "fmt")
+  (cargo-process--command-init "init")
+  (cargo-process--command-new "new")
+  (cargo-process--command-outdated "outdated -R")
+  (cargo-process--command-rm "rm --color never")
+  (cargo-process--command-run "run --color never")
+  (cargo-process--command-run-bin "run --bin")
+  (cargo-process--command-run-example "run --example")
+  (cargo-process--command-search "search")
+  (cargo-process--command-test "test --color never")
+  (cargo-process--command-update "update")
+  (cargo-process--command-upgrade "upgrade"))
 
 (use-package lsp-mode
   :ensure t
