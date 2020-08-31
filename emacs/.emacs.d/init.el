@@ -1918,14 +1918,6 @@
   :quelpa (shell-pwd :repo "xFA25E/shell-pwd" :fetcher github :version original)
   :commands shell-pwd-generate-buffer-name shell-pwd-shorten-directory)
 
-(use-package shell-synopsis
-  :quelpa
-  (shell-synopsis :repo "xFA25E/shell-synopsis"
-                  :fetcher github
-                  :version original)
-
-  :hook (shell-mode-hook . shell-synopsis-setup))
-
 (use-package imenu-anywhere
   :ensure t
   :bind (:map goto-map ("I" . ivy-imenu-anywhere)))
