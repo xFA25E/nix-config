@@ -1902,16 +1902,6 @@
   (flycheck-checkbashisms-newline t)
   (flycheck-checkbashisms-posix t))
 
-(use-package so-long
-  :quelpa
-  (so-long
-   :url
-   "https://raw.githubusercontent.com/emacs-mirror/emacs/master/lisp/so-long.el"
-   :fetcher url
-   :version original)
-
-  :hook (after-init-hook . global-so-long-mode))
-
 (use-package lisp-mode :config (put 'use-package #'lisp-indent-function 1))
 
 (use-package shell-pwd
@@ -2428,6 +2418,8 @@
 (use-package scratch
   :ensure t
   :bind ("C-c s" . scratch))
+
+(use-package so-long :hook (after-init-hook . global-so-long-mode))
 
 ;; Local Variables:
 ;; eval: (cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
