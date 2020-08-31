@@ -2425,6 +2425,10 @@
   :ensure t
   :init (load-theme 'parchment t))
 
+(use-package scratch
+  :ensure t
+  :bind ("C-c s" . scratch))
+
 ;; Local Variables:
 ;; eval: (cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
 ;; End:
