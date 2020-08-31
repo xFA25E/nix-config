@@ -4,12 +4,20 @@ url="${1:-$(rofi -dmenu -p "Url")}"
 
 case "$(printf "video\naudio\nmusic" | rofi -dmenu -p "Download" -no-custom)" in
     video)
-        emn -e "(youtube-dl \"${url:?}\")"
+        if [ -n "${2}" ]; then
+            tsp -L "${2}" ytdly "${url}"
+        else
+            tsp ytdly "${url}"
+        fi
         ;;
     audio)
-        emn -e '(async-shell-command "ytdlay \"'"${url:?}"'\"")'
+        if [ -n "${2}" ]; then
+            tsp -L "${2}" ytdlay "${url}"
+        else
+            tsp ytdlay "${url}"
+        fi
         ;;
     music)
-        emn -e '(async-shell-command "ytdlam \"'"${url:?}"'\"")'
+        TSP_TITLE="${2}" ytdlam "${url}"
         ;;
 esac

@@ -22,4 +22,5 @@ if [ "$(printf 'no\nyes' | rofi -dmenu -p 'Playlist?' -select no)" = yes ]; then
     args="${args} --yes-playlist"
 fi
 
-exec ytdla --output "${output}" ${args} "$@"
+
+tsp -u "$(tsp -L "${TSP_TITLE}" ytdla --output "${output}" ${args} "$@")"

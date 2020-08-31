@@ -1463,16 +1463,6 @@
     (when (derived-mode-p 'prog-mode)
       (check-parens))))
 
-(use-package youtube-dl
-  :quelpa
-  (youtube-dl :repo "skeeto/youtube-dl-emacs" :fetcher github :version original)
-
-  :bind (:map mode-specific-map ("o y" . youtube-dl-list))
-
-  :custom
-  (youtube-dl-arguments nil)
-  (youtube-dl-program "ytdly"))
-
 (use-package transmission
   :ensure t
   :bind (:map transmission-mode-map ("M" . transmission-move)))
@@ -2325,9 +2315,8 @@
     (let* ((item (newsticker--treeview-get-selected-item))
            (title (newsticker--title item))
            (link (newsticker--link item)))
-      (if (youtube-dl link :title title)
-          (message "Downloading \"%s\"" title)
-        (message "Not youtube item"))))
+      (message "Downloading \"%s\"" title)
+      (start-process "ytdl-queue" nil "ytdli" link title)))
 
   (defun newsticker-treeview-show-duration ()
     (interactive)
@@ -2338,7 +2327,7 @@
       (message "\"%s\" duration: ..." title)
       (set-process-sentinel
        (start-process "youtube-duration" duration-buffer
-                      youtube-dl-program "--no-color" "--get-duration" link)
+                      "ytdl" "--no-color" "--get-duration" link)
        `(lambda (process _change)
           (when (eq 0 (process-exit-status process))
             (with-current-buffer ,duration-buffer
