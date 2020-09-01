@@ -1,15 +1,18 @@
 ;; -*- lexical-binding: t; -*-
 
-(require 'xdg)
-
 (eval-and-compile
-  (defvar nsm-settings-file
-    (expand-file-name "emacs/network-security.data" (xdg-cache-home)))
-  (defvar package-user-dir (expand-file-name "emacs/elpa" (xdg-cache-home)))
-  (defvar gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
-  (defvar package-archives '(("gnu"   . "https://elpa.gnu.org/packages/")
-                             ("melpa" . "https://melpa.org/packages/")
-                             ("org"   . "https://orgmode.org/elpa/")))
+  (require 'xdg)
+
+  (customize-set-variable
+   'nsm-settings-file (expand-file-name "emacs/network-security.data" (xdg-cache-home)))
+  (customize-set-variable
+   'package-user-dir (expand-file-name "emacs/elpa" (xdg-cache-home)))
+  (customize-set-variable
+   'gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+  (customize-set-variable
+   'package-archives '(("gnu"   . "https://elpa.gnu.org/packages/")
+                       ("melpa" . "https://melpa.org/packages/")
+                       ("org"   . "https://orgmode.org/elpa/")))
 
   (require 'package)
   (package-initialize)
@@ -18,11 +21,11 @@
     (package-refresh-contents)
     (package-install 'use-package))
 
-  (setq use-package-enable-imenu-support t)
+  (customize-set-variable 'use-package-enable-imenu-support t)
   (require 'use-package)
-  (setq use-package-expand-minimally t
-        use-package-always-defer t
-        use-package-hook-name-suffix nil)
+  (customize-set-variable 'use-package-expand-minimally t)
+  (customize-set-variable 'use-package-always-defer t)
+  (customize-set-variable 'use-package-hook-name-suffix nil)
 
   (use-package diminish :ensure t)
 
@@ -41,9 +44,9 @@
     :custom (quelpa-use-package-inhibit-loading-quelpa t)))
 
 (use-package gcmh
-  :diminish gcmh-mode
   :ensure t
-  :init (gcmh-mode 1))
+  :diminish gcmh-mode
+  :hook (emacs-startup-hook . gcmh-mode))
 
 (use-package emacs
   :bind ("C-S-SPC" . insert-space-after-point)
@@ -61,7 +64,6 @@
   (next-screen-context-lines 10)
   (resize-mini-windows t)
   (tab-width 4)
-  (truncate-lines t)
   (undo-limit 200000)
   (undo-outer-limit 20000000)
   (undo-strong-limit 300000)
@@ -69,7 +71,7 @@
   (visible-bell nil)
   (x-gtk-use-system-tooltips nil)
   (x-stretch-cursor t)
-  (fill-column 80)
+  (fill-column 90)
   (help-char (aref (kbd "C-?") 0))
   (kill-buffer-query-functions
    (remq #'process-kill-buffer-query-function kill-buffer-query-functions))
@@ -84,8 +86,7 @@
 
 (use-package minibuffer
   :commands read-file-name
-  :custom (read-file-name-completion-ignore-case t)
-  :bind (:map minibuffer-inactive-mode-map ("C-c M-h" . pcomplete-help)))
+  :custom (read-file-name-completion-ignore-case t))
 
 (use-package startup
   :init (provide 'startup)
@@ -141,18 +142,22 @@
   :init (provide 'subr)
 
   :commands
-  with-current-buffer
-  shell-quote-argument
-  error
-  start-process
+  add-hook
   add-to-list
-  eval-after-load
-  match-string
-  replace-regexp-in-string
-  string-prefix-p
-  split-string
+  alist-get
   butlast
+  derived-mode-p
+  error
+  eval-after-load
+  generate-new-buffer
+  match-string
   remove-hook
+  replace-regexp-in-string
+  shell-quote-argument
+  split-string
+  start-process
+  string-prefix-p
+  with-current-buffer
 
   :bind (:map mode-specific-map ("x t" . terminal-in-path))
 
@@ -355,7 +360,7 @@
     (setq-local ispell-parser 'tex)))
 
 (use-package dired
-  :commands dired-get-marked-files
+  :commands dired-get-marked-files dired-get-subdir dired-copy-filename-as-kill@newline
 
   :hook
   (dired-mode-hook          . dired-hide-details-mode)
@@ -400,6 +405,7 @@
   :after dired
   :commands dired-do-shell-command
   :bind (:map dired-mode-map ("b" . dired-stat))
+  :custom (dired-create-destination-dirs 'ask)
 
   :config
   (add-to-list 'dired-compress-files-alist '("\\.tar\\'" . "tar -cf %o %i"))
@@ -578,11 +584,7 @@
 
 (use-package shell
   :functions shell-history-filter
-
-  :bind
-  (:map shell-mode-map
-        ("C-c M-d" . shell-change-directory)
-        ("C-c M-h" . pcomplete-help))
+  :bind (:map shell-mode-map ("C-c M-d" . shell-change-directory))
 
   :custom
   (shell-prompt-pattern
@@ -659,14 +661,15 @@
 
 (use-package mu4e
   :defines
-  mu4e-maildir
   mu4e-view-actions
   mu4e-headers-actions
   mu4e-main-mode-map
   mu4e-headers-mode-map
   mu4e-view-mode-map
+  mu4e-get-mail-command
 
   :commands
+  mu4e-root-maildir
   mu4e-kill-update-mail
   mu4e-update-mail-and-index
   mu4e-update-index
@@ -707,8 +710,6 @@
   (mu4e-modeline-max-width 100)
   (mu4e-get-mail-command "mailsync -a")
   (mu4e-update-interval 600)
-  (mu4e-maildir
-   (or (getenv "MAILDIR") (expand-file-name "mail" (xdg-data-home))))
   (mu4e-maildir-shortcuts
    '(("/EXYS"    . ?e)
      ("/POLIMI"  . ?p)
@@ -731,10 +732,6 @@
                ("libreoffice" . ("doc" "docx" "xlsx" "xls" "odt" "ppt"))
                ("mpv"         . ("m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4"
                                  "avi" "mpg" "mov" "3gp" "vob"))))))
-
-  :init
-  (dolist (dir '("SENT" "DRAFTS" "TRASH" "ARCHIVE"))
-    (make-directory (expand-file-name dir mu4e-maildir) t))
 
   :config
   (load-file (expand-file-name "emacs/secrets/mu4e.el" (xdg-data-home)))
@@ -907,7 +904,7 @@
 (use-package ivy
   :ensure t
   :diminish ivy-mode
-  :commands ivy-add-actions
+  :commands ivy-add-actions ivy-configure
   :hook (after-init-hook . ivy-mode)
 
   :custom
@@ -921,21 +918,38 @@
   ("C-s" . swiper-isearch)
   (:map search-map ("." . swiper-isearch-thing-at-point)))
 
+(use-package grep
+  :defines grep-find-ignored-directories grep-find-ignored-files
+  :commands grep-read-regexp grep-read-files grep-expand-template@cut
+  :bind (:map search-map ("G" . rgrep))
+
+  :config
+  (add-to-list 'grep-files-aliases '("php" . "*.php *.phtml"))
+
+  (define-advice grep-expand-template (:filter-return (cmd) cut)
+    (concat cmd " | cut -c-500")))
+
 (use-package counsel
   :ensure t
   :diminish counsel-mode
   :hook (after-init-hook . counsel-mode)
   :custom (counsel-fzf-dir-function #'counsel-fzf-dir-function-git-root)
 
-  :functions
-  counsel-switch-to-shell-buffer@unique
-  counsel-set-variable@prin-fix
-
   :commands
   counsel-git-grep-action
   counsel-read-directory-name
   counsel--buffers-with-mode
   counsel--switch-to-shell
+  counsel--git-root
+  counsel-ag-occur
+  counsel--grep-unwind
+  counsel-git-grep-transformer
+  counsel-require-program
+  counsel--find-return-list
+  counsel-fzf-dir-function-git-root
+  counsel-switch-to-shell-buffer@unique
+  counsel-set-variable@prin-fix
+  kill-buffer-if-alive
 
   :bind
   ([remap tmm-menubar] . counsel-tmm)
@@ -984,10 +998,7 @@
         ("G t"   . counsel-org-tag)
         ;; COMPLETION
         ("c c" . counsel-company)
-        ("c e" . counsel-el)
-        ("c j" . counsel-clj)
-        ("c l" . counsel-cl)
-        ("c p" . counsel-jedi)
+        ("c s" . counsel-symbol)
         ;; OTHER
         ("o P" . counsel-list-processes)
         ("p"   . counsel-package)
@@ -1476,6 +1487,7 @@
 (use-package yasnippet-snippets :ensure t)
 
 (use-package lisp
+  :commands check-parens kill-sexp
   :hook (after-save-hook . check-parens-in-prog-mode)
   :init (provide 'lisp)
 
@@ -1491,11 +1503,7 @@
 (use-package dumb-jump
   :ensure t
   :custom (dumb-jump-selector 'ivy)
-
-  :bind
-  ("C-M-g" . dumb-jump-go)
-  ("C-M-m" . dumb-jump-back)
-  ("C-x 4 C-M-g" . dumb-jump-go-other-window))
+  :hook (xref-backend-functions . dumb-jump-xref-activate))
 
 (use-package free-keys :ensure t)
 
@@ -1533,16 +1541,6 @@
       (ansi-color-apply-on-region
        compilation-filter-start (point)))))
 
-(use-package grep
-  :commands grep-read-regexp grep-read-files grep-expand-template@cut
-  :bind (:map search-map ("G" . rgrep))
-
-  :config
-  (add-to-list 'grep-files-aliases '("php" . "*.php *.phtml"))
-
-  (define-advice grep-expand-template (:filter-return (cmd) cut)
-    (concat cmd " | cut -c-500")))
-
 (use-package nix-mode :ensure t)
 
 (use-package wgrep
@@ -1557,6 +1555,8 @@
   mingus-playlistp
   mingus-get-absolute-filename
   mingus-dired-file@dired-jump
+  mingus-git-out@kill
+  mingus-buffer-p
 
   :bind
   (:map mode-specific-map ("o s" . mingus))
@@ -1579,14 +1579,14 @@
                         mingus-mpd-playlist-dir
                       (mingus-get-absolute-filename))))
 
-  (define-advice mingus-git-out (:override (&optional x) kill)
+  (define-advice mingus-git-out (:override (&optional _x) kill)
     (interactive)
-    (when (mingus-buffer-p)
-      (kill-current-buffer))))
+    (when (mingus-buffer-p) (kill-current-buffer))))
 
 (use-package mingus
   :ensure t
   :after counsel
+  :commands mingus-add-files
   :bind (:map mode-specific-map ("o S" . mingus-find-and-add-file))
 
   :config
@@ -1623,7 +1623,7 @@
 (use-package time :custom (display-time-24hr-format t))
 
 (use-package url-util
-  :commands url-get-url-at-point encode-url-entities decode-url-entities
+  :commands encode-url-entities decode-url-entities
 
   :config
   (defun decode-url-entities (beg end)
@@ -1642,6 +1642,8 @@
         (goto-char beg)
         (insert text)))))
 
+(use-package thingatpt :commands thing-at-point-url-at-point)
+
 (use-package url
   :custom
   (url-configuration-directory
@@ -1650,7 +1652,7 @@
   :config
   (defun insert-image-from-url (&optional url)
     (interactive)
-    (unless url (setq url (url-get-url-at-point)))
+    (unless url (setq url (thing-at-point-url-at-point)))
     (unless url
       (error "Couldn't find URL."))
     (let ((buffer (url-retrieve-synchronously url)))
@@ -1914,7 +1916,9 @@
 
 (use-package whitespace
   :diminish whitespace-mode
-  :custom (whitespace-style '(face lines-tail))
+  :custom
+  (whitespace-style '(face lines-tail))
+  (whitespace-line-column nil)
 
   :hook
   (before-save-hook . whitespace-cleanup)
@@ -2004,11 +2008,6 @@
   :ensure t
   :hook ((emacs-lisp-mode-hook lisp-mode-hook) . lisp-extra-font-lock-mode))
 
-(use-package request
-  :custom
-  (request-storage-directory
-   (expand-file-name "emacs/request/" (xdg-cache-home))))
-
 (use-package shr-tag-pre-highlight
   :ensure t
   :after shr
@@ -2057,14 +2056,15 @@
 
 (use-package hl-line
   :hook
-  (dired-mode-hook         . hl-line-mode)
   (csv-mode-hook           . hl-line-mode)
+  (dired-mode-hook         . hl-line-mode)
   (grep-mode-hook          . hl-line-mode)
   (ivy-occur-mode-hook     . hl-line-mode)
   (mingus-browse-hook      . hl-line-mode)
   (mingus-playlist-hooks   . hl-line-mode)
-  (transmission-mode       . hl-line-mode)
+  (tar-mode                . hl-line-mode)
   (transmission-files-mode . hl-line-mode)
+  (transmission-mode       . hl-line-mode)
   (transmission-peers-mode . hl-line-mode))
 
 (use-package try-complete-file-name-with-env
@@ -2206,6 +2206,7 @@
 
 (use-package smartparens
   :ensure t
+  :commands sp-kill-region sp-backward-kill-word
 
   :bind
   ("C-M-u" . sp-backward-up-sexp)
@@ -2280,6 +2281,8 @@
   )
 
 (use-package newst-treeview
+  :commands newsticker--treeview-get-selected-item
+
   :bind
   (:map mode-specific-map ("o n" . newsticker-show-news))
   (:map newsticker-treeview-mode-map
@@ -2349,6 +2352,13 @@
 
 (use-package projectile
   :ensure t
+
+  :commands
+  projectile-project-root
+  projectile-file-cached-p
+  projectile-default-mode-line@remove-empty
+  projectile-project-p
+
   :bind-keymap ("M-m" . projectile-command-map)
 
   :custom
@@ -2387,6 +2397,8 @@
 
 (use-package ytel
   :ensure t
+  :commands ytel-get-current-video
+
   :bind
   (:map mode-specific-map ("o Y" . ytel))
   (:map ytel-mode-map
