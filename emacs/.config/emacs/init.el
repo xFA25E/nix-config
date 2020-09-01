@@ -41,12 +41,9 @@
   (use-package quelpa-use-package
     :ensure t
     :demand t
-    :custom (quelpa-use-package-inhibit-loading-quelpa t)))
+    :custom (quelpa-use-package-inhibit-loading-quelpa t))
 
-(use-package gcmh
-  :ensure t
-  :diminish gcmh-mode
-  :hook (emacs-startup-hook . gcmh-mode))
+  (use-package rx :config (rx-define ext (&rest exts) (and "." (or exts) string-end))))
 
 (use-package emacs
   :bind ("C-S-SPC" . insert-space-after-point)
@@ -84,6 +81,19 @@
     (interactive)
     (save-excursion (insert " "))))
 
+(use-package gcmh
+  :ensure t
+  :diminish gcmh-mode
+  :hook (emacs-startup-hook . gcmh-mode))
+
+(use-package xdg
+  :commands xdg-documents-dir xdg-download-dir xdg-music-dir
+
+  :config
+  (defun xdg-documents-dir () (or (getenv "XDG_DOCUMENTS_DIR") "~/Documents"))
+  (defun xdg-download-dir () (or (getenv "XDG_DOWNLOAD_DIR") "~/Downloads"))
+  (defun xdg-music-dir () (or (getenv "XDG_MUSIC_DIR") "~/Music")))
+
 (use-package minibuffer
   :commands read-file-name
   :custom (read-file-name-completion-ignore-case t))
@@ -110,14 +120,6 @@
   :custom
   (ispell-program-name "aspell")
   (ispell-extra-args (list "--sug-mode=ultra")))
-
-(use-package xdg
-  :commands xdg-documents-dir xdg-download-dir xdg-music-dir
-
-  :config
-  (defun xdg-documents-dir () (or (getenv "XDG_DOCUMENTS_DIR") "~/Documents"))
-  (defun xdg-download-dir () (or (getenv "XDG_DOWNLOAD_DIR") "~/Downloads"))
-  (defun xdg-music-dir () (or (getenv "XDG_MUSIC_DIR") "~/Music")))
 
 (use-package window
   :commands pop-to-buffer
@@ -303,7 +305,7 @@
 
   (defun custom-backup-enable-predicate (name)
     (let ((regexp (rx (or (and string-start (or "/tmp/" "/dev/shm/"))
-                          (and ".vcf" string-end)))))
+                          (ext "vcf")))))
       (or (not (string-match-p regexp name))
           (normal-backup-enable-predicate name)))))
 
@@ -434,50 +436,48 @@
 
   :custom
   (dired-guess-shell-alist-user
-   `((,(rx "." (or "csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx") string-end)
+   `((,(rx (ext "csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx"))
       "setsid -f libreoffice * >/dev/null 2>&1"
       "libreoffice --invisible --headless --convert-to pdf * &"
       "libreoffice --invisible --headless --convert-to epub * &"
       "libreoffice --invisible --headless --convert-to csv * &")
 
-     (,(rx "." (or "jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp")
-           string-end)
+     (,(rx (ext "jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp"))
       "setsid -f sxiv * >/dev/null 2>&1"
       "setsid -f gimp * >/dev/null 2>&1")
 
-     (,(rx ".eps" string-end)
+     (,(rx (ext "eps"))
       "setsid -f inkscape * >/dev/null 2>&1")
 
-     (,(rx ".ai" string-end)
+     (,(rx (ext "ai"))
       "setsid -f inkscape * >/dev/null 2>&1"
       "setsid -f gimp * >/dev/null 2>&1")
 
-     (,(rx ".fb2" string-end)
+     (,(rx (ext "fb2"))
       "ebook-convert ? .epub &")
 
-     (,(rx ".pdf" string-end)
+     (,(rx (ext "pdf"))
       "setsid -f zathura * >/dev/null 2>&1"
       "setsid -f libreoffice * >/dev/null 2>&1")
 
-     (,(rx "." (or "epub" "djvu") string-end)
+     (,(rx (ext "epub" "djvu"))
       "setsid -f zathura * >/dev/null 2>&1")
 
-     (,(rx "." (or "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi"
-                   "mpg" "mov" "3gp" "vob" "wmv" "aiff")
-           string-end)
+     (,(rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp"
+                "vob" "wmv" "aiff"))
       "setsid -f mpv --force-window=yes * >/dev/null 2>&1"
       "video_duration * | format_duration"
       "mediainfo"
       "mpv -vo=drm")
 
-     (,(rx ".cue" string-end)
+     (,(rx (ext "cue"))
       "setsid -f mpv --force-window=yes * >/dev/null 2>&1")
 
-     (,(rx ".torrent" string-end)
+     (,(rx (ext "torrent"))
       "transmission-show"
       "transmission-remote --add")
 
-     (,(rx ".rar" string-end)
+     (,(rx (ext "rar"))
       "temp=\"$(basename `?` .rar)\"; mkdir \"${temp}\"; unrar x ? \"${temp}\""))))
 
 (use-package ibuffer
@@ -644,15 +644,11 @@
   :custom
   (message-kill-buffer-on-exit t)
   (message-send-mail-function  #'message-send-mail-with-sendmail)
-  (message-subject-re-regexp (rx bol
-                                 (* (any " " "\t"))
-                                 (* (any "R" "r")
-                                    (? (any "E" "e" "i" "I"))
-                                    (? (any "s" "S"))
+  (message-subject-re-regexp (rx bol (* blank)
+                                 (* (or "R" "RE" "Re" "Ris")
                                     (* "[" (* digit) "]")
                                     (? " ") ":"
-                                    (* (any " " "\t")))
-                                 (* (any " " "\t")))))
+                                    (* blank)))))
 
 (use-package sendmail
   :custom
@@ -819,7 +815,7 @@
   :quelpa
   (smali-mode :repo "strazzere/Emacs-Smali" :fetcher github :version original)
 
-  :mode (rx ".smali" string-end))
+  :mode (rx (ext "smali")))
 
 (use-package cyrillic-dvorak-im
   :quelpa
@@ -1250,7 +1246,7 @@
              (read-directory-name "Directory: " lib-dir nil t))))
 
     (string-match (rx "/" (group (one-or-more (not (any "/"))))
-                      "." (or "pdf" "djvu" "fb2" "epub") string-end)
+                      (ext "pdf" "djvu" "fb2" "epub"))
                   file)
     (let ((newfile (expand-file-name (substring (match-string 0 file) 1)
                                      directory))
@@ -1423,7 +1419,7 @@
 
 (use-package jdecomp
   :ensure t
-  :mode ((rx ".class" string-end) . jdecomp-mode)
+  :mode ((rx (ext "class")) . jdecomp-mode)
   :custom (jdecomp-decompiler-paths '((cfr . "/usr/share/cfr/cfr.jar"))))
 
 (use-package subword
@@ -1516,7 +1512,7 @@
 
 (use-package restclient
   :ensure t
-  :mode ((rx ".http" string-end) . restclient-mode))
+  :mode ((rx (ext "http")) . restclient-mode))
 
 (use-package company-restclient
   :ensure t
@@ -1709,10 +1705,6 @@
   (geiser-repl-history-filename
    (expand-file-name "geiser/history" (xdg-cache-home))))
 
-(use-package sxhkd-mode
-  :quelpa (sxhkd-mode :repo "xFA25E/sxhkd-mode" :fetcher github :version original)
-  :mode (rx "sxhkdrc" string-end))
-
 (use-package conf-mode
   :hook (after-save-hook . xresources-reload)
 
@@ -1809,7 +1801,7 @@
 
 (use-package nov
   :ensure t
-  :mode ((rx ".epub" string-end) . nov-mode)
+  :mode ((rx (ext "epub")) . nov-mode)
 
   :custom
   (nov-save-place-file
@@ -2020,14 +2012,14 @@
 
 (use-package web-mode
   :ensure t
-  :mode (rx ".twig" string-end)
+  :mode (rx (ext "twig"))
   :custom (web-mode-markup-indent-offset 2))
 
 (use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
 
 (use-package plantuml-mode
   :ensure t
-  :mode (rx ".puml" string-end)
+  :mode (rx (ext "puml"))
   :hook (completion-at-point-functions . plantuml-completion-at-point)
 
   :custom
