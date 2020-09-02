@@ -198,8 +198,8 @@ command may be a string or a function"
 (global-set-key "s-h" "bspc node --focus west")
 (global-set-key "s-n" "bspc node --focus east")
 (global-set-key "s-t" "bspc node --focus south")
-(global-set-key "s-Tab" "bspc node --focus prev.local")
-(global-set-key "s-S-Tab" "bspc node --focus next.local")
+(global-set-key "s-Tab" "bspc node --focus prev.local.!hidden.window")
+(global-set-key "s-S-Tab" "bspc node --focus next.local.!hidden.window")
 
 ;; euclid mover
 (global-set-key "s-S-c" "bspwm_move north 10")
