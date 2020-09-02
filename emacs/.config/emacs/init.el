@@ -69,7 +69,7 @@
   (x-gtk-use-system-tooltips nil)
   (x-stretch-cursor t)
   (fill-column 90)
-  (help-char (aref (kbd "C-?") 0))
+  ;; (help-char (aref (kbd "C-l") 0))
   (kill-buffer-query-functions
    (remq #'process-kill-buffer-query-function kill-buffer-query-functions))
   (user-full-name "Valeriy Litkovskyy")
@@ -93,6 +93,11 @@
   (defun xdg-documents-dir () (or (getenv "XDG_DOCUMENTS_DIR") "~/Documents"))
   (defun xdg-download-dir () (or (getenv "XDG_DOWNLOAD_DIR") "~/Downloads"))
   (defun xdg-music-dir () (or (getenv "XDG_MUSIC_DIR") "~/Music")))
+
+(use-package auth-source-pass
+  :custom
+  (auth-source-pass-filename
+   (or (getenv "PASSWORD_STORE_DIR") (expand-file-name "pass" (xdg-data-home)))))
 
 (use-package minibuffer
   :commands read-file-name
@@ -491,7 +496,7 @@
 
 (use-package compile
   :custom
-  (compilation-always-kill   t)
+  (compilation-always-kill t)
   (compilation-scroll-output 'first-error)
 
   :bind (:map ctl-x-map ("c" . compile)))
@@ -503,7 +508,7 @@
 (use-package gdb-mi
   :custom
   (gdb-many-windows t)
-  (gdb-show-main    t))
+  (gdb-show-main t))
 
 (use-package isearch
   :bind
@@ -518,7 +523,7 @@
 
   :custom-face
   (Man-overstrike ((t (:inherit font-lock-variable-name-face :bold t))))
-  (Man-underline  ((t (:inherit font-lock-negation-char-face :underline t)))))
+  (Man-underline ((t (:inherit font-lock-negation-char-face :underline t)))))
 
 (use-package image-dired
   :hook (dired-mode-hook . image-dired-minor-mode)
@@ -683,7 +688,6 @@
   (:map mode-specific-map ("o m" . mu4e))
   (:map mu4e-headers-mode-map ("C-c C-e" . mu4e-update-mail-and-index-exys))
   (:map mu4e-view-mode-map ("C-c C-e" . mu4e-update-mail-and-index-exys))
-
   (:map mu4e-main-mode-map
         ("q" . quit-window)
         ("Q" . mu4e-quit)
@@ -743,10 +747,8 @@
           (browse-url-browser-function #'browse-url-firefox))
       (apply oldfunc args)))
 
-  (define-advice mu4e-update-mail-and-index
-      (:before (&rest _ignore) kill-update)
+  (define-advice mu4e-update-mail-and-index (:before (&rest _ignore) kill-update)
     (mu4e-kill-update-mail))
-
 
   (defun mu4e-update-mail-and-index-exys ()
     (interactive)
@@ -790,7 +792,7 @@
   (bookmark-save-flag 1)
   (bookmark-default-file (expand-file-name "emacs/bookmarks" (xdg-data-home))))
 
-(use-package uniquify :custom (uniquify-ignore-buffers-re   "^\\*"))
+(use-package uniquify :custom (uniquify-ignore-buffers-re "^\\*"))
 
 (use-package dired-hide-dotfiles
   :ensure t
@@ -812,9 +814,7 @@
    (expand-file-name "emacs/last-package-update-day" (xdg-cache-home))))
 
 (use-package smali-mode
-  :quelpa
-  (smali-mode :repo "strazzere/Emacs-Smali" :fetcher github :version original)
-
+  :quelpa (smali-mode :repo "strazzere/Emacs-Smali" :fetcher github :version original)
   :mode (rx (ext "smali")))
 
 (use-package cyrillic-dvorak-im
@@ -837,7 +837,6 @@
 
   :bind
   ("M-z" . avy-goto-word-0)
-
   (:map goto-map
         ("M-g" . avy-goto-line)
         ("g"   . nil)
@@ -878,8 +877,7 @@
 
   :custom-face
   (aw-leading-char-face
-   ((t (:inherit aw-leading-char-face
-                 :foreground "red" :weight bold :height 1.5))))
+   ((t (:inherit aw-leading-char-face :foreground "red" :weight bold :height 1.5))))
 
   :config
   (defun aw-find-file-in-window (window)
@@ -952,7 +950,6 @@
   ([remap insert-char] . counsel-unicode-char)
   (:map counsel-mode-map ([remap apropos-command] . nil))
   (:map ctl-x-map ("C-f" . counsel-find-file))
-
   (:map search-map
         ("r" . counsel-rg)
         ("g" . counsel-rgrep)
@@ -961,20 +958,17 @@
         ("f b" . counsel-find-library)
         ("f l" . counsel-locate)
         ("f z" . counsel-fzf))
-
   (:map help-map
         ("A"   . counsel-apropos)
         ("F"   . counsel-faces)
         ("z e" . counsel-colors-emacs)
         ("z w" . counsel-colors-web))
-
   (:map goto-map
         ("i" . counsel-semantic-or-imenu)
         ("j" . counsel-find-symbol)
         ("l" . counsel-ace-link)
         ("m" . counsel-mark-ring)
         ("o" . counsel-outline))
-
   (:map mode-specific-map
         ;; SHELL
         ("x s" . counsel-switch-to-shell-buffer)
@@ -1614,9 +1608,14 @@
 
 (use-package json-mode :ensure t)
 
-(use-package autorevert :custom (auto-revert-remote-files t))
+(use-package autorevert
+  :custom
+  (auto-revert-remote-files t)
+  (auto-revert-avoid-polling t))
 
 (use-package time :custom (display-time-24hr-format t))
+
+(use-package url-handlers :hook (after-init-hook . url-handler-mode))
 
 (use-package url-util
   :commands encode-url-entities decode-url-entities
@@ -1715,8 +1714,6 @@
                (yes-or-no-p "Reload xresources?"))
       (let ((xres (expand-file-name "X11/xresources" (xdg-config-home))))
         (shell-command (format "xrdb -load %s; runel remote reload" xres))))))
-
-(use-package mwheel :config (mouse-wheel-mode -1))
 
 (use-package remember
   :commands remember-notes-maybe
@@ -2048,16 +2045,17 @@
 
 (use-package hl-line
   :hook
-  (csv-mode-hook           . hl-line-mode)
-  (dired-mode-hook         . hl-line-mode)
-  (grep-mode-hook          . hl-line-mode)
-  (ivy-occur-mode-hook     . hl-line-mode)
-  (mingus-browse-hook      . hl-line-mode)
-  (mingus-playlist-hooks   . hl-line-mode)
-  (tar-mode                . hl-line-mode)
-  (transmission-files-mode . hl-line-mode)
-  (transmission-mode       . hl-line-mode)
-  (transmission-peers-mode . hl-line-mode))
+  ((csv-mode-hook
+    dired-mode-hook
+    grep-mode-hook
+    ivy-occur-mode-hook
+    mingus-browse-hook
+    mingus-playlist-hooks
+    tar-mode
+    transmission-files-mode
+    transmission-mode
+    transmission-peers-mode
+    ytel-mode) . hl-line-mode))
 
 (use-package try-complete-file-name-with-env
   :quelpa
@@ -2395,7 +2393,8 @@
   (:map mode-specific-map ("o Y" . ytel))
   (:map ytel-mode-map
         ("m" . ytel-play-in-mpvi)
-        ("c" . ytel-copy-link))
+        ("c" . ytel-copy-link)
+        ("t" . ytel-show-thumbnail))
 
   :config
   (defun ytel-play-in-mpvi ()
@@ -2413,7 +2412,14 @@
            (id (ytel-video-id video))
            (link (concat "https://www.youtube.com/watch?v=" id)))
       (kill-new link)
-      (message "Copied %s" link))))
+      (message "Copied %s" link)))
+
+  (defun ytel-show-thumbnail ()
+    (interactive)
+    (cl-flet ((pred (tm) (string-equal "maxresdefault" (alist-get 'quality tm))))
+      (let ((method (concat "videos/" (ytel-video-id (ytel-get-current-video)))))
+        (let-alist (ytel--API-call method '(("fields" "videoThumbnails")))
+          (eww (alist-get 'url (cl-find-if #'pred .videoThumbnails))))))))
 
 (use-package parchment-theme
   :ensure t
