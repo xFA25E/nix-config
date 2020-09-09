@@ -68,7 +68,7 @@
   (visible-bell nil)
   (x-gtk-use-system-tooltips nil)
   (x-stretch-cursor t)
-  (fill-column 90)
+  (fill-column 100)
   ;; (help-char (aref (kbd "C-l") 0))
   (kill-buffer-query-functions
    (remq #'process-kill-buffer-query-function kill-buffer-query-functions))
