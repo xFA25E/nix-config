@@ -244,15 +244,6 @@
 
 (use-package tooltip :config (tooltip-mode -1))
 
-(use-package faces
-  :custom-face
-  (default ((t (:inherit default :family "Iosevka"))))
-  (mode-line ((t (:box (:line-width 1 :color nil :style nil)
-                       :font "DejaVu Sans"))))
-  (mode-line-inactive ((t (:box (:line-width 1 :style nil)
-                                :weight light :inherit mode-line))))
-  (fixed-pitch-serif ((t (:inherit fixed-pitch-serif :font "DejaVu Serif")))))
-
 (use-package paren
   :custom (show-paren-style 'parentheses)
   :hook (after-init-hook . show-paren-mode))
@@ -519,11 +510,7 @@
 
 (use-package man
   :custom (Man-notify-method 'aggressive)
-  :bind (:map help-map ("M" . man))
-
-  :custom-face
-  (Man-overstrike ((t (:inherit font-lock-variable-name-face :bold t))))
-  (Man-underline ((t (:inherit font-lock-negation-char-face :underline t)))))
+  :bind (:map help-map ("M" . man)))
 
 (use-package image-dired
   :hook (dired-mode-hook . image-dired-minor-mode)
@@ -566,10 +553,6 @@
   (comint-buffer-maximum-size 10240)
 
   :init (defvar-local comint-history-filter-function (lambda (_file)))
-
-  :custom-face
-  (comint-highlight-input ((t (:inherit diff-added))))
-  (comint-highlight-prompt ((t (:inherit diff-hl-change))))
 
   :config
   (defun save-buffers-comint-input-ring ()
@@ -679,10 +662,6 @@
   mu4e-update-mail-and-index@kill-update
 
   :hook (after-init-hook . start-mu4e)
-
-  :custom-face
-  (mu4e-header-highlight-face
-   ((t (:underline (:color foreground-color :style line) :inherit (region)))))
 
   :bind
   (:map mode-specific-map ("o m" . mu4e))
@@ -874,10 +853,6 @@
      (?k aw-delete-window "Delete Window")
      (?K delete-other-windows "Delete Other Windows")
      (?? aw-show-dispatch-help)))
-
-  :custom-face
-  (aw-leading-char-face
-   ((t (:inherit aw-leading-char-face :foreground "red" :weight bold :height 1.5))))
 
   :config
   (defun aw-find-file-in-window (window)
@@ -1719,11 +1694,10 @@
 (use-package remember
   :commands remember-notes-maybe
 
-  :bind
-  (:map remember-notes-mode-map
-        ("C-c C-c" . nil)
-        ("C-c '"   . remember-notes-save-and-bury-buffer)
-        ("C-c \""  . remember-notes-save-and-kill-terminal))
+  :bind (:map remember-notes-mode-map
+              ("C-c C-c" . nil)
+              ("C-c '"   . remember-notes-save-and-bury-buffer)
+              ("C-c \""  . remember-notes-save-and-kill-terminal))
 
   :custom
   (remember-data-file (expand-file-name "emacs/notes" (xdg-data-home)))
@@ -2410,7 +2384,7 @@
 
 (use-package ytel
   :ensure t
-  :commands ytel-get-current-video
+  :commands ytel-get-current-video ytel--API-call
 
   :bind
   (:map mode-specific-map ("o Y" . ytel))
@@ -2444,15 +2418,28 @@
         (let-alist (ytel--API-call method '(("fields" "videoThumbnails")))
           (eww (alist-get 'url (cl-find-if #'pred .videoThumbnails))))))))
 
-(use-package parchment-theme
-  :ensure t
-  :init (load-theme 'parchment t))
-
 (use-package scratch
   :ensure t
   :bind ("C-c s" . scratch))
 
 (use-package so-long :hook (after-init-hook . global-so-long-mode))
+
+(use-package custom
+  :demand t
+  :config (load-theme 'tsdh-light t))
+
+(use-package faces
+  :after custom
+
+  :custom-face
+  (default ((t (:inherit default :family "Iosevka"))))
+  (mode-line ((t (:inherit mode-line :font "DejaVu Sans"))))
+  (fixed-pitch-serif ((t (:inherit fixed-pitch-serif :font "DejaVu Serif"))))
+  (header-line ((t (:inherit header-line :inverse-video nil :font "Iosevka"))))
+  (Man-overstrike ((t (:inherit font-lock-variable-name-face :bold t))))
+  (Man-underline ((t (:inherit font-lock-negation-char-face :underline t))))
+  (comint-highlight-input ((t (:inherit diff-added))))
+  (comint-highlight-prompt ((t (:inherit diff-hl-change)))))
 
 ;; Local Variables:
 ;; eval: (cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
