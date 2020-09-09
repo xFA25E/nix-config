@@ -643,6 +643,60 @@
   (sendmail-program "msmtp")
   (send-mail-function #'message-send-mail-with-sendmail))
 
+(use-package org
+  :ensure org-plus-contrib
+  :commands add-book-to-library
+  :bind (:map mode-specific-map ("G a a" . org-agenda))
+
+  :custom
+  (org-src-tab-acts-natively t)
+  (org-agenda-files '("~/org/life.org"))
+  (org-log-into-drawer t)
+  (org-log-reschedule 'note)
+  (org-refile-use-outline-path 'file)
+  (org-refile-allow-creating-parent-nodes 'confirm)
+  (org-agenda-skip-additional-timestamps-same-entry nil)
+  (org-refile-targets '((org-agenda-files :level . 1)))
+  (org-id-locations-file
+   (expand-file-name "emacs/org/id-locations" (xdg-cache-home)))
+
+  :config
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               '((calc       . t)
+                                 (emacs-lisp . t)
+                                 (shell      . t)))
+
+  (defun add-book-to-library (file directory)
+    (interactive
+     (let ((lib-dir (expand-file-name "library/" (xdg-documents-dir))))
+       (list (read-file-name "Book: " lib-dir nil t)
+             (read-directory-name "Directory: " lib-dir nil t))))
+
+    (string-match (rx "/" (group (one-or-more (not (any "/"))))
+                      (ext "pdf" "djvu" "fb2" "epub"))
+                  file)
+    (let ((newfile (expand-file-name (substring (match-string 0 file) 1)
+                                     directory))
+          (book (match-string 1 file))
+          (tags (upcase
+                 (replace-regexp-in-string
+                  (rx "/") ":"
+                  (replace-regexp-in-string
+                   (rx (or space "-")) "_"
+                   (substring
+                    directory
+                    (length
+                     (expand-file-name "library" (xdg-documents-dir)))))))))
+      (find-file (expand-file-name "library/library_want.org" (xdg-documents-dir)))
+      (goto-char (point-max))
+      (insert
+       (format "* WANT %s %s \n  :PROPERTIES:\n  :FILE:      [[file:%s]]\n  :END:\n"
+               book tags (string-remove-prefix
+                          (expand-file-name "library/" (xdg-documents-dir))
+                          newfile)))
+      (save-buffer)
+      (rename-file file newfile))))
+
 (use-package mu4e
   :defines
   mu4e-view-actions
@@ -735,6 +789,27 @@
       (mu4e-update-mail-and-index nil)))
 
   (defun start-mu4e () (mu4e t)))
+
+(use-package org-mime
+  :ensure t
+  :commands org-mu4e-maybe-compose-org-mode org-mime-edit-src-exit@htmlize
+  :defines org-mu4e-compose-html-p
+  :custom (org-mu4e-compose-html-p :no)
+  :hook (mu4e-compose-mode-hook . org-mu4e-maybe-compose-org-mode)
+
+  :bind (:map message-mode-map
+              ("C-c M-o" . org-mime-htmlize)
+              ("C-c M-e" . org-mime-edit-mail-in-org-mode)
+              ("C-c M-t" . org-mime-revert-to-plain-text-mail))
+
+  :config
+  (define-advice org-mime-edit-src-exit (:after () htmlize)
+    (when (derived-mode-p 'message-mode)
+      (org-mime-htmlize)))
+
+  (defun org-mu4e-maybe-compose-org-mode ()
+    (when (eq :yes org-mu4e-compose-html-p)
+      (org-mime-edit-mail-in-org-mode))))
 
 (use-package proced :bind (:map mode-specific-map ("o p" . proced)))
 
@@ -1185,60 +1260,6 @@
   :custom
   (selection-coding-system 'utf-8)
   (select-enable-clipboard t))
-
-(use-package org
-  :ensure org-plus-contrib
-  :commands add-book-to-library
-  :bind (:map mode-specific-map ("G a a" . org-agenda))
-
-  :custom
-  (org-src-tab-acts-natively t)
-  (org-agenda-files '("~/org/life.org"))
-  (org-log-into-drawer t)
-  (org-log-reschedule 'note)
-  (org-refile-use-outline-path 'file)
-  (org-refile-allow-creating-parent-nodes 'confirm)
-  (org-agenda-skip-additional-timestamps-same-entry nil)
-  (org-refile-targets '((org-agenda-files :level . 1)))
-  (org-id-locations-file
-   (expand-file-name "emacs/org/id-locations" (xdg-cache-home)))
-
-  :config
-  (org-babel-do-load-languages 'org-babel-load-languages
-                               '((calc       . t)
-                                 (emacs-lisp . t)
-                                 (shell      . t)))
-
-  (defun add-book-to-library (file directory)
-    (interactive
-     (let ((lib-dir (expand-file-name "library/" (xdg-documents-dir))))
-       (list (read-file-name "Book: " lib-dir nil t)
-             (read-directory-name "Directory: " lib-dir nil t))))
-
-    (string-match (rx "/" (group (one-or-more (not (any "/"))))
-                      (ext "pdf" "djvu" "fb2" "epub"))
-                  file)
-    (let ((newfile (expand-file-name (substring (match-string 0 file) 1)
-                                     directory))
-          (book (match-string 1 file))
-          (tags (upcase
-                 (replace-regexp-in-string
-                  (rx "/") ":"
-                  (replace-regexp-in-string
-                   (rx (or space "-")) "_"
-                   (substring
-                    directory
-                    (length
-                     (expand-file-name "library" (xdg-documents-dir)))))))))
-      (find-file (expand-file-name "library/library_want.org" (xdg-documents-dir)))
-      (goto-char (point-max))
-      (insert
-       (format "* WANT %s %s \n  :PROPERTIES:\n  :FILE:      [[file:%s]]\n  :END:\n"
-               book tags (string-remove-prefix
-                          (expand-file-name "library/" (xdg-documents-dir))
-                          newfile)))
-      (save-buffer)
-      (rename-file file newfile))))
 
 (use-package org-bullets
   :ensure t
@@ -2075,20 +2096,6 @@
       (setcdr rest (cons 'bash-completion-dynamic-complete (cdr rest))))))
 
 (use-package frame :config (define-advice suspend-frame (:override ()) nil))
-
-(use-package org-mime
-  :ensure t
-  :commands org-mime-edit-src-exit@htmlize
-
-  :bind (:map message-mode-map
-              ("C-c M-o" . org-mime-htmlize)
-              ("C-c M-e" . org-mime-edit-mail-in-org-mode)
-              ("C-c M-t" . org-mime-revert-to-plain-text-mail))
-
-  :config
-  (define-advice org-mime-edit-src-exit (:after () htmlize)
-    (when (derived-mode-p 'message-mode)
-      (org-mime-htmlize))))
 
 (use-package vc-hooks :custom (vc-handled-backends nil))
 
