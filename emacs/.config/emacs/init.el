@@ -903,7 +903,8 @@
 
   :custom
   (ivy-count-format "%d/%d ")
-  (ivy-use-selectable-prompt t))
+  (ivy-use-selectable-prompt t)
+  (ivy-height (lambda (_c) (/ (frame-height) 3))))
 
 (use-package swiper
   :ensure t
