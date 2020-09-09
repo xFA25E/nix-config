@@ -2171,7 +2171,18 @@
   (shr-max-image-proportion 0.7)
   (shr-width (current-fill-column)))
 
-(use-package finder :bind (:map help-map ("M-c" . finder-commentary)))
+(use-package finder
+  :commands finder-exit@with-package
+  :bind (:map help-map ("M-c" . finder-commentary))
+
+  :config
+  (define-advice finder-exit (:override () with-package)
+    (interactive)
+    (if (string-match-p (rx "*Finder" (? "-package") "*") (buffer-name))
+        (quit-window t)
+      (dolist (buf '("*Finder*" "*Finder-package*"))
+        (when (get-buffer buf)
+          (kill-buffer buf))))))
 
 (use-package xml
   :commands
