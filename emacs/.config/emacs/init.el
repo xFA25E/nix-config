@@ -1845,7 +1845,7 @@
 (use-package find-func
   :custom
   (find-function-C-source-directory
-   (expand-file-name "programs/emacs-26.3/src" (xdg-download-dir))))
+   (expand-file-name "programs/emacs-27.1/src" (xdg-download-dir))))
 
 (use-package find-dired
   :commands find-dired-grep-ignore
@@ -2102,7 +2102,19 @@
 
 (use-package frame :config (define-advice suspend-frame (:override ()) nil))
 
-(use-package org-mime :ensure t)
+(use-package org-mime
+  :ensure t
+  :commands org-mime-edit-src-exit@htmlize
+
+  :bind (:map message-mode-map
+              ("C-c M-o" . org-mime-htmlize)
+              ("C-c M-e" . org-mime-edit-mail-in-org-mode)
+              ("C-c M-t" . org-mime-revert-to-plain-text-mail))
+
+  :config
+  (define-advice org-mime-edit-src-exit (:after () htmlize)
+    (when (derived-mode-p 'message-mode)
+      (org-mime-htmlize))))
 
 (use-package vc-hooks :custom (vc-handled-backends nil))
 
