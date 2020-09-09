@@ -15,7 +15,8 @@ selected_dir="$(select_directory)"
 
 output="${MUSIC_DIRECTORY}/${selected_dir}/%(title)s.%(ext)s"
 # args="--audio-format mp3 --embed-thumbnail"
-args="--audio-format opus"
+args="--audio-format mp3"
+# args="--audio-format opus"
 
 if [ "$(printf 'no\nyes' | rofi -dmenu -p 'Playlist?' -select no)" = yes ]; then
     output="${MUSIC_DIRECTORY}/${selected_dir}/%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
