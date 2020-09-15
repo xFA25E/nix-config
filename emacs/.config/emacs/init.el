@@ -68,7 +68,7 @@
   (visible-bell nil)
   (x-gtk-use-system-tooltips nil)
   (x-stretch-cursor t)
-  (fill-column 100)
+  (fill-column 90)
   ;; (help-char (aref (kbd "C-l") 0))
   (kill-buffer-query-functions
    (remq #'process-kill-buffer-query-function kill-buffer-query-functions))
@@ -591,7 +591,7 @@
      (rx (or
           (and bol
                (opt "sudo " (opt "-A "))
-               (or "aria2c" "awk" "base16_theme" "bash" "bspc" "cat" "cd"
+               (or "awk" "base16_theme" "bash" "bspc" "cat" "cd"
                    "chmod" "chown" "ckbatt" "command" "cp" "cut" "dash" "dd"
                    "df" "dh" "du" "echo" "em" "emacs" "env" "exit" "export" "fd"
                    "feh" "file" "find" "gawk" "gparted" "gpg" "grep" "gzip"
@@ -2433,7 +2433,7 @@
 
 (use-package custom
   :demand t
-  :config (load-theme 'tsdh-light t))
+  :config (load-theme 'leuven t))
 
 (use-package faces
   :after custom
@@ -2441,12 +2441,16 @@
   :custom-face
   (default ((t (:inherit default :family "Iosevka"))))
   (mode-line ((t (:inherit mode-line :font "DejaVu Sans"))))
+  (mode-line-inactive ((t (:inherit mode-line-inactive :font "DejaVu Sans"))))
   (fixed-pitch-serif ((t (:inherit fixed-pitch-serif :font "DejaVu Serif"))))
   (header-line ((t (:inherit header-line :inverse-video nil :font "Iosevka"))))
   (Man-overstrike ((t (:inherit font-lock-variable-name-face :bold t))))
   (Man-underline ((t (:inherit font-lock-negation-char-face :underline t))))
   (comint-highlight-input ((t (:inherit diff-added))))
-  (comint-highlight-prompt ((t (:inherit diff-hl-change)))))
+  (comint-highlight-prompt ((t (:inherit diff-hl-change))))
+  ;; leuven
+  (mu4e-context-face ((t :inherit mu4e-context-face :foreground "orange")))
+  (mu4e-modeline-face ((t :inherit mu4e-modeline-face :foreground "green"))))
 
 ;; Local Variables:
 ;; eval: (cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
