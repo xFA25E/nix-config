@@ -770,9 +770,7 @@
   (load-file (expand-file-name "emacs/secrets/mu4e.el" (xdg-data-home)))
   (load-library "org-mu4e")
 
-  (add-to-list 'mu4e-view-actions
-               '("browser view" . mu4e-action-view-in-browser)
-               t)
+  (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t)
 
   (define-advice mu4e-action-view-in-browser
       (:around (oldfunc &rest args) check-parens-fix)
@@ -790,9 +788,26 @@
 
   (defun start-mu4e () (mu4e t)))
 
+(use-package mu4e-alert
+  :ensure t
+  :config (mu4e-alert-set-default-style 'libnotify)
+  :hook
+  (after-init-hook . mu4e-alert-enable-notifications)
+  (after-init-hook . mu4e-alert-enable-mode-line-display)
+
+  :custom
+  (mu4e-alert-interesting-mail-query
+   (concat "flag:unread AND NOT flag:trashed"
+           " AND NOT (from:\"info@exys.it\" OR to:\"assistenza@exys.it\")")))
+
 (use-package org-mime
   :ensure t
-  :commands org-mu4e-maybe-compose-org-mode org-mime-edit-src-exit@htmlize
+
+  :commands
+  org-mu4e-maybe-compose-org-mode
+  org-mime-edit-src-exit@htmlize
+  org-mime-replace-images@fix-imgs
+
   :defines org-mu4e-compose-html-p
   :custom (org-mu4e-compose-html-p :no)
   :hook (mu4e-compose-mode-hook . org-mu4e-maybe-compose-org-mode)
@@ -809,7 +824,10 @@
 
   (defun org-mu4e-maybe-compose-org-mode ()
     (when (eq :yes org-mu4e-compose-html-p)
-      (org-mime-edit-mail-in-org-mode))))
+      (org-mime-edit-mail-in-org-mode)))
+
+  (define-advice org-mime-replace-images (:filter-args (args) fix-imgs)
+    (cons (replace-regexp-in-string "src=\"file:///" "src=\"/" (first args)) (rest args))))
 
 (use-package proced :bind (:map mode-specific-map ("o p" . proced)))
 
@@ -1419,17 +1437,10 @@
 
 (use-package php-mode
   :ensure t
-  :commands run-php
 
   :custom
   (php-mode-coding-style 'php)
-  (php-manual-path
-   (expand-file-name "php_docs/php-chunked-xhtml" (xdg-cache-home)))
-
-  :config
-  (defun run-php ()
-    (interactive)
-    (pop-to-buffer (make-comint-in-buffer "php" "*php*" "php" nil "-a"))))
+  (php-manual-path (expand-file-name "php_docs/php-chunked-xhtml" (xdg-cache-home))))
 
 (use-package company-php
   :ensure t
@@ -1586,7 +1597,9 @@
         (expand-file-name
          (ivy-read
           "Add file to mpd: "
-          (counsel--find-return-list (split-string ". -type f -o -type d"))
+          (counsel--find-return-list
+           (split-string
+            ". ( -iname *.flac -o -iname *.m4a -o -iname *.mp3 -o -iname *.ogg -o -iname *.opus ) -type f -o -type d"))
           :require-match t)
          (xdg-music-dir))))
       (mpd-play mpd-inter-conn)
@@ -2441,7 +2454,6 @@
   :custom-face
   (default ((t (:inherit default :family "Iosevka"))))
   (mode-line ((t (:inherit mode-line :font "DejaVu Sans"))))
-  (mode-line-inactive ((t (:inherit mode-line-inactive :font "DejaVu Sans"))))
   (fixed-pitch-serif ((t (:inherit fixed-pitch-serif :font "DejaVu Serif"))))
   (header-line ((t (:inherit header-line :inverse-video nil :font "Iosevka"))))
   (Man-overstrike ((t (:inherit font-lock-variable-name-face :bold t))))
@@ -2449,8 +2461,10 @@
   (comint-highlight-input ((t (:inherit diff-added))))
   (comint-highlight-prompt ((t (:inherit diff-hl-change))))
   ;; leuven
-  (mu4e-context-face ((t :inherit mu4e-context-face :foreground "orange")))
-  (mu4e-modeline-face ((t :inherit mu4e-modeline-face :foreground "green"))))
+  (mode-line-inactive ((t (:inherit mode-line-inactive :font "DejaVu Sans"))))
+  (mu4e-context-face ((t (:inherit mu4e-context-face :foreground "orange"))))
+  (mu4e-modeline-face ((t (:inherit mu4e-modeline-face :foreground "green"))))
+  (org-list-dt ((t (:inherit org-list-dt :foreground "sky blue")))))
 
 ;; Local Variables:
 ;; eval: (cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)

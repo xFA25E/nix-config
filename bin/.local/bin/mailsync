@@ -7,13 +7,7 @@ new_mails() {
 }
 
 if [ "${STATE}" = 'full' ]; then
-    mpop -Q "$@"
-    res=$?
-    new_messages="$(new_mails | wc -l)"
-    if [ "${new_messages}" != 0 ]; then
-        notify-send "Mail" "You have ${new_messages} new messages"
-    fi
-    exit ${res}
+    exec mpop -Q "$@"
 else
     exit 1
 fi
