@@ -127,7 +127,6 @@
   (ispell-extra-args (list "--sug-mode=ultra")))
 
 (use-package window
-  :commands pop-to-buffer
   :init (provide 'window)
 
   :bind
@@ -149,21 +148,16 @@
   :init (provide 'subr)
 
   :commands
-  add-hook
   add-to-list
   alist-get
-  butlast
   derived-mode-p
   error
-  eval-after-load
   generate-new-buffer
   match-string
-  remove-hook
   replace-regexp-in-string
   shell-quote-argument
   split-string
   start-process
-  string-prefix-p
   with-current-buffer
 
   :bind (:map mode-specific-map ("x t" . terminal-in-path))
@@ -358,7 +352,7 @@
     (setq-local ispell-parser 'tex)))
 
 (use-package dired
-  :commands dired-get-marked-files dired-get-subdir dired-copy-filename-as-kill@newline
+  :commands dired-get-marked-files
 
   :hook
   (dired-mode-hook          . dired-hide-details-mode)
@@ -401,7 +395,6 @@
 (use-package dired-aux
   :demand t
   :after dired
-  :commands dired-do-shell-command
   :bind (:map dired-mode-map ("b" . dired-stat))
   :custom (dired-create-destination-dirs 'ask)
 
@@ -492,9 +485,7 @@
 
   :bind (:map ctl-x-map ("c" . compile)))
 
-(use-package sh-script
-  :commands sh-show-shell
-  :custom (system-uses-terminfo nil))
+(use-package sh-script :custom (system-uses-terminfo nil))
 
 (use-package gdb-mi
   :custom
@@ -534,16 +525,9 @@
   :config (defun disable-image-dired () (image-dired-minor-mode -1)))
 
 (use-package comint
-  :functions
-  write-region-with-filter
-  comint-read-input-ring
-  comint-show-maximum-output
-  comint-delete-input
-  comint-send-input
-
   :hook
-  (kill-buffer-hook . comint-write-input-ring)
-  (kill-emacs-hook  . save-buffers-comint-input-ring)
+  (kill-buffer-hook               . comint-write-input-ring)
+  (kill-emacs-hook                . save-buffers-comint-input-ring)
   (comint-output-filter-functions . comint-strip-ctrl-m)
   (comint-output-filter-functions . comint-truncate-buffer)
 
@@ -571,7 +555,6 @@
   (advice-add 'comint-write-input-ring :around #'write-region-with-filter))
 
 (use-package shell
-  :functions shell-history-filter
   :bind (:map shell-mode-map ("C-c M-d" . shell-change-directory))
 
   :custom
@@ -698,23 +681,6 @@
       (rename-file file newfile))))
 
 (use-package mu4e
-  :defines
-  mu4e-view-actions
-  mu4e-headers-actions
-  mu4e-main-mode-map
-  mu4e-headers-mode-map
-  mu4e-view-mode-map
-  mu4e-get-mail-command
-
-  :commands
-  mu4e-root-maildir
-  mu4e-kill-update-mail
-  mu4e-update-mail-and-index
-  mu4e-update-index
-  mu4e-action-view-in-browser@check-parens-fix
-  mu4e@with-index
-  mu4e-update-mail-and-index@kill-update
-
   :hook (after-init-hook . start-mu4e)
 
   :bind
@@ -737,7 +703,8 @@
   (mu4e-change-filenames-when-moving t)
   (mu4e-context-policy 'pick-first)
   (mu4e-compose-context-policy 'always-ask)
-  (mu4e-headers-date-format "%Y-%m-%d %H:%M")
+  (mu4e-headers-date-format "%d %b %a %R")
+  (mu4e-headers-time-format "%16R")
   (mu4e-view-show-addresses t)
   (mu4e-attachment-dir (expand-file-name (xdg-download-dir)))
   (mu4e-modeline-max-width 100)
@@ -757,14 +724,13 @@
      (:subject)))
   (mu4e-view-attachment-assoc
    (eval-when-compile
-     (mapcan (lambda (args)
-               (mapcar (lambda (ext) (cons ext (car args)))
-                       (cdr args)))
-             '(("sxiv"        . ("png" "jpg" "gif" "jpeg" "bmp" "tif" "thm"))
-               ("zathura"     . ("pdf" "epub" "djvu"))
-               ("libreoffice" . ("doc" "docx" "xlsx" "xls" "odt" "ppt"))
-               ("mpv"         . ("m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4"
-                                 "avi" "mpg" "mov" "3gp" "vob"))))))
+     (mapcan
+      (lambda (args) (mapcar (lambda (ext) (cons ext (car args))) (cdr args)))
+      '(("sxiv"        . ("jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp"))
+        ("zathura"     . ("pdf" "epub" "djvu"))
+        ("libreoffice" . ("csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx"))
+        ("mpv"         . ("m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov"
+                          "3gp" "vob"  "wmv" "aiff"))))))
 
   :config
   (load-file (expand-file-name "emacs/secrets/mu4e.el" (xdg-data-home)))
@@ -790,25 +756,17 @@
 
 (use-package mu4e-alert
   :ensure t
-  :config (mu4e-alert-set-default-style 'libnotify)
+
   :hook
   (after-init-hook . mu4e-alert-enable-notifications)
   (after-init-hook . mu4e-alert-enable-mode-line-display)
 
-  :custom
-  (mu4e-alert-interesting-mail-query
-   (concat "flag:unread AND NOT flag:trashed"
-           " AND NOT (from:\"info@exys.it\" OR to:\"assistenza@exys.it\")")))
+  :config
+  (mu4e-alert-set-default-style 'libnotify))
 
 (use-package org-mime
   :ensure t
-
-  :commands
-  org-mu4e-maybe-compose-org-mode
-  org-mime-edit-src-exit@htmlize
-  org-mime-replace-images@fix-imgs
-
-  :defines org-mu4e-compose-html-p
+  :commands org-mu4e-maybe-compose-org-mode
   :custom (org-mu4e-compose-html-p :no)
   :hook (mu4e-compose-mode-hook . org-mu4e-maybe-compose-org-mode)
 
@@ -901,7 +859,6 @@
   :ensure t
   :demand t
   :after cyrillic-dvorak-im
-  :commands reverse-im-activate
   :config (reverse-im-activate "cyrillic-dvorak"))
 
 (use-package avy
@@ -923,7 +880,6 @@
 
 (use-package ace-window
   :ensure t
-  :commands aw-switch-to-window aw-flip-window
   :bind ("M-o" . ace-window)
 
   :custom
@@ -966,7 +922,7 @@
 (use-package ivy
   :ensure t
   :diminish ivy-mode
-  :commands ivy-add-actions ivy-configure
+  :commands ivy-add-actions
   :hook (after-init-hook . ivy-mode)
 
   :custom
@@ -982,8 +938,6 @@
   (:map search-map ("." . swiper-isearch-thing-at-point)))
 
 (use-package grep
-  :defines grep-find-ignored-directories grep-find-ignored-files
-  :commands grep-read-regexp grep-read-files grep-expand-template@cut
   :bind (:map search-map ("G" . rgrep))
 
   :config
@@ -996,23 +950,7 @@
   :ensure t
   :diminish counsel-mode
   :hook (after-init-hook . counsel-mode)
-  :custom (counsel-fzf-dir-function #'counsel-fzf-dir-function-git-root)
-
-  :commands
-  counsel-git-grep-action
-  counsel-read-directory-name
-  counsel--buffers-with-mode
-  counsel--switch-to-shell
-  counsel--git-root
-  counsel-ag-occur
-  counsel--grep-unwind
-  counsel-git-grep-transformer
-  counsel-require-program
-  counsel--find-return-list
-  counsel-fzf-dir-function-git-root
-  counsel-switch-to-shell-buffer@unique
-  counsel-set-variable@prin-fix
-  kill-buffer-if-alive
+  :custom (counsel-fzf-dir-function #'counsel-directory)
 
   :bind
   ([remap tmm-menubar] . counsel-tmm)
@@ -1021,9 +959,7 @@
   (:map ctl-x-map ("C-f" . counsel-find-file))
   (:map search-map
         ("r" . counsel-rg)
-        ("g" . counsel-rgrep)
-        ("f f" . counsel-file-directory-jump)
-        ("f d" . counsel-file-directory-jump-fd)
+        ("f d" . counsel-file-directory-jump)
         ("f b" . counsel-find-library)
         ("f l" . counsel-locate)
         ("f z" . counsel-fzf))
@@ -1064,45 +1000,16 @@
         ("v"   . counsel-set-variable))
 
   :config
-  (defun counsel-fzf-dir-function-git-root ()
+  (defun counsel-directory ()
     (or (counsel--git-root) default-directory))
 
   (defun counsel-file-directory-jump ()
     (interactive)
-    (let* ((find-program find-program)
-           (counsel-file-jump-args
-            (cl-flet ((entries (entries type f)
-                               (cl-list* (funcall f (car entries))
-                                         (mapcan
-                                          (lambda (e) (list "-o" type (funcall f e)))
-                                          (cdr entries)))))
-              (append '(".")
-                      (when-let ((entries grep-find-ignored-directories))
-                        (append '("-type" "d" "(" "-path")
-                                (entries entries "-path" (lambda (d) (concat "*/" d)))
-                                '(")" "-prune" "-o")))
-                      (when-let ((entries grep-find-ignored-files))
-                        (append '("!" "-type" "d" "(" "-name")
-                                (entries entries "-name" #'identity)
-                                '(")" "-prune" "-o")))
-                      '("(" "-type" "f" "-o" "-type" "d" ")" "-print")))))
+    (let ((find-program "fd") (counsel-file-jump-args (split-string "-t d -t f -c never")))
       (counsel-file-jump
        nil
-       (or (when current-prefix-arg
-             (counsel-read-directory-name "From directory: "))
-           (counsel--git-root)
-           default-directory))))
-
-  (defun counsel-file-directory-jump-fd ()
-    (interactive)
-    (let ((find-program "fd")
-          (counsel-file-jump-args (split-string "-t d -t f -c never")))
-      (counsel-file-jump
-       nil
-       (or (when current-prefix-arg
-             (counsel-read-directory-name "From directory: "))
-           (counsel--git-root)
-           default-directory))))
+       (or (when current-prefix-arg (counsel-read-directory-name "From directory: "))
+           (counsel-directory)))))
 
   (defun kill-buffer-if-alive (buffer)
     (when (buffer-live-p (get-buffer buffer))
@@ -1113,56 +1020,18 @@
 
   (ivy-add-actions
    'counsel-file-jump
-   '(("j" ivy-dired-jump-action "dired jump")))
+   '(("j" ivy-dired-jump-action "dired jump")
+     ("t" find-file-literally "literally")))
 
   (ivy-add-actions
    'counsel-find-file
    '(("j" ivy-dired-jump-action  "dired jump")
-     ("J" find-file-other-window "other window")))
+     ("J" find-file-other-window "other window")
+     ("t" find-file-literally "literally")))
 
   (ivy-add-actions
    'counsel-switch-to-shell-buffer
    '(("k" kill-buffer-if-alive "kill buffer")))
-
-  (defun counsel-rgrep (&optional initial-input initial-directory extra-rgrep-args)
-    (interactive)
-    (let ((counsel-ag-base-command
-           (concat
-            "find "
-            (mapconcat
-             #'shell-quote-argument
-             (cl-flet ((entries (entries type f)
-                                (cl-list* (funcall f (car entries))
-                                          (mapcan
-                                           (lambda (e) (list "-o" type (funcall f e)))
-                                           (cdr entries)))))
-               (append '(".")
-                       (when-let ((entries grep-find-ignored-directories))
-                         (append '("-type" "d" "(" "-path")
-                                 (entries entries "-path" (lambda (d) (concat "*/" d)))
-                                 '(")" "-prune" "-o")))
-                       (when-let ((entries grep-find-ignored-files))
-                         (append '("!" "-type" "d" "(" "-name")
-                                 (entries entries "-name" #'identity)
-                                 '(")" "-prune" "-o")))
-                       '("-type" "f" "(" "-iname" "*" "-o" "-iname" ".[!.]*" "-o" "-iname" "..?*" ")"
-                         "-exec" "grep" "--color=never" "-P" "-nH")))
-             " ")
-            " %s "
-            (shell-quote-argument "{}")
-            " "
-            (shell-quote-argument "+")
-            " | cut -c-500"))
-          (counsel--grep-tool-look-around nil))
-
-      (counsel-ag initial-input initial-directory extra-rgrep-args "rgrep: "
-                  :caller 'counsel-rgrep)))
-
-  (ivy-configure 'counsel-rgrep
-    :occur #'counsel-ag-occur
-    :unwind-fn #'counsel--grep-unwind
-    :display-transformer-fn #'counsel-git-grep-transformer
-    :grep-p t)
 
   (define-advice counsel-switch-to-shell-buffer (:override () unique)
     (interactive)
@@ -1290,9 +1159,7 @@
   (org-html-htmlize-output-type 'css)
   (org-html-htmlize-font-prefix "org-"))
 
-(use-package htmlize
-  :ensure t
-  :commands htmlize-region-save-screenshot)
+(use-package htmlize :ensure t)
 
 (use-package css-mode :bind (:map css-mode-map ("C-c m" . css-lookup-symbol)))
 
@@ -1485,7 +1352,7 @@
 (use-package yasnippet-snippets :ensure t)
 
 (use-package lisp
-  :commands check-parens kill-sexp
+  :commands kill-sexp
   :hook (after-save-hook . check-parens-in-prog-mode)
   :init (provide 'lisp)
 
@@ -1526,8 +1393,6 @@
 (use-package csv-mode :ensure t)
 
 (use-package ansi-color
-  :commands ansi-color-apply-on-region ansi-color-apply ansi-color-filter-apply
-
   :hook
   (shell-mode-hook         . ansi-color-for-comint-mode-on)
   (compilation-filter-hook . colorize-compilation)
@@ -1548,13 +1413,6 @@
 
 (use-package mingus
   :ensure t
-
-  :commands
-  mingus-playlistp
-  mingus-get-absolute-filename
-  mingus-dired-file@dired-jump
-  mingus-git-out@kill
-  mingus-buffer-p
 
   :bind
   (:map mode-specific-map ("o s" . mingus))
@@ -1584,7 +1442,6 @@
 (use-package mingus
   :ensure t
   :after counsel
-  :commands mingus-add-files
   :bind (:map mode-specific-map ("o S" . mingus-find-and-add-file))
 
   :config
@@ -1769,7 +1626,6 @@
 
 (use-package edit-indirect
   :ensure t
-  :functions edit-indirect-guess-mode
   :custom (edit-indirect-guess-mode-function #'edit-indirect-guess-mode)
   :bind (:map ctl-x-map ("E" . edit-indirect-region-or-at-point))
 
@@ -1856,37 +1712,8 @@
    (expand-file-name "programs/emacs-27.1/src" (xdg-download-dir))))
 
 (use-package find-dired
-  :commands find-dired-grep-ignore
-  :bind (:map search-map ("f F" . find-dired-grep-ignore))
-  :custom (find-ls-option '("| xargs -0 ls -ldb" . "-ldb"))
-
-  :config
-  (defun find-dired-grep-ignore (dir args)
-    (interactive (list (read-directory-name "Run find in directory: " nil "" t)
-                       (read-string "Run find (with args): ")))
-
-    (find-dired
-     dir
-     (cl-flet ((entries (entries type f)
-                        (mapconcat
-                         (lambda (e) (shell-quote-argument (funcall f e)))
-                         (cdr entries)
-                         (concat " -o " type " "))))
-       (concat
-        (when-let ((entries grep-find-ignored-directories))
-          (concat "-type d \\( -path "
-                  (entries entries "-path" (lambda (d) (concat "*/" d)))
-                  " \\) -prune -o "))
-        (when-let ((entries grep-find-ignored-files))
-          (concat "\\! -type d \\( -name "
-                  (entries entries "-name" #'identity)
-                  " \\) -prune -o "))
-
-        "\\( "
-        (if (and args (not (string-empty-p args)))
-            args
-          "-name \\* -o -name .\\[\\!.\\]\\* -o -name ..\\?\\*")
-        " \\) -print0")))))
+  :bind (:map search-map ("f F" . find-dired))
+  :custom (find-ls-option '("| xargs -0 ls -ldb" . "-ldb")))
 
 (use-package fd-dired
   :ensure t
@@ -2166,7 +1993,6 @@
   (shr-width (current-fill-column)))
 
 (use-package finder
-  :commands finder-exit@with-package
   :bind (:map help-map ("M-c" . finder-commentary))
 
   :config
@@ -2179,11 +2005,7 @@
           (kill-buffer buf))))))
 
 (use-package xml
-  :commands
-  xml-parse-string
-  xml-escape-string
-  decode-sgml-entities
-  encode-sgml-entities
+  :commands decode-sgml-entities encode-sgml-entities
 
   :config
   (defun decode-sgml-entities (beg end)
@@ -2202,8 +2024,7 @@
         (goto-char beg)
         (insert text)))))
 
-(use-package ediff
-  :hook (ediff-before-setup-hook . save-window-configuration-to-w))
+(use-package ediff :hook (ediff-before-setup-hook . save-window-configuration-to-w))
 
 (use-package saveplace
   :hook (after-init-hook . save-place-mode)
@@ -2214,7 +2035,6 @@
 
 (use-package smartparens
   :ensure t
-  :commands sp-kill-region sp-backward-kill-word
 
   :bind
   ("C-M-u" . sp-backward-up-sexp)
@@ -2359,27 +2179,18 @@
 
 (use-package projectile
   :ensure t
-
-  :commands
-  projectile-project-root
-  projectile-file-cached-p
-  projectile-default-mode-line@remove-empty
-  projectile-project-p
-
   :bind-keymap ("M-m" . projectile-command-map)
 
   :custom
   (projectile-completion-system 'ivy)
   (projectile-enable-caching t)
   (projectile-mode-line-prefix "")
-  (projectile-cache-file
-   (expand-file-name "emacs/projectile/cache" (xdg-cache-home)))
+  (projectile-cache-file (expand-file-name "emacs/projectile/cache" (xdg-cache-home)))
   (projectile-known-projects-file
    (expand-file-name "emacs/projectile/projects" (xdg-cache-home)))
 
   :config
-  (define-advice projectile-default-mode-line
-      (:filter-return (project-name) remove-empty)
+  (define-advice projectile-default-mode-line (:filter-return (project-name) remove-empty)
     (when (not (string-equal project-name "[-]"))
       (concat " " project-name)))
 
@@ -2404,7 +2215,6 @@
 
 (use-package ytel
   :ensure t
-  :commands ytel-get-current-video ytel--API-call
 
   :bind
   (:map mode-specific-map ("o Y" . ytel))
