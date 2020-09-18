@@ -1071,7 +1071,6 @@
 
   :custom
   (flycheck-mode-line-prefix "FC")
-  (flycheck-global-modes '(not lisp-interaction-mode))
   (flycheck-shellcheck-supported-shells '(dash bash ksh88 sh))
   (flycheck-check-syntax-automatically '(save mode-enabled))
   (flycheck-clang-pedantic-errors t)
@@ -1079,6 +1078,14 @@
   (flycheck-gcc-pedantic-errors t)
   (flycheck-gcc-pedantic t)
   (flycheck-phpcs-standard "PSR12,PSR1,PSR2")
+  (flycheck-global-modes
+   '(not lisp-interaction-mode
+         outline-mode
+         org-mode
+         newsticker-treeview-mode
+         newsticker-treeview-item-mode
+         newsticker-treeview-list-mode
+         text-mode))
 
   :config
   (setq flycheck-shellcheck-supported-shells '(dash bash ksh88 sh))
@@ -2194,7 +2201,8 @@
     (when (not (string-equal project-name "[-]"))
       (concat " " project-name)))
 
-  (defun delete-file-projectile-remove-from-cache (filename &optional _trash)
+  (define-advice delete-file-projectile-remove-from-cache
+      (:override (filename &optional _trash) ftp-fix)
     (unless (string-equal (file-remote-p default-directory 'method) "ftp")
       (if (and projectile-enable-caching projectile-auto-update-cache (projectile-project-p))
           (let* ((project-root (projectile-project-root))
