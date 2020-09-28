@@ -377,6 +377,12 @@
   (dired-listing-switches "-alDF --si --group-directories-first")
   (dired-ls-F-marks-symlinks t)
 
+  :bind
+  (:map dired-mode-map
+        ("* &" . dired-flag-garbage-files)
+        ("* d" . dired-flag-files-regexp)
+        ("* g" . dired-mark-files-containing-regexp))
+
   :config
   (defun dired-setup-switches ()
     (pcase (file-remote-p default-directory 'method)
