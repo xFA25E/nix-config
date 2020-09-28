@@ -2272,6 +2272,15 @@
       (kill-new link)
       (message "Copied %s" link)))
 
+  (defun ytel-youtube-dl ()
+    (interactive)
+    (let* ((video (ytel-get-current-video))
+           (title (ytel-video-title video))
+           (id (ytel-video-id video))
+           (link (concat "https://www.youtube.com/watch?v=" id)))
+      (message "Downloading \"%s\"" title)
+      (start-process "ytdl-queue" nil "ytdli" link title)))
+
   (defun ytel-show-thumbnail ()
     (interactive)
     (cl-flet ((pred (tm) (string-equal "maxresdefault" (alist-get 'quality tm))))
