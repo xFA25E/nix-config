@@ -197,7 +197,21 @@
 
       (start-process "terminal" nil (getenv "TERMINAL") "-e" "sh" "-c" term-cmd))))
 
-(use-package subr-x :commands when-let)
+(use-package subr-x
+  :commands when-let slugify-line
+
+  :config
+  (defun slugify-line ()
+    (interactive)
+    (end-of-line)
+    (cl-flet ((trim-dashes (s) (string-trim s "-" "-")))
+      (thread-last (thing-at-point 'line)
+        substring-no-properties
+        downcase
+        (replace-regexp-in-string "[^a-z0-9]" "-")
+        (replace-regexp-in-string "-+" "-")
+        trim-dashes
+        (insert "\n")))))
 
 (use-package tramp
   :commands
