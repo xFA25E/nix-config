@@ -476,6 +476,7 @@
                 "vob" "wmv" "aiff"))
       "setsid -f mpv --force-window=yes * >/dev/null 2>&1"
       "video_duration * | format_duration"
+      "video_duration * | awk '{s+=$1}END{print s}' | format_duration"
       "mediainfo"
       "mpv -vo=drm")
 
@@ -653,6 +654,7 @@
 
   :custom
   (org-src-tab-acts-natively t)
+  (org-startup-folded t)
   (org-agenda-files '("~/org/life.org"))
   (org-log-into-drawer t)
   (org-log-reschedule 'note)
@@ -1740,12 +1742,12 @@
 
 (use-package find-dired
   :bind (:map search-map ("f F" . find-dired))
-  :custom (find-ls-option '("| xargs -0 ls -ldb" . "-ldb")))
+  :custom (find-ls-option '("-print0 | xargs -0 ls -ldb --quoting-style=literal" . "-ldb")))
 
 (use-package fd-dired
   :ensure t
   :bind (:map search-map ("f D" . fd-dired))
-  :custom (fd-dired-ls-option '("| xargs -0 ls -labdi --si" . "-labdi --si")))
+  :custom (fd-dired-ls-option '("| xargs -0 ls -ldb --quoting-style=literal" . "-ldb")))
 
 (use-package flycheck-checkbashisms
   :ensure t
@@ -2249,7 +2251,8 @@
   (:map ytel-mode-map
         ("m" . ytel-play-in-mpvi)
         ("c" . ytel-copy-link)
-        ("t" . ytel-show-thumbnail))
+        ("t" . ytel-show-thumbnail)
+        ("d" . ytel-youtube-dl))
 
   :config
   (defun ytel-play-in-mpvi ()
@@ -2302,7 +2305,10 @@
   (mode-line-inactive ((t (:inherit mode-line-inactive :font "DejaVu Sans"))))
   (mu4e-context-face ((t (:inherit mu4e-context-face :foreground "orange"))))
   (mu4e-modeline-face ((t (:inherit mu4e-modeline-face :foreground "green"))))
-  (org-list-dt ((t (:inherit org-list-dt :foreground "sky blue")))))
+  (org-list-dt ((t (:inherit org-list-dt :foreground "sky blue"))))
+  (compilation-info ((t (:inherit compilation-info :foreground "deep sky blue"))))
+  (compilation-mode-line-exit
+   ((t (:inherit compilation-mode-line-exit :foreground "lawn green")))))
 
 ;; Local Variables:
 ;; eval: (cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
