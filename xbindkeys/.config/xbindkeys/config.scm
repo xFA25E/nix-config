@@ -232,17 +232,21 @@ command may be a string or a function"
 
 (for-each
  (lambda (key)
-   (xbindkey-function
-    (kbd key)
-    (lambda ()
-      (execute-key key)
-      (set! chain (string-append chain (if (string-null? chain) "" " ") key))
-      (if (eq? current global-map)
-          (begin
-            ;; (run-command (format #f "runel remote set timer \"~a\" && millisleep 200 && runel remote set timer \" \"" chain))
-            (set! chain ""))
-          ;; (run-command (format #f "runel remote set timer \"~a\"" chain))
-          ))))
+   (for-each
+    (lambda (ksym)
+      (xbindkey-function
+       ksym
+       (lambda ()
+         (execute-key key)
+         (set! chain (string-append chain (if (string-null? chain) "" " ") key))
+         (if (eq? current global-map)
+             (begin
+               ;; (run-command (format #f "runel remote set timer \"~a\" && millisleep 200 && runel remote set timer \" \"" chain))
+               (set! chain ""))
+             ;; (run-command (format #f "runel remote set timer \"~a\"" chain))
+             ))))
+    (let ((ksym (kbd key)))
+      (list ksym (cons "Mod2" ksym)))))
 
  (delete! "s-g" (hash-map-keys global-map)))
 
