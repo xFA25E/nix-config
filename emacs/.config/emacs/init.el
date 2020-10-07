@@ -451,7 +451,7 @@
       "libreoffice --invisible --headless --convert-to epub * &"
       "libreoffice --invisible --headless --convert-to csv * &")
 
-     (,(rx (ext "jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp"))
+     (,(rx (ext "jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp" "xpm"))
       "setsid -f sxiv * >/dev/null 2>&1"
       "setsid -f gimp * >/dev/null 2>&1")
 
@@ -467,7 +467,8 @@
 
      (,(rx (ext "pdf"))
       "setsid -f zathura * >/dev/null 2>&1"
-      "setsid -f libreoffice * >/dev/null 2>&1")
+      "setsid -f libreoffice * >/dev/null 2>&1"
+      "setsid -f gimp * >/dev/null 2>&1")
 
      (,(rx (ext "epub" "djvu"))
       "setsid -f zathura * >/dev/null 2>&1")
@@ -478,7 +479,9 @@
       "video_duration * | format_duration"
       "video_duration * | awk '{s+=$1}END{print s}' | format_duration"
       "mediainfo"
-      "mpv -vo=drm")
+      "mpv -vo=drm"
+      "compress_video"
+      "strip_video")
 
      (,(rx (ext "cue"))
       "setsid -f mpv --force-window=yes * >/dev/null 2>&1")
@@ -726,6 +729,7 @@
   (mu4e-context-policy 'pick-first)
   (mu4e-compose-context-policy 'always-ask)
   (mu4e-headers-date-format "%d %b %a %R")
+  (mu4e-view-date-format "%a %d %b %Y %T")
   (mu4e-headers-time-format "%16R")
   (mu4e-view-show-addresses t)
   (mu4e-attachment-dir (expand-file-name (xdg-download-dir)))
@@ -809,7 +813,9 @@
   (define-advice org-mime-replace-images (:filter-args (args) fix-imgs)
     (cons (replace-regexp-in-string "src=\"file:///" "src=\"/" (first args)) (rest args))))
 
-(use-package proced :bind (:map mode-specific-map ("o p" . proced)))
+(use-package proced
+  :bind (:map mode-specific-map ("o p" . proced))
+  :custom (proced-tree-flag t))
 
 (use-package executable
   :custom (executable-chmod 64)
@@ -1305,6 +1311,7 @@
   (lsp-ui-sideline-enable nil))
 
 (use-package company-lsp
+  :disabled
   :ensure t
   :after company
   :init (add-to-list 'company-backends #'company-lsp))
@@ -1826,7 +1833,7 @@
   :config (add-to-list 'sly-contribs 'sly-asdf 'append))
 
 (use-package sgml-mode
-  :custom (sgml-basic-offset 2)
+  :custom (sgml-basic-offset 4)
 
   :bind
   (:map sgml-mode-map
@@ -1870,12 +1877,12 @@
   (add-to-list 'shr-external-rendering-functions
                '(pre . shr-tag-pre-highlight)))
 
-(use-package nxml-mode :custom (nxml-child-indent 2))
+(use-package nxml-mode :custom (nxml-child-indent 4))
 
 (use-package web-mode
   :ensure t
   :mode (rx (ext "twig"))
-  :custom (web-mode-markup-indent-offset 2))
+  :custom (web-mode-markup-indent-offset 4))
 
 (use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
 
