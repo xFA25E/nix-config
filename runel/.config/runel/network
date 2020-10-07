@@ -3,13 +3,13 @@
 CFG="%{F\\\\$(xgetres runel.info_fg)}"
 CHD="%{F\\\\$(xgetres runel.info_hd)}"
 
-text="${CHD}I ${CFG} \${gw_iface}  \
-${CHD}G  ${CFG}\${gw_ip}\
-\${if_up wlo1}  ${CHD}WiFi  ${CFG}\${addr wlo1}  \
-${CHD}Sd/u  ${CFG}\${downspeedf wlo1}/\${upspeedf wlo1}Kbs  \
-${CHD}Td/u  ${CFG}\${totaldown wlo1}/\${totalup wlo1}\${endif}\
-\${if_up eno1}  ${CHD}Wired  ${CFG}\${addr eno1}  \
-${CHD}Sd/u  ${CFG}\${downspeedf eno1}/\${upspeedf eno1}Kbs  \
-${CHD}Td/u  ${CFG}\${totaldown eno1}/\${totalup eno1}\${endif}"
+text="${CHD}I%{F-}  ${CFG}\${gw_iface}%{F-}  \
+${CHD}G%{F-}  ${CFG}\${gw_ip}%{F-}\
+\${if_up wlo1}  ${CHD}WiFi%{F-}  ${CFG}\${addr wlo1}%{F-}  \
+${CHD}Sd/u%{F-}  ${CFG}\${downspeedf wlo1}/\${upspeedf wlo1}Kbs%{F-}  \
+${CHD}Td/u%{F-}  ${CFG}\${totaldown wlo1}/\${totalup wlo1}%{F-}\${endif}\
+\${if_up eno1}  ${CHD}Wired%{F-}  ${CFG}\${addr eno1}%{F-}  \
+${CHD}Sd/u%{F-}  ${CFG}\${downspeedf eno1}/\${upspeedf eno1}Kbs%{F-}  \
+${CHD}Td/u%{F-}  ${CFG}\${totaldown eno1}/\${totalup eno1}%{F-}\${endif}"
 
 exec conky -i 60 -t "${text}"

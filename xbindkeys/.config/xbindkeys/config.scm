@@ -74,6 +74,18 @@ command may be a string or a function"
 
   (delete-duplicates! (hash-map-keys-inner hm)))
 
+(define (bind-function key ksym)
+  (xbindkey-function
+   ksym
+   (lambda ()
+     (execute-key key)
+     (set! chain (string-trim (string-append chain " " key)))
+     (if (eq? current global-map)
+         (begin
+           (run-command (string-append "sratus -u keyseq -v '" chain "$'"))
+           (set! chain ""))
+         (run-command (string-append "sratus -u keyseq -v '" chain "'"))))))
+
 ;; (with-prefix
 ;;  ""
 ;;  (define-key "s-s" "shell command")
@@ -156,12 +168,12 @@ command may be a string or a function"
 (global-set-key "s-S-k" "switch_keyboard full-next")
 
 ;; change panel mode
-(global-set-key "s-p s-d" "runel remote mode default")
-(global-set-key "s-p s-s" "runel remote mode mpd")
-(global-set-key "s-p s-h" "runel remote mode hardware")
-(global-set-key "s-p s-n" "runel remote mode network")
-(global-set-key "s-p s-w" "runel remote mode wifi")
-(global-set-key "s-p s-c" "runel remote mode corona")
+(global-set-key "s-p s-d" "runel -m default")
+(global-set-key "s-p s-s" "runel -m mpd")
+(global-set-key "s-p s-h" "runel -m hardware")
+(global-set-key "s-p s-n" "runel -m network")
+(global-set-key "s-p s-w" "runel -m wifi")
+(global-set-key "s-p s-c" "runel -m corona")
 
 ;;; nodes (windows) commands ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; kill and close
@@ -232,22 +244,9 @@ command may be a string or a function"
 
 (for-each
  (lambda (key)
-   (for-each
-    (lambda (ksym)
-      (xbindkey-function
-       ksym
-       (lambda ()
-         (execute-key key)
-         (set! chain (string-append chain (if (string-null? chain) "" " ") key))
-         (if (eq? current global-map)
-             (begin
-               ;; (run-command (format #f "runel remote set timer \"~a\" && millisleep 200 && runel remote set timer \" \"" chain))
-               (set! chain ""))
-             ;; (run-command (format #f "runel remote set timer \"~a\"" chain))
-             ))))
-    (let ((ksym (kbd key)))
-      (list ksym (cons "Mod2" ksym)))))
-
+   (let ((ksym (kbd key)))
+     (bind-function key ksym)
+     (bind-function key (cons "Mod2" ksym))))
  (delete! "s-g" (hash-map-keys global-map)))
 
 (xbindkey-function
@@ -255,5 +254,4 @@ command may be a string or a function"
  (λ ()
    (set! current global-map)
    (set! chain "")
-   ;; (run-command "runel remote set timer \" \"")
-   ))
+   (run-command "sratus -u keyseq -v \"s-g$\"")))

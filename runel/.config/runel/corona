@@ -3,11 +3,11 @@
 CFG="%{F$(xgetres runel.info_fg)}"
 CHD="%{F$(xgetres runel.info_hd)}"
 
-text=".data[0] | \"${CHD}COVID-19 Italy  ${CFG}|  \
-${CHD}Confirmed  ${CFG}\\(.cases)  \
-${CHD}Recovered  ${CFG}\\(.recovered)  \
-${CHD}Deaths  ${CFG}\\(.deaths)  \
-${CHD}Active  ${CFG}\\(.active)\""
+text=".data[0] | \"${CHD}COVID-19%{F-} Italy  ${CFG}|%{F-}  \
+${CHD}Confirmed%{F-}  ${CFG}\\(.cases)%{F-}  \
+${CHD}Recovered%{F-}  ${CFG}\\(.recovered)%{F-}  \
+${CHD}Deaths%{F-}  ${CFG}\\(.deaths)%{F-}  \
+${CHD}Active%{F-}  ${CFG}\\(.active)%{F-}\""
 
 i=0
 while [ "${i}" -lt 10 ]; do

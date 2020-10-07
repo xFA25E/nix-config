@@ -43,7 +43,7 @@ export RUSTUP_HOME="${XDG_CACHE_HOME}/rustup"
 export CARGO_HOME="${XDG_CACHE_HOME}/cargo"
 export PATH="${CARGO_HOME}/bin:${PATH}"
 RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src" && export RUST_SRC_PATH
-export CARGO_TARGET_DIR="${CARGO_HOME}/target"
+# export CARGO_TARGET_DIR="${CARGO_HOME}/target"
 
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+exec sratus \
+     --color-body "$(xgetres runel.info_fg)" \
+     --color-head "$(xgetres runel.info_hd)"

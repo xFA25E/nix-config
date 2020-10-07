@@ -4,13 +4,13 @@ CFG="%{F\\\\$(xgetres runel.info_fg)}"
 CHD="%{F\\\\$(xgetres runel.info_hd)}"
 
 text="\${if_mpd_playing}\
-${CHD}S  ${CFG}\${mpd_status}  \
-${CHD}R  ${CFG}\${mpd_random}  \
-\${if_empty \${mpd_artist}}\${else}${CHD}Ar  ${CFG}\${mpd_artist}  \${endif}\
-\${if_empty \${mpd_album}}\${else}${CHD}Al  ${CFG}\${mpd_album}  \${endif}\
-${CHD}\${if_empty \${mpd_title}}F  ${CFG}\${mpd_file}  \${else}T  ${CFG}\${mpd_title}  \${endif}\
-${CHD}B  ${CFG}\${mpd_elapsed} / \${mpd_length}  \
-${CHD}V  ${CFG}\${mpd_vol}\
-\${else}${CHD}mpd  ${CFG}is dead\${endif}"
+${CHD}S%{F-}  ${CFG}\${mpd_status}%{F-}  \
+${CHD}R%{F-}  ${CFG}\${mpd_random}%{F-}  \
+\${if_empty \${mpd_artist}}\${else}${CHD}Ar%{F-}  ${CFG}\${mpd_artist}%{F-}  \${endif}\
+\${if_empty \${mpd_album}}\${else}${CHD}Al%{F-}  ${CFG}\${mpd_album}%{F-}  \${endif}\
+${CHD}\${if_empty \${mpd_title}}F%{F-}  ${CFG}\${mpd_file}%{F-}  \${else}T%{F-}  ${CFG}\${mpd_title}%{F-}  \${endif}\
+${CHD}B%{F-}  ${CFG}\${mpd_elapsed} / \${mpd_length}%{F-}  \
+${CHD}V%{F-}  ${CFG}\${mpd_vol}%{F-}\
+\${else}${CHD}mpd%{F-}  ${CFG}is dead%{F-}\${endif}"
 
 exec conky -t 60 -t "${text}"

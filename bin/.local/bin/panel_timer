@@ -30,10 +30,10 @@ case "${state}" in
         else
             time="-$(format_secs "$((duration - elapsed))")"
         fi
-        runel remote set timer "${name} ${time} ${state}"
-    ;;
+        sratus -u timer -v "${name} ${time} ${state}"
+        ;;
     halted)
-        runel remote set timer "off"
+        sratus -u timer -v "off"
         notify-send "Timer" "\"${name}\" finished"
 
         if [ "${name}" = eyes ]; then

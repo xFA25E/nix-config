@@ -7,14 +7,12 @@ if xdo id -a "${panel_name}" > /dev/null ; then
     exit 1
 fi
 
-runel daemon
+runel -m default -s --color-title "$(xgetres runel.title)" \
+      -- -B "$(xgetres runel.bg)" -F "$(xgetres runel.free)"
 
 # panel above
 xdo above -t "$(xdo id -N Bspwm -n root | sort | head -n 1)" "$(xdo id -m -a "${panel_name}")"
 normal_padding="$(bspc config border_width)"
 panel_id="$(xdo id -a "${panel_name}")"
-panel_padding="$(xwininfo -id "${panel_id:?}" -stats | awk '/Height:/ {print $2}')"
+panel_padding="$(xwininfo -id "${panel_id:?}" -stats | grep -oP '(?<=Height: )\d+')"
 bspc config top_padding "$((panel_padding + normal_padding))"
-
-# runel remote set keyboard "$(xkb-switch -p)"
-runel remote set timer "off"

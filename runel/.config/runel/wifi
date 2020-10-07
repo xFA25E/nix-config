@@ -3,11 +3,11 @@
 CFG="%{F\\\\$(xgetres runel.info_fg)}"
 CHD="%{F\\\\$(xgetres runel.info_hd)}"
 
-text="${CHD}N  ${CFG}\${wireless_essid wlo1}  \
-${CHD}M  ${CFG}\${wireless_ap wlo1}  \
-${CHD}Q  ${CFG}\${wireless_link_qual wlo1}/\${wireless_link_qual_max wlo1}  \
-${CHD}F  ${CFG}\${wireless_freq wlo1}  \
-${CHD}B  ${CFG}\${wireless_bitrate wlo1}  \
-${CHD}T  ${CFG}\${wireless_mode wlo1}"
+text="${CHD}N%{F-}  ${CFG}\${wireless_essid wlo1}%{F-}  \
+${CHD}M%{F-}  ${CFG}\${wireless_ap wlo1}%{F-}  \
+${CHD}Q%{F-}  ${CFG}\${wireless_link_qual wlo1}/\${wireless_link_qual_max wlo1}%{F-}  \
+${CHD}F%{F-}  ${CFG}\${wireless_freq wlo1}%{F-}  \
+${CHD}B%{F-}  ${CFG}\${wireless_bitrate wlo1}%{F-}  \
+${CHD}T%{F-}  ${CFG}\${wireless_mode wlo1}%{F-}"
 
 exec conky -i 60 -t "${text}"
