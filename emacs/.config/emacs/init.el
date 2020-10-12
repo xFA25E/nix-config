@@ -2022,9 +2022,10 @@
   :ensure t
   :bind ("C-M-z" . avy-zap-up-to-char-dwim))
 
+(use-package browse-url :custom (browse-url-secondary-browser-function #'browse-url-firefox))
+
 (use-package shr
   :custom
-  (shr-external-browser #'browse-url-firefox)
   (shr-max-image-proportion 0.7)
   (shr-width (current-fill-column)))
 
