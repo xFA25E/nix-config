@@ -13,4 +13,4 @@ ${CHD}B%{F-}  ${CFG}\${mpd_elapsed} / \${mpd_length}%{F-}  \
 ${CHD}V%{F-}  ${CFG}\${mpd_vol}%{F-}\
 \${else}${CHD}mpd%{F-}  ${CFG}is dead%{F-}\${endif}"
 
-exec conky -t 60 -t "${text}"
+exec conky -i 60 -t "${text}"

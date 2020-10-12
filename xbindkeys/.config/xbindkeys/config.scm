@@ -79,13 +79,17 @@ command may be a string or a function"
    ksym
    (lambda ()
      (execute-key key)
-     (set! chain (string-trim (string-append chain " " key)))
      (if (eq? current global-map)
+         (when (not (string= chain ""))
+           (set! chain "")
+           (run-command "sratus -u keyseq -v ''"))
          (begin
-           (run-command (string-append "sratus -u keyseq -v '" chain "$'"))
-           (set! chain ""))
-         (run-command (string-append "sratus -u keyseq -v '" chain "'"))))))
+           (set! chain (string-trim (string-append chain " " key)))
+           (run-command (string-append "sratus -u keyseq -v '" chain "'")))))))
 
+;; (define prefix "")
+;; (define (define-key (key cmd)
+;;           (format #t "~a ~a~%" (string-append prefix key) cmd)))
 ;; (with-prefix
 ;;  ""
 ;;  (define-key "s-s" "shell command")
@@ -253,5 +257,6 @@ command may be a string or a function"
  (kbd "s-g")
  (λ ()
    (set! current global-map)
-   (set! chain "")
-   (run-command "sratus -u keyseq -v \"s-g$\"")))
+   (when (not (string= chain ""))
+     (set! chain "")
+     (run-command "sratus -u keyseq -v ''"))))
