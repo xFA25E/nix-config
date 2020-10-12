@@ -429,7 +429,14 @@
 (use-package async
   :ensure t
   :after bytecomp
-  :init (async-bytecomp-package-mode))
+  :hook (after-save-hook . async-byte-recompile-current-directory)
+  :init (async-bytecomp-package-mode)
+
+  :config
+  (defun async-byte-recompile-current-directory ()
+    (interactive)
+    (when (derived-mode-p 'emacs-lisp-mode)
+      (async-byte-recompile-directory default-directory))))
 
 (use-package async
   :ensure t
@@ -1704,15 +1711,6 @@
   :custom
   (nov-save-place-file
    (expand-file-name "emacs/nov-places" (xdg-cache-home))))
-
-(use-package byte-compile
-  :hook (after-save-hook . byte-recompile-current-file)
-
-  :config
-  (defun byte-recompile-current-file ()
-    (interactive)
-    (when (derived-mode-p 'emacs-lisp-mode)
-      (byte-recompile-file (buffer-file-name)))))
 
 (use-package fb2-mode
   :quelpa (fb2-mode :repo "5k1m1/fb2-mode" :fetcher github :version original)
