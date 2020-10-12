@@ -859,7 +859,7 @@ c.zoom.mouse_divider = 512
 my_keys = {
     ',w'      : 'spawn --detach mpvi {url}',
     ',W'      : 'hint links spawn --detach mpvi {hint-url}',
-    ',d'      : 'spawn --detach ytdli {url}',
+    ',d'      : 'spawn --detach ytdli {url} {title}',
     ',D'      : 'hint links spawn --detach ytdli {hint-url}',
     ',a'      : 'spawn youtube_add_link "# {title} {url}"',
     ',A'      : 'hint links spawn youtube_add_link "# {hint-url}"',
