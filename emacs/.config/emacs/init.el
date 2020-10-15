@@ -53,7 +53,7 @@
   (cursor-in-non-selected-windows nil)
   (enable-recursive-minibuffers t)
   (history-delete-duplicates t)
-  (history-length 200)
+  (history-length 300)
   (hscroll-step 1)
   (indent-tabs-mode nil)
   (indicate-buffer-boundaries 'left)
@@ -474,7 +474,7 @@
       "setsid -f zathura * >/dev/null 2>&1")
 
      (,(rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp"
-                "vob" "wmv" "aiff"))
+                "vob" "wmv" "aiff" "wav"))
       "setsid -f mpv --force-window=yes * >/dev/null 2>&1"
       "video_duration * | format_duration"
       "video_duration * | awk '{s+=$1}END{print s}' | format_duration"
@@ -672,6 +672,7 @@
   (org-babel-do-load-languages 'org-babel-load-languages
                                '((calc       . t)
                                  (emacs-lisp . t)
+                                 (sql        . t)
                                  (shell      . t)))
 
   (defun add-book-to-library (file directory)
@@ -756,7 +757,7 @@
         ("zathura"     . ("pdf" "epub" "djvu"))
         ("libreoffice" . ("csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx"))
         ("mpv"         . ("m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov"
-                          "3gp" "vob"  "wmv" "aiff"))))))
+                          "3gp" "vob"  "wmv" "aiff" "wav"))))))
 
   :config
   (load-file (expand-file-name "emacs/secrets/mu4e.el" (xdg-data-home)))
@@ -1577,12 +1578,10 @@
 
   :config
   (defun savehist-filter-file-name-history ()
-    (cl-delete-if-not (lambda (e) (or (tramp-tramp-file-p e) (file-exists-p e)))
-                      file-name-history)
-    (cl-delete-duplicates file-name-history
-                          :test (lambda (a b) (string-equal
-                                          (string-trim-left a "/")
-                                          (string-trim-left b "/"))))))
+    (cl-delete-if-not (lambda (e) (or (tramp-tramp-file-p e) (file-exists-p e))) file-name-history)
+    (cl-delete-duplicates file-name-history :test (lambda (a b) (string-equal
+                                                            (string-trim-left a "/")
+                                                            (string-trim-left b "/"))))))
 (use-package net-utils
   :bind (:map mode-specific-map
               :prefix-map net-utils-prefix-map
@@ -2111,8 +2110,7 @@
   (newsticker-dir (expand-file-name "emacs/newsticker" (xdg-cache-home)))
   (newsticker-url-list-defaults nil)
   (newsticker-url-list
-   '(("Uebermarginal Twitch" "https://twitchrss.appspot.com/vod/uebermarginal")
-     ("Uebermarginal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ10M7ftQN7ylM6NaPiEB6w")
+   '(("Uebermarginal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ10M7ftQN7ylM6NaPiEB6w")
      ("Justus Walker" "https://www.youtube.com/feeds/videos.xml?user=senttosiberia")
      ("Luke Smith" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA")
      ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
@@ -2312,7 +2310,6 @@
   :custom-face
   (default ((t (:inherit default :family "Iosevka"))))
   (mode-line ((t (:inherit mode-line :font "DejaVu Sans"))))
-  (fixed-pitch-serif ((t (:inherit fixed-pitch-serif :font "DejaVu Serif"))))
   (header-line ((t (:inherit header-line :inverse-video nil :font "Iosevka"))))
   (Man-overstrike ((t (:inherit font-lock-variable-name-face :bold t))))
   (Man-underline ((t (:inherit font-lock-negation-char-face :underline t))))
