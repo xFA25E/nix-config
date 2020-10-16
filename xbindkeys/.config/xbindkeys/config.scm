@@ -138,7 +138,6 @@ command may be a string or a function"
 
 (define prefix "")
 (define-macro (define-key key cmd)
-  ;; (global-set-key key cmd)
   (cond
    ((and (string? key) (string? cmd))
     `(global-set-key (string-trim (string-append prefix " " ,key)) ,cmd))
