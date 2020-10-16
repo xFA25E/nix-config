@@ -112,11 +112,12 @@ command may be a string or a function"
     (if (null? lst)
         (list pfx)
         (apply append!
-               (map (lambda (e) (cond ((string? e) (list (string-append pfx e)))
-                                 ((number? e) (list (string-append pfx (number->string e))))
-                                 ((symbol? e) (list (string-append pfx (symbol->string e))))
-                                 ((list? e) (inner pfx e))
-                                 (else (error "Neither string or list or number in or"))))
+               (map (lambda (e)
+                      (cond ((string? e) (list (string-append pfx e)))
+                            ((number? e) (list (string-append pfx (number->string e))))
+                            ((symbol? e) (list (string-append pfx (symbol->string e))))
+                            ((list? e) (inner pfx e))
+                            (else (error "Neither string or list or number in or"))))
                     lst))))
 
   (if (null? (cdr lst))
