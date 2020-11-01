@@ -68,7 +68,7 @@
   (visible-bell nil)
   (x-gtk-use-system-tooltips nil)
   (x-stretch-cursor t)
-  (fill-column 90)
+  (fill-column 80)
   ;; (help-char (aref (kbd "C-l") 0))
   (kill-buffer-query-functions
    (remq #'process-kill-buffer-query-function kill-buffer-query-functions))
@@ -93,6 +93,9 @@
   (defun xdg-documents-dir () (or (getenv "XDG_DOCUMENTS_DIR") "~/Documents"))
   (defun xdg-download-dir () (or (getenv "XDG_DOWNLOAD_DIR") "~/Downloads"))
   (defun xdg-music-dir () (or (getenv "XDG_MUSIC_DIR") "~/Music")))
+
+(use-package auth-source
+  :custom (auth-sources '("~/.authinfo.gpg" "~/.netrc" "~/.authinfo")))
 
 (use-package auth-source-pass
   :custom
