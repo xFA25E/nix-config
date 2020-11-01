@@ -1330,12 +1330,6 @@
   (lsp-ui-peek-enable nil)
   (lsp-ui-sideline-enable nil))
 
-(use-package company-lsp
-  :disabled
-  :ensure t
-  :after company
-  :init (add-to-list 'company-backends #'company-lsp))
-
 (use-package multiple-cursors
   :ensure t
 
@@ -1373,11 +1367,6 @@
   :bind (:map php-mode-map ("M-." . ac-php-find-symbol-at-point))
   :custom (ac-php-tags-path (expand-file-name "emacs/ac-php" (xdg-cache-home)))
   :hook (php-mode-hook . ac-php-core-eldoc-setup))
-
-(use-package php-eldoc
-  :disabled
-  :ensure t
-  :hook (php-mode-hook . php-eldoc-enable))
 
 (use-package lua-mode :ensure t)
 
