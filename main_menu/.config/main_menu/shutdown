@@ -1,5 +1,5 @@
 #!/bin/sh
-runel remote quit
-rimer remote quit
+pkill runel
+pkill rimer
 bspc quit
 shutdown now
