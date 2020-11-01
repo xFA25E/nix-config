@@ -508,8 +508,8 @@ c.editor.encoding = "utf-8"
 c.fonts.default_family = ['Iosevka', 'lucy tewi']
 
 # Font variables
-default_font="10pt default_family"
-hint_font="bold 13pt default_family"
+default_font="15pt default_family"
+hint_font="bold 18pt default_family"
 
 # Font used in the completion widget.
 c.fonts.completion.entry = default_font
@@ -842,7 +842,7 @@ c.window.hide_decoration = False
 c.window.title_format = '{perc}({scroll_pos}){audio} {current_title}{title_sep}{current_url}'
 
 # The default zoom level.
-c.zoom.default = "100%"
+c.zoom.default = "150%"
 
 # The available zoom levels.
 c.zoom.levels = ["25%", "33%", "39%", "50%", "67%", "75%", "90%",
