@@ -2,9 +2,9 @@
 runel.bg:       base00
 runel.free:     base04
 runel.monitor:  base0E
-runel.occupied: base0D
+runel.occupied: base0B
 runel.urgent:   base09
 runel.state:    base0F
-runel.title:    base0C
+runel.title:    base0D
 runel.info_fg:  base07
 runel.info_hd:  base0A
