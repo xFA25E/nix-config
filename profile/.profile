@@ -50,7 +50,7 @@ export LANG=en_US.UTF-8
 
 # runel
 export RUNEL_WM_NAME="runel_panel"
-export LEMONBAR_ARGS="-n,${RUNEL_WM_NAME},-f,Iosevka-8"
+export LEMONBAR_ARGS="-n,${RUNEL_WM_NAME},-f,Iosevka-12"
 
 # less
 export LESSHISFILE="/dev/null"
@@ -87,7 +87,7 @@ export SSH_ASKPASS="ssh-askpass"
 export ENV="${XDG_CONFIG_HOME}/sh/init"
 
 # c compiler
-export CFLAGS='-Wall -Wextra -pedantic'
+export CFLAGS='-Wall -Wextra -Werror -pedantic'
 
 # java
 export _JAVA_AWT_WM_NONREPARENTING=1
