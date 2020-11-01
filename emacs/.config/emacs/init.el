@@ -241,7 +241,6 @@
 (use-package scroll-bar
   :custom
   (scroll-step 1)
-  (scroll-margin 5)
   (scroll-conservatively 10000)
 
   :config (scroll-bar-mode -1))
@@ -491,7 +490,7 @@
       "transmission-remote --add")
 
      (,(rx (ext "rar"))
-      "temp=\"$(basename `?` .rar)\"; mkdir \"${temp}\"; unrar x ? \"${temp}\""))))
+      "temp=\"$(echo `?` | rev | cut -d. -f 2- | rev)\"; mkdir -p \"${temp}\"; unrar x ? \"${temp}\""))))
 
 (use-package ibuffer
   :custom (ibuffer-default-sorting-mode 'major-mode)
@@ -507,7 +506,12 @@
   (compilation-always-kill t)
   (compilation-scroll-output 'first-error)
 
-  :bind (:map ctl-x-map ("c" . compile)))
+  :bind (:map ctl-x-map ("c" . compile))
+
+  :config
+  ;; leuven
+  (set-face-attribute 'compilation-info nil :foreground "deep sky blue")
+  (set-face-attribute 'compilation-mode-line-exit nil :foreground "lawn green"))
 
 (use-package sh-script :custom (system-uses-terminfo nil))
 
@@ -525,7 +529,11 @@
 
 (use-package man
   :custom (Man-notify-method 'aggressive)
-  :bind (:map help-map ("M" . man)))
+  :bind (:map help-map ("M-m" . man))
+
+  :config
+  (set-face-attribute 'Man-overstrike nil :inherit 'font-lock-variable-name-face :bold t)
+  (set-face-attribute 'Man-underline nil :inherit 'font-lock-negation-char-face :underline t))
 
 (use-package image-dired
   :hook (dired-mode-hook . image-dired-minor-mode)
@@ -563,6 +571,9 @@
   :init (defvar-local comint-history-filter-function (lambda (_file)))
 
   :config
+  (set-face-attribute 'comint-highlight-input nil :inherit 'diff-added)
+  (set-face-attribute 'comint-highlight-prompt nil :inherit 'diff-hl-change)
+
   (defun save-buffers-comint-input-ring ()
     (dolist (buf (buffer-list))
       (with-current-buffer buf (comint-write-input-ring))))
@@ -669,6 +680,9 @@
    (expand-file-name "emacs/org/id-locations" (xdg-cache-home)))
 
   :config
+  ;; leuven
+  (set-face-attribute 'org-list-dt nil :foreground "sky blue")
+
   (org-babel-do-load-languages 'org-babel-load-languages
                                '((calc       . t)
                                  (emacs-lisp . t)
@@ -719,6 +733,7 @@
         ("C-c C-e" . mu4e-update-mail-and-index-exys))
 
   :custom
+  (mu4e-headers-visible-lines 7)
   (mu4e-sent-folder "/SENT")
   (mu4e-drafts-folder "/DRAFTS")
   (mu4e-trash-folder "/TRASH")
@@ -736,7 +751,7 @@
   (mu4e-attachment-dir (expand-file-name (xdg-download-dir)))
   (mu4e-modeline-max-width 100)
   (mu4e-get-mail-command "mailsync -a")
-  (mu4e-update-interval 600)
+  (mu4e-update-interval 300)
   (mu4e-maildir-shortcuts
    '(("/EXYS"    . ?e)
      ("/POLIMI"  . ?p)
@@ -760,6 +775,10 @@
                           "3gp" "vob"  "wmv" "aiff" "wav"))))))
 
   :config
+  ;; leuven
+  (set-face-attribute 'mu4e-context-face nil :foreground "orange")
+  (set-face-attribute 'mu4e-modeline-face nil :foreground "green")
+
   (load-file (expand-file-name "emacs/secrets/mu4e.el" (xdg-data-home)))
   (load-library "org-mu4e")
 
@@ -918,7 +937,7 @@
   (aw-leading-char-style 'path)
   (aw-dispatch-always t)
   (aw-minibuffer-flag t)
-  (aw-fair-aspect-ratio 3)
+  (aw-fair-aspect-ratio 6)
   (aw-dispatch-alist
    '((?m aw-swap-window "Swap Windows")
      (?M aw-move-window "Move Window")
@@ -957,7 +976,7 @@
   :custom
   (ivy-count-format "%d/%d ")
   (ivy-use-selectable-prompt t)
-  (ivy-height (lambda (_c) (/ (frame-height) 3))))
+  (ivy-height 15))
 
 (use-package swiper
   :ensure t
@@ -1615,7 +1634,7 @@
     (when (and (derived-mode-p 'conf-xdefaults-mode)
                (yes-or-no-p "Reload xresources?"))
       (let ((xres (expand-file-name "X11/xresources" (xdg-config-home))))
-        (shell-command (format "xrdb -load %s; runel remote reload" xres))))))
+        (shell-command (format "xrdb -load %s" xres))))))
 
 (use-package remember
   :commands remember-notes-maybe
@@ -1679,8 +1698,6 @@
          ("sql" (sql-mode))
          ("html" (html-mode))))
       (t (normal-mode)))))
-
-(use-package web-beautify :ensure t)
 
 (use-package emmet-mode
   :ensure t
@@ -1845,7 +1862,7 @@
   :custom (rg-executable "rg")
 
   :bind
-  (:map search-map ("R" . rg-menu))
+  (:map search-map ("R" . rg))
   (:map rg-mode-map
         ("C-n" . next-line)
         ("C-p" . previous-line)
@@ -1922,11 +1939,11 @@
     ivy-occur-mode-hook
     mingus-browse-hook
     mingus-playlist-hooks
-    tar-mode
-    transmission-files-mode
-    transmission-mode
-    transmission-peers-mode
-    ytel-mode) . hl-line-mode))
+    tar-mode-hook
+    transmission-files-mode-hook
+    transmission-mode-hook
+    transmission-peers-mode-hook
+    ytel-mode-hook) . hl-line-mode))
 
 (use-package try-complete-file-name-with-env
   :quelpa
@@ -2110,7 +2127,8 @@
   (newsticker-dir (expand-file-name "emacs/newsticker" (xdg-cache-home)))
   (newsticker-url-list-defaults nil)
   (newsticker-url-list
-   '(("Uebermarginal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ10M7ftQN7ylM6NaPiEB6w")
+   '(("Alt-Hype" "https://www.bitchute.com/feeds/rss/channel/thealthype/")
+     ("American Renaissance" "https://www.bitchute.com/feeds/rss/channel/amrenaissance/")
      ("Justus Walker" "https://www.youtube.com/feeds/videos.xml?user=senttosiberia")
      ("Luke Smith" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA")
      ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
@@ -2156,7 +2174,8 @@
 
   :custom
   (newsticker-treeview-automatically-mark-displayed-items-as-old nil)
-  (newsticker-treeview-treewindow-width 40)
+  (newsticker-treeview-treewindow-width 30)
+  (newsticker-treeview-listwindow-height 6)
   (newsticker--treeview-list-sort-order 'sort-by-time-reverse)
 
   :config
@@ -2251,6 +2270,8 @@
 
 (use-package ytel
   :ensure t
+  :custom (ytel-invidious-api-url "https://invidious.snopyta.org")
+  :hook (ytel-mode-hook . toggle-truncate-lines)
 
   :bind
   (:map mode-specific-map ("o Y" . ytel))
@@ -2324,6 +2345,8 @@
   (set-face-attribute 'header-line nil :inverse-video nil :family "Iosevka")
   ;; leuven
   (set-face-attribute 'mode-line-inactive nil :family "DejaVu Sans" :height 125))
+
+(use-package format-all :ensure t)
 
 ;; Local Variables:
 ;; eval: (cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
