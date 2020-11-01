@@ -142,10 +142,7 @@
 
   :config
   (add-to-list 'display-buffer-alist
-               `(,(rx string-start "*Man" (0+ anything) "*" string-end)
-                 . (display-buffer-reuse-mode-window
-                    (inhibit-same-window . nil)
-                    (mode . Man-mode)))))
+               `(,(rx (* any)) (display-buffer-same-window))))
 
 (use-package subr
   :init (provide 'subr)
@@ -2307,25 +2304,26 @@
   :demand t
   :config (load-theme 'leuven t))
 
-(use-package faces
-  :after custom
+(use-package font-core
+  :hook
+  (after-init-hook . global-font-lock-mode-disable)
+  ((org-mode-hook
+    comint-mode-hook
+    dired-mode-hook
+    rg-mode-hook
+    magit-mode-hook) . font-lock-mode)
 
-  :custom-face
-  (default ((t (:inherit default :family "Iosevka"))))
-  (mode-line ((t (:inherit mode-line :font "DejaVu Sans"))))
-  (header-line ((t (:inherit header-line :inverse-video nil :font "Iosevka"))))
-  (Man-overstrike ((t (:inherit font-lock-variable-name-face :bold t))))
-  (Man-underline ((t (:inherit font-lock-negation-char-face :underline t))))
-  (comint-highlight-input ((t (:inherit diff-added))))
-  (comint-highlight-prompt ((t (:inherit diff-hl-change))))
+  :config (defun global-font-lock-mode-disable () (global-font-lock-mode -1)))
+
+(use-package faces
+  :config
+  ;; default
+  (set-face-attribute 'default nil :family "Iosevka" :height 165)
+  (set-face-attribute 'mode-line nil :family "DejaVu Sans" :height 125)
+  (set-face-attribute 'fixed-pitch-serif nil :family "DejaVu Serif")
+  (set-face-attribute 'header-line nil :inverse-video nil :family "Iosevka")
   ;; leuven
-  (mode-line-inactive ((t (:inherit mode-line-inactive :font "DejaVu Sans"))))
-  (mu4e-context-face ((t (:inherit mu4e-context-face :foreground "orange"))))
-  (mu4e-modeline-face ((t (:inherit mu4e-modeline-face :foreground "green"))))
-  (org-list-dt ((t (:inherit org-list-dt :foreground "sky blue"))))
-  (compilation-info ((t (:inherit compilation-info :foreground "deep sky blue"))))
-  (compilation-mode-line-exit
-   ((t (:inherit compilation-mode-line-exit :foreground "lawn green")))))
+  (set-face-attribute 'mode-line-inactive nil :family "DejaVu Sans" :height 125))
 
 ;; Local Variables:
 ;; eval: (cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
