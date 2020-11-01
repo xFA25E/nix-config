@@ -23,14 +23,20 @@ save_log() {
     date "+%Y %m %d ${1:?provide activity} ${2:?provide duration}" >> "${3:?provide file}"
 }
 
+format_duration() {
+    if [ "${duration}" = "${max_duration}" ]; then
+        echo "+$(format_secs "${elapsed}")"
+    else
+        echo "-$(format_secs "$((duration - elapsed))")"
+    fi
+}
+
 case "${state}" in
-    running|paused)
-        if [ "${duration}" = "${max_duration}" ]; then
-            time="+$(format_secs "${elapsed}")"
-        else
-            time="-$(format_secs "$((duration - elapsed))")"
-        fi
-        sratus -u timer -v "${name} ${time} ${state}"
+    running)
+        sratus -u timer -v "${name} $(format_duration)"
+        ;;
+    paused)
+        sratus -u timer -v "${name} $(format_duration) !"
         ;;
     halted)
         sratus -u timer -v "off"
