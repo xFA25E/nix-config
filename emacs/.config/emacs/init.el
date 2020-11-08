@@ -1220,8 +1220,7 @@
 
 (use-package rainbow-mode
   :ensure t
-  :diminish rainbow-mode
-  :hook (css-mode-hook . rainbow-mode))
+  :diminish rainbow-mode)
 
 (use-package clipmon
   :ensure t
@@ -1408,7 +1407,9 @@
 
 (use-package transmission
   :ensure t
-  :bind (:map transmission-mode-map ("M" . transmission-move)))
+  :bind
+  (:map mode-specific-map ("o r" . transmission))
+  (:map transmission-mode-map ("M" . transmission-move)))
 
 (use-package dumb-jump
   :ensure t
@@ -1827,6 +1828,8 @@
 (use-package sly
   :ensure t
   :custom
+  (sly-default-lisp 'sbcl)
+  (sly-lisp-implementations '((sbcl ("lisp-sbcl")) (ecl ("lisp-ecl"))))
   (sly-mrepl-history-file-name
    (expand-file-name "emacs/sly-mrepl-history" (xdg-cache-home))))
 
