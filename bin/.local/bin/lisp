@@ -1,2 +1,0 @@
-#!/bin/sh
-sbcl --userinit "${XDG_CONFIG_HOME}/sbcl/sbclrc" "$@"
