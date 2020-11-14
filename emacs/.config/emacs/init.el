@@ -735,9 +735,6 @@
 
 ;;; EDITING
 
-
-;;;; GENERAL
-
 (use-package simple
   :hook
   (before-save-hook . delete-trailing-whitespace)
