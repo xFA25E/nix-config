@@ -1,8 +1,9 @@
-;;; USE-PACKAGE INIT ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; USE-PACKAGE INIT
 
 (require 'xdg)
 
-;;;; PACKAGE ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; PACKAGE
 
 (customize-set-variable
  'nsm-settings-file (expand-file-name "emacs/network-security.data" (xdg-cache-home)))
@@ -21,7 +22,8 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
-;;;; USE-PACKAGE VARIABLES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; USE-PACKAGE VARIABLES
 
 (customize-set-variable 'use-package-enable-imenu-support t)
 (customize-set-variable 'use-package-expand-minimally t)
@@ -29,7 +31,8 @@
 (customize-set-variable 'use-package-hook-name-suffix nil)
 (require 'use-package)
 
-;;; UTILS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; UTILS
 
 (use-package xdg
   :commands xdg-download-dir xdg-music-dir
@@ -74,7 +77,8 @@
 
 (use-package subr-x :commands when-let thread-last)
 
-;;; SETTINGS PACKAGES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; SETTINGS
 
 (use-package emacs
   :bind ("C-S-SPC" . insert-space-after-point)
@@ -113,7 +117,8 @@
     (interactive)
     (save-excursion (insert " "))))
 
-;;;; FACES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; FACES
 
 (use-package custom
   :demand t
@@ -185,7 +190,17 @@
       (ansi-color-apply-on-region
        compilation-filter-start (point)))))
 
-;;;; GUI ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package page-break-lines :ensure t)
+
+(use-package bicycle
+  :ensure t
+  :after outline
+  :bind (:map outline-minor-mode-map
+              ("<C-tab>" . bicycle-cycle)
+              ("<backtab>" . bicycle-cycle-global)))
+
+
+;;;; GUI
 
 (use-package tool-bar :config (tool-bar-mode -1))
 
@@ -204,7 +219,8 @@
 
 (use-package frame :config (define-advice suspend-frame (:override ()) nil))
 
-;;;; AUTH ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; AUTH
 
 (use-package auth-source
   :custom (auth-sources '("~/.authinfo.gpg" "~/.netrc" "~/.authinfo")))
@@ -214,7 +230,8 @@
   (auth-source-pass-filename
    (or (getenv "PASSWORD_STORE_DIR") (expand-file-name "pass" (xdg-data-home)))))
 
-;;;; URL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; URL
 
 (use-package browse-url :custom (browse-url-secondary-browser-function #'browse-url-firefox))
 
@@ -286,7 +303,8 @@
         (goto-char beg)
         (insert text)))))
 
-;;;; CACHE ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; CACHE
 
 (use-package savehist
   :custom (savehist-file (expand-file-name "emacs/savehist" (xdg-data-home)))
@@ -316,7 +334,8 @@
   (save-place-file (expand-file-name "emacs/saveplace" (xdg-data-home)))
   (save-place-forget-unreadable-files t))
 
-;;;; FILES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; FILES
 
 (use-package autorevert
   :custom
@@ -357,7 +376,8 @@
       (or (not (string-match-p regexp name))
           (normal-backup-enable-predicate name)))))
 
-;;;; SHR ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; SHR
 
 (use-package shr
   :custom
@@ -371,7 +391,8 @@
   :config
   (add-to-list 'shr-external-rendering-functions '(pre . shr-tag-pre-highlight)))
 
-;;;; CLIPBOARD ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; CLIPBOARD
 
 (use-package select
   :custom
@@ -382,7 +403,8 @@
   :ensure t
   :hook (after-init-hook . clipmon-mode))
 
-;;;; OTHER ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; OTHER
 
 (use-package startup
   :init (provide 'startup)
@@ -461,7 +483,8 @@
   :diminish gcmh-mode
   :hook (emacs-startup-hook . gcmh-mode))
 
-;;; REMOTE ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; REMOTE
 
 (use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
 
@@ -483,7 +506,8 @@
   (after-init-hook . sudo-edit-indicator-mode)
   (shell-mode-hook . sudo-edit-set-header))
 
-;;; MAN ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; MAN
 
 (use-package man
   :custom (Man-notify-method 'aggressive)
@@ -507,7 +531,8 @@
         (when (get-buffer buf)
           (kill-buffer buf))))))
 
-;;; DIRED ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; DIRED
 
 (use-package dired
   :commands dired-get-marked-files
@@ -691,7 +716,8 @@
   :diminish dired-async-mode
   :init (dired-async-mode))
 
-;;;; FIND ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; FIND
 
 (use-package find-dired
   :custom (find-ls-option '("-print0 | xargs -0 ls -ldb --quoting-style=literal" . "-ldb")))
@@ -706,9 +732,11 @@
     (let ((arg (second args)))
       (list (first args) (substring arg 1 (1- (length arg)))))))
 
-;;; EDITING ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; EDITING
 
-;;;; GENERAL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; GENERAL
 
 (use-package simple
   :hook
@@ -812,7 +840,8 @@
          ("html" (html-mode))))
       (t (normal-mode)))))
 
-;;;;; FORMATTING ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;; FORMATTING
 
 (use-package whitespace
   :diminish whitespace-mode
@@ -820,7 +849,8 @@
 
 (use-package format-all :ensure t)
 
-;;;;; INPUT METHOD ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;; INPUT METHOD
 
 (use-package cyrillic-dvorak-im
   :quelpa
@@ -836,7 +866,8 @@
   :after cyrillic-dvorak-im
   :config (reverse-im-activate "cyrillic-dvorak"))
 
-;;;;; PAIRS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;; PAIRS
 
 (use-package elec-pair :hook (after-init-hook . electric-pair-mode))
 
@@ -870,7 +901,8 @@
 
   (require 'smartparens-config))
 
-;;;; CONF ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; CONF
 
 (use-package ledger-mode
   :ensure t
@@ -896,7 +928,8 @@
   (defun setup-tex-mode-ispell-parser ()
     (setq-local ispell-parser 'tex)))
 
-;;;;; WEB ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;; WEB
 
 (use-package css-mode :bind (:map css-mode-map ("C-c m" . css-lookup-symbol)))
 
@@ -910,13 +943,15 @@
   :ensure t
   :mode ((rx (ext "http")) . restclient-mode))
 
-;;;;; GIT ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;; GIT
 
 (use-package gitconfig-mode :ensure t)
 
 (use-package gitignore-mode :ensure t)
 
-;;;;; XML-LIKE ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;; XML-LIKE
 
 (use-package sgml-mode
   :custom (sgml-basic-offset 4)
@@ -940,7 +975,8 @@
   (emmet-preview-default t)
   (emmet-self-closing-tag-style ""))
 
-;;;; PROG ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; PROG
 
 (use-package nix-mode :ensure t)
 
@@ -951,7 +987,8 @@
   :ensure t
   :custom (rust-format-on-save t))
 
-;;;;; SHELL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;; SHELL
 
 (use-package sh-script :custom (system-uses-terminfo nil))
 
@@ -959,7 +996,8 @@
   :custom (executable-chmod 64)
   :hook (after-save-hook . executable-make-buffer-file-executable-if-script-p))
 
-;;;;; SQL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;; SQL
 
 (use-package sql-indent
   :ensure t
@@ -969,7 +1007,8 @@
   :ensure t
   :hook sql-mode-hook)
 
-;;;;; WEB ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;; WEB
 
 (use-package php-mode
   :ensure t
@@ -983,7 +1022,8 @@
   :mode (rx (ext "twig"))
   :custom (web-mode-markup-indent-offset 4))
 
-;;;;; LSP ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;; LSP
 
 (use-package lsp-mode
   :ensure t
@@ -998,7 +1038,8 @@
 
 (use-package lsp-ui :ensure t)
 
-;;;;; LISP ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;; LISP
 
 (use-package lisp
   :commands kill-sexp
@@ -1010,7 +1051,8 @@
     (when (derived-mode-p 'prog-mode)
       (check-parens))))
 
-;;;;;; ELITE LISP ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;; ELITE LISP
 
 (use-package elisp-mode
   :bind ("C-x C-S-e" . eval-and-replace)
@@ -1042,7 +1084,8 @@
         ("C-c m" . pp-macroexpand-last-sexp)
         ("C-c M" . emacs-lisp-macroexpand)))
 
-;;;;;; COMMON LISP (AKA BORSHCH) ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;; COMMON LISP (AKA BORSHCH)
 
 (use-package lisp-mode :config (put 'use-package #'lisp-indent-function 1))
 
@@ -1062,7 +1105,8 @@
   :after sly
   :config (add-to-list 'sly-contribs 'sly-asdf 'append))
 
-;;;;;; SCHEME ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;; SCHEME
 
 (use-package scheme :custom (scheme-program-name "guile"))
 
@@ -1072,13 +1116,15 @@
   (geiser-repl-history-filename
    (expand-file-name "geiser/history" (xdg-cache-home))))
 
-;;;;;; CLOJURE ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;; CLOJURE
 
 (use-package clojure-mode :ensure t)
 
 (use-package cider :ensure t)
 
-;;; CORRECTNESS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; CORRECTNESS
 
 (use-package ispell
   :custom
@@ -1107,9 +1153,11 @@
   (flycheck-checkbashisms-newline t)
   (flycheck-checkbashisms-posix t))
 
-;;; COMPLETION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; COMPLETION
 
-;;;; MINIBUFFER ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; MINIBUFFER
 
 (use-package minibuffer :custom (read-file-name-completion-ignore-case t))
 
@@ -1117,7 +1165,8 @@
   :custom (minibuffer-eldef-shorten-default t)
   :hook (after-init-hook . minibuffer-electric-default-mode))
 
-;;;; HIPPIE-EXP ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; HIPPIE-EXP
 
 (use-package hippie-exp
   :bind ([remap dabbrev-expand] . hippie-expand)
@@ -1133,7 +1182,8 @@
   :demand t
   :after hippie-exp)
 
-;;;; IVY ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; IVY
 
 (use-package ivy
   :ensure t
@@ -1263,7 +1313,8 @@
           (apply c-set-var args)
         (call-interactively c-set-var)))))
 
-;;;; COMPANY ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; COMPANY
 
 (use-package company
   :ensure t
@@ -1320,14 +1371,16 @@
   :after company
   :init (add-to-list 'company-backends #'company-restclient))
 
-;;;; SHELL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; SHELL
 
 (use-package bash-completion
   :ensure t
   :after shell
   :hook (shell-dynamic-complete-functions . bash-completion-dynamic-complete))
 
-;;; SEARCHING ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; SEARCHING
 
 (use-package isearch
   :bind (:map isearch-mode-map ("C-h" . isearch-delete-char))
@@ -1362,9 +1415,11 @@
         ("}" . rg-next-file)
         ("M-}" . rg-next-file)))
 
-;;; JUMPING ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; JUMPING
 
-;;;; ON BUFFER ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; ON BUFFER
 
 (use-package avy
   :ensure t
@@ -1387,7 +1442,8 @@
   :ensure t
   :hook (after-init-hook . ace-link-setup-default))
 
-;;;; TO DEFINITION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; TO DEFINITION
 
 (use-package dumb-jump
   :ensure t
@@ -1403,7 +1459,8 @@
   (find-function-C-source-directory
    (expand-file-name "programs/emacs-27.1/src" (xdg-download-dir))))
 
-;;; COMPILATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; COMPILATION
 
 (use-package compile
   :custom
@@ -1447,7 +1504,8 @@
   (cargo-process--command-update "update")
   (cargo-process--command-upgrade "upgrade"))
 
-;;; REPL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; REPL
 
 (use-package comint
   :hook
@@ -1495,7 +1553,8 @@
       (write-region "" nil file t)
       (setq sql-input-ring-file-name file))))
 
-;;;; SHELL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; SHELL
 
 (use-package shell
   :bind (:map shell-mode-map ("C-c M-d" . shell-change-directory))
@@ -1553,7 +1612,8 @@
   :quelpa (shell-pwd :repo "xFA25E/shell-pwd" :fetcher github :version original)
   :commands shell-pwd-generate-buffer-name shell-pwd-shorten-directory)
 
-;;; TEMPLATES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; TEMPLATES
 
 (use-package autoinsert :hook (find-file-hook . auto-insert))
 
@@ -1580,7 +1640,8 @@
 
 (use-package yasnippet-snippets :ensure t)
 
-;;; APPLICATIONS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; APPLICATIONS
 
 (use-package vlf
   :ensure t
@@ -1645,7 +1706,8 @@
   (auto-package-update-last-update-day-path
    (expand-file-name "emacs/last-package-update-day" (xdg-cache-home))))
 
-;;;; XML ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; XML
 
 (use-package eww :custom (eww-search-prefix "https://ddg.co/lite/?q="))
 
@@ -1671,7 +1733,8 @@
 
 (use-package htmlize :ensure t)
 
-;;;; KEYS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; KEYS
 
 (use-package which-key
   :ensure t
@@ -1680,7 +1743,8 @@
 
 (use-package free-keys :ensure t)
 
-;;;; YO-HO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; YO-HO
 (use-package transmission
   :ensure t
 
@@ -1696,7 +1760,8 @@
   :quelpa (torrent-mode :repo "xFA25E/torrent-mode" :fetcher github :version original)
   :hook (after-init-hook . torrent-mode-setup))
 
-;;;; PROJECTILE ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; PROJECTILE
 
 (use-package projectile
   :ensure t
@@ -1729,7 +1794,8 @@
   :ensure t
   :hook (after-init-hook . counsel-projectile-mode))
 
-;;;; YTEL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; YTEL
 
 (use-package ytel
   :ensure t
@@ -1776,7 +1842,8 @@
      bruh-mpvi-get-title-function
      (lambda () (ytel-video-title (ytel-get-current-video))))))
 
-;;;; VERSION CONTROL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; VERSION CONTROL
 
 (use-package vc-hooks :custom (vc-handled-backends '(Git)))
 
@@ -1788,7 +1855,8 @@
   (magit-credential-cache-daemon-socket
    (expand-file-name "git/credential/socket" (xdg-cache-home))))
 
-;;;; RSS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; RSS
 
 (use-package newst-backend
   :hook (newsticker-new-item-functions . newsticker-add-thumbnail)
@@ -1883,7 +1951,8 @@
      bruh-mpvi-get-title-function
      (lambda () (newsticker--title (newsticker--treeview-get-selected-item))))))
 
-;;;; MPD ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; MPD
 
 (use-package mingus
   :ensure t
@@ -1926,7 +1995,8 @@
       (mpd-play mpd-inter-conn)
       (kill-buffer-if-alive (get-buffer "*Mingus*")))))
 
-;;;; E-READER ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; E-READER
 
 (use-package pdf-tools :ensure t)
 
@@ -1941,7 +2011,8 @@
   :quelpa (fb2-mode :repo "5k1m1/fb2-mode" :fetcher github :version original)
   :custom (fb2-replace-hard-space t))
 
-;;; MAIL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; MAIL
 
 (use-package message
   :commands message-send-mail-with-sendmail
@@ -1960,7 +2031,8 @@
   (sendmail-program "msmtp")
   (send-mail-function #'message-send-mail-with-sendmail))
 
-;;;; MU4E ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; MU4E
 
 (use-package mu4e
   :hook (after-init-hook . (lambda () (mu4e t)))
@@ -2042,7 +2114,8 @@
   :config
   (mu4e-alert-set-default-style 'libnotify))
 
-;;; ORGANIZE ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; ORGANIZE
 
 (use-package remember
   :commands remember-notes-maybe
@@ -2069,7 +2142,8 @@
     (remember-notes-save-and-bury-buffer)
     (save-buffers-kill-terminal)))
 
-;;;; ORG ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; ORG
 
 (use-package org
   :ensure org-plus-contrib
@@ -2119,10 +2193,12 @@
   (org-html-htmlize-output-type 'css)
   (org-html-htmlize-font-prefix "org-"))
 
-;;; LOCAL VARIABLES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; LOCAL VARIABLES
 
 ;; Local Variables:
 ;; lexical-binding: t
 ;; outline-minor-mode: t
+;; page-break-lines-mode: t
 ;; eval: (cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
 ;; End:
