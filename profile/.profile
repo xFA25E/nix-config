@@ -87,7 +87,7 @@ export SSH_ASKPASS="ssh-askpass"
 export ENV="${XDG_CONFIG_HOME}/sh/init"
 
 # c compiler
-export CFLAGS='-Wall -Wextra -Werror -pedantic'
+# export CFLAGS='-Wall -Wextra -Werror -pedantic'
 
 # java
 export _JAVA_AWT_WM_NONREPARENTING=1
