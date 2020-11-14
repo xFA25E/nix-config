@@ -417,9 +417,6 @@ c.content.local_content_can_access_remote_urls = False
 # Whether support for HTML 5 local storage and Web SQL is enabled.
 c.content.local_storage = False
 
-# Allow websites to record audio/video.
-c.content.media_capture = False
-
 # Allow websites to lock your mouse pointer
 c.content.mouse_lock = "ask"
 
