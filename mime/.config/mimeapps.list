@@ -1,0 +1,15 @@
+[Default Applications]
+x-scheme-handler/tg=telegramdesktop.desktop
+x-scheme-handler/postman=Postman.desktop
+application/pdf=org.pwmt.zathura-pdf-mupdf.desktop;
+x-scheme-handler/msteams=teams.desktop
+x-scheme-handler/eclipse+installer=_home_val_Downloads_programs_eclipse-installer_.desktop
+x-scheme-handler/eclipse+command x-scheme-handler/eclipse+mpc=_home_val_eclipse_jee-2020-06_eclipse_.desktop
+application/x-directory=emacs-dired.desktop
+inode/directory=emacs-dired.desktop
+x-scheme-handler/mailto=emacs-mail.desktop
+
+[Added Associations]
+application/octet-stream=sxiv.desktop;
+text/x-php=emacs.desktop;
+application/epub+zip=org.pwmt.zathura-pdf-mupdf.desktop;
