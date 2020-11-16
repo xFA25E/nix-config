@@ -176,6 +176,7 @@
 
 (use-package form-feed
   :ensure t
+  :diminish form-feed-mode
   :hook (emacs-lisp-mode-hook . form-feed-mode))
 
 
@@ -214,6 +215,7 @@
 ;;;;; OUTLINE
 
 (use-package outline
+  :diminish outline-minor-mode
   :hook
   (emacs-lisp-mode-hook . outline-minor-mode))
 
@@ -239,7 +241,9 @@
   :after outline
   :hook (outline-minor-mode-hook . outline-minor-faces-add-font-lock-keywords))
 
-(use-package hideshow :hook (emacs-lisp-mode-hook . hs-minor-mode))
+(use-package hideshow
+  :diminish hs-minor-mode
+  :hook (emacs-lisp-mode-hook . hs-minor-mode))
 
 (use-package bicycle
   :ensure t
@@ -1199,6 +1203,8 @@
   :hook (after-init-hook . minibuffer-electric-default-mode))
 
 
+(use-package eldoc :diminish eldoc-mode)
+
 ;;;; HIPPIE-EXP
 
 (use-package hippie-exp
