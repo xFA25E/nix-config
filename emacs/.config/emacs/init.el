@@ -120,30 +120,24 @@
 
 ;;;; FACES
 
-(use-package custom
-  :demand t
-  :config (load-theme 'leuven t))
-
 (use-package faces
+  :demand t
   :config
-  ;; default
   (set-face-attribute 'default nil :family "Iosevka" :height 165)
   (set-face-attribute 'mode-line nil :family "DejaVu Sans" :height 125)
+  (set-face-attribute 'mode-line-inactive nil :family "DejaVu Sans" :height 125)
   (set-face-attribute 'fixed-pitch-serif nil :family "DejaVu Serif")
-  (set-face-attribute 'header-line nil :inverse-video nil :family "Iosevka")
-  ;; leuven
-  (set-face-attribute 'mode-line-inactive nil :family "DejaVu Sans" :height 125))
+  (set-face-attribute 'header-line nil :inverse-video nil :family "Iosevka"))
 
-(use-package font-core
-  :hook
-  (after-init-hook . global-font-lock-mode-disable)
-  ((text-mode-hook
-    comint-mode-hook
-    dired-mode-hook
-    compilation-mode-hook
-    special-mode-hook) . font-lock-mode)
+(use-package mb-depth :hook (after-init-hook . minibuffer-depth-indicate-mode))
 
-  :config (defun global-font-lock-mode-disable () (global-font-lock-mode -1)))
+(use-package so-long :hook (after-init-hook . global-so-long-mode))
+
+(use-package rainbow-mode :ensure t)
+
+(use-package paren
+  :custom (show-paren-style 'parentheses)
+  :hook (after-init-hook . show-paren-mode))
 
 (use-package hl-line
   :hook
@@ -159,14 +153,6 @@
     transmission-peers-mode-hook
     ytel-mode-hook) . hl-line-mode))
 
-(use-package so-long :hook (after-init-hook . global-so-long-mode))
-
-(use-package paren
-  :custom (show-paren-style 'parentheses)
-  :hook (after-init-hook . show-paren-mode))
-
-(use-package mb-depth :hook (after-init-hook . minibuffer-depth-indicate-mode))
-
 (use-package diff-hl
   :ensure t
 
@@ -175,8 +161,6 @@
   (prog-mode-hook          . diff-hl-mode)
   (org-mode-hook           . diff-hl-mode)
   (dired-mode-hook         . diff-hl-dired-mode))
-
-(use-package rainbow-mode :ensure t)
 
 (use-package ansi-color
   :hook
@@ -190,14 +174,71 @@
       (ansi-color-apply-on-region
        compilation-filter-start (point)))))
 
-(use-package page-break-lines :ensure t)
+(use-package form-feed
+  :ensure t
+  :hook (emacs-lisp-mode-hook . form-feed-mode))
+
+
+;;;;; THEMES
+
+(use-package custom :demand t)
+
+(use-package parchment-theme
+  :ensure t
+  :after custom
+  :init (load-theme 'parchment t))
+
+
+;;;;;; LEUVEN
+
+(use-package faces
+  :disabled
+  :after compile
+  :config
+  (set-face-attribute 'compilation-info nil :foreground "deep sky blue")
+  (set-face-attribute 'compilation-mode-line-exit nil :foreground "lawn green"))
+
+(use-package faces
+  :disabled
+  :after mu4e
+  :config
+  (set-face-attribute 'mu4e-context-face nil :foreground "orange")
+  (set-face-attribute 'mu4e-modeline-face nil :foreground "green"))
+
+(use-package faces
+  :disabled
+  :after org
+  (set-face-attribute 'org-list-dt nil :foreground "sky blue"))
+
+
+;;;;; OUTLINE
+
+(use-package outline :hook (emacs-lisp-mode-hook . outline-minor-mode))
 
 (use-package bicycle
   :ensure t
   :after outline
-  :bind (:map outline-minor-mode-map
-              ("<C-tab>" . bicycle-cycle)
-              ("<backtab>" . bicycle-cycle-global)))
+
+  :bind
+  (:map outline-minor-mode-map
+        ("<C-tab>" . bicycle-cycle)
+        ("<backtab>" . bicycle-cycle-global)))
+
+(use-package outline-minor-faces
+  :ensure t
+  :after outline
+  :hook (outline-minor-mode-hook . outline-minor-faces-add-font-lock-keywords))
+
+(use-package hideshow :hook (emacs-lisp-mode-hook . hs-minor-mode))
+
+(use-package bicycle
+  :ensure t
+  :after hideshow
+
+  :bind
+  (:map hs-minor-mode-map
+        ("<C-tab>" . bicycle-cycle)
+        ("<backtab>" . bicycle-cycle-global)))
 
 
 ;;;; GUI
@@ -264,22 +305,7 @@
 
 (use-package url
   :custom
-  (url-configuration-directory (expand-file-name "emacs/url/" (xdg-cache-home)))
-
-  :config
-  (defun insert-image-from-url (&optional url)
-    (interactive)
-    (unless url (setq url (thing-at-point 'url)))
-    (unless url
-      (error "Couldn't find URL."))
-    (let ((buffer (url-retrieve-synchronously url)))
-      (unwind-protect
-          (let ((data (with-current-buffer buffer
-                        (goto-char (point-min))
-                        (search-forward "\n\n")
-                        (buffer-substring (point) (point-max)))))
-            (insert-image (create-image data nil t)))
-        (kill-buffer buffer)))))
+  (url-configuration-directory (expand-file-name "emacs/url/" (xdg-cache-home))))
 
 (use-package url-handlers :hook (after-init-hook . url-handler-mode))
 
@@ -1464,12 +1490,7 @@
   (compilation-always-kill t)
   (compilation-scroll-output 'first-error)
 
-  :bind (:map ctl-x-map ("c" . compile))
-
-  :config
-  ;; leuven
-  (set-face-attribute 'compilation-info nil :foreground "deep sky blue")
-  (set-face-attribute 'compilation-mode-line-exit nil :foreground "lawn green"))
+  :bind (:map ctl-x-map ("c" . compile)))
 
 ;; Add support for cargo error --> file:line:col
 (use-package cargo
@@ -1796,7 +1817,8 @@
 
 (use-package ytel
   :ensure t
-  :custom (ytel-invidious-api-url "https://invidious.snopyta.org")
+  ;; :custom (ytel-invidious-api-url "https://invidious.snopyta.org")
+  :custom (ytel-invidious-api-url "https://invidious.mservice.ru.com")
   :hook (ytel-mode-hook . toggle-truncate-lines)
 
   :bind
@@ -1804,7 +1826,8 @@
   (:map ytel-mode-map
         ("c" . ytel-copy-link)
         ("t" . ytel-show-thumbnail)
-        ("v" . ytel-current-browse-url))
+        ("v" . ytel-current-browse-url)
+        ("RET" . ytel-show))
 
   :config
   (defun ytel-current-browse-url ()
@@ -2083,9 +2106,6 @@
                           "3gp" "vob"  "wmv" "aiff" "wav"))))))
 
   :config
-  ;; leuven
-  (set-face-attribute 'mu4e-context-face nil :foreground "orange")
-  (set-face-attribute 'mu4e-modeline-face nil :foreground "green")
 
   (load-file (expand-file-name "emacs/secrets/mu4e.el" (xdg-data-home)))
   (load-library "org-mu4e")
@@ -2160,9 +2180,6 @@
    (expand-file-name "emacs/org/id-locations" (xdg-cache-home)))
 
   :config
-  ;; leuven
-  (set-face-attribute 'org-list-dt nil :foreground "sky blue")
-
   (org-babel-do-load-languages 'org-babel-load-languages
                                '((calc       . t)
                                  (emacs-lisp . t)
@@ -2196,6 +2213,5 @@
 ;; Local Variables:
 ;; lexical-binding: t
 ;; outline-minor-mode: t
-;; page-break-lines-mode: t
 ;; eval: (cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
 ;; End:
