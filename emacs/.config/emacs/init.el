@@ -213,7 +213,17 @@
 
 ;;;;; OUTLINE
 
-(use-package outline :hook (emacs-lisp-mode-hook . outline-minor-mode))
+(use-package outline
+  :hook
+  (emacs-lisp-mode-hook . outline-minor-mode))
+
+(use-package outline
+  :after imenu
+  :config
+  (defun outline-show-after-imenu-jump ()
+    (when outline-minor-mode
+      (outline-show-entry)))
+  (add-hook 'imenu-after-jump-hook #'outline-show-after-imenu-jump))
 
 (use-package bicycle
   :ensure t
