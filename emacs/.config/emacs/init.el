@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;;; USE-PACKAGE INIT
 
 (require 'xdg)
@@ -120,15 +122,6 @@
 
 ;;;; FACES
 
-(use-package faces
-  :demand t
-  :config
-  (set-face-attribute 'default nil :family "Iosevka" :height 165)
-  (set-face-attribute 'mode-line nil :family "DejaVu Sans" :height 125)
-  (set-face-attribute 'mode-line-inactive nil :family "DejaVu Sans" :height 125)
-  (set-face-attribute 'fixed-pitch-serif nil :family "DejaVu Serif")
-  (set-face-attribute 'header-line nil :inverse-video nil :family "Iosevka"))
-
 (use-package mb-depth :hook (after-init-hook . minibuffer-depth-indicate-mode))
 
 (use-package so-long :hook (after-init-hook . global-so-long-mode))
@@ -182,50 +175,71 @@
 
 ;;;;; THEMES
 
-(use-package custom :demand t)
+(use-package custom :commands load-theme custom-theme-enabled-p)
 
-(use-package parchment-theme
+(use-package acme-theme
   :ensure t
-  :after custom
-  :init (load-theme 'parchment t))
-
-
-;;;;;; LEUVEN
+  :init (load-theme 'acme t))
 
 (use-package faces
-  :disabled
-  :after compile
   :config
-  (set-face-attribute 'compilation-info nil :foreground "deep sky blue")
-  (set-face-attribute 'compilation-mode-line-exit nil :foreground "lawn green"))
+  (set-face-attribute 'default nil :family "Iosevka" :height 165)
+  (set-face-attribute 'mode-line nil :family "DejaVu Sans" :height 125)
+  (set-face-attribute 'mode-line-inactive nil :family "DejaVu Sans" :height 125)
+  (set-face-attribute 'fixed-pitch-serif nil :family "DejaVu Serif")
+  (set-face-attribute 'header-line nil :inverse-video nil :family "Iosevka")
+
+  (with-eval-after-load 'man
+    (set-face-attribute 'Man-overstrike nil :inherit 'font-lock-variable-name-face :bold t)
+    (set-face-attribute 'Man-underline nil :inherit 'font-lock-negation-char-face :underline t)))
 
 (use-package faces
-  :disabled
-  :after mu4e
+  :if (custom-theme-enabled-p 'acme)
+
   :config
-  (set-face-attribute 'mu4e-context-face nil :foreground "orange")
-  (set-face-attribute 'mu4e-modeline-face nil :foreground "green"))
+  (with-eval-after-load 'comint
+    (set-face-attribute 'comint-highlight-input nil :inherit 'diff-added)
+    (set-face-attribute 'comint-highlight-prompt nil :inherit 'diff-hl-reverted-hunk-highlight))
+
+  (with-eval-after-load 'isearch
+    (set-face-attribute 'isearch-fail nil :background "LightSalmon1")))
 
 (use-package faces
-  :disabled
-  :after org
-  (set-face-attribute 'org-list-dt nil :foreground "sky blue"))
+  :if (custom-theme-enabled-p 'leuven)
+
+  :config
+  (with-eval-after-load 'comint
+    (set-face-attribute 'comint-highlight-input nil :inherit 'diff-added)
+    (set-face-attribute 'comint-highlight-prompt nil :inherit 'diff-hl-change))
+
+  (with-eval-after-load 'compile
+    (set-face-attribute 'compilation-info nil :foreground "deep sky blue")
+    (set-face-attribute 'compilation-mode-line-exit nil :foreground "lawn green"))
+
+  (with-eval-after-load 'mu4e
+    (set-face-attribute 'mu4e-context-face nil :foreground "orange")
+    (set-face-attribute 'mu4e-modeline-face nil :foreground "green"))
+
+  (with-eval-after-load 'org
+    (set-face-attribute 'org-list-dt nil :foreground "sky blue")))
 
 
 ;;;;; OUTLINE
 
 (use-package outline
   :diminish outline-minor-mode
-  :hook
-  (emacs-lisp-mode-hook . outline-minor-mode))
+  :hook (emacs-lisp-mode-hook . outline-minor-mode)
 
-(use-package outline
-  :after imenu
   :config
-  (defun outline-show-after-imenu-jump ()
+  (defun outline-show-after-jump ()
     (when outline-minor-mode
       (outline-show-entry)))
-  (add-hook 'imenu-after-jump-hook #'outline-show-after-imenu-jump))
+
+  (with-eval-after-load 'imenu
+    (add-hook 'imenu-after-jump-hook #'outline-show-after-jump))
+
+  (with-eval-after-load 'xref
+    (add-hook 'xref-after-jump-hook #'outline-show-after-jump)))
 
 (use-package bicycle
   :ensure t
@@ -272,7 +286,10 @@
 
 (use-package tooltip :config (tooltip-mode -1))
 
-(use-package frame :config (define-advice suspend-frame (:override ()) nil))
+(use-package frame
+  :config
+  (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+  (define-advice suspend-frame (:override ()) nil))
 
 
 ;;;; AUTH
@@ -298,9 +315,9 @@
   (bruh-default-browser #'eww-browse-url)
   (bruh-videos-browser-function #'bruh-mpvi-ytdli-or-browse)
   (browse-url-browser-function #'bruh-browse-url)
+  (bruh-mpvi-get-title-functions nil)
 
   :config
-  (defvar-local bruh-mpvi-get-title-function (lambda () (read-from-minibuffer "Title: ")))
   (defun bruh-mpvi-ytdli-or-browse (url &rest rest)
     (cond
      ((yes-or-no-p (format "Mpv %s ?" url))
@@ -308,8 +325,13 @@
         (start-process (concat "mpv " url) nil "mpvi" url)))
      ((yes-or-no-p (format "Download %s ?" url))
       (let ((process-environment (browse-url-process-environment)))
-        (start-process (concat "ytdl " url) nil "ytdli" url
-                       (funcall bruh-mpvi-get-title-function))))
+        (start-process
+         (concat "ytdl " url) nil "ytdli" url
+         (funcall
+          (or (seq-some
+               (lambda (args) (when (derived-mode-p (car args)) (cdr args)))
+               bruh-mpvi-get-title-functions)
+              (lambda () (read-from-minibuffer "Title: ")))))))
      (t
       (apply bruh-default-browser url rest))))
 
@@ -551,11 +573,7 @@
 
 (use-package man
   :custom (Man-notify-method 'aggressive)
-  :bind (:map help-map ("M-m" . man))
-
-  :config
-  (set-face-attribute 'Man-overstrike nil :inherit 'font-lock-variable-name-face :bold t)
-  (set-face-attribute 'Man-underline nil :inherit 'font-lock-negation-char-face :underline t))
+  :bind (:map help-map ("M-m" . man)))
 
 (use-package apropos :custom (apropos-sort-by-scores t))
 
@@ -716,17 +734,23 @@
   :custom (dired-create-destination-dirs 'ask)
 
   :config
+  (add-to-list
+   'dired-compress-file-suffixes
+   `(,(rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -"))
+
   (defun dired-stat ()
     (interactive)
     (dired-do-shell-command "stat" current-prefix-arg
                             (dired-get-marked-files t current-prefix-arg))))
 
 (use-package wdired
+  :after dired
   ;; does not work as expected
   :hook (wdired-mode-hook . disable-image-dired)
   :config (defun disable-image-dired () (image-dired-minor-mode -1)))
 
 (use-package image-dired
+  :after dired
   :hook (dired-mode-hook . image-dired-minor-mode)
 
   :custom
@@ -744,14 +768,16 @@
 
 (use-package dired-rsync
   :ensure t
+  :after dired
   :bind (:map dired-mode-map ("r" . dired-rsync)))
 
 (use-package dired-git-info
   :ensure t
+  :after dired
   :bind (:map dired-mode-map (")" . dired-git-info-mode)))
 
-(use-package async
-  :ensure t
+(use-package dired-async
+  :ensure async
   :after dired
   :diminish dired-async-mode
   :init (dired-async-mode))
@@ -764,7 +790,7 @@
 
 (use-package fd-dired
   :ensure t
-  :bind (:map search-map ("f D" . fd-dired))
+  :bind (:map search-map ("f d" . fd-dired))
   :custom (fd-dired-ls-option '("| xargs -0 ls -ldb --quoting-style=literal" . "-ldb"))
 
   :config
@@ -1184,7 +1210,7 @@
 (use-package flycheck-checkbashisms
   :ensure t
   :after flycheck
-  :hook (after-init-hook . flycheck-checkbashisms-setup)
+  :init (flycheck-checkbashisms-setup)
 
   :custom
   (flycheck-checkbashisms-newline t)
@@ -1237,42 +1263,37 @@
 
 (use-package ivy-xref
   :ensure t
+  :after xref ivy
   :custom (xref-show-xrefs-function #'ivy-xref-show-xrefs))
 
 (use-package counsel
   :ensure t
   :diminish counsel-mode
   :hook (after-init-hook . counsel-mode)
-  :custom (counsel-fzf-dir-function #'counsel-directory)
+
+  :custom
+  (counsel-fzf-dir-function
+   (lambda () (or (counsel--git-root) default-directory)))
 
   :bind
-  ([remap tmm-menubar] . counsel-tmm)
   ([remap insert-char] . counsel-unicode-char)
   (:map counsel-mode-map ([remap apropos-command] . nil))
   (:map ctl-x-map ("C-f" . counsel-find-file))
   (:map search-map
-        ("r" . counsel-rg)
-        ("f d" . counsel-file-directory-jump)
         ("f b" . counsel-find-library)
         ("f l" . counsel-locate)
         ("f z" . counsel-fzf))
   (:map help-map
         ("A"   . counsel-apropos)
-        ("F"   . counsel-faces)
-        ("z e" . counsel-colors-emacs)
-        ("z w" . counsel-colors-web))
+        ("F"   . counsel-faces))
   (:map goto-map
         ("i" . counsel-semantic-or-imenu)
-        ("j" . counsel-find-symbol)
         ("l" . counsel-ace-link)
         ("m" . counsel-mark-ring)
         ("o" . counsel-outline))
   (:map mode-specific-map
-        ;; SHELL
-        ("x s" . counsel-switch-to-shell-buffer)
         ;; HISTORY
         ("h c" . counsel-command-history)
-        ("h e" . counsel-esh-history)
         ("h m" . counsel-minibuffer-history)
         ("h s" . counsel-shell-history)
         ;; ORG
@@ -1286,71 +1307,14 @@
         ("G t"   . counsel-org-tag)
         ;; COMPLETION
         ("c c" . counsel-company)
-        ("c s" . counsel-symbol)
         ;; OTHER
         ("o P" . counsel-list-processes)
-        ("p"   . counsel-package)
-        ("v"   . counsel-set-variable))
+        ("p"   . counsel-package))
 
   :config
-  (defun counsel-directory ()
-    (or (counsel--git-root) default-directory))
-
-  (defun counsel-file-directory-jump ()
-    (interactive)
-    (let ((find-program "fd") (counsel-file-jump-args (split-string "-t d -t f -c never")))
-      (counsel-file-jump
-       nil
-       (or (when current-prefix-arg (counsel-read-directory-name "From directory: "))
-           (counsel-directory)))))
-
-  (defun kill-buffer-if-alive (buffer)
-    (when (buffer-live-p (get-buffer buffer))
-      (kill-buffer buffer)))
-
-  (defun ivy-dired-jump-action (dir)
-    (dired-jump nil (string-trim-right dir "/")))
-
-  (ivy-add-actions
-   'counsel-file-jump
-   '(("j" ivy-dired-jump-action "dired jump")
-     ("t" find-file-literally "literally")))
-
   (ivy-add-actions
    'counsel-find-file
-   '(("j" ivy-dired-jump-action  "dired jump")
-     ("J" find-file-other-window "other window")
-     ("t" find-file-literally "literally")))
-
-  (ivy-add-actions
-   'counsel-switch-to-shell-buffer
-   '(("k" kill-buffer-if-alive "kill buffer")))
-
-  (define-advice counsel-switch-to-shell-buffer (:override () unique)
-    (interactive)
-    (let* ((default-directory (if current-prefix-arg
-                                  (expand-file-name
-                                   (counsel-read-directory-name
-                                    "Default directory: "))
-                                default-directory))
-           (buffer-name (if (fboundp 'shell-pwd-generate-buffer-name)
-                            (shell-pwd-generate-buffer-name default-directory)
-                          "*shell*")))
-
-      (ivy-read "Shell buffer: "
-                (cons (generate-new-buffer-name buffer-name)
-                      (counsel--buffers-with-mode 'shell-mode))
-                :action #'counsel--switch-to-shell
-                :caller #'counsel-switch-to-shell-buffer)
-
-      (when (fboundp #'shell-pwd-enable)
-        (shell-pwd-enable))))
-
-  (define-advice counsel-set-variable (:around (c-set-var &rest args) prin-fix)
-    (cl-letf (((symbol-function 'prin1-char) #'prin1-to-string))
-      (if args
-          (apply c-set-var args)
-        (call-interactively c-set-var)))))
+   '(("j" (lambda (dir) (dired-jump nil (string-trim-right dir "/")))  "dired jump"))))
 
 
 ;;;; COMPANY
@@ -1402,12 +1366,12 @@
 
 (use-package company-c-headers
   :ensure t
-  :after company
+  :after company cc-mode
   :init (add-to-list 'company-backends #'company-c-headers))
 
 (use-package company-restclient
   :ensure t
-  :after company
+  :after company restclient
   :init (add-to-list 'company-backends #'company-restclient))
 
 
@@ -1427,7 +1391,8 @@
 
   :custom
   (isearch-allow-scroll t)
-  (isearch-lazy-count t))
+  (isearch-lazy-count t)
+  (search-whitespace-regexp ".*?"))
 
 (use-package grep
   :config
@@ -1445,7 +1410,16 @@
   :custom (rg-executable "rg")
 
   :bind
-  (:map search-map ("R" . rg))
+  (:map search-map
+        :prefix-map rg-custom-map
+        :prefix "r"
+        ("r" . rg)
+        ("." . rg-dwim)
+        ("l" . rg-list-searches)
+        ("t" . rg-literal)
+        ("p" . rg-project)
+        ("k" . rg-kill-saved-searches)
+        ("s" . rg-save-search-as-name))
   (:map rg-mode-map
         ("C-n" . next-line)
         ("C-p" . previous-line)
@@ -1554,8 +1528,6 @@
   (comint-buffer-maximum-size 10240)
 
   :config
-  (set-face-attribute 'comint-highlight-input nil :inherit 'diff-added)
-  (set-face-attribute 'comint-highlight-prompt nil :inherit 'diff-hl-change)
 
   (defun save-buffers-comint-input-ring ()
     (dolist (buf (buffer-list))
@@ -1644,35 +1616,51 @@
 
 (use-package shell-pwd
   :quelpa (shell-pwd :repo "xFA25E/shell-pwd" :fetcher github :version original)
-  :commands shell-pwd-generate-buffer-name shell-pwd-shorten-directory)
+  :bind (:map mode-specific-map ("x s" . shell-pwd-switch-to-buffer))
+
+  :config
+  (cl-defun shell-pwd-switch-to-buffer (&optional (directory default-directory))
+    (interactive
+     (list (if current-prefix-arg
+               (expand-file-name (read-directory-name "Default directory: "))
+             default-directory)))
+    (cl-flet ((shell-buffer-p (b) (eq (buffer-local-value 'major-mode b) 'shell-mode))
+              (pwd-buffer () (shell-pwd-generate-buffer-name directory)))
+      (let* ((buffer-name (generate-new-buffer-name (pwd-buffer)))
+             (shell-buffers (mapcar #'buffer-name (cl-delete-if-not #'shell-buffer-p (buffer-list))))
+             (name (completing-read "Shell buffer: " (cons buffer-name shell-buffers))))
+        (if-let ((buffer (get-buffer name))) (pop-to-buffer buffer) (shell name))))
+    (shell-pwd-enable)))
 
 
 ;;; TEMPLATES
 
 (use-package autoinsert :hook (find-file-hook . auto-insert))
 
-(use-package yasnippet
-  :ensure t
-  :custom (yas-wrap-around-region t)
+(use-package tempo-mode
+  :quelpa (tempo-mode :repo "xFA25E/tempo-mode" :fetcher github :version original)
+  :hook ((emacs-lisp-mode-hook lisp-interaction-mode-hook) . tempo-mode)
 
   :bind
-  (:map yas-minor-mode-map
-        ([(tab)] . nil)
-        ("TAB"   . nil)
-        ("<tab>" . nil)
-        ("C-z"   . yas-expand))
-  (:map yas-keymap
-        ([(shift tab)] . nil)
-        ([backtab]     . nil)
-        ("S-TAB"       . nil)
-        ("S-<tab>"     . nil)
-        ([(tab)]       . nil)
-        ("TAB"         . nil)
-        ("<tab>"       . nil)
-        ("C-S-z"       . yas-prev-field)
-        ("C-z"         . yas-next-field-or-maybe-expand)))
+  (:map tempo-mode-map
+        ("C-z" . tempo-mode-complete-tag-or-call-on-region)
+        ("M-g M-e" . tempo-forward-mark)
+        ("M-g M-a" . tempo-backward-mark))
 
-(use-package yasnippet-snippets :ensure t)
+  :config
+  (tempo-mode-define-templates emacs-lisp-mode
+    ("var"
+     '("(defvar " (string-trim-right (buffer-name) (rx ".el" eos)) "-" p n>
+       r> ")"))
+    ("fun"
+     '("(defun " (string-trim-right (buffer-name) (rx ".el" eos)) "-" p " (" p ")" n>
+       r> ")"))
+    ("fn" '("(lambda (" p ") " r> ")"))
+    ("let" '("(let ((" p "))" n> r> ")")))
+
+  (tempo-mode-define-templates lisp-interaction-mode
+    ("var" '("(defvar var" p n> r> ")"))
+    ("fun" '("(defun fun" p " (" p ")" n> r> ")"))))
 
 
 ;;; APPLICATIONS
@@ -1682,7 +1670,13 @@
   :after counsel
   :init (ivy-add-actions 'counsel-find-file '(("l" vlf "view large file"))))
 
-(use-package sdcv :ensure t)
+(use-package sdcv
+  :ensure t
+  :bind (:map mode-specific-map ("o t" . sdcv-search-input))
+
+  :config
+  (define-advice sdcv-goto-sdcv (:after () fullscreen)
+    (delete-other-windows)))
 
 (use-package ediff :hook (ediff-before-setup-hook . save-window-configuration-to-w))
 
@@ -1779,6 +1773,7 @@
 
 
 ;;;; YO-HO
+
 (use-package transmission
   :ensure t
 
@@ -1794,12 +1789,17 @@
   :quelpa (torrent-mode :repo "xFA25E/torrent-mode" :fetcher github :version original)
   :hook (after-init-hook . torrent-mode-setup))
 
+(use-package mediainfo-mode
+  :quelpa (mediainfo-mode :repo "xFA25E/mediainfo-mode" :fetcher github :version original)
+  :hook (after-init-hook . mediainfo-mode-setup))
+
 
 ;;;; PROJECTILE
 
 (use-package projectile
   :ensure t
   :bind-keymap ("M-m" . projectile-command-map)
+  :hook (after-init-hook . projectile-mode)
 
   :custom
   (projectile-completion-system 'ivy)
@@ -1824,28 +1824,37 @@
             (if (projectile-file-cached-p relative-filename project-root)
                 (projectile-purge-file-from-cache relative-filename)))))))
 
-(use-package counsel-projectile
-  :ensure t
-  :hook (after-init-hook . counsel-projectile-mode))
-
 
 ;;;; YTEL
 
 (use-package ytel
   :ensure t
-  ;; :custom (ytel-invidious-api-url "https://invidious.snopyta.org")
-  :custom (ytel-invidious-api-url "https://invidious.mservice.ru.com")
   :hook (ytel-mode-hook . toggle-truncate-lines)
+
+  :custom
+  (ytel-instances
+   '("https://invidious.fdn.fr"
+     "https://invidious.site"
+     "https://invidious.kavin.rocks"
+     "https://vid.encryptionin.space"
+     "https://invidious.snopyta.org"
+     "https://invidious.mservice.ru.com"
+     "https://invidious.xyz"))
+  (ytel-invidious-api-url (car ytel-instances))
 
   :bind
   (:map mode-specific-map ("o Y" . ytel))
   (:map ytel-mode-map
         ("c" . ytel-copy-link)
         ("t" . ytel-show-thumbnail)
-        ("v" . ytel-current-browse-url)
-        ("RET" . ytel-show))
+        ("v" . ytel-current-browse-url))
 
   :config
+  (defun ytel-switch-instance ()
+    (interactive)
+    (setq ytel-invidious-api-url
+          (completing-read "Instance: " ytel-instances nil t)))
+
   (defun ytel-current-browse-url ()
     (interactive)
     (let* ((id (ytel-video-id (ytel-get-current-video)))
@@ -1865,18 +1874,24 @@
     (cl-flet ((pred (tm) (string-equal "maxresdefault" (alist-get 'quality tm))))
       (let ((method (concat "videos/" (ytel-video-id (ytel-get-current-video)))))
         (let-alist (ytel--API-call method '(("fields" "videoThumbnails")))
-          (eww (alist-get 'url (cl-find-if #'pred .videoThumbnails))))))))
+          (eww (alist-get 'url (cl-find-if #'pred .videoThumbnails)))))))
 
-(use-package ytel
-  :ensure t
-  :after bruh
-  :hook (ytel-mode-hook . ytel-title-function-setup)
+  (with-eval-after-load 'bruh
+    (setf (alist-get 'ytel-mode bruh-mpvi-get-title-functions)
+        (lambda () (ytel-video-title (ytel-get-current-video))))))
+
+(use-package ytel-show
+  ;; :load-path "~/Documents/projects/emacs-lisp/ytel-show/"
+  :quelpa (ytel-show :repo "xFA25E/ytel-show" :fetcher github :version original)
+  :after ytel
+  :bind (:map ytel-mode-map ("RET" . ytel-show))
 
   :config
-  (defun ytel-title-function-setup ()
-    (setq-local
-     bruh-mpvi-get-title-function
-     (lambda () (ytel-video-title (ytel-get-current-video))))))
+  (with-eval-after-load 'bruh
+    (setf (alist-get 'ytel-show-mode bruh-mpvi-get-title-functions)
+          #'ytel-show--current-video-id)
+    (setf (alist-get 'ytel-show-comments-mode bruh-mpvi-get-title-functions)
+          (lambda () ytel-show-comments--video-title))))
 
 
 ;;;; VERSION CONTROL
@@ -1907,16 +1922,18 @@
   (newsticker-url-list
    '(("Alt-Hype" "https://www.bitchute.com/feeds/rss/channel/thealthype/")
      ("American Renaissance" "https://www.bitchute.com/feeds/rss/channel/amrenaissance/")
+     ("Atlanta Functional Programming" "https://www.youtube.com/feeds/videos.xml?channel_id=UCYg6qFXDE5SGT_YXhuJPU0A")
      ("Justus Walker" "https://www.youtube.com/feeds/videos.xml?user=senttosiberia")
-     ("Luke Smith" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA")
      ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
      ("Luke Smith PeerTube" "https://videos.lukesmith.xyz/feeds/videos.xml?accountId=3")
-     ("Tsoding" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEbYhDd6c6vngsF5PQpFVWg")
+     ("Luke Smith YouTube" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA")
      ("Protesilaos Stavrou" "https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g")
-     ("Atlanta Functional Programming" "https://www.youtube.com/feeds/videos.xml?channel_id=UCYg6qFXDE5SGT_YXhuJPU0A")
+     ("TealDeer BitChute" "https://www.bitchute.com/feeds/rss/channel/tealdeer/")
+     ("TealDeer YouTube" "https://www.youtube.com/feeds/videos.xml?channel_id=UCMIj-wEiKIcGAcLoBO2ciQQ")
+     ("Tsoding" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEbYhDd6c6vngsF5PQpFVWg")
      ("Мысли и методы" "http://feeds.soundcloud.com/users/soundcloud:users:259154388/sounds.rss")
-     ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg")
-     ("Простая Академия" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8mmPf2oKdfE2pdjqctTWUw")))
+     ("Простая Академия" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8mmPf2oKdfE2pdjqctTWUw")
+     ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg")))
 
   :config
   (defun newsticker-add-thumbnail (_feedname item)
@@ -1976,16 +1993,11 @@
             (with-current-buffer ,duration-buffer
               (message "\"%s\" duration: %s"
                        ,title (string-trim (buffer-string)))
-              (kill-buffer))))))))
+              (kill-buffer)))))))
 
-(use-package newst-treeview
-  :after bruh
-  :hook (newsticker-treeview-mode-hook . newst-treeview-title-function-setup)
-  :config
-  (defun newst-treeview-title-function-setup ()
-    (setq-local
-     bruh-mpvi-get-title-function
-     (lambda () (newsticker--title (newsticker--treeview-get-selected-item))))))
+  (with-eval-after-load 'bruh
+    (setf (alist-get 'newsticker-treeview-mode bruh-mpvi-get-title-functions)
+          (lambda () (newsticker--title (newsticker--treeview-get-selected-item))))))
 
 
 ;;;; MPD
@@ -1994,7 +2006,9 @@
   :ensure t
 
   :bind
-  (:map mode-specific-map ("o s" . mingus))
+  (:map mode-specific-map
+        ("o s" . mingus)
+        ("o S" . mingus-find-and-add-file))
 
   :custom
   (mingus-mode-line-separator "|")
@@ -2006,30 +2020,34 @@
   :config
   (define-advice mingus-git-out (:override (&optional _x) kill)
     (interactive)
-    (when (mingus-buffer-p) (kill-current-buffer))))
+    (when (mingus-buffer-p) (kill-current-buffer)))
 
-(use-package mingus
-  :ensure t
-  :after counsel
-  :bind (:map mode-specific-map ("o S" . mingus-find-and-add-file))
+  (defun mingus-music-files ()
+    (let* ((default-directory (xdg-music-dir))
+           (exts (cdr (mapcan (lambda (e) `("-o" "-iname" ,(concat "*." e)))
+                              '("flac" "m4a" "mp3" "ogg" "opus"))))
+           (args `("." "(" ,@exts ")" "-type" "f" "-o" "-type" "d")))
+      (with-temp-buffer
+        (apply #'call-process "find" nil t nil args)
+        (let (files)
+          (goto-char (point-max))
+          (beginning-of-line 0)
+          (while (< (point-min) (point))
+            (when (looking-at "\\./")
+              (goto-char (match-end 0)))
+            (push (buffer-substring (point) (line-end-position)) files)
+            (beginning-of-line 0))
+          files))))
 
-  :config
   (defun mingus-find-and-add-file ()
     (interactive)
-    (counsel-require-program find-program)
-    (let ((default-directory (xdg-music-dir)))
-      (mingus-add-files
-       (list
-        (expand-file-name
-         (ivy-read
-          "Add file to mpd: "
-          (counsel--find-return-list
-           (split-string
-            ". ( -iname *.flac -o -iname *.m4a -o -iname *.mp3 -o -iname *.ogg -o -iname *.opus ) -type f -o -type d"))
-          :require-match t)
-         (xdg-music-dir))))
-      (mpd-play mpd-inter-conn)
-      (kill-buffer-if-alive (get-buffer "*Mingus*")))))
+    (mingus-add-files
+     ((lambda (f) (list (expand-file-name f (xdg-music-dir))))
+      (completing-read "Add file to mpd: " (mingus-music-files) nil t)))
+    (mpd-play mpd-inter-conn)
+    (let ((buffer (get-buffer "*Mingus*")))
+      (when (buffer-live-p (get-buffer buffer))
+        (kill-buffer buffer)))))
 
 
 ;;;; E-READER
@@ -2222,12 +2240,3 @@
   :custom
   (org-html-htmlize-output-type 'css)
   (org-html-htmlize-font-prefix "org-"))
-
-
-;;; LOCAL VARIABLES
-
-;; Local Variables:
-;; lexical-binding: t
-;; outline-minor-mode: t
-;; eval: (cl-pushnew (quote emacs-lisp-checkdoc) flycheck-disabled-checkers)
-;; End:

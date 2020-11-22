@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: calc
-# key: calc_
-# --
-#+BEGIN_SRC calc ${1::exports both }${2::var}
-$0
-#+END_SRC

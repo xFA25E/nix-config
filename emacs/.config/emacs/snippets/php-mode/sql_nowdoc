@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: sql_nowdoc
-# key: sql
-# expand-env: ((yas-indent-line nil))
-# --
-<<<'SQL'
-$0
-SQL;
