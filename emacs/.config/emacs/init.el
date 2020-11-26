@@ -332,6 +332,13 @@
                (lambda (args) (when (derived-mode-p (car args)) (cdr args)))
                bruh-mpvi-get-title-functions)
               (lambda () (read-from-minibuffer "Title: ")))))))
+     ((and
+       (string-match
+        (rx (or (and "youtube.com/watch?" (*? any) "v=") "youtu.be/")
+            (group (= 11 (any "-_A-Za-z0-9"))))
+        url)
+        (yes-or-no-p (format "Show %s in ytel-show?" url)))
+      (ytel-show (vector (match-string 1 url))))
      (t
       (apply bruh-default-browser url rest))))
 
@@ -791,12 +798,7 @@
 (use-package fd-dired
   :ensure t
   :bind (:map search-map ("f d" . fd-dired))
-  :custom (fd-dired-ls-option '("| xargs -0 ls -ldb --quoting-style=literal" . "-ldb"))
-
-  :config
-  (define-advice fd-dired (:filter-args (args) unquote)
-    (let ((arg (second args)))
-      (list (first args) (substring arg 1 (1- (length arg)))))))
+  :custom (fd-dired-ls-option '("| xargs -0 ls -ldb --quoting-style=literal" . "-ldb")))
 
 
 ;;; EDITING
@@ -1635,35 +1637,72 @@
 
 ;;; TEMPLATES
 
-(use-package autoinsert :hook (find-file-hook . auto-insert))
+(use-package autoinsert :hook (after-init-hook . auto-insert-mode))
 
-(use-package tempo-mode
-  :quelpa (tempo-mode :repo "xFA25E/tempo-mode" :fetcher github :version original)
-  :hook ((emacs-lisp-mode-hook lisp-interaction-mode-hook) . tempo-mode)
+(use-package skempo-mode
+  :quelpa (skempo-mode :repo "xFA25E/skempo-mode" :fetcher github :version original)
+  :hook ((emacs-lisp-mode-hook lisp-interaction-mode-hook) . skempo-mode)
 
   :bind
-  (:map tempo-mode-map
-        ("C-z" . tempo-mode-complete-tag-or-call-on-region)
+  (:map skempo-mode-map
+        ("C-z" . skempo-mode-complete-tag-or-call-on-region)
         ("M-g M-e" . tempo-forward-mark)
         ("M-g M-a" . tempo-backward-mark))
 
   :config
-  (tempo-mode-define-templates emacs-lisp-mode
-    ("var"
-     '("(defvar " (string-trim-right (buffer-name) (rx ".el" eos)) "-" p n>
-       r> ")"))
-    ("fun"
-     '("(defun " (string-trim-right (buffer-name) (rx ".el" eos)) "-" p " (" p ")" n>
-       r> ")"))
-    ("fn" '("(lambda (" p ") " r> ")"))
-    ("let" '("(let ((" p "))" n> r> ")")))
+  (define-advice skeleton-read (:around (fn &rest args) help-char)
+    (let ((help-char (aref (kbd "C-?") 0)))
+      (apply fn args)))
 
-  (tempo-mode-define-templates lisp-interaction-mode
-    ("var" '("(defvar var" p n> r> ")"))
-    ("fun" '("(defun fun" p " (" p ")" n> r> ")"))))
+  (defun skempo-mode-elisp-namespace ()
+    (string-trim-right (buffer-name) (rx ".el" eos)))
+
+  (defun skempo-mode-elisp-group ()
+    (string-trim-right (buffer-name) (rx (? "-mode") ".el" eos)))
+
+  (skempo-mode-define-templates emacs-lisp-mode
+    ("defvar" :tempo
+     "(defvar " (skempo-mode-elisp-namespace) "-" p n>
+     r> n>
+     "\"" p "\")")
+
+    ("defun" :tempo
+     "(defun " (skempo-mode-elisp-namespace) "-" p " (" p ")" n>
+     "\"" p "\"" n>
+     r> ")")
+
+    ("lambda" :tempo "(lambda (" p ") " n> r> ")")
+
+    ("let" :tempo "(let ((" p "))" n> r> ")")
+
+    ("defgroup" :tempo
+     "(defgroup " (skempo-mode-elisp-group) " nil" n>
+     "\"" p "\"" n>
+     ":group " p "nil)")
+
+    ("defcustom" :tempo
+     "(defcustom " (skempo-mode-elisp-namespace) "-" p n>
+     r> n>
+     "\"" p "\"" n>
+     ":type nil" n>
+     ":group '" (skempo-mode-elisp-group) ")" n>)
+
+    ("defface" :tempo
+     "(defface " (skempo-mode-elisp-namespace) "-" p n>
+     "'((t :inherit " p "nil))" n>
+     "\"" p "\"" n>
+     ":group '" (skempo-mode-elisp-group) ")")))
 
 
 ;;; APPLICATIONS
+
+(use-package forms
+  :hook (kill-buffer-hook . forms-kill-file-buffer)
+
+  :config
+  (defun forms-kill-file-buffer ()
+    (when (and (derived-mode-p 'forms-mode) (buffer-live-p forms--file-buffer))
+      (kill-buffer forms--file-buffer))))
 
 (use-package vlf
   :ensure t
@@ -1679,10 +1718,6 @@
     (delete-other-windows)))
 
 (use-package ediff :hook (ediff-before-setup-hook . save-window-configuration-to-w))
-
-(use-package activity-log
-  :quelpa
-  (activity-log :repo "xFA25E/activity-log" :fetcher github :version original))
 
 (use-package net-utils
   :bind (:map mode-specific-map
@@ -1700,8 +1735,8 @@
               ("t" . traceroute)
               ("w" . iwconfig)))
 
-(use-package elf-mode
-  :quelpa (elf-mode :repo "sirikid/elf-mode" :fetcher github :version original))
+(use-package readelf-mode
+  :quelpa (readelf-mode :repo "sirikid/readelf-mode" :fetcher github :version original))
 
 (use-package calendar :custom (calendar-week-start-day 1))
 
@@ -1790,8 +1825,10 @@
   :hook (after-init-hook . torrent-mode-setup))
 
 (use-package mediainfo-mode
-  :quelpa (mediainfo-mode :repo "xFA25E/mediainfo-mode" :fetcher github :version original)
-  :hook (after-init-hook . mediainfo-mode-setup))
+  ;; :quelpa (mediainfo-mode :repo "xFA25E/mediainfo-mode" :fetcher github :version original)
+  ;; :hook (after-init-hook . mediainfo-mode-setup)
+  :load-path "~/Documents/projects/emacs-lisp/mediainfo-mode/"
+  )
 
 
 ;;;; PROJECTILE
@@ -1928,8 +1965,7 @@
      ("Luke Smith PeerTube" "https://videos.lukesmith.xyz/feeds/videos.xml?accountId=3")
      ("Luke Smith YouTube" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA")
      ("Protesilaos Stavrou" "https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g")
-     ("TealDeer BitChute" "https://www.bitchute.com/feeds/rss/channel/tealdeer/")
-     ("TealDeer YouTube" "https://www.youtube.com/feeds/videos.xml?channel_id=UCMIj-wEiKIcGAcLoBO2ciQQ")
+     ("TealDeer" "https://www.bitchute.com/feeds/rss/channel/tealdeer/")
      ("Tsoding" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEbYhDd6c6vngsF5PQpFVWg")
      ("Мысли и методы" "http://feeds.soundcloud.com/users/soundcloud:users:259154388/sounds.rss")
      ("Простая Академия" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8mmPf2oKdfE2pdjqctTWUw")
@@ -2052,7 +2088,9 @@
 
 ;;;; E-READER
 
-(use-package pdf-tools :ensure t)
+(use-package pdf-tools
+  :ensure t
+  :init (pdf-loader-install))
 
 (use-package nov
   :ensure t
