@@ -1319,64 +1319,6 @@
    '(("j" (lambda (dir) (dired-jump nil (string-trim-right dir "/")))  "dired jump"))))
 
 
-;;;; COMPANY
-
-(use-package company
-  :ensure t
-
-  :bind
-  (:map company-active-map
-        ("M-o" . company-other-backend)
-        ("M-h" . company-show-doc-buffer)
-        ("M-w" . company-show-location)
-        ("M-n" . nil)
-        ("M-p" . nil)
-        ("C-w" . backward-kill-word)
-        ("C-n" . company-select-next-or-abort)
-        ("C-p" . company-select-previous-or-abort)
-        ("C-h" . backward-delete-char-untabify))
-
-  :custom
-  (company-idle-delay 0)
-  (company-minimum-prefix-length 1)
-  (company-require-match nil)
-  (company-selection-wrap-around t)
-  (company-transformers '(company-sort-by-occurrence)))
-
-(use-package company-try-hard
-  :ensure t
-  :after company
-  :bind (:map company-mode-map ("M-Z" . company-try-hard)))
-
-(use-package company-php
-  :disabled
-  :ensure t
-  :demand t
-  :after company php-mode
-  :init (add-to-list 'company-backends #'company-ac-php-backend)
-  :bind (:map php-mode-map ("M-." . ac-php-find-symbol-at-point))
-  :custom (ac-php-tags-path (expand-file-name "emacs/ac-php" (xdg-cache-home)))
-  :hook (php-mode-hook . ac-php-core-eldoc-setup))
-
-(use-package company-shell
-  :ensure t
-  :after company
-
-  :init
-  (add-to-list 'company-backends #'company-shell)
-  (add-to-list 'company-backends #'company-shell-env))
-
-(use-package company-c-headers
-  :ensure t
-  :after company cc-mode
-  :init (add-to-list 'company-backends #'company-c-headers))
-
-(use-package company-restclient
-  :ensure t
-  :after company restclient
-  :init (add-to-list 'company-backends #'company-restclient))
-
-
 ;;;; SHELL
 
 (use-package bash-completion
@@ -1490,29 +1432,14 @@
   :hook (rust-mode-hook . cargo-minor-mode)
 
   :custom
-  (cargo-process--command-add "add")
-  (cargo-process--command-audit "audit -f")
-  (cargo-process--command-bench "bench")
   (cargo-process--command-build "build --color never")
   (cargo-process--command-check "check --color never")
-  (cargo-process--command-clean "clean")
   (cargo-process--command-clippy "clippy --color never")
   (cargo-process--command-current-file-tests "test --color never")
   (cargo-process--command-current-test "test --color never")
-  (cargo-process--command-doc "doc")
-  (cargo-process--command-doc-open "doc --open")
-  (cargo-process--command-fmt "fmt")
-  (cargo-process--command-init "init")
-  (cargo-process--command-new "new")
-  (cargo-process--command-outdated "outdated -R")
   (cargo-process--command-rm "rm --color never")
   (cargo-process--command-run "run --color never")
-  (cargo-process--command-run-bin "run --bin")
-  (cargo-process--command-run-example "run --example")
-  (cargo-process--command-search "search")
-  (cargo-process--command-test "test --color never")
-  (cargo-process--command-update "update")
-  (cargo-process--command-upgrade "upgrade"))
+  (cargo-process--command-test "test --color never"))
 
 
 ;;; REPL
