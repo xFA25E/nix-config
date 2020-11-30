@@ -63,7 +63,6 @@
 
 (use-package subr
   :init (provide 'subr)
-
   :commands
   add-to-list
   alist-get
@@ -74,7 +73,6 @@
   split-string
   start-process
   with-current-buffer
-
   :config (defalias 'yes-or-no-p 'y-or-n-p))
 
 (use-package subr-x :commands when-let thread-last)
@@ -83,7 +81,8 @@
 ;;; SETTINGS
 
 (use-package emacs
-  :bind ("C-S-SPC" . insert-space-after-point)
+  :bind
+  ("C-S-SPC" . insert-space-after-point)
 
   :custom
   (create-lockfiles nil)
@@ -96,7 +95,6 @@
   (indicate-buffer-boundaries 'left)
   (indicate-empty-lines t)
   (next-screen-context-lines 10)
-  (resize-mini-windows t)
   (tab-width 4)
   (undo-limit 200000)
   (undo-outer-limit 20000000)
@@ -106,11 +104,13 @@
   (x-gtk-use-system-tooltips nil)
   (x-stretch-cursor t)
   (fill-column 80)
-  ;; (help-char (aref (kbd "C-l") 0))
+  (help-char (aref (kbd "C-l") 0))
   (kill-buffer-query-functions
    (remq #'process-kill-buffer-query-function kill-buffer-query-functions))
   (user-full-name "Valeriy Litkovskyy")
   (read-process-output-max (* 1024 1024))
+  (completion-ignore-case t)
+  (read-buffer-completion-ignore-case t)
 
   :config
   (setq-default line-spacing 0.2)
@@ -137,7 +137,6 @@
   ((csv-mode-hook
     dired-mode-hook
     grep-mode-hook
-    ivy-occur-mode-hook
     mingus-browse-hook
     mingus-playlist-hooks
     tar-mode-hook
@@ -182,46 +181,41 @@
   :init (load-theme 'acme t))
 
 (use-package faces
+  :bind (:map help-map ("F" . list-faces-display))
+
   :config
-  (set-face-attribute 'default nil :family "Iosevka" :height 165)
-  (set-face-attribute 'mode-line nil :family "DejaVu Sans" :height 125)
-  (set-face-attribute 'mode-line-inactive nil :family "DejaVu Sans" :height 125)
+  (set-face-attribute 'default nil :family "Iosevka")
+  (set-face-attribute 'default nil :height 165)
+  (set-face-attribute 'mode-line nil :family "DejaVu Sans")
+  (set-face-attribute 'mode-line nil :height 125)
+  (set-face-attribute 'mode-line-inactive nil :family "DejaVu Sans" )
+  (set-face-attribute 'mode-line-inactive nil :height 125)
   (set-face-attribute 'fixed-pitch-serif nil :family "DejaVu Serif")
   (set-face-attribute 'header-line nil :inverse-video nil :family "Iosevka")
 
   (with-eval-after-load 'man
     (set-face-attribute 'Man-overstrike nil :inherit 'font-lock-variable-name-face :bold t)
-    (set-face-attribute 'Man-underline nil :inherit 'font-lock-negation-char-face :underline t)))
+    (set-face-attribute 'Man-underline nil :inherit 'font-lock-negation-char-face :underline t))
 
-(use-package faces
-  :if (custom-theme-enabled-p 'acme)
+  (when (custom-theme-enabled-p 'acme)
+    (with-eval-after-load 'comint
+      (set-face-attribute 'comint-highlight-input nil :inherit 'diff-added)
+      (set-face-attribute 'comint-highlight-prompt nil :inherit 'diff-hl-reverted-hunk-highlight))
+    (with-eval-after-load 'isearch
+      (set-face-attribute 'isearch-fail nil :background "LightSalmon1")))
 
-  :config
-  (with-eval-after-load 'comint
-    (set-face-attribute 'comint-highlight-input nil :inherit 'diff-added)
-    (set-face-attribute 'comint-highlight-prompt nil :inherit 'diff-hl-reverted-hunk-highlight))
-
-  (with-eval-after-load 'isearch
-    (set-face-attribute 'isearch-fail nil :background "LightSalmon1")))
-
-(use-package faces
-  :if (custom-theme-enabled-p 'leuven)
-
-  :config
-  (with-eval-after-load 'comint
-    (set-face-attribute 'comint-highlight-input nil :inherit 'diff-added)
-    (set-face-attribute 'comint-highlight-prompt nil :inherit 'diff-hl-change))
-
-  (with-eval-after-load 'compile
-    (set-face-attribute 'compilation-info nil :foreground "deep sky blue")
-    (set-face-attribute 'compilation-mode-line-exit nil :foreground "lawn green"))
-
-  (with-eval-after-load 'mu4e
-    (set-face-attribute 'mu4e-context-face nil :foreground "orange")
-    (set-face-attribute 'mu4e-modeline-face nil :foreground "green"))
-
-  (with-eval-after-load 'org
-    (set-face-attribute 'org-list-dt nil :foreground "sky blue")))
+  (when (custom-theme-enabled-p 'leuven)
+    (with-eval-after-load 'comint
+      (set-face-attribute 'comint-highlight-input nil :inherit 'diff-added)
+      (set-face-attribute 'comint-highlight-prompt nil :inherit 'diff-hl-change))
+    (with-eval-after-load 'compile
+      (set-face-attribute 'compilation-info nil :foreground "deep sky blue")
+      (set-face-attribute 'compilation-mode-line-exit nil :foreground "lawn green"))
+    (with-eval-after-load 'mu4e
+      (set-face-attribute 'mu4e-context-face nil :foreground "orange")
+      (set-face-attribute 'mu4e-modeline-face nil :foreground "green"))
+    (with-eval-after-load 'org
+      (set-face-attribute 'org-list-dt nil :foreground "sky blue"))))
 
 
 ;;;;; OUTLINE
@@ -235,11 +229,11 @@
     (when outline-minor-mode
       (outline-show-entry)))
 
-  (with-eval-after-load 'imenu
-    (add-hook 'imenu-after-jump-hook #'outline-show-after-jump))
-
   (with-eval-after-load 'xref
-    (add-hook 'xref-after-jump-hook #'outline-show-after-jump)))
+    (add-hook 'xref-after-jump-hook #'outline-show-after-jump))
+
+  (with-eval-after-load 'imenu
+    (add-hook 'imenu-after-jump-hook #'outline-show-after-jump)))
 
 (use-package bicycle
   :ensure t
@@ -450,7 +444,10 @@
 
 (use-package shr
   :custom
+  (shr-use-fonts nil)
+  (shr-use-colors nil)
   (shr-max-image-proportion 0.7)
+  (shr-image-animate nil)
   (shr-width (current-fill-column)))
 
 (use-package shr-tag-pre-highlight
@@ -692,17 +689,12 @@
       "setsid -f mpv --force-window=yes * >/dev/null 2>&1"
       "video_duration * | format_duration"
       "video_duration * | awk '{s+=$1}END{print s}' | format_duration"
-      "mediainfo"
-      "mpv -vo=drm"
-      "compress_video"
-      "strip_video")
+      "compress_video * &"
+      "strip_video * &"
+      "mpv -vo=drm")
 
      (,(rx (ext "cue"))
       "setsid -f mpv --force-window=yes * >/dev/null 2>&1")
-
-     (,(rx (ext "torrent"))
-      "transmission-show"
-      "transmission-remote --add")
 
      (,(rx (ext "rar"))
       "temp=\"$(echo `?` | rev | cut -d. -f 2- | rev)\"; mkdir -p \"${temp}\"; unrar x ? \"${temp}\"")))
@@ -800,6 +792,14 @@
   :bind (:map search-map ("f d" . fd-dired))
   :custom (fd-dired-ls-option '("| xargs -0 ls -ldb --quoting-style=literal" . "-ldb")))
 
+(use-package locate
+  :custom (locate-make-command-line 'locate-make-ignore-case-command-line)
+  :bind (:map search-map ("f l" . locate))
+
+  :config
+  (defun locate-make-ignore-case-command-line (search-string)
+    (list locate-command "-i" search-string)))
+
 
 ;;; EDITING
 
@@ -820,13 +820,13 @@
   ("M-u"   . upcase-dwim)
   ([remap move-beginning-of-line] . back-to-indentation-or-beginning)
   ([remap newline] . newline-and-indent)
-
   (:map ctl-x-map
         ("K"   . kill-current-buffer)
-        ("C-r" . overwrite-mode)
-        ("m"   . nil))
+        ("C-r" . overwrite-mode))
+  (:map mode-specific-map ("o P" . list-processes))
 
   :custom
+  (completion-show-help nil)
   (shift-select-mode nil)
   (kill-do-not-save-duplicates t)
   (kill-read-only-ok t)
@@ -950,7 +950,7 @@
   ("C-M-(" . sp-backward-barf-sexp)
   ("C-M-t" . sp-transpose-sexp)
   ("C-M-k" . sp-kill-sexp)
-  ("C-k"   . sp-kill-hybrid-sexp)
+  ;; ("C-k"   . sp-kill-hybrid-sexp)
   ("C-M-w" . sp-copy-sexp)
   ("M-d"   . sp-kill-word)
   ("C-w"   . sp-backward-kill-word-or-region)
@@ -1198,7 +1198,6 @@
 
 (use-package flycheck
   :ensure t
-
   :custom
   (flycheck-mode-line-prefix "FC")
   (flycheck-clang-pedantic-errors t)
@@ -1206,14 +1205,13 @@
   (flycheck-gcc-pedantic-errors t)
   (flycheck-gcc-pedantic t)
   (flycheck-phpcs-standard "PSR12,PSR1,PSR2")
-
-  :config (add-to-list 'flycheck-shellcheck-supported-shells 'dash))
+  :config
+  (add-to-list 'flycheck-shellcheck-supported-shells 'dash))
 
 (use-package flycheck-checkbashisms
   :ensure t
   :after flycheck
   :init (flycheck-checkbashisms-setup)
-
   :custom
   (flycheck-checkbashisms-newline t)
   (flycheck-checkbashisms-posix t))
@@ -1221,18 +1219,116 @@
 
 ;;; COMPLETION
 
+(use-package bash-completion
+  :ensure t
+  :after shell
+  :hook (shell-dynamic-complete-functions . bash-completion-dynamic-complete))
+
 
 ;;;; MINIBUFFER
 
-(use-package minibuffer :custom (read-file-name-completion-ignore-case t))
+(use-package insert-char-preview
+  :ensure t
+  :bind ([remap insert-char] . insert-char-preview))
+
+(use-package eldoc :diminish eldoc-mode)
+
+(use-package minibuffer
+  :commands completing-read-in-region
+
+  :bind
+  (:map minibuffer-local-completion-map
+        ("<return>" . minibuffer-force-complete-and-exit)
+        ("RET" . minibuffer-force-complete-and-exit)
+        ("C-j" . exit-minibuffer)
+        ("SPC" . nil))
+
+  :custom
+  (completion-cycle-threshold 3)
+  (read-file-name-completion-ignore-case t)
+  (completion-category-defaults nil)
+  (completion-pcm-complete-word-inserts-delimiters t)
+  (completion-styles '(flex partial-completion substring))
+  (completion-in-region-function 'completing-read-in-region)
+
+  :config
+  (defun completing-read-in-region (start end collection &optional predicate)
+    "Prompt for completion of region in the minibuffer if non-unique.
+Use as a value for `completion-in-region-function'."
+    (if (and (minibufferp) (not (string= (minibuffer-prompt) "Eval: ")))
+        (completion--in-region start end collection predicate)
+      (let* ((initial (buffer-substring-no-properties start end))
+             (limit (car (completion-boundaries initial collection predicate "")))
+             (all (completion-all-completions initial collection predicate (length initial)))
+             (completion (cond ((atom all) nil)
+                               ((and (consp all) (atom (cdr all)))
+                                (concat (substring initial 0 limit) (car all)))
+                               (t
+                                (completing-read "Completion: " collection predicate nil initial)))))
+        (if (null completion)
+            (progn (message "No completion") nil)
+          (delete-region start end)
+          (insert completion)
+          t)))))
+
+(use-package orderless
+  :ensure t
+  :after minibuffer
+  :custom
+  (orderless-matching-styles
+   '(orderless-flex orderless-regexp orderless-literal orderless-prefixes))
+  :init (add-to-list 'completion-styles 'orderless))
 
 (use-package minibuf-eldef
   :custom (minibuffer-eldef-shorten-default t)
   :hook (after-init-hook . minibuffer-electric-default-mode))
 
-
-(use-package eldoc :diminish eldoc-mode)
+(use-package map-ynp
+  :init (provide 'map-ynp)
+  :custom (read-answer-short t))
 
+(use-package icomplete
+  :hook (after-init-hook . icomplete-mode)
+
+  :bind
+  (:map icomplete-minibuffer-map
+        ("<tab>" . icomplete-force-complete)
+        ("M-j"   . icomplete-fido-exit)
+        ("<return>" . icomplete-force-complete-and-exit)
+        ("RET" . icomplete-force-complete-and-exit)
+        ("C-j" . exit-minibuffer)
+        ("C-h" . icomplete-fido-backward-updir)
+        ("M-H"   . icomplete-complete-minibuffer-history)
+        ("C-n" . icomplete-forward-completions)
+        ("C-p" . icomplete-backward-completions))
+
+  :custom
+  (icomplete-in-buffer t)
+  (icomplete-tidy-shadowed-file-names t)
+  (icomplete-separator (propertize " ⋅ " 'face 'shadow))
+  (icomplete-show-matches-on-no-input t)
+  (icomplete-hide-common-prefix nil)
+
+  :config
+  (defun icomplete-complete-minibuffer-history ()
+    (interactive)
+    (let* ((history (symbol-value minibuffer-history-variable))
+           (entry (completing-read "History: " history nil t)))
+      (delete-minibuffer-contents)
+      (insert entry))))
+
+(use-package icomplete-vertical
+  :ensure t
+  :after icomplete
+  :init (icomplete-vertical-mode))
+
+(use-package consult
+  :quelpa (consult :repo "minad/consult" :fetcher github :version original)
+  :bind
+  ("M-y" . consult-yank-replace)
+  (:map goto-map ("o" . consult-outline)))
+
+
 ;;;; HIPPIE-EXP
 
 (use-package hippie-exp
@@ -1248,83 +1344,6 @@
 
   :demand t
   :after hippie-exp)
-
-
-;;;; IVY
-
-(use-package ivy
-  :ensure t
-  :diminish ivy-mode
-  :commands ivy-add-actions
-  :hook (after-init-hook . ivy-mode)
-
-  :custom
-  (ivy-count-format "%d/%d ")
-  (ivy-use-selectable-prompt t)
-  (ivy-height 15))
-
-(use-package ivy-xref
-  :ensure t
-  :after xref ivy
-  :custom (xref-show-xrefs-function #'ivy-xref-show-xrefs))
-
-(use-package counsel
-  :ensure t
-  :diminish counsel-mode
-  :hook (after-init-hook . counsel-mode)
-
-  :custom
-  (counsel-fzf-dir-function
-   (lambda () (or (counsel--git-root) default-directory)))
-
-  :bind
-  ([remap insert-char] . counsel-unicode-char)
-  (:map counsel-mode-map ([remap apropos-command] . nil))
-  (:map ctl-x-map ("C-f" . counsel-find-file))
-  (:map search-map
-        ("f b" . counsel-find-library)
-        ("f l" . counsel-locate)
-        ("f z" . counsel-fzf))
-  (:map help-map
-        ("A"   . counsel-apropos)
-        ("F"   . counsel-faces))
-  (:map goto-map
-        ("i" . counsel-semantic-or-imenu)
-        ("l" . counsel-ace-link)
-        ("m" . counsel-mark-ring)
-        ("o" . counsel-outline))
-  (:map mode-specific-map
-        ;; HISTORY
-        ("h c" . counsel-command-history)
-        ("h m" . counsel-minibuffer-history)
-        ("h s" . counsel-shell-history)
-        ;; ORG
-        ("G G"   . counsel-org-goto-all)
-        ("G a h" . counsel-org-agenda-headlines)
-        ("G a t" . counsel-org-tag-agenda)
-        ("G c"   . counsel-org-capture)
-        ("G e"   . counsel-org-entity)
-        ("G f"   . counsel-org-file)
-        ("G g"   . counsel-org-goto)
-        ("G t"   . counsel-org-tag)
-        ;; COMPLETION
-        ("c c" . counsel-company)
-        ;; OTHER
-        ("o P" . counsel-list-processes)
-        ("p"   . counsel-package))
-
-  :config
-  (ivy-add-actions
-   'counsel-find-file
-   '(("j" (lambda (dir) (dired-jump nil (string-trim-right dir "/")))  "dired jump"))))
-
-
-;;;; SHELL
-
-(use-package bash-completion
-  :ensure t
-  :after shell
-  :hook (shell-dynamic-complete-functions . bash-completion-dynamic-complete))
 
 
 ;;; SEARCHING
@@ -1397,21 +1416,36 @@
 
 (use-package ace-link
   :ensure t
-  :hook (after-init-hook . ace-link-setup-default))
+  :hook (after-init-hook . ace-link-setup-default)
+  :bind (:map goto-map ("l" . ace-link)))
 
 
 ;;;; TO DEFINITION
 
 (use-package dumb-jump
   :ensure t
-  :custom (dumb-jump-selector 'ivy)
   :hook (xref-backend-functions . dumb-jump-xref-activate))
+
+(use-package imenu
+  :bind (:map goto-map ("i" . imenu))
+  :custom
+  (imenu-auto-rescan t)
+  (imenu-use-popup-menu nil)
+  (imenu-space-replacement " ")
+  (imenu-level-separator "/"))
+
+(use-package flimenu
+  :ensure t
+  :after imenu
+  :init (flimenu-global-mode))
 
 (use-package imenu-anywhere
   :ensure t
-  :bind (:map goto-map ("I" . ivy-imenu-anywhere)))
+  :bind (:map goto-map ("I" . imenu-anywhere)))
 
 (use-package find-func
+  :bind (:map search-map ("f b" . find-library))
+
   :custom
   (find-function-C-source-directory
    (expand-file-name "programs/emacs-27.1/src" (xdg-download-dir))))
@@ -1456,11 +1490,25 @@
   (comint-input-ring-size 10000)
   (comint-buffer-maximum-size 10240)
 
-  :config
+  :bind (:map comint-mode-map ("C-c h s" . comint-history))
 
+  :config
   (defun save-buffers-comint-input-ring ()
     (dolist (buf (buffer-list))
       (with-current-buffer buf (comint-write-input-ring))))
+
+  (defun comint-history ()
+    (interactive)
+    (let* ((beg (or (marker-position comint-accum-marker)
+                    (process-mark (get-buffer-process (current-buffer)))))
+           (end (point-max))
+           (input (buffer-substring beg end))
+           (element
+            (completing-read
+             "Comint history: " (ring-elements comint-input-ring)
+             nil nil input)))
+      (replace-region-contents beg end (lambda () element))
+      (comint-show-maximum-output)))
 
   (defvar-local comint-history-filter-function nil)
   (define-advice comint-write-input-ring (:before (&rest _) filter-history)
@@ -1577,10 +1625,6 @@
         ("M-g M-a" . tempo-backward-mark))
 
   :config
-  (define-advice skeleton-read (:around (fn &rest args) help-char)
-    (let ((help-char (aref (kbd "C-?") 0)))
-      (apply fn args)))
-
   (defun skempo-mode-elisp-namespace ()
     (string-trim-right (buffer-name) (rx ".el" eos)))
 
@@ -1631,10 +1675,7 @@
     (when (and (derived-mode-p 'forms-mode) (buffer-live-p forms--file-buffer))
       (kill-buffer forms--file-buffer))))
 
-(use-package vlf
-  :ensure t
-  :after counsel
-  :init (ivy-add-actions 'counsel-find-file '(("l" vlf "view large file"))))
+(use-package vlf :ensure t)
 
 (use-package sdcv
   :ensure t
@@ -1643,6 +1684,10 @@
   :config
   (define-advice sdcv-goto-sdcv (:after () fullscreen)
     (delete-other-windows)))
+
+(use-package dictionary
+  :ensure t
+  :bind (:map mode-specific-map ("o T" . dictionary-search)))
 
 (use-package ediff :hook (ediff-before-setup-hook . save-window-configuration-to-w))
 
@@ -1685,21 +1730,13 @@
   (bookmark-save-flag 1)
   (bookmark-default-file (expand-file-name "emacs/bookmarks" (xdg-data-home))))
 
-(use-package auto-package-update
-  :ensure t
-
-  :custom
-  (auto-package-update-delete-old-versions t)
-  (auto-package-update-hide-results t)
-  (auto-package-update-last-update-day-filename "last-package-update-day")
-  (auto-package-update-prompt-before-update t)
-  (auto-package-update-last-update-day-path
-   (expand-file-name "emacs/last-package-update-day" (xdg-cache-home))))
-
 
 ;;;; XML
 
-(use-package eww :custom (eww-search-prefix "https://ddg.co/lite/?q="))
+(use-package eww
+  :custom
+  (eww-browse-url-new-window-is-tab nil)
+  (eww-search-prefix "https://ddg.co/lite/?q="))
 
 (use-package xml
   :commands decode-sgml-entities encode-sgml-entities
@@ -1752,10 +1789,8 @@
   :hook (after-init-hook . torrent-mode-setup))
 
 (use-package mediainfo-mode
-  ;; :quelpa (mediainfo-mode :repo "xFA25E/mediainfo-mode" :fetcher github :version original)
-  ;; :hook (after-init-hook . mediainfo-mode-setup)
-  :load-path "~/Documents/projects/emacs-lisp/mediainfo-mode/"
-  )
+  :quelpa (mediainfo-mode :repo "xFA25E/mediainfo-mode" :fetcher github :version original)
+  :hook (after-init-hook . mediainfo-mode-setup))
 
 
 ;;;; PROJECTILE
@@ -1766,7 +1801,6 @@
   :hook (after-init-hook . projectile-mode)
 
   :custom
-  (projectile-completion-system 'ivy)
   (projectile-enable-caching t)
   (projectile-mode-line-prefix "")
   (projectile-cache-file (expand-file-name "emacs/projectile/cache" (xdg-cache-home)))
@@ -1803,7 +1837,8 @@
      "https://vid.encryptionin.space"
      "https://invidious.snopyta.org"
      "https://invidious.mservice.ru.com"
-     "https://invidious.xyz"))
+     "https://invidious.xyz"
+     "https://vid.encryptionin.space"))
   (ytel-invidious-api-url (car ytel-instances))
 
   :bind
@@ -1817,7 +1852,7 @@
   (defun ytel-switch-instance ()
     (interactive)
     (setq ytel-invidious-api-url
-          (completing-read "Instance: " ytel-instances nil t)))
+          (completing-read "Instance: " ytel-instances)))
 
   (defun ytel-current-browse-url ()
     (interactive)
@@ -1891,6 +1926,7 @@
      ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
      ("Luke Smith PeerTube" "https://videos.lukesmith.xyz/feeds/videos.xml?accountId=3")
      ("Luke Smith YouTube" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA")
+     ("Planet Emacslife" "https://planet.emacslife.com/atom.xml")
      ("Protesilaos Stavrou" "https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g")
      ("TealDeer" "https://www.bitchute.com/feeds/rss/channel/tealdeer/")
      ("Tsoding" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEbYhDd6c6vngsF5PQpFVWg")
@@ -2005,8 +2041,8 @@
   (defun mingus-find-and-add-file ()
     (interactive)
     (mingus-add-files
-     ((lambda (f) (list (expand-file-name f (xdg-music-dir))))
-      (completing-read "Add file to mpd: " (mingus-music-files) nil t)))
+     ((lambda (f) (list (print (expand-file-name f (xdg-music-dir)))))
+      (print (completing-read "Add file to mpd: " (mingus-music-files) nil t))))
     (mpd-play mpd-inter-conn)
     (let ((buffer (get-buffer "*Mingus*")))
       (when (buffer-live-p (get-buffer buffer))
@@ -2187,13 +2223,12 @@
 
 (use-package org-mime
   :ensure t
-
+  :after message
   :bind
   (:map message-mode-map
         ("C-c M-o" . org-mime-htmlize)
         ("C-c M-e" . org-mime-edit-mail-in-org-mode)
         ("C-c M-t" . org-mime-revert-to-plain-text-mail))
-
   :config
   (define-advice org-mime-replace-images (:filter-args (args) fix-imgs)
     (cl-destructuring-bind (first . rest) args
