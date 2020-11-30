@@ -1320,7 +1320,26 @@ Use as a value for `completion-in-region-function'."
 (use-package icomplete-vertical
   :ensure t
   :after icomplete
-  :init (icomplete-vertical-mode))
+  :bind (:map icomplete-minibuffer-map ("C-v" . #'icomplete-vertical-toggle))
+  :config
+  (defun icomplete-vertical-around-advice (fn &rest args)
+    (icomplete-vertical-do nil
+      (apply fn args)))
+
+  (advice-add 'icomplete-complete-minibuffer-history :around #'icomplete-vertical-around-advice)
+
+  (with-eval-after-load 'comint
+    (advice-add 'comint-history :around #'icomplete-vertical-around-advice))
+
+  (with-eval-after-load 'mingus
+    (advice-add 'mingus-find-and-add-file :around #'icomplete-vertical-around-advice))
+
+  (with-eval-after-load 'imenu
+    (advice-add 'imenu--completion-buffer :around #'icomplete-vertical-around-advice))
+
+  (with-eval-after-load 'consult
+    (advice-add 'consult-yank-replace :around #'icomplete-vertical-around-advice)
+    (advice-add 'consult-outline :around #'icomplete-vertical-around-advice)))
 
 (use-package consult
   :quelpa (consult :repo "minad/consult" :fetcher github :version original)
