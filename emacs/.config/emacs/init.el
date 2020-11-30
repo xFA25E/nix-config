@@ -1287,6 +1287,10 @@ Use as a value for `completion-in-region-function'."
   :init (provide 'map-ynp)
   :custom (read-answer-short t))
 
+(use-package completing-history
+  :quelpa (completing-history :repo "oantolin/completing-history" :fetcher github)
+  :bind ("M-H" . completing-history-insert-item))
+
 (use-package icomplete
   :hook (after-init-hook . icomplete-mode)
 
@@ -1298,7 +1302,6 @@ Use as a value for `completion-in-region-function'."
         ("RET" . icomplete-force-complete-and-exit)
         ("C-j" . exit-minibuffer)
         ("C-h" . icomplete-fido-backward-updir)
-        ("M-H"   . icomplete-complete-minibuffer-history)
         ("C-n" . icomplete-forward-completions)
         ("C-p" . icomplete-backward-completions))
 
@@ -1307,26 +1310,28 @@ Use as a value for `completion-in-region-function'."
   (icomplete-tidy-shadowed-file-names t)
   (icomplete-separator (propertize " ⋅ " 'face 'shadow))
   (icomplete-show-matches-on-no-input t)
-  (icomplete-hide-common-prefix nil)
+  (icomplete-hide-common-prefix nil))
 
-  :config
-  (defun icomplete-complete-minibuffer-history ()
-    (interactive)
-    (let* ((history (symbol-value minibuffer-history-variable))
-           (entry (completing-read "History: " history nil t)))
-      (delete-minibuffer-contents)
-      (insert entry))))
+(use-package consult
+  :quelpa (consult :repo "minad/consult" :fetcher github :version original)
+  :bind
+  ("M-y" . consult-yank-replace)
+  (:map goto-map ("o" . consult-outline)))
 
 (use-package icomplete-vertical
   :ensure t
   :after icomplete
   :bind (:map icomplete-minibuffer-map ("C-v" . #'icomplete-vertical-toggle))
+
   :config
   (defun icomplete-vertical-around-advice (fn &rest args)
     (icomplete-vertical-do nil
       (apply fn args)))
 
   (advice-add 'icomplete-complete-minibuffer-history :around #'icomplete-vertical-around-advice)
+
+  (with-eval-after-load 'completing-history
+    (advice-add 'completing-history-insert-item :around #'icomplete-vertical-around-advice))
 
   (with-eval-after-load 'minibuffer
     (advice-add 'read-file-name :around #'icomplete-vertical-around-advice))
@@ -1343,12 +1348,6 @@ Use as a value for `completion-in-region-function'."
   (with-eval-after-load 'consult
     (advice-add 'consult-yank-replace :around #'icomplete-vertical-around-advice)
     (advice-add 'consult-outline :around #'icomplete-vertical-around-advice)))
-
-(use-package consult
-  :quelpa (consult :repo "minad/consult" :fetcher github :version original)
-  :bind
-  ("M-y" . consult-yank-replace)
-  (:map goto-map ("o" . consult-outline)))
 
 
 ;;;; HIPPIE-EXP
@@ -1512,25 +1511,10 @@ Use as a value for `completion-in-region-function'."
   (comint-input-ring-size 10000)
   (comint-buffer-maximum-size 10240)
 
-  :bind (:map comint-mode-map ("C-c h s" . comint-history))
-
   :config
   (defun save-buffers-comint-input-ring ()
     (dolist (buf (buffer-list))
       (with-current-buffer buf (comint-write-input-ring))))
-
-  (defun comint-history ()
-    (interactive)
-    (let* ((beg (or (marker-position comint-accum-marker)
-                    (process-mark (get-buffer-process (current-buffer)))))
-           (end (point-max))
-           (input (buffer-substring beg end))
-           (element
-            (completing-read
-             "Comint history: " (ring-elements comint-input-ring)
-             nil nil input)))
-      (replace-region-contents beg end (lambda () element))
-      (comint-show-maximum-output)))
 
   (defvar-local comint-history-filter-function nil)
   (define-advice comint-write-input-ring (:before (&rest _) filter-history)
@@ -2063,8 +2047,8 @@ Use as a value for `completion-in-region-function'."
   (defun mingus-find-and-add-file ()
     (interactive)
     (mingus-add-files
-     ((lambda (f) (list (print (expand-file-name f (xdg-music-dir)))))
-      (print (completing-read "Add file to mpd: " (mingus-music-files) nil t))))
+     ((lambda (f) (list (expand-file-name f (xdg-music-dir))))
+      (completing-read "Add file to mpd: " (mingus-music-files) nil t)))
     (mpd-play mpd-inter-conn)
     (let ((buffer (get-buffer "*Mingus*")))
       (when (buffer-live-p (get-buffer buffer))
@@ -2252,6 +2236,20 @@ Use as a value for `completion-in-region-function'."
         ("C-c M-e" . org-mime-edit-mail-in-org-mode)
         ("C-c M-t" . org-mime-revert-to-plain-text-mail))
   :config
+  (define-advice org-mime-beautify-quoted (:filter-return (html) newlines)
+    (let ((blockquote-count
+           (save-match-data
+             (with-temp-buffer
+               (insert html)
+               (goto-char (point-min))
+               (how-many "blockquote" (point-min) (point-max))))))
+      (if (/= 2 blockquote-count) html
+        (replace-regexp-in-string
+         "\n" "<br/>\n"
+         (replace-regexp-in-string
+          (rx (>= 3 "\n")) "\n\n"
+          html)))))
+
   (define-advice org-mime-replace-images (:filter-args (args) fix-imgs)
     (cl-destructuring-bind (first . rest) args
       (cons (replace-regexp-in-string "src=\"file:///" "src=\"/" first) rest))))
