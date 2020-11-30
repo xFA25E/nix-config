@@ -378,7 +378,7 @@
 
   :config
   (defun savehist-filter-file-name-history ()
-    (cl-labels ((trim-slashes (s) (string-trim-right s "/+"))
+    (cl-labels ((trim-slashes (s) (string-trim-right s (rx (+ (? ".") "/"))))
                 (http-p (s) (string-match-p (rx bos (? "/") "http") s))
                 (remote-or-exists-p (e) (or (file-remote-p e) (file-exists-p e))))
       (thread-last (cl-delete-duplicates
@@ -1106,6 +1106,8 @@
 
 ;;;;; LISP
 
+(use-package lisp-mode :config (put 'use-package #'lisp-indent-function 1))
+
 (use-package lisp
   :commands kill-sexp
   :hook (after-save-hook . check-parens-in-prog-mode)
@@ -1151,8 +1153,6 @@
 
 
 ;;;;;; COMMON LISP (AKA BORSHCH)
-
-(use-package lisp-mode :config (put 'use-package #'lisp-indent-function 1))
 
 (use-package sly
   :ensure t
@@ -1321,6 +1321,7 @@ Use as a value for `completion-in-region-function'."
 (use-package icomplete-vertical
   :ensure t
   :after icomplete
+  :demand t
   :bind (:map icomplete-minibuffer-map ("C-v" . #'icomplete-vertical-toggle))
 
   :config
@@ -1851,7 +1852,6 @@ Use as a value for `completion-in-region-function'."
   (:map mode-specific-map ("o Y" . ytel))
   (:map ytel-mode-map
         ("c" . ytel-copy-link)
-        ("t" . ytel-show-thumbnail)
         ("v" . ytel-current-browse-url))
 
   :config
@@ -1873,13 +1873,6 @@ Use as a value for `completion-in-region-function'."
            (link (concat "https://www.youtube.com/watch?v=" id)))
       (kill-new link)
       (message "Copied %s" link)))
-
-  (defun ytel-show-thumbnail ()
-    (interactive)
-    (cl-flet ((pred (tm) (string-equal "maxresdefault" (alist-get 'quality tm))))
-      (let ((method (concat "videos/" (ytel-video-id (ytel-get-current-video)))))
-        (let-alist (ytel--API-call method '(("fields" "videoThumbnails")))
-          (eww (alist-get 'url (cl-find-if #'pred .videoThumbnails)))))))
 
   (with-eval-after-load 'bruh
     (setf (alist-get 'ytel-mode bruh-mpvi-get-title-functions)
