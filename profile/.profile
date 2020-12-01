@@ -152,6 +152,8 @@ export ADB_VENDOR_KEY="${XDG_CONFIG_HOME}/android"
 # boot
 export BOOT_HOME="${XDG_CACHE_HOME}/boot"
 
+if [ -e /home/val/.nix-profile/etc/profile.d/nix.sh ]; then . /home/val/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+
 # Following automatically calls "startx" when you login:
 [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ] && \
     exec startx "${XINITRC}" -- -keeptty -nolisten tcp >"${XDG_RUNTIME_DIR:?}/xorg.log" 2>&1
