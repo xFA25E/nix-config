@@ -1312,43 +1312,16 @@ Use as a value for `completion-in-region-function'."
   (icomplete-show-matches-on-no-input t)
   (icomplete-hide-common-prefix nil))
 
+(use-package icomplete-vertical
+  :ensure t
+  :after icomplete
+  :init (icomplete-vertical-mode))
+
 (use-package consult
   :quelpa (consult :repo "minad/consult" :fetcher github :version original)
   :bind
   ("M-y" . consult-yank-replace)
   (:map goto-map ("o" . consult-outline)))
-
-(use-package icomplete-vertical
-  :ensure t
-  :after icomplete
-  :demand t
-  :bind (:map icomplete-minibuffer-map ("C-v" . #'icomplete-vertical-toggle))
-
-  :config
-  (defun icomplete-vertical-around-advice (fn &rest args)
-    (icomplete-vertical-do nil
-      (apply fn args)))
-
-  (advice-add 'icomplete-complete-minibuffer-history :around #'icomplete-vertical-around-advice)
-
-  (with-eval-after-load 'completing-history
-    (advice-add 'completing-history-insert-item :around #'icomplete-vertical-around-advice))
-
-  (with-eval-after-load 'minibuffer
-    (advice-add 'read-file-name :around #'icomplete-vertical-around-advice))
-
-  (with-eval-after-load 'comint
-    (advice-add 'comint-history :around #'icomplete-vertical-around-advice))
-
-  (with-eval-after-load 'mingus
-    (advice-add 'mingus-find-and-add-file :around #'icomplete-vertical-around-advice))
-
-  (with-eval-after-load 'imenu
-    (advice-add 'imenu--completion-buffer :around #'icomplete-vertical-around-advice))
-
-  (with-eval-after-load 'consult
-    (advice-add 'consult-yank-replace :around #'icomplete-vertical-around-advice)
-    (advice-add 'consult-outline :around #'icomplete-vertical-around-advice)))
 
 
 ;;;; HIPPIE-EXP
