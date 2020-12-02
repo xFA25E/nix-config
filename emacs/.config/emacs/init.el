@@ -169,7 +169,7 @@
 (use-package form-feed
   :ensure t
   :diminish form-feed-mode
-  :hook (emacs-lisp-mode-hook . form-feed-mode))
+  :hook ((emacs-lisp-mode-hook scheme-mode-hook) . form-feed-mode))
 
 
 ;;;;; THEMES
@@ -251,7 +251,8 @@
 
 (use-package hideshow
   :diminish hs-minor-mode
-  :hook (emacs-lisp-mode-hook . hs-minor-mode))
+  :hook (emacs-lisp-mode-hook . hs-minor-mode)
+  :bind (:map hs-minor-mode-map ("<C-M-tab>" . #'hs-toggle-hiding)))
 
 (use-package bicycle
   :ensure t
@@ -260,6 +261,7 @@
   :bind
   (:map hs-minor-mode-map
         ("<C-tab>" . bicycle-cycle)
+        ("<C-M-tab>" . #'hs-toggle-hiding)
         ("<backtab>" . bicycle-cycle-global)))
 
 
@@ -299,7 +301,9 @@
 
 ;;;; URL
 
-(use-package browse-url :custom (browse-url-secondary-browser-function #'browse-url-firefox))
+(use-package browse-url
+  :custom (browse-url-secondary-browser-function #'browse-url-firefox)
+  :bind (:map ctl-x-map ("B" . browse-url)))
 
 (use-package bruh
   :after browse-url
@@ -378,17 +382,15 @@
 
   :config
   (defun savehist-filter-file-name-history ()
-    (cl-labels ((trim-slashes (s) (string-trim-right s (rx (+ (? ".") "/"))))
-                (http-p (s) (string-match-p (rx bos (? "/") "http") s))
-                (remote-or-exists-p (e) (or (file-remote-p e) (file-exists-p e))))
-      (thread-last (cl-delete-duplicates
-                    file-name-history
-                    :test #'string-equal
-                    :key #'trim-slashes)
-        (cl-delete-if #'http-p)
-        (cl-delete-if-not #'remote-or-exists-p)
-        (mapcar #'substring-no-properties)
-        (setq file-name-history)))))
+    (setq
+     file-name-history
+     (cl-delete-if
+      #'string-empty-p
+      (cl-delete-duplicates
+       (mapcar
+        (lambda (s) (string-trim-right (expand-file-name s) (rx (+ "/"))))
+        file-name-history)
+       :test #'string-equal)))))
 
 (use-package saveplace
   :hook (after-init-hook . save-place-mode)
@@ -1248,7 +1250,7 @@
   (read-file-name-completion-ignore-case t)
   (completion-category-defaults nil)
   (completion-pcm-complete-word-inserts-delimiters t)
-  (completion-styles '(flex partial-completion substring))
+  (completion-styles '(substring partial-completion flex))
   (completion-in-region-function 'completing-read-in-region)
 
   :config
@@ -1276,7 +1278,7 @@ Use as a value for `completion-in-region-function'."
   :after minibuffer
   :custom
   (orderless-matching-styles
-   '(orderless-flex orderless-regexp orderless-literal orderless-prefixes))
+   '(orderless-literal orderless-flex orderless-prefixes orderless-regexp))
   :init (add-to-list 'completion-styles 'orderless))
 
 (use-package minibuf-eldef
@@ -1293,7 +1295,6 @@ Use as a value for `completion-in-region-function'."
 
 (use-package icomplete
   :hook (after-init-hook . icomplete-mode)
-
   :bind
   (:map icomplete-minibuffer-map
         ("<tab>" . icomplete-force-complete)
@@ -1304,7 +1305,6 @@ Use as a value for `completion-in-region-function'."
         ("C-h" . icomplete-fido-backward-updir)
         ("C-n" . icomplete-forward-completions)
         ("C-p" . icomplete-backward-completions))
-
   :custom
   (icomplete-in-buffer t)
   (icomplete-tidy-shadowed-file-names t)
