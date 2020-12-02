@@ -26,7 +26,7 @@
 
 ;; run launcher
 (global-set-key "s-space" "rofi -show run")
-(global-set-key "s-S-space" "rofi -show window")
+(global-set-key "s-S-space" "windmenu")
 
 ;; change brightness
 (global-set-key "XF86MonBrightnessDown" "xbacklight -dec 3")
