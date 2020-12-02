@@ -1331,9 +1331,6 @@ Use as a value for `completion-in-region-function'."
 
   (advice-add 'icomplete-complete-minibuffer-history :around #'icomplete-vertical-around-advice)
 
-  (with-eval-after-load 'completing-history
-    (advice-add 'completing-history-insert-item :around #'icomplete-vertical-around-advice))
-
   (with-eval-after-load 'minibuffer
     (advice-add 'read-file-name :around #'icomplete-vertical-around-advice))
 
