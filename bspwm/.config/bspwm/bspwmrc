@@ -32,7 +32,6 @@ bspc config focused_border_color  "$( xgetres 'bspwm.focused_border_color' )"
 
 bspc monitor --reset-desktops H B V C M R T S
 bspc query --desktops --names | xargs -I'{}' bspc desktop '{}' --layout monocle
-bspc desktop C --layout tiled
 
 # rules
 bspc rule --remove '*'
