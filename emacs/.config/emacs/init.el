@@ -1092,18 +1092,17 @@
 
 ;;;;; LSP
 
+(use-package eglot :ensure t)
+
 (use-package lsp-mode
+  :disabled
   :ensure t
-
-  :hook
-  (rust-mode-hook . lsp)
-  (lsp-mode-hook . lsp-enable-which-key-integration)
-
+  :hook (lsp-mode-hook . lsp-enable-which-key-integration)
   :custom
   (lsp-session-file (expand-file-name "emacs/lsp/session" (xdg-cache-home)))
   (lsp-xml-server-work-dir (expand-file-name "emacs/lsp/xml" (xdg-cache-home))))
 
-(use-package lsp-ui :ensure t)
+(use-package lsp-ui :disabled :ensure t)
 
 
 ;;;;; LISP
@@ -1197,6 +1196,8 @@
   :custom
   (ispell-program-name "aspell")
   (ispell-extra-args (list "--sug-mode=ultra")))
+
+(use-package flymake :custom (flymake-no-changes-timeout nil))
 
 (use-package flycheck
   :ensure t
