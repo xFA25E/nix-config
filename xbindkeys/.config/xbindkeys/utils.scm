@@ -28,18 +28,17 @@
 
 (define (current-run-key key)
   (let ((value (lookup-key current-key-map key)))
-    (set! current-key-map
-      (if (hash-table? value)
-          value
-          (begin (value) global-key-map))))
-
-  (if (eq? current-key-map global-key-map)
-      (unless (null? current-key-path)
-        (set! current-key-path '())
-        (notify-panel ""))
-      (begin
-        (set! current-key-path (cons key current-key-path))
-        (notify-panel (string-join (reverse current-key-path) " ")))))
+    (if (hash-table? value)
+        (begin
+          (set! current-key-map value)
+          (set! current-key-path (cons key current-key-path))
+          (notify-panel (string-join (reverse current-key-path) " ")))
+        (begin
+          (set! current-key-map global-key-map)
+          (when (procedure? value) (value))
+          (unless (null? current-key-path)
+            (set! current-key-path '())
+            (notify-panel ""))))))
 
 (define (bind-key key)
   (let ((run-key (lambda () (current-run-key key)))
