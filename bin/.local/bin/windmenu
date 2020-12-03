@@ -18,7 +18,7 @@ ebuf_ls()
     emacsclient --eval '
 (mapconcat
  (apply-partially (quote concat) "e  ")
- (delete-if
+ (cl-delete-if
   (apply-partially (quote string-prefix-p) " ")
   (mapcar (quote buffer-name) (buffer-list)))
  "\n")
@@ -30,7 +30,7 @@ all_ls() {
     ebuf_ls
 }
 
-selected="$(all_ls | rofi -dmenu -i -no-custom)"
+selected="$(all_ls | rofi -p 'Window' -dmenu -i -no-custom)"
 [ -z "${selected}" ] && exit 1
 
 case "${selected}" in
