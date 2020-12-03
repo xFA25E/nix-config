@@ -1251,7 +1251,7 @@
   (read-file-name-completion-ignore-case t)
   (completion-category-defaults nil)
   (completion-pcm-complete-word-inserts-delimiters t)
-  (completion-styles '(substring partial-completion flex))
+  (completion-styles '(substring partial-completion))
   (completion-in-region-function 'completing-read-in-region)
 
   :config
@@ -1267,7 +1267,7 @@ Use as a value for `completion-in-region-function'."
                                ((and (consp all) (atom (cdr all)))
                                 (concat (substring initial 0 limit) (car all)))
                                (t
-                                (completing-read "Completion: " collection predicate nil initial)))))
+                                (completing-read "Completion: " collection predicate t initial)))))
         (if (null completion)
             (progn (message "No completion") nil)
           (delete-region start end)
@@ -1278,8 +1278,9 @@ Use as a value for `completion-in-region-function'."
   :ensure t
   :after minibuffer
   :custom
+  (orderless-component-separator (rx (+ space)))
   (orderless-matching-styles
-   '(orderless-literal orderless-flex orderless-prefixes orderless-regexp))
+   '(orderless-literal orderless-prefixes orderless-regexp))
   :init (add-to-list 'completion-styles 'orderless))
 
 (use-package minibuf-eldef
