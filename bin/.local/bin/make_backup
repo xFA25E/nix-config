@@ -43,10 +43,7 @@ sudo -A chown val:users "${directory}" || { sudo -A umount "${directory}"; exit_
 xargs --arg-file="${backup_file}" --max-args=200 -I{} \
       rsync --delete --delete-excluded --archive --verbose --partial --progress --relative \
       --backup --backup-dir="${directory%/}/backup" --suffix="$(date '+.~%Y%m%d~')" \
-      --filter='dir-merge,- .gitignore' --exclude='.git' \
-      --exclude="${HOME}/.cache" --exclude='lost+found' \
-      --exclude='*TelegramDesktop/' \
-      --exclude="${directory}" \
+      --exclude='lost+found' --exclude="${directory}" \
       "{}" "${directory%/}/current"
 
 sudo -A umount "${directory}"
