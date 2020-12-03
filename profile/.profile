@@ -152,7 +152,12 @@ export ADB_VENDOR_KEY="${XDG_CONFIG_HOME}/android"
 # boot
 export BOOT_HOME="${XDG_CACHE_HOME}/boot"
 
-if [ -e /home/val/.nix-profile/etc/profile.d/nix.sh ]; then . /home/val/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+# pager
+export PAGER=cat
+
+if [ -e "${HOME}/.nix-profile/etc/profile.d/nix.sh" ]; then
+    . "${HOME}/.nix-profile/etc/profile.d/nix.sh"
+fi
 
 # Following automatically calls "startx" when you login:
 [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ] && \
