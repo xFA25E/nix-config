@@ -310,28 +310,33 @@
 
   :config
   (defun bruh-mpvi-ytdli-or-browse (url &rest rest)
-    (cond
-     ((yes-or-no-p (format "Mpv %s ?" url))
-      (let ((process-environment (browse-url-process-environment)))
-        (start-process (concat "mpv " url) nil "mpvi" url)))
-     ((yes-or-no-p (format "Download %s ?" url))
-      (let ((process-environment (browse-url-process-environment)))
-        (start-process
-         (concat "ytdl " url) nil "ytdli" url
-         (funcall
-          (or (seq-some
-               (lambda (args) (when (derived-mode-p (car args)) (cdr args)))
-               bruh-mpvi-get-title-functions)
-              (lambda () (read-from-minibuffer "Title: ")))))))
-     ((and
-       (string-match
-        (rx (or (and "youtube.com/watch?" (*? any) "v=") "youtu.be/")
-            (group (= 11 (any "-_A-Za-z0-9"))))
-        url)
-        (yes-or-no-p (format "Show %s in ytel-show?" url)))
-      (ytel-show (vector (match-string 1 url))))
-     (t
-      (apply bruh-default-browser url rest))))
+    (let ((actions '("mpv" "ytdl" "default"))
+          (youtube-id
+           (save-match-data
+             (string-match
+              (rx (or (and "youtube.com/watch?" (*? any) "v=") "youtu.be/")
+                  (group (= 11 (any "-_A-Za-z0-9"))))
+              url)
+             (match-string 1 url))))
+      (when youtube-id
+        (push "ytel" actions))
+      (pcase (completing-read (format "Bruh %s: " url) actions nil t)
+        ("ytel"
+         (ytel-show (vector youtube-id)))
+        ("mpv"
+         (let ((process-environment (browse-url-process-environment)))
+           (start-process (concat "mpv " url) nil "mpvi" url)))
+        ("ytdl"
+         (let ((process-environment (browse-url-process-environment)))
+           (start-process
+            (concat "ytdl " url) nil "ytdli" url
+            (funcall
+             (or (seq-some
+                  (lambda (args) (when (derived-mode-p (car args)) (cdr args)))
+                  bruh-mpvi-get-title-functions)
+                 (lambda () (read-from-minibuffer "Title: ")))))))
+        ("default"
+         (apply bruh-default-browser url rest)))))
 
   (dolist (re `(,(rx bos "http" (? "s") "://" (? "www.") "bitchute.com/" (or "embed" "video" "channel"))
                 ,(rx bos "http" (? "s") "://videos.lukesmith.xyz/" (or "static/webseed" "videos/watch"))))
@@ -386,7 +391,11 @@
   :hook (after-init-hook . save-place-mode)
   :custom
   (save-place-file (expand-file-name "emacs/saveplace" (xdg-data-home)))
-  (save-place-forget-unreadable-files t))
+  (save-place-forget-unreadable-files t)
+  :config
+  (setq save-place-skip-check-regexp
+        (rx (or (regexp save-place-skip-check-regexp)
+                (and bos "http")))))
 
 
 ;;;; FILES
@@ -767,12 +776,15 @@
 ;;;; FIND
 
 (use-package find-dired
-  :custom (find-ls-option '("-print0 | xargs -0 ls -ldb --quoting-style=literal" . "-ldb")))
+  :bind (:map search-map ("f f" . find-dired))
+  :custom
+  (find-ls-option '("-print0 | sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF")))
 
 (use-package fd-dired
-  :ensure t
+  :quelpa (fd-dired :repo "xFA25E/fd-dired" :fetcher github)
+  ;; :ensure t
   :bind (:map search-map ("f d" . fd-dired))
-  :custom (fd-dired-ls-option '("| xargs -0 ls -ldb --quoting-style=literal" . "-ldb")))
+  :custom (fd-dired-ls-option '("| sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF")))
 
 (use-package locate
   :custom (locate-make-command-line 'locate-make-ignore-case-command-line)
@@ -1071,8 +1083,6 @@
   (lsp-session-file (expand-file-name "emacs/lsp/session" (xdg-cache-home)))
   (lsp-xml-server-work-dir (expand-file-name "emacs/lsp/xml" (xdg-cache-home))))
 
-(use-package lsp-ui :disabled :ensure t)
-
 
 ;;;;; LISP
 
@@ -1173,6 +1183,7 @@
   (flycheck-gcc-pedantic-errors t)
   (flycheck-gcc-pedantic t)
   (flycheck-phpcs-standard "PSR12,PSR1,PSR2")
+  (flycheck-check-syntax-automatically '(save mode-enabled))
   :config
   (add-to-list 'flycheck-shellcheck-supported-shells 'dash))
 
@@ -1262,6 +1273,7 @@ Use as a value for `completion-in-region-function'."
 
 (use-package icomplete
   :hook (after-init-hook . icomplete-mode)
+
   :bind
   (:map icomplete-minibuffer-map
         ("<tab>" . icomplete-force-complete)
@@ -1269,15 +1281,26 @@ Use as a value for `completion-in-region-function'."
         ("<return>" . icomplete-force-complete-and-exit)
         ("RET" . icomplete-force-complete-and-exit)
         ("C-j" . exit-minibuffer)
-        ("C-h" . icomplete-fido-backward-updir)
+        ("C-M-h" . icomplete-fido-updir-always)
+        ("C-h" . backward-delete-char)
         ("C-n" . icomplete-forward-completions)
         ("C-p" . icomplete-backward-completions))
+
   :custom
   (icomplete-in-buffer t)
   (icomplete-tidy-shadowed-file-names t)
   (icomplete-separator (propertize " ⋅ " 'face 'shadow))
   (icomplete-show-matches-on-no-input t)
-  (icomplete-hide-common-prefix nil))
+  (icomplete-hide-common-prefix nil)
+
+  :config
+  (defun icomplete-fido-updir-always ()
+    "Delete char before or go up directory, like `ido-mode'."
+    (interactive)
+    (save-excursion
+      (goto-char (1- (point)))
+      (when (search-backward "/" (point-min) t)
+        (delete-region (1+ (point)) (point-max))))))
 
 (use-package consult
   :quelpa (consult :repo "minad/consult" :fetcher github :version original)
@@ -1876,7 +1899,8 @@ Use as a value for `completion-in-region-function'."
      ("Tsoding" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEbYhDd6c6vngsF5PQpFVWg")
      ("Мысли и методы" "http://feeds.soundcloud.com/users/soundcloud:users:259154388/sounds.rss")
      ("Простая Академия" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8mmPf2oKdfE2pdjqctTWUw")
-     ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg")))
+     ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg")
+     ("Fd-Dired" "https://github.com/yqrashawn/fd-dired/commits/master.atom")))
 
   :config
   (defun newsticker-add-thumbnail (_feedname item)
@@ -2186,7 +2210,39 @@ Use as a value for `completion-in-region-function'."
 
   (define-advice org-mime-replace-images (:filter-args (args) fix-imgs)
     (cl-destructuring-bind (first . rest) args
-      (cons (replace-regexp-in-string "src=\"file:///" "src=\"/" first) rest))))
+      (cons (replace-regexp-in-string "src=\"file:///" "src=\"/" first) rest)))
+
+  (define-advice org-mime-edit-mail-in-org-mode (:override () up-to-signature)
+    (interactive)
+    ;; see `org-src--edit-element'
+    (cond
+     ((eq major-mode 'org-mode)
+      (message "This command is not for `org-mode'."))
+     (t
+      (setq org-mime--saved-temp-window-config (current-window-configuration))
+      (let* ((beg (copy-marker (org-mime-mail-body-begin)))
+             (end (copy-marker (or (org-mime-mail-signature-begin)
+                                   (point-max))))
+             (bufname "OrgMimeMailBody")
+             (buffer (generate-new-buffer bufname))
+             (overlay (org-mime-src--make-source-overlay beg end))
+             (text (buffer-substring-no-properties beg end)))
+
+        (setq org-mime-src--beg-marker beg)
+        (setq org-mime-src--end-marker end)
+        ;; don't use local-variable because only user can't edit multiple emails
+        ;; or multiple embedded org code in one mail
+        (setq org-mime-src--overlay overlay)
+
+        (save-excursion
+          (delete-other-windows)
+          (org-switch-to-buffer-other-window buffer)
+          (erase-buffer)
+          (insert org-mime-src--hint)
+          (insert text)
+          (goto-char (point-min))
+          (org-mode)
+          (org-mime-src-mode)))))))
 
 (use-package ox-html
   :after org
