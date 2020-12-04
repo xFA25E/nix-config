@@ -882,7 +882,9 @@
       (t (normal-mode)))))
 
 
-;;;;; FORMATTING
+(use-package paragraphs :bind ("C-M-S-t" . transpose-paragraphs))
+
+;;;; FORMATTING
 
 (use-package whitespace
   :diminish whitespace-mode
@@ -891,7 +893,7 @@
 (use-package format-all :ensure t)
 
 
-;;;;; INPUT METHOD
+;;;; INPUT METHOD
 
 (use-package cyrillic-dvorak-im
   :quelpa
@@ -907,7 +909,7 @@
   :config (reverse-im-activate "cyrillic-dvorak"))
 
 
-;;;;; PAIRS
+;;;; PAIRS
 
 (use-package elec-pair :hook (after-init-hook . electric-pair-mode))
 
