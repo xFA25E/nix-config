@@ -38,7 +38,6 @@
 
 (use-package xdg
   :commands xdg-download-dir xdg-music-dir
-
   :config
   (defun xdg-download-dir () (or (getenv "XDG_DOWNLOAD_DIR") "~/Downloads"))
   (defun xdg-music-dir () (or (getenv "XDG_MUSIC_DIR") "~/Music")))
@@ -48,7 +47,6 @@
 (use-package quelpa
   :ensure t
   :demand t
-
   :custom
   (quelpa-build-dir (expand-file-name "emacs/quelpa/build" (xdg-cache-home)))
   (quelpa-dir (expand-file-name "emacs/quelpa" (xdg-cache-home)))
@@ -147,7 +145,6 @@
 
 (use-package diff-hl
   :ensure t
-
   :hook
   (magit-post-refresh-hook . diff-hl-magit-post-refresh)
   (prog-mode-hook          . diff-hl-mode)
@@ -158,7 +155,6 @@
   :hook
   (shell-mode-hook         . ansi-color-for-comint-mode-on)
   (compilation-filter-hook . colorize-compilation)
-
   :config
   (defun colorize-compilation ()
     "Colorize from `compilation-filter-start' to `point'."
@@ -223,7 +219,6 @@
 (use-package outline
   :diminish outline-minor-mode
   :hook (emacs-lisp-mode-hook . outline-minor-mode)
-
   :config
   (defun outline-show-after-jump ()
     (when outline-minor-mode
@@ -238,7 +233,6 @@
 (use-package bicycle
   :ensure t
   :after outline
-
   :bind
   (:map outline-minor-mode-map
         ("<C-tab>" . bicycle-cycle)
@@ -257,7 +251,6 @@
 (use-package bicycle
   :ensure t
   :after hideshow
-
   :bind
   (:map hs-minor-mode-map
         ("<C-tab>" . bicycle-cycle)
@@ -273,7 +266,6 @@
   :custom
   (scroll-step 1)
   (scroll-conservatively 10000)
-
   :config (scroll-bar-mode -1))
 
 (use-package menu-bar
@@ -310,6 +302,7 @@
   :quelpa (bruh :repo "a13/bruh" :fetcher github)
 
   :custom
+  (bruh-images-browser-function 'bruh-feh)
   (bruh-default-browser #'eww-browse-url)
   (bruh-videos-browser-function #'bruh-mpvi-ytdli-or-browse)
   (browse-url-browser-function #'bruh-browse-url)
@@ -351,10 +344,9 @@
 (use-package url-handlers :hook (after-init-hook . url-handler-mode))
 
 (use-package url-util
-  :commands encode-url-entities decode-url-entities
-
+  :commands url-encode-entities url-decode-entities
   :config
-  (defun decode-url-entities (beg end)
+  (defun url-decode-entities (beg end)
     (interactive "r")
     (let ((text (url-unhex-string (buffer-substring beg end))))
       (save-excursion
@@ -362,7 +354,7 @@
         (goto-char beg)
         (insert text))))
 
-  (defun encode-url-entities (beg end)
+  (defun url-encode-entities (beg end)
     (interactive "r")
     (let ((text (url-encode-url (buffer-substring beg end))))
       (save-excursion
@@ -375,11 +367,9 @@
 
 (use-package savehist
   :custom (savehist-file (expand-file-name "emacs/savehist" (xdg-data-home)))
-
   :hook
   (after-init-hook    . savehist-mode)
   (savehist-save-hook . savehist-filter-file-name-history)
-
   :config
   (defun savehist-filter-file-name-history ()
     (setq
@@ -394,7 +384,6 @@
 
 (use-package saveplace
   :hook (after-init-hook . save-place-mode)
-
   :custom
   (save-place-file (expand-file-name "emacs/saveplace" (xdg-data-home)))
   (save-place-forget-unreadable-files t))
@@ -455,7 +444,6 @@
 (use-package shr-tag-pre-highlight
   :ensure t
   :after shr
-
   :config
   (add-to-list 'shr-external-rendering-functions '(pre . shr-tag-pre-highlight)))
 
@@ -476,7 +464,6 @@
 
 (use-package startup
   :init (provide 'startup)
-
   :custom
   (auto-save-list-file-prefix
    (expand-file-name (format-time-string "emacs/auto-saves/list/%y-%m-%d-")
@@ -487,7 +474,6 @@
 
 (use-package window
   :init (provide 'window)
-
   :bind
   ("M-V"     . scroll-down-line)
   ("C-S-v"   . scroll-up-line)
@@ -495,7 +481,6 @@
   ("C-M-S-f" . next-buffer)
   ("M-Q"     . quit-window)
   (:map ctl-x-map ("C-b" . switch-to-buffer))
-
   :config
   (add-to-list 'display-buffer-alist `(,(rx (* any)) (display-buffer-same-window))))
 
@@ -530,7 +515,6 @@
 
 (use-package byte-compile
   :hook (after-save-hook . byte-recompile-current-file)
-
   :config
   (defun byte-recompile-current-file ()
     (interactive)
@@ -563,7 +547,6 @@
   (tramp-default-method "ssh")
   (tramp-histfile-override t)
   (tramp-completion-reread-directory-timeout nil)
-
   :config
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
   (add-to-list 'tramp-remote-path "~/.local/bin"))
@@ -585,7 +568,6 @@
 
 (use-package finder
   :bind (:map help-map ("M-c" . finder-commentary))
-
   :config
   (define-advice finder-exit (:override () with-package)
     (interactive)
@@ -733,7 +715,6 @@
   :after dired
   :bind (:map dired-mode-map ("b" . dired-stat))
   :custom (dired-create-destination-dirs 'ask)
-
   :config
   (add-to-list
    'dired-compress-file-suffixes
@@ -753,7 +734,6 @@
 (use-package image-dired
   :after dired
   :hook (dired-mode-hook . image-dired-minor-mode)
-
   :custom
   (image-dired-external-viewer "sxiv")
   (image-dired-db-file
@@ -797,7 +777,6 @@
 (use-package locate
   :custom (locate-make-command-line 'locate-make-ignore-case-command-line)
   :bind (:map search-map ("f l" . locate))
-
   :config
   (defun locate-make-ignore-case-command-line (search-string)
     (list locate-command "-i" search-string)))
@@ -853,7 +832,6 @@
 (use-package register
   :commands save-window-configuration-to-w
   :custom (register-separator ?\n)
-
   :bind
   (:map ctl-x-r-map
         ("C-@"   . nil)
@@ -864,7 +842,6 @@
         ("L"     . list-registers)
         ("p"     . prepend-to-register)
         ("a"     . append-to-register))
-
   :config
   (set-register register-separator "\n")
   (defun save-window-configuration-to-w (&rest _ignore)
@@ -875,13 +852,11 @@
 
 (use-package multiple-cursors
   :ensure t
-
   :bind
   ("C-S-c C-S-c" . mc/edit-lines)
   ("C->"         . mc/mark-next-like-this)
   ("C-<"         . mc/mark-previous-like-this)
   (:map mode-specific-map ("C-<" . mc/mark-all-like-this))
-
   :custom
   (mc/always-run-for-all t)
   (mc/always-repeat-command t))
@@ -890,7 +865,6 @@
   :ensure t
   :custom (edit-indirect-guess-mode-function #'edit-indirect-guess-mode)
   :bind (:map ctl-x-map ("E" . edit-indirect-region-or-at-point))
-
   :config
   (defun edit-indirect-region-or-at-point ()
     (interactive)
@@ -924,7 +898,6 @@
   (cyrillic-dvorak-im :repo "xFA25E/cyrillic-dvorak-im"
                       :fetcher github
                       :version original)
-
   :demand t)
 
 (use-package reverse-im
@@ -977,7 +950,6 @@
 
 (use-package conf-mode
   :hook (after-save-hook . xresources-reload)
-
   :config
   (defun xresources-reload ()
     (interactive)
@@ -990,7 +962,6 @@
 
 (use-package tex-mode
   :hook (tex-mode-hook . setup-tex-mode-ispell-parser)
-
   :config
   (defun setup-tex-mode-ispell-parser ()
     (setq-local ispell-parser 'tex)))
@@ -1022,7 +993,6 @@
 
 (use-package sgml-mode
   :custom (sgml-basic-offset 4)
-
   :bind
   (:map sgml-mode-map
         ("C-M-n" . sgml-skip-tag-forward)
@@ -1034,10 +1004,8 @@
 (use-package emmet-mode
   :ensure t
   :diminish emmet-mode
-
   :hook
   ((nxml-mode-hook html-mode-hook mhtml-mode-hook web-mode-hook) . emmet-mode)
-
   :custom
   (emmet-preview-default t)
   (emmet-self-closing-tag-style ""))
@@ -1079,7 +1047,6 @@
 
 (use-package php-mode
   :ensure t
-
   :custom
   (php-mode-coding-style 'php)
   (php-manual-path (expand-file-name "php_docs/php-chunked-xhtml" (xdg-cache-home))))
@@ -1113,7 +1080,6 @@
   :commands kill-sexp
   :hook (after-save-hook . check-parens-in-prog-mode)
   :init (provide 'lisp)
-
   :config
   (defun check-parens-in-prog-mode ()
     (when (derived-mode-p 'prog-mode)
@@ -1124,11 +1090,9 @@
 
 (use-package elisp-mode
   :bind ("C-x C-S-e" . eval-and-replace)
-
   :custom
   (eval-expression-print-level t)
   (eval-expression-print-length t)
-
   :config
   (defun eval-and-replace ()
     (interactive)
@@ -1157,7 +1121,6 @@
 
 (use-package sly
   :ensure t
-
   :custom
   (sly-default-lisp 'sbcl)
   (sly-lisp-implementations '((sbcl ("lisp-sbcl")) (ecl ("lisp-ecl"))))
@@ -1362,7 +1325,6 @@ Use as a value for `completion-in-region-function'."
    :repo "xFA25E/try-complete-file-name-with-env"
    :fetcher github
    :version original)
-
   :demand t
   :after hippie-exp)
 
@@ -1372,7 +1334,6 @@ Use as a value for `completion-in-region-function'."
 (use-package isearch
   :bind (:map isearch-mode-map ("C-h" . isearch-delete-char))
   :config (define-key isearch-mode-map (kbd "C-?") isearch-help-map)
-
   :custom
   (isearch-allow-scroll t)
   (isearch-lazy-count t)
@@ -1381,7 +1342,6 @@ Use as a value for `completion-in-region-function'."
 (use-package grep
   :config
   (add-to-list 'grep-files-aliases '("php" . "*.php *.phtml"))
-
   (define-advice grep-expand-template (:filter-return (cmd) cut)
     (concat cmd " | cut -c-500")))
 
@@ -1420,7 +1380,6 @@ Use as a value for `completion-in-region-function'."
 
 (use-package avy
   :ensure t
-
   :bind
   ("M-z" . avy-goto-word-0)
   (:map goto-map
@@ -1428,7 +1387,6 @@ Use as a value for `completion-in-region-function'."
         ("g"   . nil)
         ("n"   . nil)
         ("p"   . nil))
-
   :custom
   (avy-background t)
   (avy-goto-word-0-regexp (rx symbol-start (or (syntax word) (syntax symbol))))
@@ -1466,7 +1424,6 @@ Use as a value for `completion-in-region-function'."
 
 (use-package find-func
   :bind (:map search-map ("f b" . find-library))
-
   :custom
   (find-function-C-source-directory
    (expand-file-name "programs/emacs-27.1/src" (xdg-download-dir))))
@@ -1478,14 +1435,12 @@ Use as a value for `completion-in-region-function'."
   :custom
   (compilation-always-kill t)
   (compilation-scroll-output 'first-error)
-
   :bind (:map ctl-x-map ("c" . compile)))
 
 ;; Add support for cargo error --> file:line:col
 (use-package cargo
   :ensure t
   :hook (rust-mode-hook . cargo-minor-mode)
-
   :custom
   (cargo-process--command-build "build --color never")
   (cargo-process--command-check "check --color never")
@@ -1528,11 +1483,9 @@ Use as a value for `completion-in-region-function'."
 
 (use-package sql
   :hook (sql-interactive-mode-hook . sql-interactive-set-history)
-
   :custom
   (sql-mysql-options '("-A"))
   (sql-sqlite-options `("-column" "-header" "-cmd" "PRAGMA foreign_keys = ON;"))
-
   :config
   (defun sql-interactive-set-history ()
     (let ((file (expand-file-name
@@ -1600,7 +1553,6 @@ Use as a value for `completion-in-region-function'."
 (use-package shell-pwd
   :quelpa (shell-pwd :repo "xFA25E/shell-pwd" :fetcher github :version original)
   :bind (:map mode-specific-map ("x s" . shell-pwd-switch-to-buffer))
-
   :config
   (cl-defun shell-pwd-switch-to-buffer (&optional (directory default-directory))
     (interactive
@@ -1675,7 +1627,6 @@ Use as a value for `completion-in-region-function'."
 
 (use-package forms
   :hook (kill-buffer-hook . forms-kill-file-buffer)
-
   :config
   (defun forms-kill-file-buffer ()
     (when (and (derived-mode-p 'forms-mode) (buffer-live-p forms--file-buffer))
@@ -1686,7 +1637,6 @@ Use as a value for `completion-in-region-function'."
 (use-package sdcv
   :ensure t
   :bind (:map mode-specific-map ("o t" . sdcv-search-input))
-
   :config
   (define-advice sdcv-goto-sdcv (:after () fullscreen)
     (delete-other-windows)))
@@ -1745,10 +1695,9 @@ Use as a value for `completion-in-region-function'."
   (eww-search-prefix "https://ddg.co/lite/?q="))
 
 (use-package xml
-  :commands decode-sgml-entities encode-sgml-entities
-
+  :commands sgml-decode-entities sgml-encode-entities
   :config
-  (defun decode-sgml-entities (beg end)
+  (defun sgml-decode-entities (beg end)
     (interactive "r")
     (save-excursion
       (narrow-to-region beg end)
@@ -1756,7 +1705,7 @@ Use as a value for `completion-in-region-function'."
       (xml-parse-string)
       (widen)))
 
-  (defun encode-sgml-entities (beg end)
+  (defun sgml-encode-entities (beg end)
     (interactive "r")
     (let ((text (xml-escape-string (buffer-substring beg end))))
       (save-excursion
@@ -1781,11 +1730,9 @@ Use as a value for `completion-in-region-function'."
 
 (use-package transmission
   :ensure t
-
   :bind
   (:map mode-specific-map ("o r" . transmission))
   (:map transmission-mode-map ("M" . transmission-move))
-
   :config
   (define-advice transmission (:after () fullscreen)
     (delete-other-windows)))
@@ -1878,11 +1825,9 @@ Use as a value for `completion-in-region-function'."
         (lambda () (ytel-video-title (ytel-get-current-video))))))
 
 (use-package ytel-show
-  ;; :load-path "~/Documents/projects/emacs-lisp/ytel-show/"
   :quelpa (ytel-show :repo "xFA25E/ytel-show" :fetcher github :version original)
   :after ytel
   :bind (:map ytel-mode-map ("RET" . ytel-show))
-
   :config
   (with-eval-after-load 'bruh
     (setf (alist-get 'ytel-show-mode bruh-mpvi-get-title-functions)
@@ -1898,7 +1843,6 @@ Use as a value for `completion-in-region-function'."
 (use-package magit
   :ensure t
   :bind ("C-x g" . magit)
-
   :custom
   (magit-credential-cache-daemon-socket
    (expand-file-name "git/credential/socket" (xdg-cache-home))))
@@ -2056,7 +2000,6 @@ Use as a value for `completion-in-region-function'."
 (use-package nov
   :ensure t
   :mode ((rx (ext "epub")) . nov-mode)
-
   :custom
   (nov-save-place-file (expand-file-name "emacs/nov-places" (xdg-cache-home))))
 
@@ -2069,7 +2012,6 @@ Use as a value for `completion-in-region-function'."
 
 (use-package message
   :commands message-send-mail-with-sendmail
-
   :custom
   (message-kill-buffer-on-exit t)
   (message-send-mail-function  #'message-send-mail-with-sendmail)
@@ -2156,11 +2098,9 @@ Use as a value for `completion-in-region-function'."
 
 (use-package mu4e-alert
   :ensure t
-
   :hook
   (after-init-hook . mu4e-alert-enable-notifications)
   (after-init-hook . mu4e-alert-enable-mode-line-display)
-
   :config
   (mu4e-alert-set-default-style 'libnotify))
 
@@ -2248,7 +2188,6 @@ Use as a value for `completion-in-region-function'."
 
 (use-package ox-html
   :after org
-
   :custom
   (org-html-htmlize-output-type 'css)
   (org-html-htmlize-font-prefix "org-"))
