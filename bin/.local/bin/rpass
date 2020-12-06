@@ -43,14 +43,14 @@ type_field() {
             setxkbmap us
             millisleep 100
             xdotool type "${entry}"
-            switch_keyboard default
+            setxkbmap -layout 'dvorak,ru' -variant ',ruu'
             ;;
         *)
             entry="$(printf "%s" "${text}" | parse_field "${field}")"
-            setxkbmap us
+            # setxkbmap us
             millisleep 100
             xdotool type "${entry}"
-            switch_keyboard default
+            setxkbmap -layout 'dvorak,ru' -variant ',ruu'
     esac
 }
 
@@ -83,7 +83,7 @@ rpass_otp() {
     setxkbmap us
     millisleep 100
     xdotool type "${code}"
-    switch_keyboard default
+    setxkbmap -layout 'dvorak,ru' -variant ',ruu'
 }
 
 rpass_ask() {

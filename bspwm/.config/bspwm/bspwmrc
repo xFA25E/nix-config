@@ -35,22 +35,18 @@ bspc query --desktops --names | xargs -I'{}' bspc desktop '{}' --layout monocle
 
 # rules
 bspc rule --remove '*'
-bspc rule --add qutebrowser     desktop=B follow=off
-bspc rule --add firefox         desktop=B follow=off
-bspc rule --add Firefox         desktop=B follow=off
-bspc rule --add IceCat          desktop=B follow=off
-bspc rule --add Navigator       desktop=B follow=off
-bspc rule --add "Tor Browser"   desktop=B follow=off state=pseudo_tiled
-bspc rule --add brave-browser   desktop=B follow=off
-bspc rule --add Brave-browser   desktop=B follow=off
-bspc rule --add chromium        desktop=B follow=off
-bspc rule --add Chromium        desktop=B follow=off
-bspc rule --add TelegramDesktop desktop=C follow=off
-bspc rule --add discord         desktop=C follow=off
-bspc rule --add whatsapp-nativefier-d40211 desktop=C follow=off
+bspc rule --add qutebrowser     desktop=B
+bspc rule --add firefox         desktop=B
+bspc rule --add Firefox         desktop=B
+bspc rule --add IceCat          desktop=B
+bspc rule --add Navigator       desktop=B
+bspc rule --add brave-browser   desktop=B
+bspc rule --add Brave-browser   desktop=B
+bspc rule --add "Tor Browser"   desktop=B state=pseudo_tiled
+bspc rule --add TelegramDesktop desktop=C
 bspc rule --add mpv             desktop=V follow=off
-bspc rule --add Zathura                              state=tiled
-bspc rule --add Emacs:emacs                          state=tiled
-bspc rule --add Remacs:remacs                        state=tiled
+bspc rule --add Zathura     state=tiled
+bspc rule --add Emacs:emacs:Ediff state=floating
+bspc rule --add Emacs:emacs state=tiled
 
 # bspc config external_rules_command "${XDG_CONFIG_HOME:?}/bspwm/external_rules"

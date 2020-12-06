@@ -3,17 +3,24 @@
 CFG="%{F\\\\$(xgetres runel.info_fg)}"
 CHD="%{F\\\\$(xgetres runel.info_hd)}"
 
-text="${CHD}F%{F-}  ${CFG}\${freq}MHz%{F-}  \
-${CHD}C%{F-}  ${CFG}\${cpu}%%%{F-}  \
-${CHD}T%{F-}  ${CFG}\${acpitemp}°C%{F-}  \
-${CHD}R%{F-}  ${CFG}\${mem}%{F-}  \
-${CHD}S%{F-}  ${CFG}\${swap}%{F-}  \
-${CHD}FsR%{F-}  ${CFG}\${fs_free /}%{F-}  \
-${CHD}FsH%{F-}  ${CFG}\${fs_free /home}%{F-}  \
-\${if_mounted /mnt/second_partition}${CHD}FsW%{F-}  ${CFG}\${fs_free /mnt/second_partition}%{F-}  \${endif}\
-${CHD}IOr%{F-}  ${CFG}\${diskio_read /dev/sda}%{F-}  \
-${CHD}IOw%{F-}  ${CFG}\${diskio_write /dev/sda}%{F-}  \
-${CHD}P%{F-}  ${CFG}\${running_processes}/\${processes}%{F-}\
-\${if_empty \${battery_time}}\${else}  ${CHD}B%{F-}  ${CFG}\${battery_time}%{F-}\${endif}"
+text="\
+${CHD}I%{F-}  ${CFG}\${gw_iface}%{F-}\
+  ${CHD}G%{F-}  ${CFG}\${gw_ip}%{F-}\
+\${if_up wlo1}\
+  ${CHD}WiFi%{F-}  ${CFG}\${addr wlo1}%{F-}\
+  ${CHD}N%{F-}  ${CFG}\${wireless_essid wlo1}%{F-}\
+  ${CHD}Q%{F-}  ${CFG}\${wireless_link_qual wlo1}/\${wireless_link_qual_max wlo1}%{F-}\
+\${endif}\
+\${if_up eno1}\
+  ${CHD}Wired%{F-}  ${CFG}\${addr eno1}%{F-}\
+\${endif}\
+  ${CHD}FsR%{F-}  ${CFG}\${fs_free /}%{F-}\
+  ${CHD}FsH%{F-}  ${CFG}\${fs_free /home}%{F-}\
+\${if_mounted /mnt/second_partition}\
+  ${CHD}FsW%{F-}  ${CFG}\${fs_free /mnt/second_partition}%{F-}\
+\${endif}\
+\${if_empty \${battery_time}}\${else}\
+  ${CHD}B%{F-}  ${CFG}\${battery_time}%{F-}\
+\${endif}"
 
 exec conky -i 60 -t "${text}"

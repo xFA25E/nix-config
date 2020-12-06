@@ -33,7 +33,7 @@
 (global-set-key "XF86MonBrightnessUp" "xbacklight -inc 3")
 
 ;; change volume
-(global-set-keys (and XF86 (or AudioLowerVolume AudioMute AudioRaiseVolume))
+(global-set-keys (and XF86Audio (or LowerVolume Mute RaiseVolume))
   (and "amixer -D pulse sset Master " (or 2%- toggle 2%+) " >/dev/null"))
 
 ;; change volume
@@ -62,13 +62,9 @@
 (global-set-keys (and "s-s s-" (or comma period 1 2 3 4 5 6 7 8 9 0))
   (and "mpc -q volume " (or -1 "+1" (and (or 1 2 3 4 5 6 7 8 9 10) 0))))
 
-;; keyboard layouts control
-(global-set-key "s-k" "switch_keyboard next")
-(global-set-key "s-S-k" "switch_keyboard full-next")
-
 ;; change panel mode
-(global-set-keys (and "s-p s-" (or d s h n w c))
-  (and "runel -m " (or default mpd hardware network wifi corona)))
+(global-set-keys (and "s-p s-" (or d s h c))
+  (and "runel -m " (or default mpd hardware corona)))
 
 
 ;;; nodes (windows) commands

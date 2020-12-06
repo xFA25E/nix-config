@@ -12,4 +12,6 @@
                             (user-homedir-pathname))
            ql:*local-project-directories*))
 
+(ql:quickload :slynk)
+
 ;; (setf *print-circle* t)

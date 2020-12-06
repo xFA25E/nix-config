@@ -733,7 +733,7 @@ for key in ("top", "bottom", "left", "right"):
     c.tabs.indicator.padding[key] = 0
 
 # Behavior when the last tab is closed.
-c.tabs.last_close = "blank"
+c.tabs.last_close = "close"
 
 # Maximum width (in pixels) of tabs (-1 for no maximum)
 c.tabs.max_width = -1
@@ -774,6 +774,7 @@ c.tabs.show_switching_delay = 2000
 
 # Open a new window for every tab.
 c.tabs.tabs_are_windows = False
+# c.tabs.tabs_are_windows = True
 
 # Alignment of the text inside of tabs.
 c.tabs.title.alignment = "center"

@@ -177,7 +177,7 @@
   :init (load-theme 'acme t))
 
 (use-package faces
-  :bind (:map help-map ("F" . list-faces-display))
+  :bind (:map help-map ("M-f" . list-faces-display))
 
   :config
   (set-face-attribute 'default nil :family "Iosevka")
@@ -276,7 +276,7 @@
 
 (use-package frame
   :config
-  (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+  ;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
   (define-advice suspend-frame (:override ()) nil))
 
 
@@ -1131,11 +1131,13 @@
 
 ;;;;;; COMMON LISP (AKA BORSHCH)
 
+(use-package inf-lisp :custom (inferior-lisp-program "sbcl"))
+
 (use-package sly
   :ensure t
   :custom
   (sly-default-lisp 'sbcl)
-  (sly-lisp-implementations '((sbcl ("lisp-sbcl")) (ecl ("lisp-ecl"))))
+  (sly-lisp-implementations '((sbcl ("sbcl"))))
   (sly-mrepl-history-file-name
    (expand-file-name "emacs/sly-mrepl-history" (xdg-cache-home))))
 
@@ -1225,10 +1227,13 @@
   :custom
   (completion-cycle-threshold 3)
   (read-file-name-completion-ignore-case t)
-  (completion-category-defaults nil)
   (completion-pcm-complete-word-inserts-delimiters t)
   (completion-styles '(substring partial-completion))
-  (completion-in-region-function 'completing-read-in-region)
+  (completion-in-region-function
+   ;; 'completion--in-region
+   'completing-read-in-region
+   )
+  (completion-category-overrides '((bookmark (styles basic substring))))
 
   :config
   (defun completing-read-in-region (start end collection &optional predicate)
@@ -1670,7 +1675,9 @@ Use as a value for `completion-in-region-function'."
   :ensure t
   :bind (:map mode-specific-map ("o T" . dictionary-search)))
 
-(use-package ediff :hook (ediff-before-setup-hook . save-window-configuration-to-w))
+(use-package ediff
+  :custom (ediff-window-setup-function 'ediff-setup-windows-plain)
+  :hook (ediff-before-setup-hook . save-window-configuration-to-w))
 
 (use-package net-utils
   :bind (:map mode-specific-map

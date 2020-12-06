@@ -1,2 +1,0 @@
-#!/bin/sh
-exec sbcl --userinit "${XDG_CONFIG_HOME}/common-lisp/init.lisp" "$@"

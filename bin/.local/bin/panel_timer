@@ -33,13 +33,13 @@ format_duration() {
 
 case "${state}" in
     running)
-        sratus -u timer -v "${name} $(format_duration)"
+        # sratus -u timer -v "${name} $(format_duration)"
         ;;
     paused)
-        sratus -u timer -v "${name} $(format_duration) !"
+        # sratus -u timer -v "${name} $(format_duration) !"
         ;;
     halted)
-        sratus -u timer -v "off"
+        # sratus -u timer -v "off"
         notify-send "Timer" "\"${name}\" finished"
 
         if [ "${name}" = eyes ]; then
