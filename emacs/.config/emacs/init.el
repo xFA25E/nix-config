@@ -2,65 +2,50 @@
 
 ;;; USE-PACKAGE INIT
 
-(require 'xdg)
-
 
 ;;;; PACKAGE
 
-(customize-set-variable
- 'nsm-settings-file (expand-file-name "emacs/network-security.data" (xdg-cache-home)))
-(customize-set-variable
- 'package-user-dir (expand-file-name "emacs/elpa" (xdg-cache-home)))
-(customize-set-variable
- 'gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
-(customize-set-variable
- 'package-archives '(("gnu"   . "https://elpa.gnu.org/packages/")
-                     ("melpa" . "https://melpa.org/packages/")
-                     ("org"   . "https://orgmode.org/elpa/")))
+(let ((cache-home
+       (let ((env (getenv "XDG_CACHE_HOME")))
+         (if (or (null env) (not (file-name-absolute-p env)))
+             (expand-file-name "~/.cache")
+           env))))
+  (setq package-user-dir (expand-file-name "emacs/elpa" cache-home)
+        nsm-settings-file (expand-file-name "emacs/network-security.data" cache-home)
+        gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"
+        package-archives '(("gnu"   . "https://elpa.gnu.org/packages/")
+                           ("melpa" . "https://melpa.org/packages/")
+                           ("org"   . "https://orgmode.org/elpa/"))))
 
-(require 'package)
 (package-initialize)
-(unless (package-installed-p 'use-package)
+(unless (package-installed-p 'leaf)
   (package-refresh-contents)
-  (package-install 'use-package))
+  (package-install 'leaf))
 
-
-;;;; USE-PACKAGE VARIABLES
-
-(customize-set-variable 'use-package-enable-imenu-support t)
-(customize-set-variable 'use-package-expand-minimally t)
-(customize-set-variable 'use-package-always-defer t)
-(customize-set-variable 'use-package-hook-name-suffix nil)
-(require 'use-package)
+(defvar leaf-key-bindlist nil)
+(defvar leaf-expand-minimally t)
 
 
 ;;; UTILS
 
-(use-package xdg
-  :commands xdg-download-dir xdg-music-dir
+(leaf xdg
+  :commands xdg-download-dir xdg-music-dir xdg-data-home xdg-cache-home
   :config
-  (defun xdg-download-dir () (or (getenv "XDG_DOWNLOAD_DIR") "~/Downloads"))
-  (defun xdg-music-dir () (or (getenv "XDG_MUSIC_DIR") "~/Music")))
+  (defun xdg-download-dir () (xdg--dir-home "XDG_DOWNLOAD_DIR" "~/Downloads"))
+  (defun xdg-music-dir () (xdg--dir-home "XDG_MUSIC_DIR""~/Music")))
 
-(use-package diminish :ensure t)
+(leaf diminish :package t)
 
-(use-package quelpa
-  :ensure t
-  :demand t
+(leaf quelpa
+  :package t
   :custom
-  (quelpa-build-dir (expand-file-name "emacs/quelpa/build" (xdg-cache-home)))
-  (quelpa-dir (expand-file-name "emacs/quelpa" (xdg-cache-home)))
-  (quelpa-update-melpa-p nil))
+  `(quelpa-build-dir . ,(expand-file-name "emacs/quelpa/build" (xdg-cache-home)))
+  `(quelpa-dir . ,(expand-file-name "emacs/quelpa" (xdg-cache-home)))
+  '(quelpa-update-melpa-p . nil))
 
-(use-package quelpa-use-package
-  :ensure t
-  :demand t
-  :custom (quelpa-use-package-inhibit-loading-quelpa t))
+(leaf rx :config (rx-define ext (&rest exts) (and "." (or exts) string-end)))
 
-(use-package rx :config (rx-define ext (&rest exts) (and "." (or exts) string-end)))
-
-(use-package subr
-  :init (provide 'subr)
+(leaf subr
   :commands
   add-to-list
   alist-get
@@ -71,48 +56,51 @@
   split-string
   start-process
   with-current-buffer
-  :config (defalias 'yes-or-no-p 'y-or-n-p))
+  y-or-n-p
+  :preface (provide 'subr)
+  :init (advice-add 'yes-or-no-p :override 'y-or-n-p))
 
-(use-package subr-x :commands when-let thread-last)
+(leaf subr-x :commands when-let thread-last)
+
+(leaf bindings :preface (provide 'bindings))
 
 
 ;;; SETTINGS
 
-(use-package emacs
-  :bind
-  ("C-S-SPC" . insert-space-after-point)
+(leaf emacs
+  :bind ("C-S-SPC" . insert-space-after-point)
 
   :custom
-  (create-lockfiles nil)
-  (cursor-in-non-selected-windows nil)
-  (enable-recursive-minibuffers t)
-  (history-delete-duplicates t)
-  (history-length 300)
-  (hscroll-step 1)
-  (indent-tabs-mode nil)
-  (indicate-buffer-boundaries 'left)
-  (indicate-empty-lines t)
-  (next-screen-context-lines 10)
-  (tab-width 4)
-  (undo-limit 200000)
-  (undo-outer-limit 20000000)
-  (undo-strong-limit 300000)
-  (use-dialog-box nil)
-  (visible-bell nil)
-  (x-gtk-use-system-tooltips nil)
-  (x-stretch-cursor t)
-  (fill-column 80)
-  (help-char (aref (kbd "C-l") 0))
-  (kill-buffer-query-functions
-   (remq #'process-kill-buffer-query-function kill-buffer-query-functions))
-  (user-full-name "Valeriy Litkovskyy")
-  (read-process-output-max (* 1024 1024))
-  (completion-ignore-case t)
-  (read-buffer-completion-ignore-case t)
+  '(create-lockfiles . nil)
+  '(cursor-in-non-selected-windows . nil)
+  '(enable-recursive-minibuffers . t)
+  '(history-delete-duplicates . t)
+  '(history-length . 300)
+  '(hscroll-step . 1)
+  '(indent-tabs-mode . nil)
+  '(indicate-buffer-boundaries . 'left)
+  '(indicate-empty-lines . t)
+  '(next-screen-context-lines . 10)
+  '(tab-width . 4)
+  '(undo-limit . 200000)
+  '(undo-outer-limit . 20000000)
+  '(undo-strong-limit . 300000)
+  '(use-dialog-box . nil)
+  '(visible-bell . nil)
+  '(x-gtk-use-system-tooltips . nil)
+  '(x-stretch-cursor . t)
+  '(fill-column . 80)
+  `(help-char . ,(aref (kbd "C-l") 0))
+  `(kill-buffer-query-functions
+   . ,(remq #'process-kill-buffer-query-function kill-buffer-query-functions))
+  '(user-full-name . "Valeriy Litkovskyy")
+  `(read-process-output-max . ,(* 1024 1024))
+  '(completion-ignore-case . t)
+  '(read-buffer-completion-ignore-case . t)
+
+  :setq-default '(line-spacing . 0.2)
 
   :config
-  (setq-default line-spacing 0.2)
-
   (defun insert-space-after-point ()
     (interactive)
     (save-excursion (insert " "))))
@@ -120,17 +108,17 @@
 
 ;;;; FACES
 
-(use-package mb-depth :hook (after-init-hook . minibuffer-depth-indicate-mode))
+(leaf mb-depth :hook (after-init-hook . minibuffer-depth-indicate-mode))
 
-(use-package so-long :hook (after-init-hook . global-so-long-mode))
+(leaf so-long :hook (after-init-hook . global-so-long-mode))
 
-(use-package rainbow-mode :ensure t)
+(leaf rainbow-mode :package t)
 
-(use-package paren
-  :custom (show-paren-style 'parentheses)
+(leaf paren
+  :custom '(show-paren-style . 'parentheses)
   :hook (after-init-hook . show-paren-mode))
 
-(use-package hl-line
+(leaf hl-line
   :hook
   ((csv-mode-hook
     dired-mode-hook
@@ -143,17 +131,16 @@
     transmission-peers-mode-hook
     ytel-mode-hook) . hl-line-mode))
 
-(use-package diff-hl
-  :ensure t
+(leaf diff-hl
+  :package t
   :hook
   (magit-post-refresh-hook . diff-hl-magit-post-refresh)
-  (prog-mode-hook          . diff-hl-mode)
-  (org-mode-hook           . diff-hl-mode)
-  (dired-mode-hook         . diff-hl-dired-mode))
+  (dired-mode-hook . diff-hl-dired-mode)
+  ((prog-mode-hook org-mode-hook) . diff-hl-mode))
 
-(use-package ansi-color
+(leaf ansi-color
   :hook
-  (shell-mode-hook         . ansi-color-for-comint-mode-on)
+  (shell-mode-hook . ansi-color-for-comint-mode-on)
   (compilation-filter-hook . colorize-compilation)
   :config
   (defun colorize-compilation ()
@@ -162,22 +149,22 @@
       (ansi-color-apply-on-region
        compilation-filter-start (point)))))
 
-(use-package form-feed
-  :ensure t
-  :diminish form-feed-mode
-  :hook ((emacs-lisp-mode-hook scheme-mode-hook) . form-feed-mode))
+(leaf form-feed
+  :package t
+  :hook ((emacs-lisp-mode-hook scheme-mode-hook) . form-feed-mode)
+  :config (diminish 'form-feed-mode))
 
 
 ;;;;; THEMES
 
-(use-package custom :commands load-theme custom-theme-enabled-p)
+(leaf custom :commands load-theme custom-theme-enabled-p)
 
-(use-package acme-theme
-  :ensure t
+(leaf acme-theme
+  :package t
   :init (load-theme 'acme t))
 
-(use-package faces
-  :bind (:map help-map ("M-f" . list-faces-display))
+(leaf faces
+  :bind (help-map :package help ("M-f" . list-faces-display))
 
   :config
   (set-face-attribute 'default nil :family "Iosevka")
@@ -216,10 +203,11 @@
 
 ;;;;; OUTLINE
 
-(use-package outline
-  :diminish outline-minor-mode
+(leaf outline
   :hook (emacs-lisp-mode-hook . outline-minor-mode)
   :config
+  (diminish 'outline-minor-mode)
+
   (defun outline-show-after-jump ()
     (when outline-minor-mode
       (outline-show-entry)))
@@ -230,85 +218,84 @@
   (with-eval-after-load 'imenu
     (add-hook 'imenu-after-jump-hook #'outline-show-after-jump)))
 
-(use-package bicycle
-  :ensure t
-  :after outline
-  :bind
-  (:map outline-minor-mode-map
-        ("<C-tab>" . bicycle-cycle)
-        ("<backtab>" . bicycle-cycle-global)))
-
-(use-package outline-minor-faces
-  :ensure t
+(leaf outline-minor-faces
+  :package t
   :after outline
   :hook (outline-minor-mode-hook . outline-minor-faces-add-font-lock-keywords))
 
-(use-package hideshow
-  :diminish hs-minor-mode
+(leaf hideshow
   :hook (emacs-lisp-mode-hook . hs-minor-mode)
-  :bind (:map hs-minor-mode-map ("<C-M-tab>" . #'hs-toggle-hiding)))
+  :bind (hs-minor-mode-map ("<C-M-tab>" . hs-toggle-hiding))
+  :config (diminish 'hs-minor-mode))
 
-(use-package bicycle
-  :ensure t
-  :after hideshow
+(leaf bicycle
+  :package t
   :bind
-  (:map hs-minor-mode-map
-        ("<C-tab>" . bicycle-cycle)
-        ("<C-M-tab>" . #'hs-toggle-hiding)
-        ("<backtab>" . bicycle-cycle-global)))
+  (outline-minor-mode-map
+   :package outline
+   ("<C-tab>" . bicycle-cycle)
+   ("<backtab>" . bicycle-cycle-global))
+  (hs-minor-mode-map
+   :package hideshow
+   ("<C-tab>" . bicycle-cycle)
+   ("<backtab>" . bicycle-cycle-global)
+   ("<C-M-tab>" . hs-toggle-hiding)))
 
 
 ;;;; GUI
 
-(use-package tool-bar :config (tool-bar-mode -1))
+(leaf tool-bar :defer-config (tool-bar-mode -1))
 
-(use-package scroll-bar
+(leaf scroll-bar
   :custom
-  (scroll-step 1)
-  (scroll-conservatively 10000)
-  :config (scroll-bar-mode -1))
+  '(scroll-step . 1)
+  '(scroll-conservatively . 10000)
+  :defer-config (scroll-bar-mode -1))
 
-(use-package menu-bar
+(leaf menu-bar
   :bind ("<f10>" . menu-bar-mode)
-  :config (menu-bar-mode -1))
+  :defer-config (menu-bar-mode -1))
 
-(use-package tooltip :config (tooltip-mode -1))
+(leaf tooltip :defer-config (tooltip-mode -1))
 
-(use-package frame
-  :config
-  ;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
-  (define-advice suspend-frame (:override ()) nil))
+(leaf frame :defer-config (define-advice suspend-frame (:override ()) nil))
 
 
 ;;;; AUTH
 
-(use-package auth-source
-  :custom (auth-sources '("~/.authinfo.gpg" "~/.netrc" "~/.authinfo")))
+(leaf auth-source
+  :custom '(auth-sources . '("~/.authinfo.gpg" "~/.netrc" "~/.authinfo")))
 
-(use-package auth-source-pass
+(leaf auth-source-pass
   :custom
-  (auth-source-pass-filename
-   (or (getenv "PASSWORD_STORE_DIR") (expand-file-name "pass" (xdg-data-home)))))
+  `(auth-source-pass-filename
+    . ,(or (getenv "PASSWORD_STORE_DIR") (expand-file-name "pass" (xdg-data-home)))))
 
 
 ;;;; URL
 
-(use-package browse-url
-  :custom (browse-url-secondary-browser-function #'browse-url-firefox)
-  :bind (:map ctl-x-map ("B" . browse-url)))
+(leaf browse-url
+  :custom '(browse-url-secondary-browser-function . #'browse-url-firefox)
+  :bind (ctl-x-map :package subr ("B" . browse-url)))
 
-(use-package bruh
+(leaf bruh
+  :defvar bruh-videos-re
+  :defun bruh-mpvi-ytdli-or-browse
+
+  :preface
+  (unless (package-installed-p 'bruh)
+    (quelpa '(bruh :repo "a13/bruh" :fetcher github)))
+
   :after browse-url
-  :quelpa (bruh :repo "a13/bruh" :fetcher github)
 
   :custom
-  (bruh-images-browser-function 'bruh-feh)
-  (bruh-default-browser #'eww-browse-url)
-  (bruh-videos-browser-function #'bruh-mpvi-ytdli-or-browse)
-  (browse-url-browser-function #'bruh-browse-url)
-  (bruh-mpvi-get-title-functions nil)
+  '(bruh-images-browser-function . 'bruh-feh)
+  '(bruh-default-browser . #'eww-browse-url)
+  '(bruh-videos-browser-function . #'bruh-mpvi-ytdli-or-browse)
+  '(browse-url-browser-function . #'bruh-browse-url)
+  '(bruh-mpvi-get-title-functions . nil)
 
-  :config
+  :defer-config
   (defun bruh-mpvi-ytdli-or-browse (url &rest rest)
     (let ((actions '("mpv" "ytdl" "default"))
           (youtube-id
@@ -342,13 +329,13 @@
                 ,(rx bos "http" (? "s") "://videos.lukesmith.xyz/" (or "static/webseed" "videos/watch"))))
     (add-to-list 'bruh-videos-re re)))
 
-(use-package url
+(leaf url
   :custom
-  (url-configuration-directory (expand-file-name "emacs/url/" (xdg-cache-home))))
+  `(url-configuration-directory . ,(expand-file-name "emacs/url/" (xdg-cache-home))))
 
-(use-package url-handlers :hook (after-init-hook . url-handler-mode))
+(leaf url-handlers :hook (after-init-hook . url-handler-mode))
 
-(use-package url-util
+(leaf url-util
   :commands url-encode-entities url-decode-entities
   :config
   (defun url-decode-entities (beg end)
@@ -370,8 +357,8 @@
 
 ;;;; CACHE
 
-(use-package savehist
-  :custom (savehist-file (expand-file-name "emacs/savehist" (xdg-data-home)))
+(leaf savehist
+  :custom `(savehist-file . ,(expand-file-name "emacs/savehist" (xdg-data-home)))
   :hook
   (after-init-hook    . savehist-mode)
   (savehist-save-hook . savehist-filter-file-name-history)
@@ -387,11 +374,11 @@
         file-name-history)
        :test #'string-equal)))))
 
-(use-package saveplace
+(leaf saveplace
   :hook (after-init-hook . save-place-mode)
   :custom
-  (save-place-file (expand-file-name "emacs/saveplace" (xdg-data-home)))
-  (save-place-forget-unreadable-files t)
+  `(save-place-file . ,(expand-file-name "emacs/saveplace" (xdg-data-home)))
+  '(save-place-forget-unreadable-files . t)
   :config
   (setq save-place-skip-check-regexp
         (rx (or (regexp save-place-skip-check-regexp)
@@ -400,33 +387,33 @@
 
 ;;;; FILES
 
-(use-package autorevert
+(leaf autorevert
   :custom
-  (auto-revert-remote-files t)
-  (auto-revert-avoid-polling t))
+  '(auto-revert-remote-files . t)
+  '(auto-revert-avoid-polling . t))
 
-(use-package files
+(leaf files
   :commands read-directory-name custom-backup-enable-predicate
 
   :bind
-  ("M-~"         . nil)
+  ("M-~" . nil)
   ("C-S-x C-S-c" . save-buffers-kill-emacs)
-  (:map ctl-x-map ("R" . revert-buffer-no-confirm))
+  (ctl-x-map :package subr ("R" . revert-buffer-no-confirm))
 
   :custom
-  (backup-by-copying t)
-  (confirm-nonexistent-file-or-buffer nil)
-  (delete-old-versions t)
-  (kept-new-versions 6)
-  (kept-old-versions 2)
-  (require-final-newline nil)
-  (version-control t)
-  (backup-enable-predicate #'custom-backup-enable-predicate)
+  '(backup-by-copying . t)
+  '(confirm-nonexistent-file-or-buffer . nil)
+  '(delete-old-versions . t)
+  '(kept-new-versions . 6)
+  '(kept-old-versions . 2)
+  '(require-final-newline . nil)
+  '(version-control . t)
+  '(backup-enable-predicate . #'custom-backup-enable-predicate)
   ;; (remote-file-name-inhibit-cache nil "Speed up tramp, caution!")
-  (auto-save-file-name-transforms
-   `((,(rx (* any)) ,(expand-file-name "emacs/auto-saves/" (xdg-cache-home)) t)))
-  (backup-directory-alist
-   `((,(rx (* any)) . ,(expand-file-name "emacs/backups" (xdg-data-home)))))
+  `(auto-save-file-name-transforms
+    . ',`((,(rx (* any)) ,(expand-file-name "emacs/auto-saves/" (xdg-cache-home)) t)))
+  `(backup-directory-alist
+    . ',`((,(rx (* any)) . ,(expand-file-name "emacs/backups" (xdg-data-home)))))
 
   :config
   (defun revert-buffer-no-confirm ()
@@ -442,87 +429,89 @@
 
 ;;;; SHR
 
-(use-package shr
+(leaf shr
+  :defvar shr-external-rendering-functions
   :custom
-  (shr-use-fonts nil)
-  (shr-use-colors nil)
-  (shr-max-image-proportion 0.7)
-  (shr-image-animate nil)
-  (shr-width (current-fill-column)))
+  '(shr-use-fonts . nil)
+  '(shr-use-colors . nil)
+  '(shr-max-image-proportion . 0.7)
+  '(shr-image-animate . nil)
+  `(shr-width . ,(current-fill-column)))
 
-(use-package shr-tag-pre-highlight
-  :ensure t
+(leaf shr-tag-pre-highlight
+  :package t
   :after shr
-  :config
-  (add-to-list 'shr-external-rendering-functions '(pre . shr-tag-pre-highlight)))
+  :commands shr-tag-pre-highlight
+  :leaf-defer nil
+  :config (add-to-list 'shr-external-rendering-functions '(pre . shr-tag-pre-highlight)))
 
 
 ;;;; CLIPBOARD
 
-(use-package select
+(leaf select
   :custom
-  (selection-coding-system 'utf-8)
-  (select-enable-clipboard t))
+  '(selection-coding-system . 'utf-8)
+  '(select-enable-clipboard . t))
 
-(use-package clipmon
-  :ensure t
+(leaf clipmon
+  :package t
   :hook (after-init-hook . clipmon-mode))
 
 
 ;;;; OTHER
 
-(use-package startup
-  :init (provide 'startup)
+(leaf startup
+  :preface (provide 'startup)
   :custom
-  (auto-save-list-file-prefix
-   (expand-file-name (format-time-string "emacs/auto-saves/list/%y-%m-%d-")
-                     (xdg-cache-home)))
-  (inhibit-startup-echo-area-message t)
-  (inhibit-startup-screen t)
-  (initial-scratch-message nil))
+  `(auto-save-list-file-prefix
+    . ,(expand-file-name (format-time-string "emacs/auto-saves/list/%y-%m-%d-")
+                         (xdg-cache-home)))
+  '(inhibit-startup-echo-area-message . t)
+  '(inhibit-startup-screen . t)
+  '(initial-scratch-message . nil))
 
-(use-package window
-  :init (provide 'window)
+(leaf window
+  :preface (provide 'window)
   :bind
-  ("M-V"     . scroll-down-line)
-  ("C-S-v"   . scroll-up-line)
+  ("M-V" . scroll-down-line)
+  ("C-S-v" . scroll-up-line)
   ("C-M-S-b" . previous-buffer)
   ("C-M-S-f" . next-buffer)
-  ("M-Q"     . quit-window)
-  (:map ctl-x-map ("C-b" . switch-to-buffer))
+  ("M-Q" . quit-window)
+  (ctl-x-map :package subr ("C-b" . switch-to-buffer))
   :config
   (add-to-list 'display-buffer-alist `(,(rx (* any)) (display-buffer-same-window))))
 
-(use-package time :custom (display-time-24hr-format t))
+(leaf time :custom '(display-time-24hr-format . t))
 
-(use-package novice :custom (disabled-command-function nil))
+(leaf novice :custom '(disabled-command-function . nil))
 
-(use-package cus-edit :custom (custom-file null-device))
+(leaf cus-edit :custom '(custom-file . null-device))
 
-(use-package uniquify :custom (uniquify-ignore-buffers-re "^\\*"))
+(leaf uniquify :custom `(uniquify-ignore-buffers-re . ,(rx bol "*")))
 
-(use-package mule
-  :config
+(leaf mule
+  :defer-config
   (prefer-coding-system 'utf-8)
   (set-terminal-coding-system 'utf-8)
   (set-language-environment "UTF-8"))
 
-(use-package gamegrid
+(leaf gamegrid
   :custom
-  (gamegrid-user-score-file-directory
-   (expand-file-name "emacs/games/" (xdg-cache-home))))
+  `(gamegrid-user-score-file-directory
+    . ,(expand-file-name "emacs/games/" (xdg-cache-home))))
 
-(use-package ede/base
+(leaf ede/base
   :custom
-  (ede-project-placeholder-cache-file
-   (expand-file-name "emacs/ede/projects.el" (xdg-cache-home))))
+  `(ede-project-placeholder-cache-file
+    . ,(expand-file-name "emacs/ede/projects.el" (xdg-cache-home))))
 
-(use-package async
-  :ensure t
-  :after bytecomp
-  :init (async-bytecomp-package-mode))
+(leaf async
+  :package t
+  :after package
+  :config (async-bytecomp-package-mode))
 
-(use-package byte-compile
+(leaf byte-compile
   :hook (after-save-hook . byte-recompile-current-file)
   :config
   (defun byte-recompile-current-file ()
@@ -530,38 +519,38 @@
     (when (derived-mode-p 'emacs-lisp-mode)
       (byte-recompile-file (buffer-file-name)))))
 
-(use-package transient
+(leaf transient
   :custom
-  (transient-history-file
-   (expand-file-name "emacs/transient/history.el" (xdg-cache-home)))
-  (transient-levels-file
-   (expand-file-name "emacs/transient/levels.el" (xdg-cache-home)))
-  (transient-values-file
-   (expand-file-name "emacs/transient/values.el" (xdg-cache-home))))
+  `(transient-history-file
+    . ,(expand-file-name "emacs/transient/history.el" (xdg-cache-home)))
+  `(transient-levels-file
+    . ,(expand-file-name "emacs/transient/levels.el" (xdg-cache-home)))
+  `(transient-values-file
+    . ,(expand-file-name "emacs/transient/values.el" (xdg-cache-home))))
 
-(use-package gcmh
-  :ensure t
-  :diminish gcmh-mode
-  :hook (emacs-startup-hook . gcmh-mode))
+(leaf gcmh
+  :package t
+  :hook (emacs-startup-hook . gcmh-mode)
+  :config (diminish 'gcmh-mode))
 
 
 ;;; REMOTE
 
-(use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
+(leaf ange-ftp :custom '(ange-ftp-netrc-filename . "~/.authinfo.gpg"))
 
-(use-package tramp
+(leaf tramp
   :custom
-  (tramp-persistency-file-name
-   (expand-file-name "emacs/tramp/connection-history" (xdg-cache-home)))
-  (tramp-default-method "ssh")
-  (tramp-histfile-override t)
-  (tramp-completion-reread-directory-timeout nil)
-  :config
+  `(tramp-persistency-file-name
+    . ,(expand-file-name "emacs/tramp/connection-history" (xdg-cache-home)))
+  '(tramp-default-method . "ssh")
+  '(tramp-histfile-override . t)
+  '(tramp-completion-reread-directory-timeout . nil)
+  :defer-config
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
   (add-to-list 'tramp-remote-path "~/.local/bin"))
 
-(use-package sudo-edit
-  :ensure t
+(leaf sudo-edit
+  :package t
   :hook
   (after-init-hook . sudo-edit-indicator-mode)
   (shell-mode-hook . sudo-edit-set-header))
@@ -569,14 +558,15 @@
 
 ;;; MAN
 
-(use-package man
-  :custom (Man-notify-method 'aggressive)
-  :bind (:map help-map ("M-m" . man)))
+(leaf man
+  :custom '(Man-notify-method . 'aggressive)
+  :bind (help-map :package help ("M-m" . man)))
 
-(use-package apropos :custom (apropos-sort-by-scores t))
+(leaf apropos :custom '(apropos-sort-by-scores . t))
 
-(use-package finder
-  :bind (:map help-map ("M-c" . finder-commentary))
+(leaf finder
+  :defun finder-exit@with-package
+  :bind (help-map :package help ("M-c" . finder-commentary))
   :config
   (define-advice finder-exit (:override () with-package)
     (interactive)
@@ -589,23 +579,23 @@
 
 ;;; DIRED
 
-(use-package dired
+(leaf dired
   :commands dired-get-marked-files
 
   :hook
-  (dired-mode-hook          . dired-hide-details-mode)
+  (dired-mode-hook . dired-hide-details-mode)
   (dired-before-readin-hook . dired-setup-switches)
 
   :custom
-  (dired-dwim-target t)
-  (dired-listing-switches "-alDF --si --group-directories-first")
-  (dired-ls-F-marks-symlinks t)
+  '(dired-dwim-target . t)
+  '(dired-listing-switches . "-alDF --si --group-directories-first")
+  '(dired-ls-F-marks-symlinks . t)
 
   :bind
-  (:map dired-mode-map
-        ("* &" . dired-flag-garbage-files)
-        ("* d" . dired-flag-files-regexp)
-        ("* g" . dired-mark-files-containing-regexp))
+  (dired-mode-map
+   ("* &" . dired-flag-garbage-files)
+   ("* d" . dired-flag-files-regexp)
+   ("* g" . dired-mark-files-containing-regexp))
 
   :config
   (defun dired-setup-switches ()
@@ -636,61 +626,62 @@
           (kill-new string))
         (message "%s" string)))))
 
-(use-package dired-x
-  :demand t
+(leaf dired-x
   :after dired
   :hook (dired-mode-hook . dired-omit-mode)
 
   :bind
-  (:map ctl-x-map ("C-j" . dired-jump))
-  (:map dired-mode-map
-        ("* i" . dired-mark-images)
-        ("* v" . dired-mark-videos))
+  (ctl-x-map :package subr ("C-j" . dired-jump))
+  (dired-mode-map
+   :package dired
+   ("* i" . dired-mark-images)
+   ("* v" . dired-mark-videos))
 
   :custom
-  (dired-guess-shell-alist-user
-   `((,(rx (ext "csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx"))
-      "setsid -f libreoffice * >/dev/null 2>&1"
-      "libreoffice --invisible --headless --convert-to pdf * &"
-      "libreoffice --invisible --headless --convert-to epub * &"
-      "libreoffice --invisible --headless --convert-to csv * &")
+  `(dired-guess-shell-alist-user
+    . ',(list
+         (list (rx (ext "csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx"))
+               "setsid -f libreoffice * >/dev/null 2>&1"
+               "libreoffice --invisible --headless --convert-to pdf * &"
+               "libreoffice --invisible --headless --convert-to epub * &"
+               "libreoffice --invisible --headless --convert-to csv * &")
 
-     (,(rx (ext "jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp" "xpm"))
-      "setsid -f sxiv * >/dev/null 2>&1"
-      "setsid -f gimp * >/dev/null 2>&1")
+         (list (rx (ext "jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp" "xpm"))
+               "setsid -f sxiv * >/dev/null 2>&1"
+               "setsid -f gimp * >/dev/null 2>&1")
 
-     (,(rx (ext "eps"))
-      "setsid -f inkscape * >/dev/null 2>&1")
+         (list (rx (ext "eps"))
+               "setsid -f inkscape * >/dev/null 2>&1")
 
-     (,(rx (ext "ai"))
-      "setsid -f inkscape * >/dev/null 2>&1"
-      "setsid -f gimp * >/dev/null 2>&1")
+         (list (rx (ext "ai"))
+               "setsid -f inkscape * >/dev/null 2>&1"
+               "setsid -f gimp * >/dev/null 2>&1")
 
-     (,(rx (ext "fb2"))
-      "ebook-convert ? .epub &")
+         (list (rx (ext "fb2"))
+               "ebook-convert ? .epub &")
 
-     (,(rx (ext "pdf"))
-      "setsid -f zathura * >/dev/null 2>&1"
-      "setsid -f libreoffice * >/dev/null 2>&1"
-      "setsid -f gimp * >/dev/null 2>&1")
+         (list (rx (ext "pdf"))
+               "setsid -f zathura * >/dev/null 2>&1"
+               "setsid -f libreoffice * >/dev/null 2>&1"
+               "setsid -f gimp * >/dev/null 2>&1")
 
-     (,(rx (ext "epub" "djvu"))
-      "setsid -f zathura * >/dev/null 2>&1")
+         (list (rx (ext "epub" "djvu"))
+               "setsid -f zathura * >/dev/null 2>&1")
 
-     (,(rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp"
-                "vob" "wmv" "aiff" "wav"))
-      "setsid -f mpv --force-window=yes * >/dev/null 2>&1"
-      "video_duration * | format_duration"
-      "video_duration * | awk '{s+=$1}END{print s}' | format_duration"
-      "compress_video * &"
-      "strip_video * &"
-      "mpv -vo=drm")
+         (list (rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp"
+                        "vob" "wmv" "aiff" "wav"))
+               "setsid -f mpv --force-window=yes * >/dev/null 2>&1"
+               "video_duration * | format_duration"
+               "video_duration * | awk '{s+=$1}END{print s}' | format_duration"
+               "compress_video * &"
+               "strip_video * &"
+               "mpv -vo=drm")
 
-     (,(rx (ext "cue"))
-      "setsid -f mpv --force-window=yes * >/dev/null 2>&1")
+         (list (rx (ext "cue"))
+               "setsid -f mpv --force-window=yes * >/dev/null 2>&1")
 
-     (,(rx (ext "rar"))
-      "temp=\"$(echo `?` | rev | cut -d. -f 2- | rev)\"; mkdir -p \"${temp}\"; unrar x ? \"${temp}\"")))
+         (list (rx (ext "rar"))
+               "temp=\"$(echo `?` | rev | cut -d. -f 2- | rev)\"; mkdir -p \"${temp}\"; unrar x ? \"${temp}\"")))
 
   :config
   (defun dired-get-marker-char ()
@@ -719,11 +710,10 @@
        "vob" "wmv" "aiff" "wav")
      marker-char)))
 
-(use-package dired-aux
-  :demand t
+(leaf dired-aux
   :after dired
-  :bind (:map dired-mode-map ("b" . dired-stat))
-  :custom (dired-create-destination-dirs 'ask)
+  :bind (dired-mode-map :package dired ("b" . dired-stat))
+  :custom '(dired-create-destination-dirs . 'ask)
   :config
   (add-to-list
    'dired-compress-file-suffixes
@@ -734,61 +724,63 @@
     (dired-do-shell-command "stat" current-prefix-arg
                             (dired-get-marked-files t current-prefix-arg))))
 
-(use-package wdired
+(leaf wdired
   :after dired
   ;; does not work as expected
   :hook (wdired-mode-hook . disable-image-dired)
   :config (defun disable-image-dired () (image-dired-minor-mode -1)))
 
-(use-package image-dired
+(leaf image-dired
   :after dired
   :hook (dired-mode-hook . image-dired-minor-mode)
   :custom
-  (image-dired-external-viewer "sxiv")
-  (image-dired-db-file
-   (expand-file-name "emacs/image-dired/db" (xdg-cache-home)))
-  (image-dired-dir
-   (expand-file-name "emacs/image-dired/thumbnails/" (xdg-cache-home)))
-  (image-dired-gallery-dir
-   (expand-file-name "emacs/image-dired/gallery/" (xdg-cache-home)))
-  (image-dired-temp-image-file
-   (expand-file-name "emacs/image-dired/temp" (xdg-cache-home)))
-  (image-dired-temp-rotate-image-file
-   (expand-file-name "emacs/image-dired/rotate_temp" (xdg-cache-home))))
+  '(image-dired-external-viewer . "sxiv")
+  `(image-dired-db-file
+   . ,(expand-file-name "emacs/image-dired/db" (xdg-cache-home)))
+  `(image-dired-dir
+   . ,(expand-file-name "emacs/image-dired/thumbnails/" (xdg-cache-home)))
+  `(image-dired-gallery-dir
+   . ,(expand-file-name "emacs/image-dired/gallery/" (xdg-cache-home)))
+  `(image-dired-temp-image-file
+   . ,(expand-file-name "emacs/image-dired/temp" (xdg-cache-home)))
+  `(image-dired-temp-rotate-image-file
+   . ,(expand-file-name "emacs/image-dired/rotate_temp" (xdg-cache-home))))
 
-(use-package dired-rsync
-  :ensure t
+(leaf dired-rsync
   :after dired
-  :bind (:map dired-mode-map ("r" . dired-rsync)))
+  :package t
+  :bind (dired-mode-map :package dired ("r" . dired-rsync)))
 
-(use-package dired-git-info
-  :ensure t
+(leaf dired-git-info
+  :package t
   :after dired
-  :bind (:map dired-mode-map (")" . dired-git-info-mode)))
+  :bind (dired-mode-map :package dired (")" . dired-git-info-mode)))
 
-(use-package dired-async
-  :ensure async
+(leaf dired-async
+  :package async
   :after dired
-  :diminish dired-async-mode
-  :init (dired-async-mode))
+  :config
+  (dired-async-mode)
+  (diminish 'dired-async-mode))
 
 
 ;;;; FIND
 
-(use-package find-dired
-  :bind (:map search-map ("f f" . find-dired))
-  :custom
-  (find-ls-option '("-print0 | sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF")))
+(leaf find-dired
+  :bind (search-map :package bindings ("f f" . find-dired))
+  :custom '(find-ls-option . '("-print0 | sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF")))
 
-(use-package fd-dired
-  :quelpa (fd-dired :repo "xFA25E/fd-dired" :fetcher github)
-  ;; :ensure t
-  :bind (:map search-map ("f d" . fd-dired))
-  :custom (fd-dired-ls-option '("| sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF")))
+(leaf fd-dired
+  :preface
+  (unless (package-installed-p 'fd-dired)
+    (quelpa '(fd-dired :repo "xFA25E/fd-dired" :fetcher github)))
+  :bind (search-map :package bindings ("f d" . fd-dired))
+  :custom '(fd-dired-ls-option . '("| sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF")))
 
-(use-package locate
-  :custom (locate-make-command-line 'locate-make-ignore-case-command-line)
-  :bind (:map search-map ("f l" . locate))
+(leaf locate
+  :defvar locate-command
+  :custom '(locate-make-command-line . 'locate-make-ignore-case-command-line)
+  :bind (search-map :package bindings ("f l" . locate))
   :config
   (defun locate-make-ignore-case-command-line (search-string)
     (list locate-command "-i" search-string)))
@@ -796,7 +788,7 @@
 
 ;;; EDITING
 
-(use-package simple
+(leaf simple
   :hook
   (before-save-hook . delete-trailing-whitespace)
   (after-init-hook  . size-indication-mode)
@@ -813,18 +805,19 @@
   ("M-u"   . upcase-dwim)
   ([remap move-beginning-of-line] . back-to-indentation-or-beginning)
   ([remap newline] . newline-and-indent)
-  (:map ctl-x-map
-        ("K"   . kill-current-buffer)
-        ("C-r" . overwrite-mode))
-  (:map mode-specific-map ("o P" . list-processes))
+  (ctl-x-map
+   :package subr
+   ("K"   . kill-current-buffer)
+   ("C-r" . overwrite-mode))
+  (mode-specific-map :package bindings ("o P" . list-processes))
 
   :custom
-  (completion-show-help nil)
-  (shift-select-mode nil)
-  (kill-do-not-save-duplicates t)
-  (kill-read-only-ok t)
-  (async-shell-command-buffer 'new-buffer)
-  (async-shell-command-display-buffer nil)
+  '(completion-show-help . nil)
+  '(shift-select-mode . nil)
+  '(kill-do-not-save-duplicates . t)
+  '(kill-read-only-ok . t)
+  '(async-shell-command-buffer . 'new-buffer)
+  '(async-shell-command-display-buffer . nil)
 
   :config
   (defun back-to-indentation-or-beginning ()
@@ -841,42 +834,43 @@
     (save-excursion
       (kill-new (thing-at-point 'line)))))
 
-(use-package register
+(leaf register
   :commands save-window-configuration-to-w
-  :custom (register-separator ?\n)
+  :custom '(register-separator . ?\n)
   :bind
-  (:map ctl-x-r-map
-        ("C-@"   . nil)
-        ("C-SPC" . nil)
-        ("g"     . nil)
-        ("x"     . nil)
-        ("v"     . view-register)
-        ("L"     . list-registers)
-        ("p"     . prepend-to-register)
-        ("a"     . append-to-register))
+  (ctl-x-r-map
+   :package bindings
+   ("C-@" . nil)
+   ("C-SPC" . nil)
+   ("g" . nil)
+   ("x" . nil)
+   ("v" . view-register)
+   ("L" . list-registers)
+   ("p" . prepend-to-register)
+   ("a" . append-to-register))
   :config
   (set-register register-separator "\n")
   (defun save-window-configuration-to-w (&rest _ignore)
     (window-configuration-to-register ?w)))
 
-(use-package subword
-  :hook ((php-mode-hook rust-mode-hook java-mode-hook) . subword-mode))
+(leaf subword :hook ((php-mode-hook rust-mode-hook java-mode-hook) . subword-mode))
 
-(use-package multiple-cursors
-  :ensure t
+(leaf multiple-cursors
+  :package t
   :bind
   ("C-S-c C-S-c" . mc/edit-lines)
-  ("C->"         . mc/mark-next-like-this)
-  ("C-<"         . mc/mark-previous-like-this)
-  (:map mode-specific-map ("C-<" . mc/mark-all-like-this))
+  ("C->" . mc/mark-next-like-this)
+  ("C-<" . mc/mark-previous-like-this)
+  (mode-specific-map :package bindings ("C-<" . mc/mark-all-like-this))
   :custom
-  (mc/always-run-for-all t)
-  (mc/always-repeat-command t))
+  '(mc/always-run-for-all . t)
+  '(mc/always-repeat-command . t))
 
-(use-package edit-indirect
-  :ensure t
-  :custom (edit-indirect-guess-mode-function #'edit-indirect-guess-mode)
-  :bind (:map ctl-x-map ("E" . edit-indirect-region-or-at-point))
+(leaf edit-indirect
+  :defun edit-indirect-guess-mode
+  :package t
+  :custom '(edit-indirect-guess-mode-function . #'edit-indirect-guess-mode)
+  :bind (ctl-x-map :package subr ("E" . edit-indirect-region-or-at-point))
   :config
   (defun edit-indirect-region-or-at-point ()
     (interactive)
@@ -894,57 +888,56 @@
       (t (normal-mode)))))
 
 
-(use-package paragraphs :bind ("C-M-S-t" . transpose-paragraphs))
+(leaf paragraphs :bind ("C-M-S-t" . transpose-paragraphs))
 
 ;;;; FORMATTING
 
-(use-package whitespace
-  :diminish whitespace-mode
-  :hook (before-save-hook . whitespace-cleanup))
+(leaf whitespace
+  :hook (before-save-hook . whitespace-cleanup)
+  :config (diminish 'whitespace-mode))
 
-(use-package format-all :ensure t)
+(leaf format-all :package t)
 
 
 ;;;; INPUT METHOD
 
-(use-package cyrillic-dvorak-im
-  :quelpa
-  (cyrillic-dvorak-im :repo "xFA25E/cyrillic-dvorak-im"
-                      :fetcher github
-                      :version original)
-  :demand t)
+(leaf cyrillic-dvorak-im
+  :preface
+  (unless (package-installed-p 'cyrillic-dvorak-im)
+    (quelpa '(cyrillic-dvorak-im :repo "xFA25E/cyrillic-dvorak-im" :fetcher github)))
+  :require t)
 
-(use-package reverse-im
-  :ensure t
-  :demand t
+(leaf reverse-im
+  :package t
   :after cyrillic-dvorak-im
+  :require t
   :config (reverse-im-activate "cyrillic-dvorak"))
 
 
 ;;;; PAIRS
 
-(use-package elec-pair :hook (after-init-hook . electric-pair-mode))
+(leaf elec-pair :hook (after-init-hook . electric-pair-mode))
 
-(use-package smartparens
-  :ensure t
+(leaf smartparens
+  :defun sp-kill-region sp-backward-kill-word
+  :package t
 
   :bind
   ("C-M-u" . sp-backward-up-sexp)
   ("C-M-d" . sp-down-sexp)
-  ("M-F"   . sp-forward-symbol)
-  ("M-B"   . sp-backward-symbol)
-  ("C-)"   . sp-forward-slurp-sexp)
+  ("M-F" . sp-forward-symbol)
+  ("M-B" . sp-backward-symbol)
+  ("C-)" . sp-forward-slurp-sexp)
   ("C-M-)" . sp-forward-barf-sexp)
-  ("C-("   . sp-backward-slurp-sexp)
+  ("C-(" . sp-backward-slurp-sexp)
   ("C-M-(" . sp-backward-barf-sexp)
   ("C-M-t" . sp-transpose-sexp)
   ("C-M-k" . sp-kill-sexp)
-  ;; ("C-k"   . sp-kill-hybrid-sexp)
   ("C-M-w" . sp-copy-sexp)
-  ("M-d"   . sp-kill-word)
-  ("C-w"   . sp-backward-kill-word-or-region)
-  ("M-["   . sp-unwrap-sexp)
-  ("M-]"   . sp-rewrap-sexp)
+  ("M-d" . sp-kill-word)
+  ("C-w" . sp-backward-kill-word-or-region)
+  ("M-[" . sp-unwrap-sexp)
+  ("M-]" . sp-rewrap-sexp)
 
   :config
   (defun sp-backward-kill-word-or-region (&optional count)
@@ -958,11 +951,11 @@
 
 ;;;; CONF
 
-(use-package ledger-mode
-  :ensure t
-  :custom (ledger-default-date-format "%Y-%m-%d"))
+(leaf ledger-mode
+  :package t
+  :custom '(ledger-default-date-format . "%Y-%m-%d"))
 
-(use-package conf-mode
+(leaf conf-mode
   :hook (after-save-hook . xresources-reload)
   :config
   (defun xresources-reload ()
@@ -972,9 +965,10 @@
       (let ((xres (expand-file-name "X11/xresources" (xdg-config-home))))
         (shell-command (format "xrdb -load %s" xres))))))
 
-(use-package csv-mode :ensure t)
+(leaf csv-mode :package t)
 
-(use-package tex-mode
+(leaf tex-mode
+  :defvar ispell-parser
   :hook (tex-mode-hook . setup-tex-mode-ispell-parser)
   :config
   (defun setup-tex-mode-ispell-parser ()
@@ -983,115 +977,112 @@
 
 ;;;;; WEB
 
-(use-package css-mode :bind (:map css-mode-map ("C-c m" . css-lookup-symbol)))
+(leaf css-mode :defvar css-mode-map :bind (css-mode-map ("C-c m" . css-lookup-symbol)))
 
-(use-package json-mode :ensure t)
+(leaf json-mode :package t)
 
-(use-package apache-mode :ensure t)
+(leaf apache-mode :package t)
 
-(use-package robots-txt-mode :ensure t)
+(leaf robots-txt-mode :package t)
 
-(use-package restclient
-  :ensure t
-  :mode ((rx (ext "http")) . restclient-mode))
+(leaf restclient
+  :package t
+  :init (add-to-list 'auto-mode-alist `(,(rx (ext "http")) . restclient-mode)))
 
 
 ;;;;; GIT
 
-(use-package gitconfig-mode :ensure t)
+(leaf gitconfig-mode :package t)
 
-(use-package gitignore-mode :ensure t)
+(leaf gitignore-mode :package t)
 
 
 ;;;;; XML-LIKE
 
-(use-package sgml-mode
-  :custom (sgml-basic-offset 4)
+(leaf sgml-mode
+  :defvar sgml-mode-map
+  :custom '(sgml-basic-offset . 4)
   :bind
-  (:map sgml-mode-map
-        ("C-M-n" . sgml-skip-tag-forward)
-        ("C-M-p" . sgml-skip-tag-backward)
-        ("C-c C-r" . sgml-namify-char)))
+  (sgml-mode-map
+   ("C-M-n" . sgml-skip-tag-forward)
+   ("C-M-p" . sgml-skip-tag-backward)
+   ("C-c C-r" . sgml-namify-char)))
 
-(use-package nxml-mode :custom (nxml-child-indent 4))
+(leaf nxml-mode :custom '(nxml-child-indent . 4))
 
-(use-package emmet-mode
-  :ensure t
-  :diminish emmet-mode
-  :hook
-  ((nxml-mode-hook html-mode-hook mhtml-mode-hook web-mode-hook) . emmet-mode)
+(leaf emmet-mode
+  :package t
+  :hook ((nxml-mode-hook html-mode-hook mhtml-mode-hook web-mode-hook) . emmet-mode)
   :custom
-  (emmet-preview-default t)
-  (emmet-self-closing-tag-style ""))
+  '(emmet-preview-default . t)
+  '(emmet-self-closing-tag-style . "")
+  :config (diminish 'emmet-mode))
 
 
 ;;;; PROG
 
-(use-package nix-mode :ensure t)
+(leaf nix-mode :package t)
 
-(use-package cc-mode
-  :custom (c-default-style '((java-mode . "java") (other . "awk"))))
+(leaf cc-mode :custom '(c-default-style . '((java-mode . "java") (other . "awk"))))
 
-(use-package rust-mode
-  :ensure t
-  :custom (rust-format-on-save t))
+(leaf rust-mode
+  :package t
+  :custom '(rust-format-on-save . t))
 
 
 ;;;;; SHELL
 
-(use-package sh-script :custom (system-uses-terminfo nil))
+(leaf sh-script :custom '(system-uses-terminfo . nil))
 
-(use-package executable
-  :custom (executable-chmod 64)
+(leaf executable
+  :custom '(executable-chmod . 64)
   :hook (after-save-hook . executable-make-buffer-file-executable-if-script-p))
 
 
 ;;;;; SQL
 
-(use-package sql-indent
-  :ensure t
+(leaf sql-indent
+  :package t
   :hook (sql-mode-hook . sqlind-minor-mode))
 
-(use-package sqlup-mode
-  :ensure t
+(leaf sqlup-mode
+  :package t
   :hook sql-mode-hook)
 
 
 ;;;;; WEB
 
-(use-package php-mode
-  :ensure t
+(leaf php-mode
+  :package t
   :custom
-  (php-mode-coding-style 'php)
-  (php-manual-path (expand-file-name "php_docs/php-chunked-xhtml" (xdg-cache-home))))
+  '(php-mode-coding-style . 'php)
+  `(php-manual-path . ,(expand-file-name "php_docs/php-chunked-xhtml" (xdg-cache-home))))
 
-(use-package web-mode
-  :ensure t
-  :mode (rx (ext "twig"))
-  :custom (web-mode-markup-indent-offset 4))
+(leaf web-mode
+  :package t
+  :init (add-to-list 'auto-mode-alist `(,(rx (ext "twig")) . web-mode))
+  :custom '(web-mode-markup-indent-offset . 4))
 
 
 ;;;;; LSP
 
-(use-package eglot :ensure t)
+(leaf eglot :package t)
 
-(use-package lsp-mode
-  :disabled
-  :ensure t
+(leaf lsp-mode
+  :disabled t
+  :package t
   :hook (lsp-mode-hook . lsp-enable-which-key-integration)
   :custom
-  (lsp-session-file (expand-file-name "emacs/lsp/session" (xdg-cache-home)))
-  (lsp-xml-server-work-dir (expand-file-name "emacs/lsp/xml" (xdg-cache-home))))
+  `(lsp-session-file . ,(expand-file-name "emacs/lsp/session" (xdg-cache-home)))
+  `(lsp-xml-server-work-dir . ,(expand-file-name "emacs/lsp/xml" (xdg-cache-home))))
 
 
 ;;;;; LISP
 
-(use-package lisp-mode :config (put 'use-package #'lisp-indent-function 1))
-
-(use-package lisp
+(leaf lisp
+  :preface (provide 'lisp)
   :commands kill-sexp
   :hook (after-save-hook . check-parens-in-prog-mode)
-  :init (provide 'lisp)
   :config
   (defun check-parens-in-prog-mode ()
     (when (derived-mode-p 'prog-mode)
@@ -1100,11 +1091,11 @@
 
 ;;;;;; ELITE LISP
 
-(use-package elisp-mode
+(leaf elisp-mode
   :bind ("C-x C-S-e" . eval-and-replace)
   :custom
-  (eval-expression-print-level t)
-  (eval-expression-print-length t)
+  '(eval-expression-print-level . t)
+  '(eval-expression-print-length . t)
   :config
   (defun eval-and-replace ()
     (interactive)
@@ -1115,125 +1106,121 @@
       (error (message "Invalid expression")
              (insert (current-kill 0))))))
 
-(use-package ipretty
-  :ensure t
+(leaf ipretty
+  :package t
   :bind ([remap eval-print-last-sexp] . ipretty-last-sexp))
 
-(use-package pp
+(leaf pp
   :bind
-  (:map emacs-lisp-mode-map
-        ("C-c m" . pp-macroexpand-last-sexp)
-        ("C-c M" . emacs-lisp-macroexpand))
-  (:map lisp-interaction-mode-map
-        ("C-c m" . pp-macroexpand-last-sexp)
-        ("C-c M" . emacs-lisp-macroexpand)))
+  (emacs-lisp-mode-map
+   :package elisp-mode
+   ("C-c m" . pp-macroexpand-last-sexp)
+   ("C-c M" . emacs-lisp-macroexpand)))
 
 
 ;;;;;; COMMON LISP (AKA BORSHCH)
 
-(use-package inf-lisp :custom (inferior-lisp-program "sbcl"))
+(leaf inf-lisp :custom '(inferior-lisp-program . "sbcl"))
 
-(use-package sly
-  :ensure t
+(leaf sly
+  :package t
   :custom
-  (sly-default-lisp 'sbcl)
-  (sly-lisp-implementations '((sbcl ("sbcl"))))
-  (sly-mrepl-history-file-name
-   (expand-file-name "emacs/sly-mrepl-history" (xdg-cache-home))))
+  '(sly-default-lisp . 'sbcl)
+  '(sly-lisp-implementations . '((sbcl ("sbcl"))))
+  `(sly-mrepl-history-file-name
+    . ,(expand-file-name "emacs/sly-mrepl-history" (xdg-cache-home))))
 
-(use-package sly-quicklisp :ensure t)
+(leaf sly-quicklisp :package t)
 
-(use-package sly-asdf
-  :ensure t
+(leaf sly-asdf
+  :package t
   :after sly
   :config (add-to-list 'sly-contribs 'sly-asdf 'append))
 
 
 ;;;;;; SCHEME
 
-(use-package scheme :custom (scheme-program-name "guile"))
+(leaf scheme :custom '(scheme-program-name . "guile"))
 
-(use-package geiser
-  :ensure t
+(leaf geiser
+  :package t
   :custom
-  (geiser-repl-history-filename
-   (expand-file-name "geiser/history" (xdg-cache-home))))
+  `(geiser-repl-history-filename
+    . ,(expand-file-name "geiser/history" (xdg-cache-home))))
 
 
 ;;;;;; CLOJURE
 
-(use-package clojure-mode :ensure t)
+(leaf clojure-mode :package t)
 
-(use-package cider :ensure t)
+(leaf cider :package t)
 
 
 ;;; CORRECTNESS
 
-(use-package ispell
+(leaf ispell
   :custom
-  (ispell-program-name "aspell")
-  (ispell-extra-args (list "--sug-mode=ultra")))
+  '(ispell-program-name . "aspell")
+  '(ispell-extra-args . '("--sug-mode=ultra")))
 
-(use-package flymake :custom (flymake-no-changes-timeout nil))
+(leaf flymake :custom '(flymake-no-changes-timeout . nil))
 
-(use-package flycheck
-  :ensure t
+(leaf flycheck
+  :defvar flycheck-shellcheck-supported-shells
+  :package t
   :custom
-  (flycheck-mode-line-prefix "FC")
-  (flycheck-clang-pedantic-errors t)
-  (flycheck-clang-pedantic t)
-  (flycheck-gcc-pedantic-errors t)
-  (flycheck-gcc-pedantic t)
-  (flycheck-phpcs-standard "PSR12,PSR1,PSR2")
-  (flycheck-check-syntax-automatically '(save mode-enabled))
-  :config
+  '(flycheck-mode-line-prefix . "FC")
+  '(flycheck-clang-pedantic-errors . t)
+  '(flycheck-clang-pedantic . t)
+  '(flycheck-gcc-pedantic-errors . t)
+  '(flycheck-gcc-pedantic . t)
+  '(flycheck-phpcs-standard . "PSR12,PSR1,PSR2")
+  '(flycheck-check-syntax-automatically . '(save mode-enabled))
+  :defer-config
   (add-to-list 'flycheck-shellcheck-supported-shells 'dash))
 
-(use-package flycheck-checkbashisms
-  :ensure t
+(leaf flycheck-checkbashisms
+  :package t
   :after flycheck
-  :init (flycheck-checkbashisms-setup)
   :custom
-  (flycheck-checkbashisms-newline t)
-  (flycheck-checkbashisms-posix t))
+  '(flycheck-checkbashisms-newline . t)
+  '(flycheck-checkbashisms-posix . t)
+  :init (flycheck-checkbashisms-setup))
 
 
 ;;; COMPLETION
 
-(use-package bash-completion
-  :ensure t
+(leaf bash-completion
+  :package t
   :after shell
   :hook (shell-dynamic-complete-functions . bash-completion-dynamic-complete))
 
 
 ;;;; MINIBUFFER
 
-(use-package insert-char-preview
-  :ensure t
+(leaf insert-char-preview
+  :package t
   :bind ([remap insert-char] . insert-char-preview))
 
-(use-package eldoc :diminish eldoc-mode)
+(leaf eldoc :defer-config (diminish 'eldoc-mode))
 
-(use-package minibuffer
+(leaf minibuffer
   :commands completing-read-in-region
 
   :bind
-  (:map minibuffer-local-completion-map
-        ("<return>" . minibuffer-force-complete-and-exit)
-        ("RET" . minibuffer-force-complete-and-exit)
-        ("C-j" . exit-minibuffer)
-        ("SPC" . nil))
+  (minibuffer-local-completion-map
+   ("<return>" . minibuffer-force-complete-and-exit)
+   ("RET" . minibuffer-force-complete-and-exit)
+   ("C-j" . exit-minibuffer)
+   ("SPC" . nil))
 
   :custom
-  (completion-cycle-threshold 3)
-  (read-file-name-completion-ignore-case t)
-  (completion-pcm-complete-word-inserts-delimiters t)
-  (completion-styles '(substring partial-completion))
-  (completion-in-region-function
-   ;; 'completion--in-region
-   'completing-read-in-region
-   )
-  (completion-category-overrides '((bookmark (styles basic substring))))
+  '(completion-cycle-threshold . 3)
+  '(read-file-name-completion-ignore-case . t)
+  '(completion-pcm-complete-word-inserts-delimiters . t)
+  '(completion-styles . '(substring partial-completion))
+  '(completion-in-region-function . 'completing-read-in-region)
+  '(completion-category-overrides . '((bookmark (styles basic substring))))
 
   :config
   (defun completing-read-in-region (start end collection &optional predicate)
@@ -1255,48 +1242,50 @@ Use as a value for `completion-in-region-function'."
           (insert completion)
           t)))))
 
-(use-package orderless
-  :ensure t
+(leaf orderless
+  :package t
   :after minibuffer
   :custom
-  (orderless-component-separator (rx (+ space)))
-  (orderless-matching-styles
-   '(orderless-literal orderless-prefixes orderless-regexp))
+  `(orderless-component-separator . ,(rx (+ space)))
+  '(orderless-matching-styles
+    . '(orderless-literal orderless-prefixes orderless-regexp))
   :init (add-to-list 'completion-styles 'orderless))
 
-(use-package minibuf-eldef
-  :custom (minibuffer-eldef-shorten-default t)
+(leaf minibuf-eldef
+  :custom '(minibuffer-eldef-shorten-default . t)
   :hook (after-init-hook . minibuffer-electric-default-mode))
 
-(use-package map-ynp
-  :init (provide 'map-ynp)
-  :custom (read-answer-short t))
+(leaf map-ynp
+  :preface (provide 'map-ynp)
+  :custom '(read-answer-short . t))
 
-(use-package completing-history
-  :quelpa (completing-history :repo "oantolin/completing-history" :fetcher github)
+(leaf completing-history
+  :preface
+  (unless (package-installed-p 'completing-history)
+    (quelpa '(completing-history :repo "oantolin/completing-history" :fetcher github)))
   :bind ("M-H" . completing-history-insert-item))
 
-(use-package icomplete
+(leaf icomplete
   :hook (after-init-hook . icomplete-mode)
 
   :bind
-  (:map icomplete-minibuffer-map
-        ("<tab>" . icomplete-force-complete)
-        ("M-j"   . icomplete-fido-exit)
-        ("<return>" . icomplete-force-complete-and-exit)
-        ("RET" . icomplete-force-complete-and-exit)
-        ("C-j" . exit-minibuffer)
-        ("C-M-h" . icomplete-fido-updir-always)
-        ("C-h" . backward-delete-char)
-        ("C-n" . icomplete-forward-completions)
-        ("C-p" . icomplete-backward-completions))
+  (icomplete-minibuffer-map
+   ("<tab>" . icomplete-force-complete)
+   ("M-j"   . icomplete-fido-exit)
+   ("<return>" . icomplete-force-complete-and-exit)
+   ("RET" . icomplete-force-complete-and-exit)
+   ("C-j" . exit-minibuffer)
+   ("C-M-h" . icomplete-fido-updir-always)
+   ("C-h" . backward-delete-char)
+   ("C-n" . icomplete-forward-completions)
+   ("C-p" . icomplete-backward-completions))
 
   :custom
-  (icomplete-in-buffer t)
-  (icomplete-tidy-shadowed-file-names t)
-  (icomplete-separator (propertize " ⋅ " 'face 'shadow))
-  (icomplete-show-matches-on-no-input t)
-  (icomplete-hide-common-prefix nil)
+  '(icomplete-in-buffer . t)
+  '(icomplete-tidy-shadowed-file-names . t)
+  `(icomplete-separator . ,(propertize " ⋅ " 'face 'shadow))
+  '(icomplete-show-matches-on-no-input . t)
+  '(icomplete-hide-common-prefix . nil)
 
   :config
   (defun icomplete-fido-updir-always ()
@@ -1307,17 +1296,20 @@ Use as a value for `completion-in-region-function'."
       (when (search-backward "/" (point-min) t)
         (delete-region (1+ (point)) (point-max))))))
 
-(use-package consult
-  :quelpa (consult :repo "minad/consult" :fetcher github :version original)
+(leaf consult
+  :preface
+  (unless (package-installed-p 'consult)
+    (quelpa '(consult :repo "minad/consult" :fetcher github)))
   :bind
   ("M-y" . consult-yank-replace)
-  (:map goto-map ("o" . consult-outline)))
+  (goto-map :package bindings ("o" . consult-outline)))
 
-(use-package icomplete-vertical
-  :ensure t
+(leaf icomplete-vertical
+  :package t
   :after icomplete
-  :demand t
-  :bind (:map icomplete-minibuffer-map ("C-v" . #'icomplete-vertical-toggle))
+  :require t
+  :leaf-defer nil
+  :bind (icomplete-minibuffer-map :package icomplete ("C-v" . icomplete-vertical-toggle))
 
   :config
   (defun icomplete-vertical-around-advice (fn &rest args)
@@ -1345,62 +1337,61 @@ Use as a value for `completion-in-region-function'."
 
 ;;;; HIPPIE-EXP
 
-(use-package hippie-exp
+(leaf hippie-exp
   :bind ([remap dabbrev-expand] . hippie-expand)
-  :custom (he-file-name-chars "-a-zA-Z0-9_/.,~^#$+={}"))
+  :custom '(he-file-name-chars . "-a-zA-Z0-9_/.,~^#$+={}"))
 
-(use-package try-complete-file-name-with-env
-  :quelpa
-  (try-complete-file-name-with-env
-   :repo "xFA25E/try-complete-file-name-with-env"
-   :fetcher github
-   :version original)
-  :demand t
-  :after hippie-exp)
+(leaf try-complete-file-name-with-env
+  :preface
+  (unless (package-installed-p 'try-complete-file-name-with-env)
+    (quelpa '(try-complete-file-name-with-env :repo "xFA25E/try-complete-file-name-with-env" :fetcher github)))
+  :after hippie-exp
+  :require t)
 
 
 ;;; SEARCHING
 
-(use-package isearch
-  :bind (:map isearch-mode-map ("C-h" . isearch-delete-char))
-  :config (define-key isearch-mode-map (kbd "C-?") isearch-help-map)
+(leaf isearch
+  :bind (isearch-mode-map ("C-h" . isearch-delete-char))
   :custom
-  (isearch-allow-scroll t)
-  (isearch-lazy-count t)
-  (search-whitespace-regexp ".*?"))
-
-(use-package grep
+  '(isearch-allow-scroll . t)
+  '(isearch-lazy-count . t)
+  '(search-whitespace-regexp . ".*?")
   :config
+  (define-key isearch-mode-map (kbd "C-?") isearch-help-map))
+
+(leaf grep
+  :defer-config
   (add-to-list 'grep-files-aliases '("php" . "*.php *.phtml"))
   (define-advice grep-expand-template (:filter-return (cmd) cut)
     (concat cmd " | cut -c-500")))
 
-(use-package wgrep
-  :ensure t
-  :custom (wgrep-auto-save-buffer t))
+(leaf wgrep
+  :package t
+  :custom '(wgrep-auto-save-buffer . t))
 
-(use-package rg
-  :ensure t
-  :custom (rg-executable "rg")
+(leaf rg
+  :defvar rg-mode-map
+  :package t
+  :custom '(rg-executable . "rg")
 
   :bind
-  (:map search-map
-        :prefix-map rg-custom-map
-        :prefix "r"
-        ("r" . rg)
-        ("." . rg-dwim)
-        ("l" . rg-list-searches)
-        ("t" . rg-literal)
-        ("p" . rg-project)
-        ("k" . rg-kill-saved-searches)
-        ("s" . rg-save-search-as-name))
-  (:map rg-mode-map
-        ("C-n" . next-line)
-        ("C-p" . previous-line)
-        ("{" . rg-prev-file)
-        ("M-{" . rg-prev-file)
-        ("}" . rg-next-file)
-        ("M-}" . rg-next-file)))
+  (search-map
+   :package bindings
+   ("r r" . rg)
+   ("r ." . rg-dwim)
+   ("r l" . rg-list-searches)
+   ("r t" . rg-literal)
+   ("r p" . rg-project)
+   ("r k" . rg-kill-saved-searches)
+   ("r s" . rg-save-search-as-name))
+  (rg-mode-map
+   ("C-n" . next-line)
+   ("C-p" . previous-line)
+   ("{" . rg-prev-file)
+   ("M-{" . rg-prev-file)
+   ("}" . rg-next-file)
+   ("M-}" . rg-next-file)))
 
 
 ;;; JUMPING
@@ -1408,100 +1399,102 @@ Use as a value for `completion-in-region-function'."
 
 ;;;; ON BUFFER
 
-(use-package avy
-  :ensure t
+(leaf avy
+  :package t
   :bind
   ("M-z" . avy-goto-word-0)
-  (:map goto-map
-        ("M-g" . avy-goto-line)
-        ("g"   . nil)
-        ("n"   . nil)
-        ("p"   . nil))
+  (goto-map
+   :package bindings
+   ("M-g" . avy-goto-line)
+   ("g"   . nil)
+   ("n"   . nil)
+   ("p"   . nil))
   :custom
-  (avy-background t)
-  (avy-goto-word-0-regexp (rx symbol-start (or (syntax word) (syntax symbol))))
-  (avy-style 'words)
-  (avy-keys (string-to-list "aoeuhtns")))
+  '(avy-background . t)
+  `(avy-goto-word-0-regexp . ,(rx symbol-start (or (syntax word) (syntax symbol))))
+  '(avy-style . 'words)
+  `(avy-keys . ',(string-to-list "aoeuhtns")))
 
-(use-package ace-link
-  :ensure t
+(leaf ace-link
+  :package t
   :hook (after-init-hook . ace-link-setup-default)
-  :bind (:map goto-map ("l" . ace-link)))
+  :bind (goto-map :package bindings ("l" . ace-link)))
 
 
 ;;;; TO DEFINITION
 
-(use-package dumb-jump
-  :ensure t
+(leaf dumb-jump
+  :package t
   :hook (xref-backend-functions . dumb-jump-xref-activate))
 
-(use-package imenu
-  :bind (:map goto-map ("i" . imenu))
+(leaf imenu
+  :bind (goto-map :package bindings ("i" . imenu))
   :custom
-  (imenu-auto-rescan t)
-  (imenu-use-popup-menu nil)
-  (imenu-space-replacement " ")
-  (imenu-level-separator "/"))
+  '(imenu-auto-rescan . t)
+  '(imenu-use-popup-menu . nil)
+  '(imenu-space-replacement . " ")
+  '(imenu-level-separator . "/"))
 
-(use-package flimenu
-  :ensure t
+(leaf flimenu
+  :package t
   :after imenu
   :init (flimenu-global-mode))
 
-(use-package imenu-anywhere
-  :ensure t
-  :bind (:map goto-map ("I" . imenu-anywhere)))
+(leaf imenu-anywhere
+  :package t
+  :bind (goto-map :package bindings ("I" . imenu-anywhere)))
 
-(use-package find-func
-  :bind (:map search-map ("f b" . find-library))
+(leaf find-func
+  :bind (search-map :package bindings ("f b" . find-library))
   :custom
-  (find-function-C-source-directory
-   (expand-file-name "programs/emacs-27.1/src" (xdg-download-dir))))
+  `(find-function-C-source-directory
+    . ,(expand-file-name "programs/emacs-27.1/src" (xdg-download-dir))))
 
 
 ;;; COMPILATION
 
-(use-package compile
+(leaf compile
   :custom
-  (compilation-always-kill t)
-  (compilation-scroll-output 'first-error)
-  :bind (:map ctl-x-map ("c" . compile)))
+  '(compilation-always-kill . t)
+  '(compilation-scroll-output . 'first-error)
+  :bind (ctl-x-map :package subr ("c" . compile)))
 
 ;; Add support for cargo error --> file:line:col
-(use-package cargo
-  :ensure t
+(leaf cargo
+  :package t
   :hook (rust-mode-hook . cargo-minor-mode)
   :custom
-  (cargo-process--command-build "build --color never")
-  (cargo-process--command-check "check --color never")
-  (cargo-process--command-clippy "clippy --color never")
-  (cargo-process--command-current-file-tests "test --color never")
-  (cargo-process--command-current-test "test --color never")
-  (cargo-process--command-rm "rm --color never")
-  (cargo-process--command-run "run --color never")
-  (cargo-process--command-test "test --color never"))
+  '(cargo-process--command-build . "build --color never")
+  '(cargo-process--command-check . "check --color never")
+  '(cargo-process--command-clippy . "clippy --color never")
+  '(cargo-process--command-current-file-tests . "test --color never")
+  '(cargo-process--command-current-test . "test --color never")
+  '(cargo-process--command-rm . "rm --color never")
+  '(cargo-process--command-run . "run --color never")
+  '(cargo-process--command-test . "test --color never"))
 
 
 ;;; REPL
 
-(use-package comint
+(leaf comint
+  :preface (defvar-local comint-history-filter-function nil)
+
   :hook
-  (kill-buffer-hook               . comint-write-input-ring)
-  (kill-emacs-hook                . save-buffers-comint-input-ring)
+  (kill-buffer-hook . comint-write-input-ring)
+  (kill-emacs-hook . save-buffers-comint-input-ring)
   (comint-output-filter-functions . comint-strip-ctrl-m)
   (comint-output-filter-functions . comint-truncate-buffer)
 
   :custom
-  (comint-input-ignoredups t)
-  (comint-input-ring-size 10000)
-  (comint-buffer-maximum-size 10240)
+  '(comint-input-ignoredups . t)
+  '(comint-input-ring-size . 10000)
+  '(comint-buffer-maximum-size . 10240)
 
   :config
   (defun save-buffers-comint-input-ring ()
     (dolist (buf (buffer-list))
       (with-current-buffer buf (comint-write-input-ring))))
 
-  (defvar-local comint-history-filter-function nil)
   (define-advice comint-write-input-ring (:before (&rest _) filter-history)
     (let ((fn comint-history-filter-function))
       (when (and fn comint-input-ring (not (ring-empty-p comint-input-ring)))
@@ -1511,11 +1504,12 @@ Use as a value for `completion-in-region-function'."
           ring-convert-sequence-to-ring
           (setq-local comint-input-ring))))))
 
-(use-package sql
+(leaf sql
+  :defvar sql-interactive-product sql-input-ring-file-name
   :hook (sql-interactive-mode-hook . sql-interactive-set-history)
   :custom
-  (sql-mysql-options '("-A"))
-  (sql-sqlite-options `("-column" "-header" "-cmd" "PRAGMA foreign_keys = ON;"))
+  '(sql-mysql-options . '("-A"))
+  '(sql-sqlite-options . '("-column" "-header" "-cmd" "PRAGMA foreign_keys = ON;"))
   :config
   (defun sql-interactive-set-history ()
     (let ((file (expand-file-name
@@ -1528,15 +1522,15 @@ Use as a value for `completion-in-region-function'."
 
 ;;;; SHELL
 
-(use-package shell
-  :bind (:map shell-mode-map ("C-c M-d" . shell-change-directory))
+(leaf shell
+  :bind (shell-mode-map ("C-c M-d" . shell-change-directory))
 
   :custom
-  (shell-prompt-pattern
-   (rx line-start
-       (one-or-more digit) " "
-       alpha
-       (zero-or-more (in ?- ?_ alpha digit)) " "))
+  `(shell-prompt-pattern
+    . ,(rx line-start
+           (one-or-more digit) " "
+           alpha
+           (zero-or-more (in ?- ?_ alpha digit)) " "))
 
   :hook (shell-mode-hook . shell-enable-comint-history)
 
@@ -1580,9 +1574,12 @@ Use as a value for `completion-in-region-function'."
       (insert (concat "cd " (shell-quote-argument dir))))
     (comint-send-input)))
 
-(use-package shell-pwd
-  :quelpa (shell-pwd :repo "xFA25E/shell-pwd" :fetcher github :version original)
-  :bind (:map mode-specific-map ("x s" . shell-pwd-switch-to-buffer))
+(leaf shell-pwd
+  :defun shell-pwd-generate-buffer-name
+  :preface
+  (unless (package-installed-p 'shell-pwd)
+    (quelpa '(shell-pwd :repo "xFA25E/shell-pwd" :fetcher github)))
+  :bind (mode-specific-map :package bindings ("x s" . shell-pwd-switch-to-buffer))
   :config
   (cl-defun shell-pwd-switch-to-buffer (&optional (directory default-directory))
     (interactive
@@ -1600,17 +1597,19 @@ Use as a value for `completion-in-region-function'."
 
 ;;; TEMPLATES
 
-(use-package autoinsert :hook (after-init-hook . auto-insert-mode))
+(leaf autoinsert :hook (after-init-hook . auto-insert-mode))
 
-(use-package skempo-mode
-  :quelpa (skempo-mode :repo "xFA25E/skempo-mode" :fetcher github :version original)
+(leaf skempo-mode
+  :preface
+  (unless (package-installed-p 'skempo-mode)
+    (quelpa '(skempo-mode :repo "xFA25E/skempo-mode" :fetcher github)))
   :hook ((emacs-lisp-mode-hook lisp-interaction-mode-hook) . skempo-mode)
 
   :bind
-  (:map skempo-mode-map
-        ("C-z" . skempo-mode-complete-tag-or-call-on-region)
-        ("M-g M-e" . tempo-forward-mark)
-        ("M-g M-a" . tempo-backward-mark))
+  (skempo-mode-map
+   ("C-z" . skempo-mode-complete-tag-or-call-on-region)
+   ("M-g M-e" . tempo-forward-mark)
+   ("M-g M-a" . tempo-backward-mark))
 
   :config
   (defun skempo-mode-elisp-namespace ()
@@ -1655,78 +1654,81 @@ Use as a value for `completion-in-region-function'."
 
 ;;; APPLICATIONS
 
-(use-package forms
+(leaf forms
   :hook (kill-buffer-hook . forms-kill-file-buffer)
   :config
   (defun forms-kill-file-buffer ()
     (when (and (derived-mode-p 'forms-mode) (buffer-live-p forms--file-buffer))
       (kill-buffer forms--file-buffer))))
 
-(use-package vlf :ensure t)
+(leaf vlf :package t)
 
-(use-package sdcv
-  :ensure t
-  :bind (:map mode-specific-map ("o t" . sdcv-search-input))
+(leaf sdcv
+  :defun sdcv-goto-sdcv@fullscreen
+  :package t
+  :bind (mode-specific-map :package bindings ("o t" . sdcv-search-input))
   :config
   (define-advice sdcv-goto-sdcv (:after () fullscreen)
     (delete-other-windows)))
 
-(use-package dictionary
-  :ensure t
-  :bind (:map mode-specific-map ("o T" . dictionary-search)))
+(leaf dictionary
+  :package t
+  :bind (mode-specific-map :package bindings ("o T" . dictionary-search)))
 
-(use-package ediff
-  :custom (ediff-window-setup-function 'ediff-setup-windows-plain)
+(leaf ediff
+  :custom '(ediff-window-setup-function . 'ediff-setup-windows-plain)
   :hook (ediff-before-setup-hook . save-window-configuration-to-w))
 
-(use-package net-utils
-  :bind (:map mode-specific-map
-              :prefix-map net-utils-prefix-map
-              :prefix "n"
-              ("a" . arp)
-              ("d" . dig)
-              ("h" . nslookup-host)
-              ("i" . ifconfig)
-              ("n" . netstat)
-              ("p" . ping)
-              ("p" . ping)
-              ("r" . route)
-              ("s" . smbclient)
-              ("t" . traceroute)
-              ("w" . iwconfig)))
+(leaf net-utils
+  :bind
+  (mode-specific-map
+   :package bindings
+   ("n a" . arp)
+   ("n d" . dig)
+   ("n h" . nslookup-host)
+   ("n i" . ifconfig)
+   ("n n" . netstat)
+   ("n p" . ping)
+   ("n p" . ping)
+   ("n r" . route)
+   ("n s" . smbclient)
+   ("n t" . traceroute)
+   ("n w" . iwconfig)))
 
-(use-package readelf-mode
-  :quelpa (readelf-mode :repo "sirikid/readelf-mode" :fetcher github :version original))
+(leaf readelf-mode
+  :preface
+  (unless (package-installed-p 'readelf-mode)
+    (quelpa '(readelf-mode :repo "sirikid/readelf-mode" :fetcher github))))
 
-(use-package calendar :custom (calendar-week-start-day 1))
+(leaf calendar :custom '(calendar-week-start-day . 1))
 
-(use-package ibuffer
-  :custom (ibuffer-default-sorting-mode 'major-mode)
-  :bind (:map ctl-x-map ("C-S-b" . ibuffer-jump)))
+(leaf ibuffer
+  :custom '(ibuffer-default-sorting-mode . 'major-mode)
+  :bind (ctl-x-map :package subr ("C-S-b" . ibuffer-jump)))
 
-(use-package gdb-mi
+(leaf gdb-mi
   :custom
-  (gdb-many-windows t)
-  (gdb-show-main t))
+  '(gdb-many-windows . t)
+  '(gdb-show-main . t))
 
-(use-package proced
-  :bind (:map mode-specific-map ("o p" . proced))
-  :custom (proced-tree-flag t))
+(leaf proced
+  :bind (mode-specific-map :package bindings ("o p" . proced))
+  :custom '(proced-tree-flag . t))
 
-(use-package bookmark
+(leaf bookmark
   :custom
-  (bookmark-save-flag 1)
-  (bookmark-default-file (expand-file-name "emacs/bookmarks" (xdg-data-home))))
+  '(bookmark-save-flag . 1)
+  `(bookmark-default-file . ,(expand-file-name "emacs/bookmarks" (xdg-data-home))))
 
 
 ;;;; XML
 
-(use-package eww
+(leaf eww
   :custom
-  (eww-browse-url-new-window-is-tab nil)
-  (eww-search-prefix "https://ddg.co/lite/?q="))
+  '(eww-browse-url-new-window-is-tab . nil)
+  '(eww-search-prefix . "https://ddg.co/lite/?q="))
 
-(use-package xml
+(leaf xml
   :commands sgml-decode-entities sgml-encode-entities
   :config
   (defun sgml-decode-entities (beg end)
@@ -1745,52 +1747,58 @@ Use as a value for `completion-in-region-function'."
         (goto-char beg)
         (insert text)))))
 
-(use-package htmlize :ensure t)
+(leaf htmlize :package t)
 
 
 ;;;; KEYS
 
-(use-package which-key
-  :ensure t
-  :diminish which-key-mode
-  :hook (after-init-hook . which-key-mode))
+(leaf which-key
+  :package t
+  :hook (after-init-hook . which-key-mode)
+  :config (diminish 'which-key-mode))
 
-(use-package free-keys :ensure t)
+(leaf free-keys :package t)
 
 
 ;;;; YO-HO
 
-(use-package transmission
-  :ensure t
+(leaf transmission
+  :defvar transmission-mode-map
+  :defun transmission@fullscreen
+  :package t
   :bind
-  (:map mode-specific-map ("o r" . transmission))
-  (:map transmission-mode-map ("M" . transmission-move))
+  (mode-specific-map :package bindings ("o r" . transmission))
+  (transmission-mode-map ("M" . transmission-move))
   :config
   (define-advice transmission (:after () fullscreen)
     (delete-other-windows)))
 
-(use-package torrent-mode
-  :quelpa (torrent-mode :repo "xFA25E/torrent-mode" :fetcher github :version original)
+(leaf torrent-mode
+  :preface
+  (unless (package-installed-p 'torrent-mode)
+    (quelpa '(torrent-mode :repo "xFA25E/torrent-mode" :fetcher github)))
   :hook (after-init-hook . torrent-mode-setup))
 
-(use-package mediainfo-mode
-  :quelpa (mediainfo-mode :repo "xFA25E/mediainfo-mode" :fetcher github :version original)
+(leaf mediainfo-mode
+  :preface
+  (unless (package-installed-p 'mediainfo-mode)
+    (quelpa '(mediainfo-mode :repo "xFA25E/mediainfo-mode" :fetcher github)))
   :hook (after-init-hook . mediainfo-mode-setup))
 
 
 ;;;; PROJECTILE
 
-(use-package projectile
-  :ensure t
-  :bind-keymap ("M-m" . projectile-command-map)
+(leaf projectile
+  :package t
+  :bind (projectile-mode-map ("M-m" . projectile-command-map))
   :hook (after-init-hook . projectile-mode)
 
   :custom
-  (projectile-enable-caching t)
-  (projectile-mode-line-prefix "")
-  (projectile-cache-file (expand-file-name "emacs/projectile/cache" (xdg-cache-home)))
-  (projectile-known-projects-file
-   (expand-file-name "emacs/projectile/projects" (xdg-cache-home)))
+  '(projectile-enable-caching . t)
+  '(projectile-mode-line-prefix . "")
+  `(projectile-cache-file . ,(expand-file-name "emacs/projectile/cache" (xdg-cache-home)))
+  `(projectile-known-projects-file
+    . ,(expand-file-name "emacs/projectile/projects" (xdg-cache-home)))
 
   :config
   (define-advice projectile-default-mode-line (:filter-return (project-name) remove-empty)
@@ -1810,27 +1818,29 @@ Use as a value for `completion-in-region-function'."
 
 ;;;; YTEL
 
-(use-package ytel
-  :ensure t
+(leaf ytel
+  :defvar ytel-mode-map
+  :defun ytel-video-id ytel-get-current-video ytel-video-title
+  :package t
   :hook (ytel-mode-hook . toggle-truncate-lines)
 
   :custom
-  (ytel-instances
-   '("https://invidious.fdn.fr"
-     "https://invidious.site"
-     "https://invidious.kavin.rocks"
-     "https://vid.encryptionin.space"
-     "https://invidious.snopyta.org"
-     "https://invidious.mservice.ru.com"
-     "https://invidious.xyz"
-     "https://vid.encryptionin.space"))
-  (ytel-invidious-api-url (car ytel-instances))
+  '(ytel-instances
+    . '("https://invidious.fdn.fr"
+        "https://invidious.site"
+        "https://invidious.kavin.rocks"
+        "https://vid.encryptionin.space"
+        "https://invidious.snopyta.org"
+        "https://invidious.mservice.ru.com"
+        "https://invidious.xyz"
+        "https://vid.encryptionin.space"))
+  '(ytel-invidious-api-url . "https://invidious.fdn.fr")
 
   :bind
-  (:map mode-specific-map ("o Y" . ytel))
-  (:map ytel-mode-map
-        ("c" . ytel-copy-link)
-        ("v" . ytel-current-browse-url))
+  (mode-specific-map :package bindings ("o Y" . ytel))
+  (ytel-mode-map
+   ("c" . ytel-copy-link)
+   ("v" . ytel-current-browse-url))
 
   :config
   (defun ytel-switch-instance ()
@@ -1856,10 +1866,14 @@ Use as a value for `completion-in-region-function'."
     (setf (alist-get 'ytel-mode bruh-mpvi-get-title-functions)
         (lambda () (ytel-video-title (ytel-get-current-video))))))
 
-(use-package ytel-show
-  :quelpa (ytel-show :repo "xFA25E/ytel-show" :fetcher github :version original)
+(leaf ytel-show
+  :defvar ytel-show-comments--video-title
+  :defun ytel-show--current-video-id
+  :preface
+  (unless (package-installed-p 'ytel-show)
+    (quelpa '(ytel-show :repo "xFA25E/ytel-show" :fetcher github)))
   :after ytel
-  :bind (:map ytel-mode-map ("RET" . ytel-show))
+  :bind (ytel-mode-map :package ytel ("RET" . ytel-show))
   :config
   (with-eval-after-load 'bruh
     (setf (alist-get 'ytel-show-mode bruh-mpvi-get-title-functions)
@@ -1870,44 +1884,40 @@ Use as a value for `completion-in-region-function'."
 
 ;;;; VERSION CONTROL
 
-(use-package vc-hooks :custom (vc-handled-backends '(Git)))
+(leaf vc-hooks :custom '(vc-handled-backends . '(Git)))
 
-(use-package magit
-  :ensure t
+(leaf magit
+  :package t
   :bind ("C-x g" . magit)
   :custom
-  (magit-credential-cache-daemon-socket
-   (expand-file-name "git/credential/socket" (xdg-cache-home))))
+  `(magit-credential-cache-daemon-socket
+    . ,(expand-file-name "git/credential/socket" (xdg-cache-home))))
 
 
 ;;;; RSS
 
-(use-package newst-backend
+(leaf newst-backend
+  :defun newsticker--link newsticker--extra newsticker--desc newsticker--title
   :hook (newsticker-new-item-functions . newsticker-add-thumbnail)
 
   :custom
-  (newsticker-retrieval-interval 0)
-  (newsticker-retrieval-method 'extern)
-  (newsticker-automatically-mark-items-as-old nil)
-  (newsticker-automatically-mark-visited-items-as-old nil)
-  (newsticker-dir (expand-file-name "emacs/newsticker" (xdg-cache-home)))
-  (newsticker-url-list-defaults nil)
-  (newsticker-url-list
-   '(("Alt-Hype" "https://www.bitchute.com/feeds/rss/channel/thealthype/")
-     ("American Renaissance" "https://www.bitchute.com/feeds/rss/channel/amrenaissance/")
-     ("Atlanta Functional Programming" "https://www.youtube.com/feeds/videos.xml?channel_id=UCYg6qFXDE5SGT_YXhuJPU0A")
-     ("Justus Walker" "https://www.youtube.com/feeds/videos.xml?user=senttosiberia")
-     ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
-     ("Luke Smith PeerTube" "https://videos.lukesmith.xyz/feeds/videos.xml?accountId=3")
-     ("Luke Smith YouTube" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA")
-     ("Planet Emacslife" "https://planet.emacslife.com/atom.xml")
-     ("Protesilaos Stavrou" "https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g")
-     ("TealDeer" "https://www.bitchute.com/feeds/rss/channel/tealdeer/")
-     ("Tsoding" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEbYhDd6c6vngsF5PQpFVWg")
-     ("Мысли и методы" "http://feeds.soundcloud.com/users/soundcloud:users:259154388/sounds.rss")
-     ("Простая Академия" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8mmPf2oKdfE2pdjqctTWUw")
-     ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg")
-     ("Fd-Dired" "https://github.com/yqrashawn/fd-dired/commits/master.atom")))
+  '(newsticker-retrieval-interval . 0)
+  '(newsticker-retrieval-method . 'extern)
+  '(newsticker-automatically-mark-items-as-old . nil)
+  '(newsticker-automatically-mark-visited-items-as-old . nil)
+  `(newsticker-dir . ,(expand-file-name "emacs/newsticker" (xdg-cache-home)))
+  '(newsticker-url-list-defaults . nil)
+  '(newsticker-url-list
+    . '(("Justus Walker" "https://www.youtube.com/feeds/videos.xml?user=senttosiberia")
+        ("Alt-Hype" "https://www.bitchute.com/feeds/rss/channel/thealthype/")
+        ("American Renaissance" "https://www.bitchute.com/feeds/rss/channel/amrenaissance/")
+        ("TealDeer" "https://www.bitchute.com/feeds/rss/channel/tealdeer/")
+        ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
+        ("Luke Smith PeerTube" "https://videos.lukesmith.xyz/feeds/videos.xml?accountId=3")
+        ("Простая Академия" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8mmPf2oKdfE2pdjqctTWUw")
+        ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg")
+        ("Protesilaos Stavrou" "https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g")
+        ("Planet Emacslife" "https://planet.emacslife.com/atom.xml")))
 
   :config
   (defun newsticker-add-thumbnail (_feedname item)
@@ -1929,21 +1939,22 @@ Use as a value for `completion-in-region-function'."
             (nthcdr 1 item)
             (d  (alist-get 'url (car thumbnail)) (newsticker--desc item)))))))))
 
-(use-package newst-treeview
+(leaf newst-treeview
+  :defvar newsticker-treeview-mode-map
   :commands newsticker--treeview-get-selected-item
   :hook (newsticker-treeview-item-mode-hook . toggle-truncate-lines)
 
   :bind
-  (:map mode-specific-map ("o n" . newsticker-show-news))
-  (:map newsticker-treeview-mode-map
-        ("r" . newsticker-treeview-show-duration)
-        ("c" . newsticker-treeview-copy-link))
+  (mode-specific-map :package bindings ("o n" . newsticker-show-news))
+  (newsticker-treeview-mode-map
+   ("r" . newsticker-treeview-show-duration)
+   ("c" . newsticker-treeview-copy-link))
 
   :custom
-  (newsticker-treeview-automatically-mark-displayed-items-as-old nil)
-  (newsticker-treeview-treewindow-width 30)
-  (newsticker-treeview-listwindow-height 6)
-  (newsticker--treeview-list-sort-order 'sort-by-time-reverse)
+  '(newsticker-treeview-automatically-mark-displayed-items-as-old . nil)
+  '(newsticker-treeview-treewindow-width . 30)
+  '(newsticker-treeview-listwindow-height . 6)
+  '(newsticker--treeview-list-sort-order . 'sort-by-time-reverse)
 
   :config
   (defun newsticker-treeview-copy-link ()
@@ -1976,20 +1987,23 @@ Use as a value for `completion-in-region-function'."
 
 ;;;; MPD
 
-(use-package mingus
-  :ensure t
+(leaf mingus
+  :defvar mpd-inter-conn
+  :defun mingus-buffer-p mingus-git-out@kill mingus-add-files mingus-music-files
+  :package t
 
   :bind
-  (:map mode-specific-map
-        ("o s" . mingus)
-        ("o S" . mingus-find-and-add-file))
+  (mode-specific-map
+   :package bindings
+   ("o s" . mingus)
+   ("o S" . mingus-find-and-add-file))
 
   :custom
-  (mingus-mode-line-separator "|")
-  (mingus-mode-line-string-max 120)
-  (mingus-mpd-config-file (expand-file-name "mpd/mpd.conf" (xdg-config-home)))
-  (mingus-seek-amount 5)
-  (mingus-use-mouse-p nil)
+  '(mingus-mode-line-separator . "|")
+  '(mingus-mode-line-string-max . 120)
+  `(mingus-mpd-config-file . ,(expand-file-name "mpd/mpd.conf" (xdg-config-home)))
+  '(mingus-seek-amount . 5)
+  '(mingus-use-mouse-p . nil)
 
   :config
   (define-advice mingus-git-out (:override (&optional _x) kill)
@@ -2016,8 +2030,9 @@ Use as a value for `completion-in-region-function'."
   (defun mingus-find-and-add-file ()
     (interactive)
     (mingus-add-files
-     ((lambda (f) (list (expand-file-name f (xdg-music-dir))))
-      (completing-read "Add file to mpd: " (mingus-music-files) nil t)))
+     (list (expand-file-name
+            (completing-read "Add file to mpd: " (mingus-music-files) nil t)
+            (xdg-music-dir))))
     (mpd-play mpd-inter-conn)
     (let ((buffer (get-buffer "*Mingus*")))
       (when (buffer-live-p (get-buffer buffer))
@@ -2026,95 +2041,95 @@ Use as a value for `completion-in-region-function'."
 
 ;;;; E-READER
 
-(use-package pdf-tools
-  :ensure t
+(leaf pdf-tools
+  :package t
   :init (pdf-loader-install))
 
-(use-package nov
-  :ensure t
-  :mode ((rx (ext "epub")) . nov-mode)
-  :custom
-  (nov-save-place-file (expand-file-name "emacs/nov-places" (xdg-cache-home))))
+(leaf nov
+  :package t
+  :init (add-to-list 'auto-mode-alist `(,(rx (ext "epub")) . nov-mode))
+  :custom `(nov-save-place-file . ,(expand-file-name "emacs/nov-places" (xdg-cache-home))))
 
-(use-package fb2-mode
-  :quelpa (fb2-mode :repo "5k1m1/fb2-mode" :fetcher github :version original)
-  :custom (fb2-replace-hard-space t))
+(leaf fb2-mode
+  :preface
+  (unless (package-installed-p 'fb2-mode)
+    (quelpa '(fb2-mode :repo "5k1m1/fb2-mode" :fetcher github)))
+  :custom '(fb2-replace-hard-space . t))
 
 
 ;;; MAIL
 
-(use-package message
+(leaf message
   :commands message-send-mail-with-sendmail
   :custom
-  (message-kill-buffer-on-exit t)
-  (message-send-mail-function  #'message-send-mail-with-sendmail)
-  (message-subject-re-regexp (rx bol (* blank)
-                                 (* (or "R" "RE" "Re" "Ris")
-                                    (* "[" (* digit) "]")
-                                    (? " ") ":"
-                                    (* blank)))))
+  '(message-kill-buffer-on-exit . t)
+  '(message-send-mail-function . #'message-send-mail-with-sendmail)
+  `(message-subject-re-regexp . ,(rx bol (* blank)
+                                     (* (or "R" "RE" "Re" "Ris")
+                                        (* "[" (* digit) "]")
+                                        (? " ") ":"
+                                        (* blank)))))
 
-(use-package sendmail
+(leaf sendmail
   :custom
-  (sendmail-program "msmtp")
-  (send-mail-function #'message-send-mail-with-sendmail))
+  '(sendmail-program . "msmtp")
+  '(send-mail-function . #'message-send-mail-with-sendmail))
 
 
 ;;;; MU4E
 
-(use-package mu4e
+(leaf mu4e
   :hook (after-init-hook . (lambda () (mu4e t)))
 
   :bind
-  (:map mode-specific-map ("o m" . mu4e))
-  (:map mu4e-main-mode-map
-        ("q" . quit-window)
-        ("Q" . mu4e-quit))
+  (mode-specific-map :package bindings ("o m" . mu4e))
+  (mu4e-main-mode-map
+   ("q" . quit-window)
+   ("Q" . mu4e-quit))
 
   :custom
-  (mu4e-headers-visible-lines 7)
-  (mu4e-sent-folder "/SENT")
-  (mu4e-drafts-folder "/DRAFTS")
-  (mu4e-trash-folder "/TRASH")
-  (mu4e-refile-folder "/ARCHIVE")
-  (mu4e-view-show-images t)
-  (mu4e-sent-messages-behavior 'sent)
-  (mu4e-completing-read-function #'completing-read)
-  (mu4e-change-filenames-when-moving t)
-  (mu4e-context-policy 'pick-first)
-  (mu4e-compose-context-policy 'always-ask)
-  (mu4e-headers-date-format "%d %b %a %R")
-  (mu4e-view-date-format "%a %d %b %Y %T")
-  (mu4e-headers-time-format "%16R")
-  (mu4e-view-show-addresses t)
-  (mu4e-attachment-dir (expand-file-name (xdg-download-dir)))
-  (mu4e-modeline-max-width 100)
-  (mu4e-get-mail-command "mailsync -a")
-  (mu4e-update-interval 300)
-  (mu4e-maildir-shortcuts
-   '(("/EXYS"    . ?e)
-     ("/POLIMI"  . ?p)
-     ("/SENT"    . ?s)
-     ("/TRASH"   . ?t)
-     ("/DRAFTS"  . ?d)
-     ("/ARCHIVE" . ?a)))
-  (mu4e-headers-fields
-   '((:human-date . 16)
-     (:flags      . 6)
-     (:from       . 22)
-     (:subject)))
-  (mu4e-view-attachment-assoc
-   (eval-when-compile
-     (mapcan
-      (lambda (args) (mapcar (lambda (ext) (cons ext (car args))) (cdr args)))
-      '(("sxiv"        . ("jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp"))
-        ("zathura"     . ("pdf" "epub" "djvu"))
-        ("libreoffice" . ("csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx"))
-        ("mpv"         . ("m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov"
-                          "3gp" "vob"  "wmv" "aiff" "wav"))))))
+  '(mu4e-headers-visible-lines . 7)
+  '(mu4e-sent-folder . "/SENT")
+  '(mu4e-drafts-folder . "/DRAFTS")
+  '(mu4e-trash-folder . "/TRASH")
+  '(mu4e-refile-folder . "/ARCHIVE")
+  '(mu4e-view-show-images . t)
+  '(mu4e-sent-messages-behavior . 'sent)
+  '(mu4e-completing-read-function . #'completing-read)
+  '(mu4e-change-filenames-when-moving . t)
+  '(mu4e-context-policy . 'pick-first)
+  '(mu4e-compose-context-policy . 'always-ask)
+  '(mu4e-headers-date-format . "%d %b %a %R")
+  '(mu4e-view-date-format . "%a %d %b %Y %T")
+  '(mu4e-headers-time-format . "%16R")
+  '(mu4e-view-show-addresses . t)
+  `(mu4e-attachment-dir . ,(expand-file-name (xdg-download-dir)))
+  '(mu4e-modeline-max-width . 100)
+  '(mu4e-get-mail-command . "mailsync -a")
+  '(mu4e-update-interval . 300)
+  '(mu4e-maildir-shortcuts
+    . '(("/EXYS"    . ?e)
+        ("/POLIMI"  . ?p)
+        ("/SENT"    . ?s)
+        ("/TRASH"   . ?t)
+        ("/DRAFTS"  . ?d)
+        ("/ARCHIVE" . ?a)))
+  '(mu4e-headers-fields
+    . '((:human-date . 16)
+        (:flags      . 6)
+        (:from       . 22)
+        (:subject)))
+  `(mu4e-view-attachment-assoc
+    . ',(eval-when-compile
+          (mapcan
+           (lambda (args) (mapcar (lambda (ext) (cons ext (car args))) (cdr args)))
+           '(("sxiv"        . ("jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp"))
+             ("zathura"     . ("pdf" "epub" "djvu"))
+             ("libreoffice" . ("csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx"))
+             ("mpv"         . ("m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov"
+                               "3gp" "vob"  "wmv" "aiff" "wav"))))))
 
   :config
-
   (load-file (expand-file-name "emacs/secrets/mu4e.el" (xdg-data-home)))
   (load-library "org-mu4e")
 
@@ -2129,29 +2144,28 @@ Use as a value for `completion-in-region-function'."
   (define-advice mu4e-update-mail-and-index (:before (&rest _ignore) kill-update)
     (mu4e-kill-update-mail)))
 
-(use-package mu4e-alert
-  :ensure t
+(leaf mu4e-alert
+  :package t
   :hook
   (after-init-hook . mu4e-alert-enable-notifications)
   (after-init-hook . mu4e-alert-enable-mode-line-display)
-  :config
-  (mu4e-alert-set-default-style 'libnotify))
+  :config (mu4e-alert-set-default-style 'libnotify))
 
 
 ;;; ORGANIZE
 
-(use-package remember
+(leaf remember
   :commands remember-notes-maybe
 
-  :bind (:map remember-notes-mode-map
-              ("C-c C-c" . nil)
-              ("C-c '"   . remember-notes-save-and-bury-buffer)
-              ("C-c \""  . remember-notes-save-and-kill-terminal))
+  :bind (remember-notes-mode-map
+         ("C-c C-c" . nil)
+         ("C-c '"   . remember-notes-save-and-bury-buffer)
+         ("C-c \""  . remember-notes-save-and-kill-terminal))
 
   :custom
-  (remember-data-file (expand-file-name "emacs/notes" (xdg-data-home)))
-  (initial-buffer-choice #'remember-notes-maybe)
-  (remember-notes-initial-major-mode 'outline-mode)
+  `(remember-data-file . ,(expand-file-name "emacs/notes" (xdg-data-home)))
+  '(initial-buffer-choice . #'remember-notes-maybe)
+  '(remember-notes-initial-major-mode . 'outline-mode)
 
   :config
   (defun remember-notes-maybe ()
@@ -2168,22 +2182,22 @@ Use as a value for `completion-in-region-function'."
 
 ;;;; ORG
 
-(use-package org
-  :ensure org-plus-contrib
-  :bind (:map mode-specific-map ("G a a" . org-agenda))
+(leaf org
+  :package org-plus-contrib
+  :bind (mode-specific-map :package bindings ("G a a" . org-agenda))
 
   :custom
-  (org-src-tab-acts-natively t)
-  (org-startup-folded t)
-  (org-agenda-files '("~/org/life.org"))
-  (org-log-into-drawer t)
-  (org-log-reschedule 'note)
-  (org-refile-use-outline-path 'file)
-  (org-refile-allow-creating-parent-nodes 'confirm)
-  (org-agenda-skip-additional-timestamps-same-entry nil)
-  (org-refile-targets '((org-agenda-files :level . 1)))
-  (org-id-locations-file
-   (expand-file-name "emacs/org/id-locations" (xdg-cache-home)))
+  '(org-src-tab-acts-natively . t)
+  '(org-startup-folded . t)
+  '(org-agenda-files . '("~/org/life.org"))
+  '(org-log-into-drawer . t)
+  '(org-log-reschedule . 'note)
+  '(org-refile-use-outline-path . 'file)
+  '(org-refile-allow-creating-parent-nodes . 'confirm)
+  '(org-agenda-skip-additional-timestamps-same-entry . nil)
+  '(org-refile-targets . '((org-agenda-files :level . 1)))
+  `(org-id-locations-file
+    . ,(expand-file-name "emacs/org/id-locations" (xdg-cache-home)))
 
   :config
   (org-babel-do-load-languages 'org-babel-load-languages
@@ -2192,14 +2206,22 @@ Use as a value for `completion-in-region-function'."
                                  (sql        . t)
                                  (shell      . t))))
 
-(use-package org-mime
-  :ensure t
-  :after message
+(leaf org-mime
+  :defvar
+  org-mime--saved-temp-window-config org-mime-src--beg-marker
+  org-mime-src--end-marker org-mime-src--overlay org-mime-src--hint
+  :defun
+  org-mime-beautify-quoted@newlines org-mime-replace-images@fix-imgs
+  org-mime-mail-body-begin org-mime-mail-signature-begin
+  org-mime-src--make-source-overlay org-mime-src-mode
+  org-mime-edit-mail-in-org-mode@up-to-signature
+  :package t
   :bind
-  (:map message-mode-map
-        ("C-c M-o" . org-mime-htmlize)
-        ("C-c M-e" . org-mime-edit-mail-in-org-mode)
-        ("C-c M-t" . org-mime-revert-to-plain-text-mail))
+  (message-mode-map
+   :package message
+   ("C-c M-o" . org-mime-htmlize)
+   ("C-c M-e" . org-mime-edit-mail-in-org-mode)
+   ("C-c M-t" . org-mime-revert-to-plain-text-mail))
   :config
   (define-advice org-mime-beautify-quoted (:filter-return (html) newlines)
     (let ((blockquote-count
@@ -2251,8 +2273,10 @@ Use as a value for `completion-in-region-function'."
           (org-mode)
           (org-mime-src-mode)))))))
 
-(use-package ox-html
+(leaf ox-html
   :after org
   :custom
-  (org-html-htmlize-output-type 'css)
-  (org-html-htmlize-font-prefix "org-"))
+  '(org-html-htmlize-output-type . 'css)
+  '(org-html-htmlize-font-prefix . "org-"))
+
+(provide 'init)
