@@ -58,7 +58,7 @@
   with-current-buffer
   y-or-n-p
   :preface (provide 'subr)
-  :init (advice-add 'yes-or-no-p :override 'y-or-n-p))
+  :advice (:override yes-or-no-p y-or-n-p))
 
 (leaf subr-x :commands when-let thread-last)
 
@@ -258,7 +258,7 @@
 
 (leaf tooltip :defer-config (tooltip-mode -1))
 
-(leaf frame :defer-config (define-advice suspend-frame (:override ()) nil))
+(leaf frame :advice (:override suspend-frame (lambda ())))
 
 
 ;;;; AUTH
@@ -508,10 +508,10 @@
 
 (leaf async
   :package t
-  :after package
+  :after bytecomp
   :config (async-bytecomp-package-mode))
 
-(leaf byte-compile
+(leaf bytecomp
   :hook (after-save-hook . byte-recompile-current-file)
   :config
   (defun byte-recompile-current-file ()
@@ -565,10 +565,11 @@
 (leaf apropos :custom '(apropos-sort-by-scores . t))
 
 (leaf finder
-  :defun finder-exit@with-package
+  :defun finder-exit-with-package
+  :advice (:override finder-exit finder-exit-with-package)
   :bind (help-map :package help ("M-c" . finder-commentary))
   :config
-  (define-advice finder-exit (:override () with-package)
+  (defun finder-exit-with-package ()
     (interactive)
     (if (string-match-p (rx "*Finder" (? "-package") "*") (buffer-name))
         (quit-window t)
@@ -580,7 +581,9 @@
 ;;; DIRED
 
 (leaf dired
+  :defun dired-copy-filename-as-kill-join-newline
   :commands dired-get-marked-files
+  :advice (:override dired-copy-filename-as-kill dired-copy-filename-as-kill-join-newline)
 
   :hook
   (dired-mode-hook . dired-hide-details-mode)
@@ -605,7 +608,7 @@
       ("adb"
        (setq-local dired-actual-switches "-alDF"))))
 
-  (define-advice dired-copy-filename-as-kill (:override (&optional arg) newline)
+  (defun dired-copy-filename-as-kill-join-newline (&optional arg)
     (interactive "P")
     (let ((string
            (or (dired-get-subdir)
@@ -627,6 +630,7 @@
         (message "%s" string)))))
 
 (leaf dired-x
+  :defun dired-get-marker-char dired-mark-extension
   :after dired
   :hook (dired-mode-hook . dired-omit-mode)
 
@@ -892,9 +896,7 @@
 
 ;;;; FORMATTING
 
-(leaf whitespace
-  :hook (before-save-hook . whitespace-cleanup)
-  :config (diminish 'whitespace-mode))
+(leaf whitespace :hook (before-save-hook . whitespace-cleanup))
 
 (leaf format-all :package t)
 
@@ -956,12 +958,14 @@
   :custom '(ledger-default-date-format . "%Y-%m-%d"))
 
 (leaf conf-mode
-  :hook (after-save-hook . xresources-reload)
+  :hook (conf-xdefaults-mode-hook . xresources-reload-setup)
   :config
+  (defun xresources-reload-setup ()
+    (add-hook 'after-save-hook 'xresources-reload nil t))
+
   (defun xresources-reload ()
     (interactive)
-    (when (and (derived-mode-p 'conf-xdefaults-mode)
-               (yes-or-no-p "Reload xresources?"))
+    (when (yes-or-no-p "Reload xresources?")
       (let ((xres (expand-file-name "X11/xresources" (xdg-config-home))))
         (shell-command (format "xrdb -load %s" xres))))))
 
@@ -985,9 +989,7 @@
 
 (leaf robots-txt-mode :package t)
 
-(leaf restclient
-  :package t
-  :init (add-to-list 'auto-mode-alist `(,(rx (ext "http")) . restclient-mode)))
+(leaf restclient :package t)
 
 
 ;;;;; GIT
@@ -1054,13 +1056,11 @@
 
 (leaf php-mode
   :package t
-  :custom
-  '(php-mode-coding-style . 'php)
-  `(php-manual-path . ,(expand-file-name "php_docs/php-chunked-xhtml" (xdg-cache-home))))
+  :custom '(php-mode-coding-style . 'php))
 
 (leaf web-mode
   :package t
-  :init (add-to-list 'auto-mode-alist `(,(rx (ext "twig")) . web-mode))
+  :mode "\\.twig\\'"
   :custom '(web-mode-markup-indent-offset . 4))
 
 
@@ -1082,11 +1082,10 @@
 (leaf lisp
   :preface (provide 'lisp)
   :commands kill-sexp
-  :hook (after-save-hook . check-parens-in-prog-mode)
+  :hook (prog-mode-hook . check-parens-setup)
   :config
-  (defun check-parens-in-prog-mode ()
-    (when (derived-mode-p 'prog-mode)
-      (check-parens))))
+  (defun check-parens-setup ()
+    (add-hook 'after-save-hook 'check-parens nil t)))
 
 
 ;;;;;; ELITE LISP
@@ -1305,34 +1304,27 @@ Use as a value for `completion-in-region-function'."
   (goto-map :package bindings ("o" . consult-outline)))
 
 (leaf icomplete-vertical
+  :defun icomplete-vertical-around
+
   :package t
   :after icomplete
   :require t
   :leaf-defer nil
   :bind (icomplete-minibuffer-map :package icomplete ("C-v" . icomplete-vertical-toggle))
 
+  :advice
+  (:around icomplete-complete-minibuffer-history icomplete-vertical-around)
+  (:around read-file-name icomplete-vertical-around)
+  (:around comint-history icomplete-vertical-around)
+  (:around mingus-find-and-add-file icomplete-vertical-around)
+  (:around imenu--completion-buffer icomplete-vertical-around)
+  (:around consult-yank-replace icomplete-vertical-around)
+  (:around consult-outline icomplete-vertical-around)
+
   :config
-  (defun icomplete-vertical-around-advice (fn &rest args)
+  (defun icomplete-vertical-around (fn &rest args)
     (icomplete-vertical-do nil
-      (apply fn args)))
-
-  (advice-add 'icomplete-complete-minibuffer-history :around #'icomplete-vertical-around-advice)
-
-  (with-eval-after-load 'minibuffer
-    (advice-add 'read-file-name :around #'icomplete-vertical-around-advice))
-
-  (with-eval-after-load 'comint
-    (advice-add 'comint-history :around #'icomplete-vertical-around-advice))
-
-  (with-eval-after-load 'mingus
-    (advice-add 'mingus-find-and-add-file :around #'icomplete-vertical-around-advice))
-
-  (with-eval-after-load 'imenu
-    (advice-add 'imenu--completion-buffer :around #'icomplete-vertical-around-advice))
-
-  (with-eval-after-load 'consult
-    (advice-add 'consult-yank-replace :around #'icomplete-vertical-around-advice)
-    (advice-add 'consult-outline :around #'icomplete-vertical-around-advice)))
+      (apply fn args))))
 
 
 ;;;; HIPPIE-EXP
@@ -1361,9 +1353,11 @@ Use as a value for `completion-in-region-function'."
   (define-key isearch-mode-map (kbd "C-?") isearch-help-map))
 
 (leaf grep
+  :defun grep-expand-template-add-cut
+  :advice (:filter-return grep-expand-template grep-expand-template-add-cut)
   :defer-config
   (add-to-list 'grep-files-aliases '("php" . "*.php *.phtml"))
-  (define-advice grep-expand-template (:filter-return (cmd) cut)
+  (defun grep-expand-template-add-cut (cmd)
     (concat cmd " | cut -c-500")))
 
 (leaf wgrep
@@ -1478,6 +1472,8 @@ Use as a value for `completion-in-region-function'."
 
 (leaf comint
   :preface (defvar-local comint-history-filter-function nil)
+  :defun comint-filter-input-ring
+  :advice (:before comint-write-input-ring comint-filter-input-ring)
 
   :hook
   (kill-buffer-hook . comint-write-input-ring)
@@ -1495,7 +1491,7 @@ Use as a value for `completion-in-region-function'."
     (dolist (buf (buffer-list))
       (with-current-buffer buf (comint-write-input-ring))))
 
-  (define-advice comint-write-input-ring (:before (&rest _) filter-history)
+  (defun comint-filter-input-ring (&rest _)
     (let ((fn comint-history-filter-function))
       (when (and fn comint-input-ring (not (ring-empty-p comint-input-ring)))
         (thread-last comint-input-ring
@@ -1655,21 +1651,22 @@ Use as a value for `completion-in-region-function'."
 ;;; APPLICATIONS
 
 (leaf forms
-  :hook (kill-buffer-hook . forms-kill-file-buffer)
+  :defvar forms--file-buffer
+  :hook (forms-mode-hook . forms-kill-file-buffer-setup)
   :config
+  (defun forms-kill-file-buffer-setup ()
+    (add-hook 'kill-buffer-hook 'forms-kill-file-buffer nil t))
+
   (defun forms-kill-file-buffer ()
-    (when (and (derived-mode-p 'forms-mode) (buffer-live-p forms--file-buffer))
+    (when (buffer-live-p forms--file-buffer)
       (kill-buffer forms--file-buffer))))
 
 (leaf vlf :package t)
 
 (leaf sdcv
-  :defun sdcv-goto-sdcv@fullscreen
+  :advice (:after sdcv-goto-sdcv delete-other-windows)
   :package t
-  :bind (mode-specific-map :package bindings ("o t" . sdcv-search-input))
-  :config
-  (define-advice sdcv-goto-sdcv (:after () fullscreen)
-    (delete-other-windows)))
+  :bind (mode-specific-map :package bindings ("o t" . sdcv-search-input)))
 
 (leaf dictionary
   :package t
@@ -1729,6 +1726,7 @@ Use as a value for `completion-in-region-function'."
   '(eww-search-prefix . "https://ddg.co/lite/?q="))
 
 (leaf xml
+  :defun xml-parse-string xml-escape-string
   :commands sgml-decode-entities sgml-encode-entities
   :config
   (defun sgml-decode-entities (beg end)
@@ -1764,32 +1762,40 @@ Use as a value for `completion-in-region-function'."
 
 (leaf transmission
   :defvar transmission-mode-map
-  :defun transmission@fullscreen
+  :advice (:after transmission delete-other-windows)
   :package t
   :bind
   (mode-specific-map :package bindings ("o r" . transmission))
-  (transmission-mode-map ("M" . transmission-move))
-  :config
-  (define-advice transmission (:after () fullscreen)
-    (delete-other-windows)))
+  (transmission-mode-map ("M" . transmission-move)))
 
 (leaf torrent-mode
   :preface
   (unless (package-installed-p 'torrent-mode)
     (quelpa '(torrent-mode :repo "xFA25E/torrent-mode" :fetcher github)))
-  :hook (after-init-hook . torrent-mode-setup))
+  :mode "\\.torrent\\'")
 
 (leaf mediainfo-mode
   :preface
   (unless (package-installed-p 'mediainfo-mode)
     (quelpa '(mediainfo-mode :repo "xFA25E/mediainfo-mode" :fetcher github)))
-  :hook (after-init-hook . mediainfo-mode-setup))
+  :mode "\\.\\(?:3gp\\|a\\(?:iff\\|vi\\)\\|flac\\|m\\(?:4a\\|kv\\|ov\\|p[34g]\\)\\|o\\(?:gg\\|pus\\)\\|vob\\|w\\(?:av\\|ebm\\|mv\\)\\)\\'"
+  :init
+  (add-to-list
+   'file-name-handler-alist
+   '("\\.\\(?:3gp\\|a\\(?:iff\\|vi\\)\\|flac\\|m\\(?:4a\\|kv\\|ov\\|p[34g]\\)\\|o\\(?:gg\\|pus\\)\\|vob\\|w\\(?:av\\|ebm\\|mv\\)\\)\\'" . mediainfo-mode--file-handler)))
+
 
 
 ;;;; PROJECTILE
 
 (leaf projectile
   :package t
+  :defun projectile-default-mode-line-remove-empty delete-file-projectile-remove-from-cache-ftp-fix
+
+  :advice
+  (:filter-return projectile-default-mode-line projectile-default-mode-line-remove-empty)
+  (:override delete-file-projectile-remove-from-cache delete-file-projectile-remove-from-cache-ftp-fix)
+
   :bind (projectile-mode-map ("M-m" . projectile-command-map))
   :hook (after-init-hook . projectile-mode)
 
@@ -1801,19 +1807,18 @@ Use as a value for `completion-in-region-function'."
     . ,(expand-file-name "emacs/projectile/projects" (xdg-cache-home)))
 
   :config
-  (define-advice projectile-default-mode-line (:filter-return (project-name) remove-empty)
+  (defun projectile-default-mode-line-remove-empty (project-name)
     (when (not (string-equal project-name "[-]"))
       (concat " " project-name)))
 
-  (define-advice delete-file-projectile-remove-from-cache
-      (:override (filename &optional _trash) ftp-fix)
+  (defun delete-file-projectile-remove-from-cache-ftp-fix (filename &optional _trash)
     (unless (string-equal (file-remote-p default-directory 'method) "ftp")
-      (if (and projectile-enable-caching projectile-auto-update-cache (projectile-project-p))
-          (let* ((project-root (projectile-project-root))
-                 (true-filename (file-truename filename))
-                 (relative-filename (file-relative-name true-filename project-root)))
-            (if (projectile-file-cached-p relative-filename project-root)
-                (projectile-purge-file-from-cache relative-filename)))))))
+      (when (and projectile-enable-caching projectile-auto-update-cache (projectile-project-p))
+        (let* ((project-root (projectile-project-root))
+               (true-filename (file-truename filename))
+               (relative-filename (file-relative-name true-filename project-root)))
+          (when (projectile-file-cached-p relative-filename project-root)
+            (projectile-purge-file-from-cache relative-filename)))))))
 
 
 ;;;; YTEL
@@ -1989,7 +1994,8 @@ Use as a value for `completion-in-region-function'."
 
 (leaf mingus
   :defvar mpd-inter-conn
-  :defun mingus-buffer-p mingus-git-out@kill mingus-add-files mingus-music-files
+  :defun mingus-buffer-p mingus-git-out-and-kill mingus-add-files mingus-music-files
+  :advice (:override mingus-git-out mingus-git-out-and-kill)
   :package t
 
   :bind
@@ -2006,9 +2012,10 @@ Use as a value for `completion-in-region-function'."
   '(mingus-use-mouse-p . nil)
 
   :config
-  (define-advice mingus-git-out (:override (&optional _x) kill)
+  (defun mingus-git-out-and-kill (&optional _)
     (interactive)
-    (when (mingus-buffer-p) (kill-current-buffer)))
+    (when (mingus-buffer-p)
+      (kill-current-buffer)))
 
   (defun mingus-music-files ()
     (let* ((default-directory (xdg-music-dir))
@@ -2047,7 +2054,7 @@ Use as a value for `completion-in-region-function'."
 
 (leaf nov
   :package t
-  :init (add-to-list 'auto-mode-alist `(,(rx (ext "epub")) . nov-mode))
+  :mode "\\.epub\\'"
   :custom `(nov-save-place-file . ,(expand-file-name "emacs/nov-places" (xdg-cache-home))))
 
 (leaf fb2-mode
@@ -2060,6 +2067,7 @@ Use as a value for `completion-in-region-function'."
 ;;; MAIL
 
 (leaf message
+  :defvar message-mode-map
   :commands message-send-mail-with-sendmail
   :custom
   '(message-kill-buffer-on-exit . t)
@@ -2079,7 +2087,16 @@ Use as a value for `completion-in-region-function'."
 ;;;; MU4E
 
 (leaf mu4e
-  :hook (after-init-hook . (lambda () (mu4e t)))
+  :defun
+  mu4e-action-view-in-browser-check-parens-fix
+  mu4e-kill-update mu4e-main-mode-map mu4e-view-actions
+  mu4e-kill-update-mail
+
+  :defvar mu4e-main-mode-map mu4e-view-actions
+
+  :advice
+  (:around mu4e-action-view-in-browser mu4e-action-view-in-browser-check-parens-fix)
+  (:before mu4e-update-mail-and-index mu4e-kill-update)
 
   :bind
   (mode-specific-map :package bindings ("o m" . mu4e))
@@ -2135,21 +2152,21 @@ Use as a value for `completion-in-region-function'."
 
   (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t)
 
-  (define-advice mu4e-action-view-in-browser
-      (:around (oldfunc &rest args) check-parens-fix)
+  (defun mu4e-action-view-in-browser-check-parens-fix (oldfunc &rest args)
     (let ((prog-mode-hook nil)
           (browse-url-browser-function #'browse-url-firefox))
       (apply oldfunc args)))
 
-  (define-advice mu4e-update-mail-and-index (:before (&rest _ignore) kill-update)
+  (defun mu4e-kill-update (_)
     (mu4e-kill-update-mail)))
 
 (leaf mu4e-alert
   :package t
-  :hook
-  (after-init-hook . mu4e-alert-enable-notifications)
-  (after-init-hook . mu4e-alert-enable-mode-line-display)
-  :config (mu4e-alert-set-default-style 'libnotify))
+  :after mu4e
+  :config
+  (mu4e-alert-enable-notifications)
+  (mu4e-alert-enable-mode-line-display)
+  (mu4e-alert-set-default-style 'libnotify))
 
 
 ;;; ORGANIZE
@@ -2210,11 +2227,19 @@ Use as a value for `completion-in-region-function'."
   :defvar
   org-mime--saved-temp-window-config org-mime-src--beg-marker
   org-mime-src--end-marker org-mime-src--overlay org-mime-src--hint
+
   :defun
-  org-mime-beautify-quoted@newlines org-mime-replace-images@fix-imgs
+  org-mime-beautify-quoted-add-newlines org-mime-replace-images-fix-cids-and-path
   org-mime-mail-body-begin org-mime-mail-signature-begin
   org-mime-src--make-source-overlay org-mime-src-mode
-  org-mime-edit-mail-in-org-mode@up-to-signature
+  org-mime-edit-mail-in-org-mode-up-to-signature
+  org-switch-to-buffer-other-window
+
+  :advice
+  (:filter-return org-mime-beautify-quoted org-mime-beautify-quoted-add-newlines)
+  (:filter-args org-mime-replace-images org-mime-replace-images-fix-cids-and-path)
+  (:override org-mime-edit-mail-in-org-mode org-mime-edit-mail-in-org-mode-up-to-signature)
+
   :package t
   :bind
   (message-mode-map
@@ -2223,7 +2248,7 @@ Use as a value for `completion-in-region-function'."
    ("C-c M-e" . org-mime-edit-mail-in-org-mode)
    ("C-c M-t" . org-mime-revert-to-plain-text-mail))
   :config
-  (define-advice org-mime-beautify-quoted (:filter-return (html) newlines)
+  (defun org-mime-beautify-quoted-add-newlines (html)
     (let ((blockquote-count
            (save-match-data
              (with-temp-buffer
@@ -2237,11 +2262,11 @@ Use as a value for `completion-in-region-function'."
           (rx (>= 3 "\n")) "\n\n"
           html)))))
 
-  (define-advice org-mime-replace-images (:filter-args (args) fix-imgs)
+  (defun org-mime-replace-images-fix-cids-and-path (args)
     (cl-destructuring-bind (first . rest) args
       (cons (replace-regexp-in-string "src=\"file:///" "src=\"/" first) rest)))
 
-  (define-advice org-mime-edit-mail-in-org-mode (:override () up-to-signature)
+  (defun org-mime-edit-mail-in-org-mode-up-to-signature ()
     (interactive)
     ;; see `org-src--edit-element'
     (cond
@@ -2280,3 +2305,7 @@ Use as a value for `completion-in-region-function'."
   '(org-html-htmlize-font-prefix . "org-"))
 
 (provide 'init)
+
+;;; Local variables:
+;;; eval: (require 'leaf)
+;;; End:
