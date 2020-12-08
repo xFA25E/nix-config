@@ -165,12 +165,9 @@
   :bind (help-map :package help ("M-f" . list-faces-display))
 
   :config
-  (set-face-attribute 'default nil :family "Iosevka")
-  (set-face-attribute 'default nil :height 165)
-  (set-face-attribute 'mode-line nil :family "DejaVu Sans")
-  (set-face-attribute 'mode-line nil :height 125)
-  (set-face-attribute 'mode-line-inactive nil :family "DejaVu Sans" )
-  (set-face-attribute 'mode-line-inactive nil :height 125)
+  (set-face-attribute 'default nil :family "Iosevka" :height 165)
+  (set-face-attribute 'mode-line nil :family "DejaVu Sans" :height 125)
+  (set-face-attribute 'mode-line-inactive nil :family "DejaVu Sans" :height 125)
   (set-face-attribute 'fixed-pitch-serif nil :family "DejaVu Serif")
   (set-face-attribute 'header-line nil :inverse-video nil :family "Iosevka")
 
@@ -2087,16 +2084,9 @@ Use as a value for `completion-in-region-function'."
 ;;;; MU4E
 
 (leaf mu4e
-  :defun
-  mu4e-action-view-in-browser-check-parens-fix
-  mu4e-kill-update mu4e-main-mode-map mu4e-view-actions
-  mu4e-kill-update-mail
-
+  :defun mu4e-action-view-in-browser-check-parens-fix mu4e-main-mode-map mu4e-view-actions
   :defvar mu4e-main-mode-map mu4e-view-actions
-
-  :advice
-  (:around mu4e-action-view-in-browser mu4e-action-view-in-browser-check-parens-fix)
-  (:before mu4e-update-mail-and-index mu4e-kill-update)
+  :advice (:around mu4e-action-view-in-browser mu4e-action-view-in-browser-check-parens-fix)
 
   :bind
   (mode-specific-map :package bindings ("o m" . mu4e))
@@ -2155,10 +2145,7 @@ Use as a value for `completion-in-region-function'."
   (defun mu4e-action-view-in-browser-check-parens-fix (oldfunc &rest args)
     (let ((prog-mode-hook nil)
           (browse-url-browser-function #'browse-url-firefox))
-      (apply oldfunc args)))
-
-  (defun mu4e-kill-update (_)
-    (mu4e-kill-update-mail)))
+      (apply oldfunc args))))
 
 (leaf mu4e-alert
   :package t
