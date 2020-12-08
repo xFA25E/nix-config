@@ -22,8 +22,8 @@
   (package-refresh-contents)
   (package-install 'leaf))
 
-(defvar leaf-key-bindlist nil)
 (defvar leaf-expand-minimally t)
+(defvar leaf-key-bindlist nil)
 
 
 ;;; UTILS
@@ -53,14 +53,12 @@
   error
   replace-regexp-in-string
   shell-quote-argument
-  split-string
   start-process
   with-current-buffer
-  y-or-n-p
   :preface (provide 'subr)
   :advice (:override yes-or-no-p y-or-n-p))
 
-(leaf subr-x :commands when-let thread-last)
+(leaf subr-x :commands thread-last)
 
 (leaf bindings :preface (provide 'bindings))
 
@@ -512,12 +510,15 @@
   :config (async-bytecomp-package-mode))
 
 (leaf bytecomp
-  :hook (after-save-hook . byte-recompile-current-file)
+  :defun byte-recompile-current-file-setup
+  :hook (emacs-lisp-mode-hook . byte-recompile-current-file-setup)
   :config
+  (defun byte-recompile-current-file-setup ()
+    (add-hook 'after-save-hook 'byte-recompile-current-file nil t))
+
   (defun byte-recompile-current-file ()
     (interactive)
-    (when (derived-mode-p 'emacs-lisp-mode)
-      (byte-recompile-file (buffer-file-name)))))
+    (byte-recompile-file (buffer-file-name))))
 
 (leaf transient
   :custom
@@ -1913,8 +1914,7 @@ Use as a value for `completion-in-region-function'."
   `(newsticker-dir . ,(expand-file-name "emacs/newsticker" (xdg-cache-home)))
   '(newsticker-url-list-defaults . nil)
   '(newsticker-url-list
-    . '(("Justus Walker" "https://www.youtube.com/feeds/videos.xml?user=senttosiberia")
-        ("Alt-Hype" "https://www.bitchute.com/feeds/rss/channel/thealthype/")
+    . '(("Alt-Hype" "https://www.bitchute.com/feeds/rss/channel/thealthype/")
         ("American Renaissance" "https://www.bitchute.com/feeds/rss/channel/amrenaissance/")
         ("TealDeer" "https://www.bitchute.com/feeds/rss/channel/tealdeer/")
         ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
@@ -1946,7 +1946,7 @@ Use as a value for `completion-in-region-function'."
 
 (leaf newst-treeview
   :defvar newsticker-treeview-mode-map
-  :commands newsticker--treeview-get-selected-item
+  :defun newsticker--treeview-get-selected-item
   :hook (newsticker-treeview-item-mode-hook . toggle-truncate-lines)
 
   :bind
