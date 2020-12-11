@@ -1,4 +1,0 @@
-#!/bin/sh
-
-name="$( rofi -dmenu -p "New desktop name" )"
-bspc monitor --add-desktops "${name:?}"

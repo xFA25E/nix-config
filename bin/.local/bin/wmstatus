@@ -1,8 +1,0 @@
-#!/bin/sh
-
-exec bratus \
-     --color-free "$(xgetres runel.free)" \
-     --color-monitor "$(xgetres runel.monitor)" \
-     --color-occupied "$(xgetres runel.occupied)" \
-     --color-state "$(xgetres runel.state)" \
-     --color-urgent "$(xgetres runel.urgent)"

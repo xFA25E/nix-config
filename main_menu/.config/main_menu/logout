@@ -1,4 +1,0 @@
-#!/bin/sh
-pkill runel
-rimer remote quit
-bspc quit

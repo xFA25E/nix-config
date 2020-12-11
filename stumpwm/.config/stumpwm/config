@@ -1,0 +1,231 @@
+;; -*-lisp-*-
+;;
+;; Here is a sample .stumpwmrc file
+
+(in-package :stumpwm)
+
+(defcommand slynk-start () ()
+  (slynk:create-server :dont-close t :port 4096))
+
+(defcommand slynk-stop () ()
+  (slynk:stop-server 4096))
+
+(defcommand telegram () ()
+  "Start telegram unless it is already running, in which case focus it."
+  (run-or-raise "telegram-desktop" '(:class "TelegramDesktop")))
+
+(defcommand qutebrowser () ()
+  "Start qutebrowser unless it is already running, in which case focus it."
+  (run-or-raise "qutebrowser" '(:class "qutebrowser")))
+
+(defcommand firefox () ()
+  "Start firefox unless it is already running, in which case focus it."
+  (run-or-raise "firefox" '(:class "firefox")))
+
+(defcommand brave () ()
+  "Start brave unless it is already running, in which case focus it."
+  (run-or-raise "brave" '(:class "Brave-browser")))
+
+(defcommand em () ()
+  "Start em unless it is already running, in which case focus it."
+  (run-or-raise "em" '(:class "Emacs")))
+
+(defvar *open-map* (make-sparse-keymap))
+
+(set-prefix-key (kbd "C-z"))
+
+(define-key *single-menu-map* (kbd "C-h") #'menu-backspace)
+(define-key *batch-menu-map* (kbd "C-h") #'menu-backspace)
+
+(define-key *menu-map* (kbd "C-m") #'menu-finish)
+
+(define-key *input-map* (kbd "C-m") #'input-submit)
+(define-key *input-map* (kbd "C-h") #'input-delete-backward-char)
+(define-key *input-map* (kbd "C-w") #'input-backward-kill-word)
+
+(define-key *top-map* (kbd "XF86AudioMute") "exec amixer -D pulse sset Master toggle >/dev/null")
+(define-key *top-map* (kbd "XF86AudioLowerVolume") "exec amixer -D pulse sset Master 1%- >/dev/null")
+(define-key *top-map* (kbd "XF86AudioRaiseVolume") "exec amixer -D pulse sset Master 1%+ >/dev/null")
+
+(define-key *top-map* (kbd "XF86AudioPrev") "exec mpc -q prev")
+(define-key *top-map* (kbd "XF86AudioPlay") "exec mpc -q toggle")
+(define-key *top-map* (kbd "XF86AudioNext") "exec mpc -q next")
+
+(define-key *top-map* (kbd "XF86MonBrightnessDown") "exec xbacklight -dec 1")
+(define-key *top-map* (kbd "XF86MonBrightnessUp") "exec xbacklight -inc 1")
+
+(define-key *root-map* (kbd "e") "em")
+(define-key *root-map* (kbd "C-e") "em")
+
+(define-key *root-map* (kbd "C-a") "mode-line")
+(define-key *root-map* (kbd "a") "mode-line")
+
+(define-key *root-map* (kbd "C-o") '*open-map*)
+
+(define-key *open-map* (kbd "C-b") "brave")
+(define-key *open-map* (kbd "C-f") "firefox")
+(define-key *open-map* (kbd "C-q") "qutebrowser")
+(define-key *open-map* (kbd "C-t") "telegram")
+(define-key *open-map* (kbd "C-w") "exec rpass type")
+(define-key *open-map* (kbd "w") "exec rpass")
+(define-key *open-map* (kbd "C-c") "exec timer add")
+(define-key *open-map* (kbd "c") "exec timer")
+
+(set-font "-*-terminus-medium-r-*-*-24-*-*-*-*-*-iso10646-1")
+
+(clear-window-placement-rules)
+
+(defvar battery-status 100)
+(defvar battery-compare-status 100)
+
+(defun battery-status ()
+  (let ((capacity-file "/sys/class/power_supply/BAT0/capacity"))
+    (parse-integer (uiop:read-file-string capacity-file) :junk-allowed t)))
+
+(defun notify-battery-status ()
+  (setf battery-status (battery-status))
+  (let ((difference (- battery-compare-status battery-status)))
+    (cond ((<= difference 0)
+           (setf battery-compare-status battery-status))
+          ((<= battery-status 10)
+           (message "BATTERY IS CRITICAL: ~d" battery-status)
+           (run-shell-command "notify_sound")
+           (setf battery-compare-status battery-status))
+          ((or (and (<= battery-status 20) (<= 3 difference))
+               (<= 10 difference))
+           (message "Battery is discharging: ~d" battery-status)
+           (setf battery-compare-status battery-status)))))
+
+(defvar battery-timer (stumpwm::run-with-timer 60 60 #'notify-battery-status))
+
+(defun notify-date-time ()
+  (when (zerop (rem (nth-value 1 (get-decoded-time)) 30))
+    (echo-date)))
+
+(defvar date-time-timer (stumpwm::run-with-timer 60 60 #'notify-date-time))
+
+(setf *timeout-wait* 10)
+
+(init-load-path #p"/home/val/.config/stumpwm/modules")
+
+(load-module "notify")
+(notify:notify-server-toggle)
+(setf notify:*notify-server-title-color* "^7^B")
+(setf notify:*notify-server-body-color* "^7^B")
+
+(defcommand brightness () ()
+  (let* ((output (run-shell-command "xbacklight -get" t))
+         (current (ppcre:scan-to-strings "[0-9]+" output))
+         (brightness (read-one-line (current-screen) "Brightness: " :initial-input current)))
+    (run-shell-command (concatenate 'string "xbacklight -set " brightness))))
+
+(defcommand lock () ()
+  (let ((screenshot "/tmp/desktop-lock-scrot.png"))
+    (run-shell-command (format nil "xkb-switch -s dvorak
+scrot -o ~A
+convert ~A -blur 6x5 ~A
+i3lock --tiling --ignore-empty-password --show-failed-attempts --pointer win --image=~A"
+                               screenshot screenshot screenshot screenshot))))
+
+(defcommand scrot () ()
+  (let* ((directory "${HOME}/Pictures/screenshots")
+         (name (read-one-line (current-screen) "Scrot name (w/o ext): "))
+         (filename (if (zerop (length name))
+                       directory
+                       (concatenate 'string directory "/" name ".png")))
+         (select (if (y-or-n-p "Select? ") "--select" "")))
+    (run-shell-command (format nil "mkdir -p ~A
+scrot --overwrite --delay 1 ~A \"~A\" --exec 'image_clipboard $f'
+notify-send Scrot 'Done screenshot'"
+                               directory select filename))))
+
+(defcommand volume () ()
+  (let* ((cmd "amixer -D pulse sget Master")
+         (output (run-shell-command cmd t))
+         (current (aref (nth-value 1 (ppcre:scan-to-strings "Front Left:[^[]+\\[([0-9]+)%\\]" output)) 0))
+         (new (read-one-line (current-screen) "Volume: " :initial-input current)))
+    (run-shell-command (format nil "amixer -D pulse sset Master '~A%'" new))))
+
+(defcommand mpd-volume () ()
+  (let* ((output (run-shell-command "mpc -q volume" t))
+         (current (ppcre:scan-to-strings "[0-9]+" output))
+         (new (read-one-line (current-screen) "Mpd volume: " :initial-input current)))
+    (run-shell-command (format nil "mpc -q volume '~A'" new))))
+
+(load-module "app-menu")
+(setf app-menu:*app-menu*
+      '(("brightness" brightness)
+        ("lock" lock)
+        ("mount" "rmount")
+        ("umount" "rumount")
+        ("scrot" scrot)
+        ("volume" volume)
+        ("mpd-volume" mpd-volume)))
+
+(define-key *open-map* (kbd "C-m") "show-menu")
+
+(run-shell-command "random_wallpaper")
+
+(setf *screen-mode-line-format*
+      '(" [%n] "
+        (:eval (window-title (current-window)))
+        " ^> L"
+        (:eval (ppcre:scan-to-strings "[0-9]+" (run-shell-command "xbacklight -get" t)))
+        " V"
+        (:eval (aref (nth-value 1 (ppcre:scan-to-strings "Front Left:[^[]+\\[([0-9]+)%\\]" (run-shell-command "amixer -D pulse sget Master" t))) 0))
+        " B"
+        (:eval (write-to-string (battery-status)))
+        " %d"))
+
+(setf *mode-line-border-width* 0)
+(setf *mode-line-pad-x* 0)
+(setf *mode-line-pad-y* 0)
+(setf *mode-line-background-color* "Black")
+(setf *mode-line-border-color* "Black")
+(setf *mode-line-foreground-color* "White")
+
+(defcommand show-mpd () ()
+  (message (string-right-trim (string #\Newline) (run-shell-command "mpc" t))))
+
+(define-key *open-map* (kbd "C-s") "show-mpd")
+
+(defcommand show-corona () ()
+  (destructuring-bind (cases recovered deaths active)
+      (split-string (string-right-trim (string #\Newline) (run-shell-command "curl -s 'https://corona-stats.online/Italy?format=json' | jq -r '.data[0] | \"\\(.cases) \\(.recovered) \\(.deaths) \\(.active)\"'" t)) " ")
+    (message "COVID-19 Italy | Confirmed: ~A  Recovered: ~A  Deaths: ~A  Active: ~A"
+             cases recovered deaths active)))
+
+(define-key *open-map* (kbd "C-k") "show-corona")
+(define-key *open-map* (kbd "C-v") "exec uxterm -e pulsemixer")
+
+;; text="\
+;; ${CHD}I%{F-}  ${CFG}\${gw_iface}%{F-}\
+;;   ${CHD}G%{F-}  ${CFG}\${gw_ip}%{F-}\
+;; \${if_up wlo1}\
+;;   ${CHD}WiFi%{F-}  ${CFG}\${addr wlo1}%{F-}\
+;;   ${CHD}N%{F-}  ${CFG}\${wireless_essid wlo1}%{F-}\
+;;   ${CHD}Q%{F-}  ${CFG}\${wireless_link_qual wlo1}/\${wireless_link_qual_max wlo1}%{F-}\
+;; \${endif}\
+;; \${if_up eno1}\
+;;   ${CHD}Wired%{F-}  ${CFG}\${addr eno1}%{F-}\
+;; \${endif}\
+;;   ${CHD}FsR%{F-}  ${CFG}\${fs_free /}%{F-}\
+;;   ${CHD}FsH%{F-}  ${CFG}\${fs_free /home}%{F-}\
+;; \${if_mounted /mnt/second_partition}\
+;;   ${CHD}FsW%{F-}  ${CFG}\${fs_free /mnt/second_partition}%{F-}\
+;; \${endif}\
+;; \${if_empty \${battery_time}}\${else}\
+;;   ${CHD}B%{F-}  ${CFG}\${battery_time}%{F-}\
+;; \${endif}"
+
+;; Filesystem      Size  Used Avail Use% Mounted on
+;; dev             4.2G     0  4.2G   0% /dev
+;; run             4.2G   27M  4.2G   1% /run
+;; /dev/sda7        22G   17G  3.3G  84% /
+;; tmpfs           4.2G     0  4.2G   0% /dev/shm
+;; tmpfs           4.2M     0  4.2M   0% /sys/fs/cgroup
+;; tmpfs           4.2G  9.3M  4.2G   1% /tmp
+;; /dev/sda5       305M  145M  145M  51% /boot
+;; /dev/sda8       285G  175G   96G  65% /home
+;; /dev/sda10      283G   40G  229G  15% /mnt/second_partition
+;; tmpfs           830M  144k  830M   1% /run/user/1000

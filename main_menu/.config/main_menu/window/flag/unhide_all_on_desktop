@@ -1,3 +1,0 @@
-#!/bin/sh
-name="$( bspc query --desktops --names | rofi -dmenu -p "Select desktop" )"
-bspc query -N -n .hidden -d "${name:?}" | xargs -I w bspc node w --flag hidden

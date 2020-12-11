@@ -1,5 +1,0 @@
-#!/bin/sh
-pkill runel
-pkill rimer
-bspc quit
-shutdown now

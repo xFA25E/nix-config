@@ -1,9 +1,0 @@
-#!/bin/sh
-
-get_desktop() {
-    bspc query --desktops --names | rofi -dmenu -p "$1"
-}
-
-name="$( get_desktop "Select desktop to swap" )"
-with="$( get_desktop "Swap ${name:?} with" )"
-bspc desktop "${name:?}" --swap "${with:?}"

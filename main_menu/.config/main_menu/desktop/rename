@@ -1,5 +1,0 @@
-#!/bin/sh
-
-name="$( bspc query --desktops --names | rofi -dmenu -p "Select desktop to rename" )"
-new_name="$( rofi -dmenu -p "New name of ${name:?}" )"
-bspc desktop "${name:?}" --rename "${new_name:?}"

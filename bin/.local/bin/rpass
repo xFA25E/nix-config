@@ -47,7 +47,7 @@ type_field() {
             ;;
         *)
             entry="$(printf "%s" "${text}" | parse_field "${field}")"
-            # setxkbmap us
+            setxkbmap us
             millisleep 100
             xdotool type "${entry}"
             setxkbmap -layout 'dvorak,ru' -variant ',ruu'

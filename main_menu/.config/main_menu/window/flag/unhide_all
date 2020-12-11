@@ -1,2 +1,0 @@
-#!/bin/sh
-bspc query -N -n .hidden | xargs -I w bspc node w --flag hidden

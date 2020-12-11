@@ -473,9 +473,7 @@
   ("C-M-S-b" . previous-buffer)
   ("C-M-S-f" . next-buffer)
   ("M-Q" . quit-window)
-  (ctl-x-map :package subr ("C-b" . switch-to-buffer))
-  :config
-  (add-to-list 'display-buffer-alist `(,(rx (* any)) (display-buffer-same-window))))
+  (ctl-x-map :package subr ("C-b" . switch-to-buffer)))
 
 (leaf time :custom '(display-time-24hr-format . t))
 
@@ -773,11 +771,12 @@
   :custom '(find-ls-option . '("-print0 | sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF")))
 
 (leaf fd-dired
-  :preface
-  (unless (package-installed-p 'fd-dired)
-    (quelpa '(fd-dired :repo "xFA25E/fd-dired" :fetcher github)))
-  :bind (search-map :package bindings ("f d" . fd-dired))
-  :custom '(fd-dired-ls-option . '("| sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF")))
+  :load-path "~/Documents/projects/emacs-lisp/fd-dired"
+  ;; :preface
+  ;; (unless (package-installed-p 'fd-dired)
+  ;;   (quelpa '(fd-dired :repo "xFA25E/fd-dired" :fetcher github)))
+  :custom '(fd-dired-ls-option . '("| sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
+  :bind (search-map :package bindings ("f d" . fd-dired) ("f D" . fd-dired-list-searches)))
 
 (leaf locate
   :defvar locate-command
@@ -856,17 +855,6 @@
     (window-configuration-to-register ?w)))
 
 (leaf subword :hook ((php-mode-hook rust-mode-hook java-mode-hook) . subword-mode))
-
-(leaf multiple-cursors
-  :package t
-  :bind
-  ("C-S-c C-S-c" . mc/edit-lines)
-  ("C->" . mc/mark-next-like-this)
-  ("C-<" . mc/mark-previous-like-this)
-  (mode-specific-map :package bindings ("C-<" . mc/mark-all-like-this))
-  :custom
-  '(mc/always-run-for-all . t)
-  '(mc/always-repeat-command . t))
 
 (leaf edit-indirect
   :defun edit-indirect-guess-mode
@@ -1064,7 +1052,12 @@
 
 ;;;;; LSP
 
-(leaf eglot :package t)
+(leaf eglot
+  :package t
+  :custom
+  '(eglot-autoshutdown . t)
+  '(eglot-confirm-server-initiated-edits . nil)
+  '(eglot-sync-connect . nil))
 
 (leaf lsp-mode
   :disabled t
@@ -1216,7 +1209,7 @@
   '(read-file-name-completion-ignore-case . t)
   '(completion-pcm-complete-word-inserts-delimiters . t)
   '(completion-styles . '(substring partial-completion))
-  '(completion-in-region-function . 'completing-read-in-region)
+  ;; '(completion-in-region-function . 'completing-read-in-region)
   '(completion-category-overrides . '((bookmark (styles basic substring))))
 
   :config
@@ -1662,7 +1655,6 @@ Use as a value for `completion-in-region-function'."
 (leaf vlf :package t)
 
 (leaf sdcv
-  :advice (:after sdcv-goto-sdcv delete-other-windows)
   :package t
   :bind (mode-specific-map :package bindings ("o t" . sdcv-search-input)))
 
@@ -1760,7 +1752,6 @@ Use as a value for `completion-in-region-function'."
 
 (leaf transmission
   :defvar transmission-mode-map
-  :advice (:after transmission delete-other-windows)
   :package t
   :bind
   (mode-specific-map :package bindings ("o r" . transmission))
@@ -2087,6 +2078,7 @@ Use as a value for `completion-in-region-function'."
   :defun mu4e-action-view-in-browser-check-parens-fix mu4e-main-mode-map mu4e-view-actions
   :defvar mu4e-main-mode-map mu4e-view-actions
   :advice (:around mu4e-action-view-in-browser mu4e-action-view-in-browser-check-parens-fix)
+  :hook (after-init-hook . mu4e~start)
 
   :bind
   (mode-specific-map :package bindings ("o m" . mu4e))
