@@ -59,6 +59,7 @@ rpass_type() {
     text="$(pass show "${password}")"
     text="${text:?}"
     field="$(printf "%s" "${text}" | parse_password | menu -p "Select entry" -l 19)"
+    millisleep 500
     type_field "${field:?}" "${text}"
 }
 
