@@ -1,6 +1,4 @@
 ;; -*-lisp-*-
-;;
-;; Here is a sample .stumpwmrc file
 
 (in-package :stumpwm)
 
@@ -60,6 +58,9 @@
 (define-key *root-map* (kbd "C-a") "mode-line")
 (define-key *root-map* (kbd "a") "mode-line")
 
+(define-key *root-map* (kbd "C-c") "exec uxterm")
+(define-key *root-map* (kbd "c") "exec uxterm")
+
 (define-key *root-map* (kbd "C-o") '*open-map*)
 
 (define-key *open-map* (kbd "C-b") "brave")
@@ -89,19 +90,28 @@
     (cond ((<= difference 0)
            (setf battery-compare-status battery-status))
           ((<= battery-status 10)
-           (message "BATTERY IS CRITICAL: ~d" battery-status)
+           (let ((*queue-messages-p* t))
+             (message "BATTERY IS CRITICAL: ~d" battery-status)
+             (message "BATTERY IS CRITICAL: ~d" battery-status)
+             (message "BATTERY IS CRITICAL: ~d" battery-status))
            (run-shell-command "notify_sound")
            (setf battery-compare-status battery-status))
           ((or (and (<= battery-status 20) (<= 3 difference))
                (<= 10 difference))
-           (message "Battery is discharging: ~d" battery-status)
+           (let ((*queue-messages-p* t))
+             (message "Battery is discharging: ~d" battery-status)
+             (message "Battery is discharging: ~d" battery-status)
+             (message "Battery is discharging: ~d" battery-status))
            (setf battery-compare-status battery-status)))))
 
 (defvar battery-timer (stumpwm::run-with-timer 60 60 #'notify-battery-status))
 
 (defun notify-date-time ()
   (when (zerop (rem (nth-value 1 (get-decoded-time)) 30))
-    (echo-date)))
+    (let ((*queue-messages-p* t))
+      (echo-date)
+      (echo-date)
+      (echo-date))))
 
 (defvar date-time-timer (stumpwm::run-with-timer 60 60 #'notify-date-time))
 
