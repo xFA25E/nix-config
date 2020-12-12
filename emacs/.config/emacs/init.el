@@ -804,7 +804,6 @@
   ("M-c"   . capitalize-dwim)
   ("M-l"   . downcase-dwim)
   ("M-u"   . upcase-dwim)
-  ([remap move-beginning-of-line] . back-to-indentation-or-beginning)
   ([remap newline] . newline-and-indent)
   (ctl-x-map
    :package subr
@@ -821,11 +820,6 @@
   '(async-shell-command-display-buffer . nil)
 
   :config
-  (defun back-to-indentation-or-beginning ()
-    (interactive)
-    (when (= (point) (progn (back-to-indentation) (point)))
-      (beginning-of-line)))
-
   (defun just-one-space-fast (&optional n)
     (interactive "*p")
     (cycle-spacing n nil 'fast))
@@ -1345,6 +1339,7 @@ Use as a value for `completion-in-region-function'."
 
 (leaf grep
   :defun grep-expand-template-add-cut
+  :defvar grep-files-aliases
   :advice (:filter-return grep-expand-template grep-expand-template-add-cut)
   :bind (search-map :package bindings ("g" . rgrep))
   :config
@@ -1591,7 +1586,7 @@ Use as a value for `completion-in-region-function'."
   :preface
   (unless (package-installed-p 'skempo-mode)
     (quelpa '(skempo-mode :repo "xFA25E/skempo-mode" :fetcher github)))
-  :hook ((emacs-lisp-mode-hook lisp-interaction-mode-hook) . skempo-mode)
+  :hook ((emacs-lisp-mode-hook lisp-mode-hook) . skempo-mode)
 
   :bind
   (skempo-mode-map
@@ -1606,6 +1601,12 @@ Use as a value for `completion-in-region-function'."
   (defun skempo-mode-elisp-group ()
     (string-trim-right (buffer-name) (rx (? "-mode") ".el" eos)))
 
+  (skempo-mode-define-templates lisp-mode
+    ("defvar" :tempo "(defvar " p n> r> n> "\"" p "\")")
+    ("defun" :tempo "(defun " p " (" p ")" n> "\"" p "\"" n> r> ")")
+    ("lambda" :tempo "(lambda (" p ") " n> r> ")")
+    ("let" :tempo "(let ((" p "))" n> r> ")"))
+
   (skempo-mode-define-templates emacs-lisp-mode
     ("defvar" :tempo
      "(defvar " (skempo-mode-elisp-namespace) "-" p n>
@@ -1618,7 +1619,6 @@ Use as a value for `completion-in-region-function'."
      r> ")")
 
     ("lambda" :tempo "(lambda (" p ") " n> r> ")")
-
     ("let" :tempo "(let ((" p "))" n> r> ")")
 
     ("defgroup" :tempo
@@ -1776,39 +1776,12 @@ Use as a value for `completion-in-region-function'."
 
 
 
-;;;; PROJECTILE
+;;;; PROJECT
 
-(leaf projectile
-  :package t
-  :defun projectile-default-mode-line-remove-empty delete-file-projectile-remove-from-cache-ftp-fix
-
-  :advice
-  (:filter-return projectile-default-mode-line projectile-default-mode-line-remove-empty)
-  (:override delete-file-projectile-remove-from-cache delete-file-projectile-remove-from-cache-ftp-fix)
-
-  :bind (projectile-mode-map ("M-m" . projectile-command-map))
-  :hook (after-init-hook . projectile-mode)
-
+(leaf project
   :custom
-  '(projectile-enable-caching . t)
-  '(projectile-mode-line-prefix . "")
-  `(projectile-cache-file . ,(expand-file-name "emacs/projectile/cache" (xdg-cache-home)))
-  `(projectile-known-projects-file
-    . ,(expand-file-name "emacs/projectile/projects" (xdg-cache-home)))
-
-  :config
-  (defun projectile-default-mode-line-remove-empty (project-name)
-    (when (not (string-equal project-name "[-]"))
-      (concat " " project-name)))
-
-  (defun delete-file-projectile-remove-from-cache-ftp-fix (filename &optional _trash)
-    (unless (string-equal (file-remote-p default-directory 'method) "ftp")
-      (when (and projectile-enable-caching projectile-auto-update-cache (projectile-project-p))
-        (let* ((project-root (projectile-project-root))
-               (true-filename (file-truename filename))
-               (relative-filename (file-relative-name true-filename project-root)))
-          (when (projectile-file-cached-p relative-filename project-root)
-            (projectile-purge-file-from-cache relative-filename)))))))
+  `(project-list-file
+    . ,(expand-file-name "emacs/project.list" (xdg-cache-home))))
 
 
 ;;;; YTEL
