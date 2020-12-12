@@ -8,7 +8,7 @@ select_directory() {
     find "${MUSIC_DIRECTORY}" -type d ! -wholename "${MUSIC_DIRECTORY}" \
         | cut -c "$((${#MUSIC_DIRECTORY} + 2))-" \
         | sort \
-        | rofi -dmenu -p "Select directory" -select "0unsorted" -i
+        | menu -p "Select directory" -l 19
 }
 
 selected_dir="$(select_directory)"
@@ -18,7 +18,7 @@ output="${MUSIC_DIRECTORY}/${selected_dir}/%(title)s.%(ext)s"
 args="--audio-format mp3"
 # args="--audio-format opus"
 
-if [ "$(printf 'no\nyes' | rofi -dmenu -p 'Playlist?' -select no)" = yes ]; then
+if [ "$(printf 'no\nyes' | menu -p 'Playlist?')" = yes ]; then
     output="${MUSIC_DIRECTORY}/${selected_dir}/%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
     args="${args} --yes-playlist"
 fi

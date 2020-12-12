@@ -12,11 +12,11 @@ list_directories() {
 }
 
 get_password() {
-    list_passwords | sort | rofi -dmenu -no-custom -p "${1:?provide prompt}"
+    list_passwords | sort | menu -p "${1:?provide prompt}" -l 19
 }
 
 get_directory() {
-    list_directories | sort | rofi -dmenu -p "${1:?provide prompt}"
+    list_directories | sort | menu -p "${1:?provide prompt}" -l 19
 }
 
 parse_field() {
@@ -58,7 +58,7 @@ rpass_type() {
     password="${1:?provide password}"
     text="$(pass show "${password}")"
     text="${text:?}"
-    field="$(printf "%s" "${text}" | parse_password | rofi -dmenu -p "Select entry" -no-custom)"
+    field="$(printf "%s" "${text}" | parse_password | menu -p "Select entry" -l 19)"
     type_field "${field:?}" "${text}"
 }
 
@@ -74,7 +74,7 @@ rpass_edit() {
 
 rpass_show() {
     p="${1:?provide password}"
-    rofi -e "$(pass show "${p}")"
+    echo "$(pass show "${p}")" | empipe
 }
 
 rpass_otp() {
@@ -98,7 +98,7 @@ rpass_url() {
 
 
 rpass_menu() {
-    printf "type:add:edit:show:url:otp:ask" | rofi -dmenu -no-custom -p "Menu" -sep ':'
+    printf 'type\nadd\nedit\nshow\nurl\notp\nask' | menu -p "Menu"
 }
 
 case "${1:-$(rpass_menu)}" in
@@ -106,7 +106,7 @@ case "${1:-$(rpass_menu)}" in
         rpass_type "$(get_password "Select password")"
         ;;
     add)
-        rpass_add "$(rofi -dmenu -p "New password name")"
+        rpass_add "$(menu -p "New password name")"
         ;;
     edit)
         rpass_edit "$(get_password "Select password")"

@@ -1,4 +1,4 @@
 #!/bin/sh
 
-# search_term="$(rofi -dmenu -p "Search term")"
+search_term="$(menu -p "Search term")"
 cd "${XDG_CACHE_HOME:-${HOME}/.cache}" && exec qutebrowser # "${search_term:?}"

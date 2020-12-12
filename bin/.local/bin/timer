@@ -42,7 +42,7 @@ get_new_timer() {
     printf "%s" "${TIMER_PROFILES}" \
         | filter_kind "${1:?provide kind}" \
         | column -t \
-        | rofi -dmenu -p "New timer" -mesg "${2:?provide message}"
+        | menu -p "New timer (${2:?provide message})" -l 19
 }
 
 map_filter() {
@@ -97,7 +97,7 @@ rimer_cmd_on_timer() {
 }
 
 timer_add() {
-    kind="$(printf "countdown\nstopwatch" | rofi -dmenu -p "Kind" -no-custom)"
+    kind="$(printf "countdown\nstopwatch" | menu -p "Kind")"
     case "${kind}" in
         countdown)
             rimer_add "${kind}" $(get_new_timer "${kind}" "NAME [[t]H:]M")
@@ -136,7 +136,7 @@ halt
 quit
 start'
 
-choice="${1:-$(echo "${menu}" | rofi -dmenu -no-custom -p "Menu")}"
+choice="${1:-$(echo "${menu}" | menu -p "Menu")}"
 
 case "${choice:?}" in
     add)

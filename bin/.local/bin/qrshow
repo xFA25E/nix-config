@@ -1,5 +1,5 @@
 #!/bin/sh
-text="${1:-$(rofi -dmenu -p "Text")}"
+text="${1:-$(xclip -o)}"
 temp_file="$(mktemp /tmp/qrXXXXX.png)"
 qrencode -o "${temp_file:?}" -s 15 "${text:?provide text}" && sxiv "${temp_file:?}"
 rm "${temp_file:?}"

@@ -53,23 +53,23 @@ case "${state}" in
                 mark_file="${HOME}/org/${name}.marks"
                 log_file="${HOME}/org/${name}.log"
                 selected="$(tail -n 1 "${log_file}" | cut -d" " -f4)"
-                what="$(awk '!$3 && $1 {print $1}' "${mark_file}" | rofi -dmenu -p "What" -select "${selected}")"
+                what="$(awk '!$3 && $1 {print $1}' "${mark_file}" | menu -p "What")"
                 save_log "${what:?}" "${elapsed}" "${log_file}"
                 save_log "${what:?}" "${elapsed}" "${log_file}.bak"
 
-                pause="$(printf "yes\nno" | rofi -dmenu -p "Pause?")"
+                pause="$(printf "yes\nno" | menu -p "Pause?")"
                 if [ "${pause}" = yes ]; then
                     rimer add --name pause --duration $((60 * 5))
                 fi
                 ;;
             eyes)
-                again="$(printf "yes\nno" | rofi -dmenu -p "Again ${name}?")"
+                again="$(printf "yes\nno" | menu -p "Again ${name}?")"
                 if [ "${again}" = yes ]; then
                     rimer add --name "${name}" --duration "${duration}"
                 fi
                 ;;
             pause)
-                study="$(printf "yes\nno" | rofi -dmenu -p "Study?")"
+                study="$(printf "yes\nno" | menu -p "Study?")"
                 if [ "${study}" = yes ]; then
                     rimer add --name study --duration $((60 * 25))
                 fi

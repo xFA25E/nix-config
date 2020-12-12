@@ -1,24 +1,22 @@
 #!/bin/sh
 
-url="${1:-$(rofi -dmenu -p "Url")}"
-
+url="${1:-$(xclip -o)}"
 
 get_formats() {
     columns='format_id,width,height,ext,filesize,vcodec,acodec'
     jq_format=".formats[] | (\"\(.$(echo "${columns}" | sed 's/,/)|\\(./g'))\")"
     #                                                     "," -> ")|\(."
-    ytdl --no-color --dump-json "${url}" | \
-        jq --raw-output "${jq_format}" | \
-        column --table --separator '|' --table-columns "${columns}"
+    ytdl --no-color --dump-json "${url}" \
+        | jq --raw-output "${jq_format}" \
+        | column --table --separator '|'
 }
 
 select_format() {
-    read -r hd
-    rofi -dmenu -p "Select format" -width 80 -lines 13 -no-custom -mesg "${hd}"
+    menu -p "Select format" -lines 19
 }
 
 
-case "$(printf "video\naudio\nmusic\nselect video" | rofi -dmenu -p "Download" -no-custom)" in
+case "$(printf "video\naudio\nmusic\nselect video" | menu -p "Download")" in
     video)
         if [ -n "${2}" ]; then
             tsp -L "${2}" ytdly "${url}"

@@ -6,7 +6,7 @@ default_browser="${BROWSER:?}"
 editor="${VISUAL:?}"
 
 menu() {
-    rofi -dmenu -p "$1" -lines 30 -width 80 -location 2
+    menu -p "$1" -l 19
 }
 
 # For every bookmarks file in bm_dir, take every line. Print path to
@@ -121,7 +121,7 @@ print_help() {
     in different directories (by default in $bm_dir).
     In every directory it creates automatically a 'bookmarks' file
     containing bookmark list in the following format: <url> <url
-    title>. It uses rofi -dmenu.
+    title>. It uses dmenu.
 
 The program accepts following arguments:
     open            Show list of bookmarks and open the selected one

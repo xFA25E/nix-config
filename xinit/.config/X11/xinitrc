@@ -30,23 +30,7 @@ xset s noexpose
 xset c on
 xset -dpms
 
-numlockx
 pidof rimer >/dev/null || setsid -f rimer start "${TIMER_UPDATER:-panel_timer}"
 pkill sctd; setsid -f sctd --longitude 47.339 --latitude 8.877
 
-case stumpwm in
-    bspwm)
-        random_wallpaper
-        pkill twmnd; setsid -f twmnd
-        pkill ckbatt; setsid -f ckbatt notify_sound
-        pkill xbindkeys; xbindkeys -fg "${XDG_CONFIG_HOME}/xbindkeys/config.scm"
-        setsid -f panel
-        setsid -f em
-        exec bspwm
-        ;;
-    stumpwm)
-        # pkill xbindkeys; xbindkeys -fg "${XDG_CONFIG_HOME}/xbindkeys/config.scm"
-        exec stumpwm
-        ;;
-    *)
-esac
+exec stumpwm

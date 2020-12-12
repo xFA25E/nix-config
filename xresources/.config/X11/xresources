@@ -1,7 +1,6 @@
 ! -*- mode: conf-xdefaults; -*-
 #include "xcolors"
 #include "xterm"
-#include "xrofi"
 #include "xrunel"
 #include "xqutebrowser"
 #include "xbspwm"

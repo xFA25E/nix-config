@@ -34,14 +34,14 @@
 
 (set-prefix-key (kbd "C-z"))
 
-(define-key *single-menu-map* (kbd "C-h") #'menu-backspace)
-(define-key *batch-menu-map* (kbd "C-h") #'menu-backspace)
+(define-key *single-menu-map* (kbd "C-h") 'menu-backspace)
+(define-key *batch-menu-map* (kbd "C-h") 'menu-backspace)
 
-(define-key *menu-map* (kbd "C-m") #'menu-finish)
+(define-key *menu-map* (kbd "C-m") 'menu-finish)
 
-(define-key *input-map* (kbd "C-m") #'input-submit)
-(define-key *input-map* (kbd "C-h") #'input-delete-backward-char)
-(define-key *input-map* (kbd "C-w") #'input-backward-kill-word)
+(define-key *input-map* (kbd "C-m") 'input-submit)
+(define-key *input-map* (kbd "C-h") 'input-delete-backward-char)
+(define-key *input-map* (kbd "C-w") 'input-backward-kill-word)
 
 (define-key *top-map* (kbd "XF86AudioMute") "exec amixer -D pulse sset Master toggle >/dev/null")
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "exec amixer -D pulse sset Master 1%- >/dev/null")
@@ -75,6 +75,7 @@
 
 (clear-window-placement-rules)
 
+(defvar battery-device (find "BAT" (split-string (run-shell-command "upower -e" t)) :test #'search))
 (defvar battery-status 100)
 (defvar battery-compare-status 100)
 
@@ -192,40 +193,31 @@ notify-send Scrot 'Done screenshot'"
 (defcommand show-corona () ()
   (destructuring-bind (cases recovered deaths active)
       (split-string (string-right-trim (string #\Newline) (run-shell-command "curl -s 'https://corona-stats.online/Italy?format=json' | jq -r '.data[0] | \"\\(.cases) \\(.recovered) \\(.deaths) \\(.active)\"'" t)) " ")
-    (message "COVID-19 Italy | Confirmed: ~A  Recovered: ~A  Deaths: ~A  Active: ~A"
-             cases recovered deaths active)))
+    (message "COVID-19 Italy~%Confirmed: ~:D~%Recovered: ~:D~%Deaths: ~:D~%Active: ~:D"
+             (parse-integer cases)
+             (parse-integer recovered)
+             (parse-integer deaths)
+             (parse-integer active))))
 
 (define-key *open-map* (kbd "C-k") "show-corona")
+
+(defun battery-state ()
+  (when battery-device
+    (let* ((output (run-shell-command (format nil "upower -i '~A'" battery-device) t))
+           (time (nth-value 1 (ppcre:scan-to-strings "time to (?:full|empty): +([0-9]+\\.[0-9]+ +[a-zA-Z]+)" output))))
+      (format nil "~A ~A ~A"
+              (aref (nth-value 1 (ppcre:scan-to-strings "percentage: +([0-9]+)" output)) 0)
+              (aref (nth-value 1 (ppcre:scan-to-strings "state: +([-a-zA-Z]+)" output)) 0)
+              (if (vectorp time) (aref time 0) "")))))
+
+(defcommand show-hardware () ()
+  (let ((sizes (run-shell-command "df --si" t)))
+    (message "R ~A~%H ~A~%W ~A~%B~A"
+            (aref (nth-value 1 (ppcre:scan-to-strings "([0-9]+(?:\\.[0-9]+)?[a-zA-Z]+) +[0-9]+% +/\\n" sizes)) 0)
+            (aref (nth-value 1 (ppcre:scan-to-strings "([0-9]+(?:\\.[0-9]+)?[a-zA-Z]+) +[0-9]+% +/home\\n" sizes)) 0)
+            (aref (nth-value 1 (ppcre:scan-to-strings "([0-9]+(?:\\.[0-9]+)?[a-zA-Z]+) +[0-9]+% +/mnt/second_partition\\n" sizes)) 0)
+            (battery-state))))
+
+(define-key *open-map* (kbd "C-d") "show-hardware")
+
 (define-key *open-map* (kbd "C-v") "exec uxterm -e pulsemixer")
-
-;; text="\
-;; ${CHD}I%{F-}  ${CFG}\${gw_iface}%{F-}\
-;;   ${CHD}G%{F-}  ${CFG}\${gw_ip}%{F-}\
-;; \${if_up wlo1}\
-;;   ${CHD}WiFi%{F-}  ${CFG}\${addr wlo1}%{F-}\
-;;   ${CHD}N%{F-}  ${CFG}\${wireless_essid wlo1}%{F-}\
-;;   ${CHD}Q%{F-}  ${CFG}\${wireless_link_qual wlo1}/\${wireless_link_qual_max wlo1}%{F-}\
-;; \${endif}\
-;; \${if_up eno1}\
-;;   ${CHD}Wired%{F-}  ${CFG}\${addr eno1}%{F-}\
-;; \${endif}\
-;;   ${CHD}FsR%{F-}  ${CFG}\${fs_free /}%{F-}\
-;;   ${CHD}FsH%{F-}  ${CFG}\${fs_free /home}%{F-}\
-;; \${if_mounted /mnt/second_partition}\
-;;   ${CHD}FsW%{F-}  ${CFG}\${fs_free /mnt/second_partition}%{F-}\
-;; \${endif}\
-;; \${if_empty \${battery_time}}\${else}\
-;;   ${CHD}B%{F-}  ${CFG}\${battery_time}%{F-}\
-;; \${endif}"
-
-;; Filesystem      Size  Used Avail Use% Mounted on
-;; dev             4.2G     0  4.2G   0% /dev
-;; run             4.2G   27M  4.2G   1% /run
-;; /dev/sda7        22G   17G  3.3G  84% /
-;; tmpfs           4.2G     0  4.2G   0% /dev/shm
-;; tmpfs           4.2M     0  4.2M   0% /sys/fs/cgroup
-;; tmpfs           4.2G  9.3M  4.2G   1% /tmp
-;; /dev/sda5       305M  145M  145M  51% /boot
-;; /dev/sda8       285G  175G   96G  65% /home
-;; /dev/sda10      283G   40G  229G  15% /mnt/second_partition
-;; tmpfs           830M  144k  830M   1% /run/user/1000

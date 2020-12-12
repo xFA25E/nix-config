@@ -4,11 +4,11 @@ get_mount_point() {
     tempfile="$(mktemp /tmp/expatXXXXXXX)"
     lsblk -nrpo "name,type,mountpoint" | awk '$2=="part"&&$3!~/\/boot|\/home$|SWAP/&&length($3)>1{print $3}' >"${tempfile:?}"
     awk '$1 == "simple-mtpfs" {print $2}' /etc/mtab >>"${tempfile:?}"
-    mount_point="$(find /mnt /mount /media /home -maxdepth 5 -type d | rofi -dmenu -i -p "Mount point")"
+    mount_point="$(find /mnt /mount /media /home -maxdepth 5 -type d | menu -p "Mount point" -l 19)"
     rm -f "${tempfile}"
 
     if [ ! -d "${mount_point:?}" ]; then
-        mkdiryn="$(printf 'no\nyes' | rofi -dmenu -i -p "Create ${mount_point}?" -no-custom)"
+        mkdiryn="$(printf 'no\nyes' | menu -p "Create ${mount_point}?")"
         if [ "${mkdiryn:?}" = "yes" ]; then
             mkdir -p "${mount_point}" || sudo -A mkdir -p "${mount_point}" || exit 1
         fi
@@ -18,7 +18,7 @@ get_mount_point() {
 
 rmount_usb() {
     drives="${1:?provide usb drives}"
-    drive="$(echo "${drives}" | rofi -dmenu -i -p "Which usb?" -no-custom | awk '{print $1}')"
+    drive="$(echo "${drives}" | menu -p "Which usb?" -l 19 | awk '{print $1}')"
 
     if sudo -A mount "${drive:?}"; then
         notify-send "USB mounting" "${drive} mounted"
@@ -40,7 +40,7 @@ rmount_usb() {
 
 rmount_android() {
     drives="${1:?provide android drives}"
-    drive="$(echo "${drives}" | rofi -dmenu -i -p "Which android?" -no-custom | cut -d: -f1)"
+    drive="$(echo "${drives}" | menu -p "Which android?" -l 19 | cut -d: -f1)"
     drive="${drive:?}"
     mount_point="$(get_mount_point)"
     simple-mtpfs --device "${drive}" "${mount_point:?}" || notify-send "Error"
@@ -55,7 +55,7 @@ if [ -n "${usb_drives}" ]; then
         rmount_usb "${usb_drives}"
     else
         echo "Mountable USB drive(s) and Android device(s) detected."
-        mount_kind="$(printf 'usb\nandroid' | rofi -dmenu -i -p "Mount what?" -no-custom)"
+        mount_kind="$(printf 'usb\nandroid' | menu -p "Mount what?")"
         case "${mount_kind:?}" in
             usb)
                 rmount_usb "${usb_drives}"

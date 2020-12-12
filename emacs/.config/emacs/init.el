@@ -1346,7 +1346,8 @@ Use as a value for `completion-in-region-function'."
 (leaf grep
   :defun grep-expand-template-add-cut
   :advice (:filter-return grep-expand-template grep-expand-template-add-cut)
-  :defer-config
+  :bind (search-map :package bindings ("g" . rgrep))
+  :config
   (add-to-list 'grep-files-aliases '("php" . "*.php *.phtml"))
   (defun grep-expand-template-add-cut (cmd)
     (concat cmd " | cut -c-500")))

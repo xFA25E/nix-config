@@ -2,12 +2,12 @@
 
 unmountusb() {
     drives="${1:?provide drives}"
-    chosen="$(echo "${drives}" | rofi -dmenu -i -p "Which drive?" -no-custom | awk '{print $1}')"
+    chosen="$(echo "${drives}" | menu -p "Which drive?" -l 19 | awk '{print $1}')"
     sudo -A umount "${chosen:?}" && notify-send "💻 USB unmounting" "${chosen} unmounted."
 }
 
 unmountandroid() {
-    chosen="$(awk '$1 == "simple-mtpfs" {print $2}' /etc/mtab | rofi -dmenu -i -p "Which android?" -no-custom)"
+    chosen="$(awk '$1 == "simple-mtpfs" {print $2}' /etc/mtab | menu -p "Which android?" -l 19)"
     sudo -A umount -l "${chosen:?}" && notify-send "🤖 Android unmounting" "${chosen} unmounted."
 }
 
@@ -24,7 +24,7 @@ else
         unmountandroid
     else
         echo "Unmountable USB drive(s) and Android device(s) detected."
-        what="$(printf 'usb\nandroid' | rofi -dmenu -i -p "Unmount what?" -no-custom)"
+        what="$(printf 'usb\nandroid' | menu -p "Unmount what?")"
         case "${what:?}" in
             usb) unmountusb "${drives}" ;;
             android) unmountandroid ;;

@@ -1,4 +1,4 @@
 #!/bin/sh
-link="${1:-$(rofi -dmenu -p "Link")}"
+link="${1:-$(xclip -o)}"
 dir="${XDG_VIDEOS_DIR:-${HOME}/Videos}/youtube"
 mkdir -p "${dir}" && echo "${link:?}" >>"${dir}/download.txt"
