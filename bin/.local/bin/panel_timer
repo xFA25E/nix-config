@@ -55,7 +55,6 @@ case "${state}" in
                 selected="$(tail -n 1 "${log_file}" | cut -d" " -f4)"
                 what="$(awk '!$3 && $1 {print $1}' "${mark_file}" | menu -p "What")"
                 save_log "${what:?}" "${elapsed}" "${log_file}"
-                save_log "${what:?}" "${elapsed}" "${log_file}.bak"
 
                 pause="$(printf "yes\nno" | menu -p "Pause?")"
                 if [ "${pause}" = yes ]; then
