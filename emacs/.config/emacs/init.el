@@ -323,25 +323,6 @@
 
 (leaf url-handlers :hook (after-init-hook . url-handler-mode))
 
-(leaf url-util
-  :commands url-encode-entities url-decode-entities
-  :config
-  (defun url-decode-entities (beg end)
-    (interactive "r")
-    (let ((text (url-unhex-string (buffer-substring beg end))))
-      (save-excursion
-        (delete-region beg end)
-        (goto-char beg)
-        (insert text))))
-
-  (defun url-encode-entities (beg end)
-    (interactive "r")
-    (let ((text (url-encode-url (buffer-substring beg end))))
-      (save-excursion
-        (delete-region beg end)
-        (goto-char beg)
-        (insert text)))))
-
 
 ;;;; CACHE
 
@@ -654,11 +635,11 @@
                "ebook-convert ? .epub &")
 
          (list (rx (ext "pdf"))
-               "setsid -f zathura * >/dev/null 2>&1"
                "setsid -f libreoffice * >/dev/null 2>&1"
                "setsid -f gimp * >/dev/null 2>&1")
 
-         (list (rx (ext "epub" "djvu"))
+         (list (rx (ext "djvu"))
+               "ebook-convert ? .pdf &"
                "setsid -f zathura * >/dev/null 2>&1")
 
          (list (rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp"
@@ -787,6 +768,7 @@
   (before-save-hook . delete-trailing-whitespace)
   (after-init-hook  . size-indication-mode)
   (after-init-hook  . column-number-mode)
+  ((newsticker-treeview-item-mode-hook ytel-mode-hook) . toggle-truncate-lines)
 
   :bind
   ("C-h"   . backward-delete-char-untabify)
@@ -864,9 +846,14 @@
          ("html" (html-mode))))
       (t (normal-mode)))))
 
-
 (leaf paragraphs :bind ("C-M-S-t" . transpose-paragraphs))
 
+(leaf encode-entities
+  :preface
+  (unless (package-installed-p 'encode-entities)
+    (quelpa '(encode-entities :repo "xFA25E/encode-entities" :fetcher github))))
+
+
 ;;;; FORMATTING
 
 (leaf whitespace :hook (before-save-hook . whitespace-cleanup))
@@ -1294,7 +1281,7 @@ Use as a value for `completion-in-region-function'."
   (:around icomplete-complete-minibuffer-history icomplete-vertical-around)
   (:around read-file-name icomplete-vertical-around)
   (:around comint-history icomplete-vertical-around)
-  (:around mingus-find-and-add-file icomplete-vertical-around)
+  (:around mingus-find-add icomplete-vertical-around)
   (:around imenu--completion-buffer icomplete-vertical-around)
   (:around consult-yank-replace icomplete-vertical-around)
   (:around consult-outline icomplete-vertical-around)
@@ -1451,34 +1438,20 @@ Use as a value for `completion-in-region-function'."
 ;;; REPL
 
 (leaf comint
-  :preface (defvar-local comint-history-filter-function nil)
-  :defun comint-filter-input-ring
-  :advice (:before comint-write-input-ring comint-filter-input-ring)
-
+  :defun comint-write-input-ring-all-buffers
   :hook
   (kill-buffer-hook . comint-write-input-ring)
-  (kill-emacs-hook . save-buffers-comint-input-ring)
+  (kill-emacs-hook . comint-write-input-ring-all-buffers)
   (comint-output-filter-functions . comint-strip-ctrl-m)
   (comint-output-filter-functions . comint-truncate-buffer)
-
   :custom
   '(comint-input-ignoredups . t)
   '(comint-input-ring-size . 10000)
   '(comint-buffer-maximum-size . 10240)
-
   :config
-  (defun save-buffers-comint-input-ring ()
+  (defun comint-write-input-ring-all-buffers ()
     (dolist (buf (buffer-list))
-      (with-current-buffer buf (comint-write-input-ring))))
-
-  (defun comint-filter-input-ring (&rest _)
-    (let ((fn comint-history-filter-function))
-      (when (and fn comint-input-ring (not (ring-empty-p comint-input-ring)))
-        (thread-last comint-input-ring
-          ring-elements
-          (funcall fn)
-          ring-convert-sequence-to-ring
-          (setq-local comint-input-ring))))))
+      (with-current-buffer buf (comint-write-input-ring)))))
 
 (leaf sql
   :defvar sql-interactive-product sql-input-ring-file-name
@@ -1499,77 +1472,25 @@ Use as a value for `completion-in-region-function'."
 ;;;; SHELL
 
 (leaf shell
-  :bind (shell-mode-map ("C-c M-d" . shell-change-directory))
-
   :custom
   `(shell-prompt-pattern
     . ,(rx line-start
            (one-or-more digit) " "
            alpha
-           (zero-or-more (in ?- ?_ alpha digit)) " "))
+           (zero-or-more (in ?- ?_ alpha digit)) " ")))
 
-  :hook (shell-mode-hook . shell-enable-comint-history)
-
-  :config
-  (defun shell-history-filter (elements)
-    (cl-flet ((match-p
-               (e)
-               (string-match-p
-                (rx bos
-                    (or (and
-                         (opt "sudo " (opt "-A "))
-                         (or "awk" "bash" "cat" "cd" "chmod" "chown" "command"
-                          "cp" "cut" "dash" "dd" "df" "dh" "du" "ebook-convert"
-                          "echo" "em" "emacs" "env" "exit" "export" "fd" "feh"
-                          "file" "find" "gawk" "gparted" "gpg" "grep" "gzip"
-                          "hash" "host" "htop" "id" "ln" "locate" "ls" "man"
-                          "mbsync" "millisleep" "mkdir" "mpop" "mpv" "mv"
-                          "notify-send" "pacman -Rsn" "pacman -S" "ping" "pkill"
-                          "printf" "pwgen" "python" "quit" "read" "rg" "rimer"
-                          "rm" "rmdir" "rofi" "setsid" "sh" "sleep" "stow"
-                          "strings" "strip" "studies_" "sxiv" "tail" "time"
-                          "timer" "top" "touch" "tr" "uname" "uptime" "watch"
-                          "wc" "which" "woof" "xclip" "xz" "yay" "youtube-dl"
-                          "ytdl"))
-                        eos))
-                e)))
-      (cl-delete-duplicates (cl-delete-if #'match-p elements) :test #'string-equal)))
-
-  (defun shell-enable-comint-history ()
-    (setq-local comint-input-ring-file-name
-                (expand-file-name "emacs/comint/shell_history" (xdg-data-home)))
-    (setq-local comint-history-filter-function #'shell-history-filter)
-    (comint-read-input-ring 'silent))
-
-  (defun shell-change-directory ()
-    "Change directory in a shell, interactively."
-    (interactive)
-    (comint-show-maximum-output)
-    (comint-delete-input)
-    (let* ((read-dir (read-directory-name "Change directory: "))
-           (dir (or (file-remote-p read-dir 'localname) read-dir)))
-      (insert (concat "cd " (shell-quote-argument dir))))
-    (comint-send-input)))
+(leaf shell-extra
+  :preface
+  (unless (package-installed-p 'shell-extra)
+    (quelpa '(shell-extra :repo "xFA25E/shell-extra" :fetcher github)))
+  :hook (shell-mode-hook . shell-extra-comint-history-enable)
+  :bind (shell-mode-map :package shell ("C-c M-d" . shell-extra-change-directory)))
 
 (leaf shell-pwd
-  :defun shell-pwd-generate-buffer-name
   :preface
   (unless (package-installed-p 'shell-pwd)
     (quelpa '(shell-pwd :repo "xFA25E/shell-pwd" :fetcher github)))
-  :bind (mode-specific-map :package bindings ("x s" . shell-pwd-switch-to-buffer))
-  :config
-  (cl-defun shell-pwd-switch-to-buffer (&optional (directory default-directory))
-    (interactive
-     (list (if current-prefix-arg
-               (expand-file-name (read-directory-name "Default directory: "))
-             default-directory)))
-    (cl-flet ((shell-buffer-p (b) (eq (buffer-local-value 'major-mode b) 'shell-mode))
-              (pwd-buffer () (shell-pwd-generate-buffer-name directory)))
-      (let* ((buffer-name (generate-new-buffer-name (pwd-buffer)))
-             (shell-buffers (mapcar #'buffer-name (cl-delete-if-not #'shell-buffer-p (buffer-list))))
-             (name (completing-read "Shell buffer: " (cons buffer-name shell-buffers))))
-        (if-let ((buffer (get-buffer name))) (pop-to-buffer buffer) (shell name))))
-    (shell-pwd-enable)))
+  :bind (mode-specific-map :package bindings ("x s" . shell-pwd-switch-to-buffer)))
 
 
 ;;; TEMPLATES
@@ -1699,26 +1620,6 @@ Use as a value for `completion-in-region-function'."
   '(eww-browse-url-new-window-is-tab . nil)
   '(eww-search-prefix . "https://ddg.co/lite/?q="))
 
-(leaf xml
-  :defun xml-parse-string xml-escape-string
-  :commands sgml-decode-entities sgml-encode-entities
-  :config
-  (defun sgml-decode-entities (beg end)
-    (interactive "r")
-    (save-excursion
-      (narrow-to-region beg end)
-      (goto-char beg)
-      (xml-parse-string)
-      (widen)))
-
-  (defun sgml-encode-entities (beg end)
-    (interactive "r")
-    (let ((text (xml-escape-string (buffer-substring beg end))))
-      (save-excursion
-        (delete-region beg end)
-        (goto-char beg)
-        (insert text)))))
-
 (leaf htmlize :package t)
 
 
@@ -1771,51 +1672,20 @@ Use as a value for `completion-in-region-function'."
 
 (leaf ytel
   :defvar ytel-mode-map
-  :defun ytel-video-id ytel-get-current-video ytel-video-title
   :package t
-  :hook (ytel-mode-hook . toggle-truncate-lines)
+  :custom '(ytel-invidious-api-url . "https://invidious.fdn.fr")
+  :bind (mode-specific-map :package bindings ("o Y" . ytel)))
 
-  :custom
-  '(ytel-instances
-    . '("https://invidious.fdn.fr"
-        "https://invidious.site"
-        "https://invidious.kavin.rocks"
-        "https://vid.encryptionin.space"
-        "https://invidious.snopyta.org"
-        "https://invidious.mservice.ru.com"
-        "https://invidious.xyz"
-        "https://vid.encryptionin.space"))
-  '(ytel-invidious-api-url . "https://invidious.fdn.fr")
-
+(leaf ytel-extra
+  :preface
+  (unless (package-installed-p 'ytel-extra)
+    (quelpa '(ytel-extra :repo "xFA25E/ytel-extra" :fetcher github)))
+  :init (with-eval-after-load 'ytel (require 'ytel-extra))
   :bind
-  (mode-specific-map :package bindings ("o Y" . ytel))
   (ytel-mode-map
-   ("c" . ytel-copy-link)
-   ("v" . ytel-current-browse-url))
-
-  :config
-  (defun ytel-switch-instance ()
-    (interactive)
-    (setq ytel-invidious-api-url
-          (completing-read "Instance: " ytel-instances)))
-
-  (defun ytel-current-browse-url ()
-    (interactive)
-    (let* ((id (ytel-video-id (ytel-get-current-video)))
-           (link (concat "https://www.youtube.com/watch?v=" id)))
-      (browse-url link)))
-
-  (defun ytel-copy-link ()
-    (interactive)
-    (let* ((video (ytel-get-current-video))
-           (id (ytel-video-id video))
-           (link (concat "https://www.youtube.com/watch?v=" id)))
-      (kill-new link)
-      (message "Copied %s" link)))
-
-  (with-eval-after-load 'bruh
-    (setf (alist-get 'ytel-mode bruh-mpvi-get-title-functions)
-        (lambda () (ytel-video-title (ytel-get-current-video))))))
+   :package ytel
+   ("c" . ytel-extra-copy-link)
+   ("v" . ytel-extra-current-browse-url)))
 
 (leaf ytel-show
   :defvar ytel-show-comments--video-title
@@ -1847,9 +1717,9 @@ Use as a value for `completion-in-region-function'."
 
 ;;;; RSS
 
-(leaf newst-backend
-  :defun newsticker--link newsticker--extra newsticker--desc newsticker--title
-  :hook (newsticker-new-item-functions . newsticker-add-thumbnail)
+(leaf newsticker
+  :defvar newsticker-treeview-mode-map
+  :bind (mode-specific-map :package bindings ("o n" . newsticker-show-news))
 
   :custom
   '(newsticker-retrieval-interval . 0)
@@ -1868,69 +1738,27 @@ Use as a value for `completion-in-region-function'."
         ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg")
         ("Protesilaos Stavrou" "https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g")
         ("Planet Emacslife" "https://planet.emacslife.com/atom.xml")))
-
-  :config
-  (defun newsticker-add-thumbnail (_feedname item)
-    (cl-flet ((d (thumb desc) (format "<img src=\"%s\"/><br/><pre>%s</pre>" thumb desc)))
-      (pcase (newsticker--link item)
-        ((rx "youtube.com")
-         (let ((group (alist-get 'group (newsticker--extra item))))
-           (setcar
-            (nthcdr 1 item)
-            (d (alist-get 'url (car (alist-get 'thumbnail group))) (cadr (alist-get 'description group))))))
-        ((rx "bitchute.com")
-         (let ((enclosure (alist-get 'enclosure (newsticker--extra item))))
-           (setcar
-            (nthcdr 1 item)
-            (d (alist-get 'url (car enclosure)) (newsticker--desc item)))))
-        ((rx "videos.lukesmith.xyz")
-         (let ((thumbnail (alist-get 'thumbnail (newsticker--extra item))))
-           (setcar
-            (nthcdr 1 item)
-            (d  (alist-get 'url (car thumbnail)) (newsticker--desc item)))))))))
-
-(leaf newst-treeview
-  :defvar newsticker-treeview-mode-map
-  :defun newsticker--treeview-get-selected-item
-  :hook (newsticker-treeview-item-mode-hook . toggle-truncate-lines)
-
-  :bind
-  (mode-specific-map :package bindings ("o n" . newsticker-show-news))
-  (newsticker-treeview-mode-map
-   ("r" . newsticker-treeview-show-duration)
-   ("c" . newsticker-treeview-copy-link))
-
-  :custom
   '(newsticker-treeview-automatically-mark-displayed-items-as-old . nil)
   '(newsticker-treeview-treewindow-width . 30)
   '(newsticker-treeview-listwindow-height . 6)
-  '(newsticker--treeview-list-sort-order . 'sort-by-time-reverse)
+  '(newsticker--treeview-list-sort-order . 'sort-by-time-reverse))
 
-  :config
-  (defun newsticker-treeview-copy-link ()
-    (interactive)
-    (let ((link (newsticker--link (newsticker--treeview-get-selected-item))))
-      (kill-new link)
-      (message "Copied %s" link)))
-
-  (with-eval-after-load 'bruh
-    (setf (alist-get 'newsticker-treeview-mode bruh-mpvi-get-title-functions)
-          (lambda () (newsticker--title (newsticker--treeview-get-selected-item))))))
+(leaf newsticker-extra
+  :preface
+  (unless (package-installed-p 'newsticker-extra)
+    (quelpa '(newsticker-extra :repo "xFA25E/newsticker-extra" :fetcher github)))
+  :hook (newsticker-new-item-functions . newsticker-extra-add-thumbnail)
+  :bind (newsticker-treeview-mode-map :package newsticker ("c" . newsticker-extra-treeview-copy-link))
+  :init (with-eval-after-load 'newst-treeview (require 'newsticker-extra)))
 
 
 ;;;; MPD
 
 (leaf mingus
-  :defvar mpd-inter-conn
-  :defun mingus-buffer-p mingus-git-out-and-kill mingus-add-files mingus-music-files
+  :defun mingus-buffer-p
   :advice (:override mingus-git-out mingus-git-out-and-kill)
   :package t
-
-  :bind
-  (mode-specific-map
-   :package bindings
-   ("o s" . mingus)
-   ("o S" . mingus-find-and-add-file))
+  :bind (mode-specific-map :package bindings ("o s" . mingus))
 
   :custom
   '(mingus-mode-line-separator . "|")
@@ -1943,35 +1771,13 @@ Use as a value for `completion-in-region-function'."
   (defun mingus-git-out-and-kill (&optional _)
     (interactive)
     (when (mingus-buffer-p)
-      (kill-current-buffer)))
+      (kill-current-buffer))))
 
-  (defun mingus-music-files ()
-    (let* ((default-directory (xdg-music-dir))
-           (exts (cdr (mapcan (lambda (e) `("-o" "-iname" ,(concat "*." e)))
-                              '("flac" "m4a" "mp3" "ogg" "opus"))))
-           (args `("." "(" ,@exts ")" "-type" "f" "-o" "-type" "d")))
-      (with-temp-buffer
-        (apply #'call-process "find" nil t nil args)
-        (let (files)
-          (goto-char (point-max))
-          (beginning-of-line 0)
-          (while (< (point-min) (point))
-            (when (looking-at "\\./")
-              (goto-char (match-end 0)))
-            (push (buffer-substring (point) (line-end-position)) files)
-            (beginning-of-line 0))
-          files))))
-
-  (defun mingus-find-and-add-file ()
-    (interactive)
-    (mingus-add-files
-     (list (expand-file-name
-            (completing-read "Add file to mpd: " (mingus-music-files) nil t)
-            (xdg-music-dir))))
-    (mpd-play mpd-inter-conn)
-    (let ((buffer (get-buffer "*Mingus*")))
-      (when (buffer-live-p (get-buffer buffer))
-        (kill-buffer buffer)))))
+(leaf mingus-find-add
+  :preface
+  (unless (package-installed-p 'mingus-find-add)
+    (quelpa '(mingus-find-add :repo "xFA25E/mingus-find-add" :fetcher github)))
+  :bind (mode-specific-map :package bindings ("o S" . mingus-find-add)))
 
 
 ;;;; E-READER
@@ -2063,7 +1869,7 @@ Use as a value for `completion-in-region-function'."
           (mapcan
            (lambda (args) (mapcar (lambda (ext) (cons ext (car args))) (cdr args)))
            '(("sxiv"        . ("jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp"))
-             ("zathura"     . ("pdf" "epub" "djvu"))
+             ("zathura"     . ("djvu"))
              ("libreoffice" . ("csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx"))
              ("mpv"         . ("m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov"
                                "3gp" "vob"  "wmv" "aiff" "wav"))))))
@@ -2143,79 +1949,20 @@ Use as a value for `completion-in-region-function'."
                                  (shell      . t))))
 
 (leaf org-mime
-  :defvar
-  org-mime--saved-temp-window-config org-mime-src--beg-marker
-  org-mime-src--end-marker org-mime-src--overlay org-mime-src--hint
-
-  :defun
-  org-mime-beautify-quoted-add-newlines org-mime-replace-images-fix-cids-and-path
-  org-mime-mail-body-begin org-mime-mail-signature-begin
-  org-mime-src--make-source-overlay org-mime-src-mode
-  org-mime-edit-mail-in-org-mode-up-to-signature
-  org-switch-to-buffer-other-window
-
-  :advice
-  (:filter-return org-mime-beautify-quoted org-mime-beautify-quoted-add-newlines)
-  (:filter-args org-mime-replace-images org-mime-replace-images-fix-cids-and-path)
-  (:override org-mime-edit-mail-in-org-mode org-mime-edit-mail-in-org-mode-up-to-signature)
-
   :package t
   :bind
   (message-mode-map
    :package message
    ("C-c M-o" . org-mime-htmlize)
    ("C-c M-e" . org-mime-edit-mail-in-org-mode)
-   ("C-c M-t" . org-mime-revert-to-plain-text-mail))
-  :config
-  (defun org-mime-beautify-quoted-add-newlines (html)
-    (let ((blockquote-count
-           (save-match-data
-             (with-temp-buffer
-               (insert html)
-               (goto-char (point-min))
-               (how-many "blockquote" (point-min) (point-max))))))
-      (if (/= 2 blockquote-count) html
-        (replace-regexp-in-string
-         "\n" "<br/>\n"
-         (replace-regexp-in-string
-          (rx (>= 3 "\n")) "\n\n"
-          html)))))
+   ("C-c M-t" . org-mime-revert-to-plain-text-mail)))
 
-  (defun org-mime-replace-images-fix-cids-and-path (args)
-    (cl-destructuring-bind (first . rest) args
-      (cons (replace-regexp-in-string "src=\"file:///" "src=\"/" first) rest)))
-
-  (defun org-mime-edit-mail-in-org-mode-up-to-signature ()
-    (interactive)
-    ;; see `org-src--edit-element'
-    (cond
-     ((eq major-mode 'org-mode)
-      (message "This command is not for `org-mode'."))
-     (t
-      (setq org-mime--saved-temp-window-config (current-window-configuration))
-      (let* ((beg (copy-marker (org-mime-mail-body-begin)))
-             (end (copy-marker (or (org-mime-mail-signature-begin)
-                                   (point-max))))
-             (bufname "OrgMimeMailBody")
-             (buffer (generate-new-buffer bufname))
-             (overlay (org-mime-src--make-source-overlay beg end))
-             (text (buffer-substring-no-properties beg end)))
-
-        (setq org-mime-src--beg-marker beg)
-        (setq org-mime-src--end-marker end)
-        ;; don't use local-variable because only user can't edit multiple emails
-        ;; or multiple embedded org code in one mail
-        (setq org-mime-src--overlay overlay)
-
-        (save-excursion
-          (delete-other-windows)
-          (org-switch-to-buffer-other-window buffer)
-          (erase-buffer)
-          (insert org-mime-src--hint)
-          (insert text)
-          (goto-char (point-min))
-          (org-mode)
-          (org-mime-src-mode)))))))
+(leaf org-mime-fixes
+  :preface
+  (unless (package-installed-p 'org-mime-fixes)
+    (quelpa '(org-mime-fixes :repo "xFA25E/org-mime-fixes" :fetcher github)))
+  :after org-mime
+  :require t)
 
 (leaf ox-html
   :after org
