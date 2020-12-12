@@ -231,3 +231,40 @@ notify-send Scrot 'Done screenshot'"
 (define-key *open-map* (kbd "C-d") "show-hardware")
 
 (define-key *open-map* (kbd "C-v") "exec uxterm -e pulsemixer")
+
+;; (setf *colors*
+;;       ;; Yellow and magenta are swapped to show keys in yellow.
+;;       ;; '("black" "red" "green" "magenta" "blue" "yellow" "cyan" "white"))
+;;       ;; '("#20204d" "red" "#6f9fff" "magenta" "blue" "#f0f0f0" "lightskyblue" "cyan"))
+;;       ;; Looks like non-VGA-16 codes do not appear in modules
+;;       '("#20204d" "#ff88b4" "#90ee90" "#ff83fa" "#87cefa" "#eeeed1" "#00ffff" "#f0f0f0"))
+;; (update-color-map (current-screen))     ; which other color maps to upgrade?
+
+;; (defmacro my-stump-set-color (val color)
+;;   "Similar to `set-any-color', but without updating colors."
+;;   `(dolist (s *screen-list*)
+;;      (setf (,val s) (alloc-color s ,color))))
+
+;; (my-stump-set-color screen-fg-color "#87cefa")
+;; (my-stump-set-color screen-bg-color "#20204d")
+;; (my-stump-set-color screen-focus-color  "#6f9fff")
+;; (my-stump-set-color screen-unfocus-color  "#20204d")
+;; (my-stump-set-color screen-border-color "#6f9fff")
+;; (my-stump-set-color screen-float-focus-color "#6f9fff")
+;; (my-stump-set-color screen-float-unfocus-color "#20204d")
+;; (update-colors-all-screens)
+
+(defun key-seq-msg (key key-seq cmd)
+  "Show a message with current incomplete key sequence."
+  (declare (ignore key))
+  (or (eq *top-map* *resize-map*)
+      (stringp cmd)
+      (message "~A" (print-key-seq (reverse key-seq)))))
+
+(add-hook *key-press-hook* 'key-seq-msg)
+
+(setf *mouse-focus-policy* :click)
+
+;; (send-meta-key (current-screen) (kbd "M-x"))
+;; (window-send-string "shell")
+;; (send-meta-key (current-screen) (kbd "RET"))
