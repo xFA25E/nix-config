@@ -66,7 +66,7 @@
 ;;; SETTINGS
 
 (leaf emacs
-  :bind ("C-S-SPC" . insert-space-after-point)
+  :setq-default '(line-spacing . 0.2)
 
   :custom
   '(create-lockfiles . nil)
@@ -94,14 +94,7 @@
   '(user-full-name . "Valeriy Litkovskyy")
   `(read-process-output-max . ,(* 1024 1024))
   '(completion-ignore-case . t)
-  '(read-buffer-completion-ignore-case . t)
-
-  :setq-default '(line-spacing . 0.2)
-
-  :config
-  (defun insert-space-after-point ()
-    (interactive)
-    (save-excursion (insert " "))))
+  '(read-buffer-completion-ignore-case . t))
 
 
 ;;;; FACES
@@ -1203,7 +1196,7 @@
   '(read-file-name-completion-ignore-case . t)
   '(completion-pcm-complete-word-inserts-delimiters . t)
   '(completion-styles . '(substring partial-completion))
-  ;; '(completion-in-region-function . 'completing-read-in-region)
+  '(completion-in-region-function . 'completing-read-in-region)
   '(completion-category-overrides . '((bookmark (styles basic substring))))
 
   :config
@@ -1273,7 +1266,7 @@ Use as a value for `completion-in-region-function'."
 
   :config
   (defun icomplete-fido-updir-always ()
-    "Delete char before or go up directory, like `ido-mode'."
+    "Go up directory, like `ido-mode'."
     (interactive)
     (save-excursion
       (goto-char (1- (point)))
@@ -1525,18 +1518,19 @@ Use as a value for `completion-in-region-function'."
                 (rx bos
                     (or (and
                          (opt "sudo " (opt "-A "))
-                         (or
-                          "awk" "base16_theme" "bash" "bspc" "cat" "cd" "chmod" "chown"
-                          "ckbatt" "command" "cp" "cut" "dash" "dd" "df" "dh" "du"
-                          "ebook-convert" "echo" "em" "emacs" "env" "exit" "export" "fd" "feh"
-                          "file" "find" "gawk" "gparted" "gpg" "grep" "gzip" "hash" "host"
-                          "htop" "id" "ln" "locate" "ls" "man" "mbsync" "millisleep" "mkdir"
-                          "mmpv" "mpop" "mpv" "mv" "notify-send" "pacman -Rsn" "pacman -S"
-                          "ping" "pkill" "printf" "pwgen" "python" "quit" "read" "rg" "rimer"
-                          "rm" "rmdir" "rofi" "runel" "setsid" "sh" "sleep" "stow" "strings"
-                          "strip" "studies_" "sxiv" "tail" "time" "timer" "top" "touch" "tr"
-                          "uname" "uptime" "watch" "wc" "which" "woof" "xbindkeys" "xclip" "xz"
-                          "yay" "youtube-dl" "ytdl"))
+                         (or "awk" "bash" "cat" "cd" "chmod" "chown" "command"
+                          "cp" "cut" "dash" "dd" "df" "dh" "du" "ebook-convert"
+                          "echo" "em" "emacs" "env" "exit" "export" "fd" "feh"
+                          "file" "find" "gawk" "gparted" "gpg" "grep" "gzip"
+                          "hash" "host" "htop" "id" "ln" "locate" "ls" "man"
+                          "mbsync" "millisleep" "mkdir" "mpop" "mpv" "mv"
+                          "notify-send" "pacman -Rsn" "pacman -S" "ping" "pkill"
+                          "printf" "pwgen" "python" "quit" "read" "rg" "rimer"
+                          "rm" "rmdir" "rofi" "setsid" "sh" "sleep" "stow"
+                          "strings" "strip" "studies_" "sxiv" "tail" "time"
+                          "timer" "top" "touch" "tr" "uname" "uptime" "watch"
+                          "wc" "which" "woof" "xclip" "xz" "yay" "youtube-dl"
+                          "ytdl"))
                         eos))
                 e)))
       (cl-delete-duplicates (cl-delete-if #'match-p elements) :test #'string-equal)))
@@ -1641,17 +1635,6 @@ Use as a value for `completion-in-region-function'."
 
 
 ;;; APPLICATIONS
-
-(leaf forms
-  :defvar forms--file-buffer
-  :hook (forms-mode-hook . forms-kill-file-buffer-setup)
-  :config
-  (defun forms-kill-file-buffer-setup ()
-    (add-hook 'kill-buffer-hook 'forms-kill-file-buffer nil t))
-
-  (defun forms-kill-file-buffer ()
-    (when (buffer-live-p forms--file-buffer)
-      (kill-buffer forms--file-buffer))))
 
 (leaf vlf :package t)
 
@@ -1929,23 +1912,6 @@ Use as a value for `completion-in-region-function'."
     (let ((link (newsticker--link (newsticker--treeview-get-selected-item))))
       (kill-new link)
       (message "Copied %s" link)))
-
-  (defun newsticker-treeview-show-duration ()
-    (interactive)
-    (let* ((item (newsticker--treeview-get-selected-item))
-           (title (newsticker--title item))
-           (link (newsticker--link item))
-           (duration-buffer "*youtube-duration*"))
-      (message "\"%s\" duration: ..." title)
-      (set-process-sentinel
-       (start-process "youtube-duration" duration-buffer
-                      "ytdl" "--no-color" "--get-duration" link)
-       `(lambda (process _change)
-          (when (eq 0 (process-exit-status process))
-            (with-current-buffer ,duration-buffer
-              (message "\"%s\" duration: %s"
-                       ,title (string-trim (buffer-string)))
-              (kill-buffer)))))))
 
   (with-eval-after-load 'bruh
     (setf (alist-get 'newsticker-treeview-mode bruh-mpvi-get-title-functions)
