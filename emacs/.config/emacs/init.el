@@ -650,16 +650,12 @@
                "setsid -f inkscape * >/dev/null 2>&1"
                "setsid -f gimp * >/dev/null 2>&1")
 
-         (list (rx (ext "fb2"))
+         (list (rx (ext "fb2" "djvu"))
                "ebook-convert ? .epub &")
 
          (list (rx (ext "pdf"))
-               "setsid -f zathura * >/dev/null 2>&1"
                "setsid -f libreoffice * >/dev/null 2>&1"
                "setsid -f gimp * >/dev/null 2>&1")
-
-         (list (rx (ext "epub" "djvu"))
-               "setsid -f zathura * >/dev/null 2>&1")
 
          (list (rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp"
                         "vob" "wmv" "aiff" "wav"))
@@ -2062,7 +2058,6 @@ Use as a value for `completion-in-region-function'."
           (mapcan
            (lambda (args) (mapcar (lambda (ext) (cons ext (car args))) (cdr args)))
            '(("sxiv"        . ("jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp"))
-             ("zathura"     . ("pdf" "epub" "djvu"))
              ("libreoffice" . ("csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx"))
              ("mpv"         . ("m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov"
                                "3gp" "vob"  "wmv" "aiff" "wav"))))))
