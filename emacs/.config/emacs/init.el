@@ -1042,14 +1042,6 @@
   '(eglot-confirm-server-initiated-edits . nil)
   '(eglot-sync-connect . nil))
 
-(leaf lsp-mode
-  :disabled t
-  :package t
-  :hook (lsp-mode-hook . lsp-enable-which-key-integration)
-  :custom
-  `(lsp-session-file . ,(expand-file-name "emacs/lsp/session" (xdg-cache-home)))
-  `(lsp-xml-server-work-dir . ,(expand-file-name "emacs/lsp/xml" (xdg-cache-home))))
-
 
 ;;;;; LISP
 
