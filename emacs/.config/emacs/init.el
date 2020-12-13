@@ -2017,7 +2017,6 @@ Use as a value for `completion-in-region-function'."
 (leaf mu4e
   :defun mu4e-action-view-in-browser-check-parens-fix mu4e-main-mode-map mu4e-view-actions
   :defvar mu4e-main-mode-map mu4e-view-actions
-  :advice (:around mu4e-action-view-in-browser mu4e-action-view-in-browser-check-parens-fix)
   :hook (after-init-hook . mu4e~start)
 
   :bind
@@ -2071,13 +2070,7 @@ Use as a value for `completion-in-region-function'."
   :config
   (load-file (expand-file-name "emacs/secrets/mu4e.el" (xdg-data-home)))
   (load-library "org-mu4e")
-
-  (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t)
-
-  (defun mu4e-action-view-in-browser-check-parens-fix (oldfunc &rest args)
-    (let ((prog-mode-hook nil)
-          (browse-url-browser-function #'browse-url-firefox))
-      (apply oldfunc args))))
+  (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t))
 
 (leaf mu4e-alert
   :package t
