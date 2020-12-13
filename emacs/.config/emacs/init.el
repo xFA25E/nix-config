@@ -1297,15 +1297,62 @@ Use as a value for `completion-in-region-function'."
 ;;;; HIPPIE-EXP
 
 (leaf hippie-exp
+  :defvar he-search-string he-tried-table he-expand-list
+  :defun
+  try-complete-file-name-with-env try-complete-file-name-partially-with-env
+  he-init-string he-file-name-beg he-string-member he-reset-string
+  he-concat-directory-file-name he-substitute-string
   :bind ([remap dabbrev-expand] . hippie-expand)
-  :custom '(he-file-name-chars . "-a-zA-Z0-9_/.,~^#$+={}"))
+  :custom '(he-file-name-chars . "-a-zA-Z0-9_/.,~^#$+={}")
+  :advice
+  (:override try-complete-file-name try-complete-file-name-with-env)
+  (:override try-complete-file-name-partially try-complete-file-name-partially-with-env)
 
-(leaf try-complete-file-name-with-env
-  :preface
-  (unless (package-installed-p 'try-complete-file-name-with-env)
-    (quelpa '(try-complete-file-name-with-env :repo "xFA25E/try-complete-file-name-with-env" :fetcher github)))
-  :after hippie-exp
-  :require t)
+  :config
+  (defun try-complete-file-name-with-env (old)
+    (unless old
+      (he-init-string (he-file-name-beg) (point))
+      (let ((name-part (file-name-nondirectory he-search-string))
+            (dir-part (substitute-in-file-name
+                       (expand-file-name (or (file-name-directory he-search-string) "")))))
+        (unless (he-string-member name-part he-tried-table)
+          (setq he-tried-table (cons name-part he-tried-table)))
+        (if (and (not (equal he-search-string "")) (file-directory-p dir-part))
+            (setq he-expand-list (sort (file-name-all-completions name-part dir-part) 'string-lessp))
+          (setq he-expand-list ()))))
+
+    (while (and he-expand-list (he-string-member (car he-expand-list) he-tried-table))
+      (setq he-expand-list (cdr he-expand-list)))
+    (if he-expand-list
+        (let ((filename (he-concat-directory-file-name
+                         (file-name-directory he-search-string)
+                         (car he-expand-list))))
+          (he-substitute-string filename)
+          (setq he-tried-table (cons (car he-expand-list) (cdr he-tried-table)))
+          (setq he-expand-list (cdr he-expand-list))
+          t)
+      (if old (he-reset-string))
+      nil))
+
+  (defun try-complete-file-name-partially-with-env (old)
+    (let ((expansion ()))
+      (unless old
+        (he-init-string (he-file-name-beg) (point))
+        (let ((name-part (file-name-nondirectory he-search-string))
+              (dir-part (substitute-in-file-name
+                         (expand-file-name (or (file-name-directory he-search-string) "")))))
+          (when (and (not (equal he-search-string "")) (file-directory-p dir-part))
+            (setq expansion (file-name-completion name-part dir-part)))
+          (when (or (eq expansion t) (string= expansion name-part) (he-string-member expansion he-tried-table))
+            (setq expansion ()))))
+
+      (if expansion
+          (let ((filename (he-concat-directory-file-name (file-name-directory he-search-string) expansion)))
+            (he-substitute-string filename)
+            (setq he-tried-table (cons expansion (cdr he-tried-table)))
+            t)
+        (if old (he-reset-string))
+        nil))))
 
 
 ;;; SEARCHING
