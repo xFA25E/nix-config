@@ -3,7 +3,7 @@
 MAX_DURATION="$(echo '(2 ^ 64) - 1' | bc)"
 
 show_message() {
-    [ -n "${1}" ] && rofi -e "${1}"
+    [ -n "${1}" ] && notify-send "Timer" "${1}"
 }
 
 parse_time() {
@@ -69,7 +69,7 @@ get_report() {
 
 select_with_header() {
     read -r hd
-    rofi -dmenu -no-custom -p "Select timer" -mesg "${hd}"
+    menu -p "Select timer" -l 19
 }
 
 get_timer_name() {
