@@ -551,65 +551,21 @@
 ;;; DIRED
 
 (leaf dired
-  :defun dired-copy-filename-as-kill-join-newline
-  :commands dired-get-marked-files
-  :advice (:override dired-copy-filename-as-kill dired-copy-filename-as-kill-join-newline)
-
-  :hook
-  (dired-mode-hook . dired-hide-details-mode)
-  (dired-before-readin-hook . dired-setup-switches)
-
+  :hook (dired-mode-hook . dired-hide-details-mode)
   :custom
   '(dired-dwim-target . t)
   '(dired-listing-switches . "-alDF --si --group-directories-first")
   '(dired-ls-F-marks-symlinks . t)
-
   :bind
   (dired-mode-map
    ("* &" . dired-flag-garbage-files)
    ("* d" . dired-flag-files-regexp)
-   ("* g" . dired-mark-files-containing-regexp))
-
-  :config
-  (defun dired-setup-switches ()
-    (pcase (file-remote-p default-directory 'method)
-      ((or "ftp" "sftp")
-       (setq-local dired-actual-switches "-al"))
-      ("adb"
-       (setq-local dired-actual-switches "-alDF"))))
-
-  (defun dired-copy-filename-as-kill-join-newline (&optional arg)
-    (interactive "P")
-    (let ((string
-           (or (dired-get-subdir)
-               (mapconcat #'identity
-                          (if arg
-                              (cond ((zerop (prefix-numeric-value arg))
-                                     (dired-get-marked-files))
-                                    ((consp arg)
-                                     (dired-get-marked-files t))
-                                    (t
-                                     (dired-get-marked-files
-                                      'no-dir (prefix-numeric-value arg))))
-                            (dired-get-marked-files 'no-dir))
-                          "\n"))))
-      (unless (string= string "")
-        (if (eq last-command 'kill-region)
-            (kill-append string nil)
-          (kill-new string))
-        (message "%s" string)))))
+   ("* g" . dired-mark-files-containing-regexp)))
 
 (leaf dired-x
-  :defun dired-get-marker-char dired-mark-extension
   :after dired
   :hook (dired-mode-hook . dired-omit-mode)
-
-  :bind
-  (ctl-x-map :package subr ("C-j" . dired-jump))
-  (dired-mode-map
-   :package dired
-   ("* i" . dired-mark-images)
-   ("* v" . dired-mark-videos))
+  :bind (ctl-x-map :package subr ("C-j" . dired-jump))
 
   :custom
   `(dired-guess-shell-alist-user
@@ -655,48 +611,27 @@
                "setsid -f mpv --force-window=yes * >/dev/null 2>&1")
 
          (list (rx (ext "rar"))
-               "temp=\"$(echo `?` | rev | cut -d. -f 2- | rev)\"; mkdir -p \"${temp}\"; unrar x ? \"${temp}\"")))
-
-  :config
-  (defun dired-get-marker-char ()
-    (list
-     (pcase current-prefix-arg
-       ('(4) ?\s)
-       ('(16)
-        (let* ((dflt (char-to-string dired-marker-char))
-               (input (read-string
-                       (format
-                        "Marker character to use (default %s): " dflt)
-                       nil nil dflt)))
-          (aref input 0)))
-       (_ dired-marker-char))))
-
-  (defun dired-mark-images (&optional marker-char)
-    (interactive (dired-get-marker-char))
-    (dired-mark-extension
-     '("jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp" "xpm")
-     marker-char))
-
-  (defun dired-mark-videos (&optional marker-char)
-    (interactive (dired-get-marker-char))
-    (dired-mark-extension
-     '("flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp"
-       "vob" "wmv" "aiff" "wav")
-     marker-char)))
+               "temp=\"$(echo `?` | rev | cut -d. -f 2- | rev)\"; mkdir -p \"${temp}\"; unrar x ? \"${temp}\""))))
 
 (leaf dired-aux
   :after dired
-  :bind (dired-mode-map :package dired ("b" . dired-stat))
   :custom '(dired-create-destination-dirs . 'ask)
-  :config
+  :defer-config
   (add-to-list
    'dired-compress-file-suffixes
-   `(,(rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -"))
+   `(,(rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -")))
 
-  (defun dired-stat ()
-    (interactive)
-    (dired-do-shell-command "stat" current-prefix-arg
-                            (dired-get-marked-files t current-prefix-arg))))
+(leaf dired-extra
+  :preface
+  (unless (package-installed-p 'dired-extra)
+    (quelpa '(dired-extra :repo "xFA25E/dired-extra" :fetcher github)))
+  :hook (dired-before-readin-hook . dired-extra-setup-switches)
+  :bind
+  (dired-mode-map
+   :package dired
+   ("b" . dired-extra-stat)
+   ("* i" . dired-extra-mark-images)
+   ("* v" . dired-extra-mark-videos)))
 
 (leaf wdired
   :after dired
@@ -1823,7 +1758,7 @@ Use as a value for `completion-in-region-function'."
 (leaf mu4e
   :defun mu4e-action-view-in-browser-check-parens-fix mu4e-main-mode-map mu4e-view-actions
   :defvar mu4e-main-mode-map mu4e-view-actions
-  :advice (:around mu4e-action-view-in-browser mu4e-action-view-in-browser-check-parens-fix)
+  ;; :advice (:around mu4e-action-view-in-browser mu4e-action-view-in-browser-check-parens-fix)
   :hook (after-init-hook . mu4e~start)
 
   :bind
