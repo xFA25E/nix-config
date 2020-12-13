@@ -783,6 +783,7 @@
   (before-save-hook . delete-trailing-whitespace)
   (after-init-hook  . size-indication-mode)
   (after-init-hook  . column-number-mode)
+  ((newsticker-treeview-item-mode-hook ytel-mode-hook) . toggle-truncate-lines)
 
   :bind
   ("C-h"   . backward-delete-char-untabify)
@@ -1761,7 +1762,6 @@ Use as a value for `completion-in-region-function'."
   :defvar ytel-mode-map
   :defun ytel-video-id ytel-get-current-video ytel-video-title
   :package t
-  :hook (ytel-mode-hook . toggle-truncate-lines)
 
   :custom
   '(ytel-instances
@@ -1880,7 +1880,6 @@ Use as a value for `completion-in-region-function'."
 (leaf newst-treeview
   :defvar newsticker-treeview-mode-map
   :defun newsticker--treeview-get-selected-item
-  :hook (newsticker-treeview-item-mode-hook . toggle-truncate-lines)
 
   :bind
   (mode-specific-map :package bindings ("o n" . newsticker-show-news))
