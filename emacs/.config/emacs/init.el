@@ -268,22 +268,20 @@
 
 (leaf bruh
   :defvar bruh-videos-re
-  :defun bruh-mpvi-ytdli-or-browse
-
   :preface
   (unless (package-installed-p 'bruh)
     (quelpa '(bruh :repo "a13/bruh" :fetcher github)))
-
   :after browse-url
-
   :custom
-  '(bruh-images-browser-function . 'bruh-feh)
-  '(bruh-default-browser . #'eww-browse-url)
-  '(bruh-videos-browser-function . #'bruh-mpvi-ytdli-or-browse)
-  '(browse-url-browser-function . #'bruh-browse-url)
+  '(bruh-images-browser-function . 'browse-url-find-file)
+  '(bruh-default-browser . 'eww-browse-url)
+  '(bruh-videos-browser-function . 'bruh-mpvi-ytdli-or-browse)
+  '(browse-url-browser-function . 'bruh-browse-url)
   '(bruh-mpvi-get-title-functions . nil)
 
   :defer-config
+  (defun browse-url-find-file (url &optional _)
+    (find-file url))
   (defun bruh-mpvi-ytdli-or-browse (url &rest rest)
     (let ((actions '("mpv" "ytdl" "default"))
           (youtube-id
