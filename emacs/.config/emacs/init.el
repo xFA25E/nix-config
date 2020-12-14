@@ -633,18 +633,13 @@
     . ',(list
          (list (rx (ext "csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx"))
                "setsid -f libreoffice * >/dev/null 2>&1"
-               "libreoffice --invisible --headless --convert-to pdf * &"
-               "libreoffice --invisible --headless --convert-to epub * &"
-               "libreoffice --invisible --headless --convert-to csv * &")
+               "libreoffice --invisible --headless --convert-to pdf * &")
 
          (list (rx (ext "jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp" "xpm"))
                "setsid -f sxiv * >/dev/null 2>&1"
                "setsid -f gimp * >/dev/null 2>&1")
 
-         (list (rx (ext "eps"))
-               "setsid -f inkscape * >/dev/null 2>&1")
-
-         (list (rx (ext "ai"))
+         (list (rx (ext "ai" "eps"))
                "setsid -f inkscape * >/dev/null 2>&1"
                "setsid -f gimp * >/dev/null 2>&1")
 
@@ -759,9 +754,6 @@
 
 (leaf fd-dired
   :load-path "~/Documents/projects/emacs-lisp/fd-dired"
-  ;; :preface
-  ;; (unless (package-installed-p 'fd-dired)
-  ;;   (quelpa '(fd-dired :repo "xFA25E/fd-dired" :fetcher github)))
   :custom '(fd-dired-ls-option . '("| sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
   :bind (search-map :package bindings ("f d" . fd-dired) ("f D" . fd-dired-list-searches)))
 
@@ -1329,7 +1321,7 @@ Use as a value for `completion-in-region-function'."
           (setq he-tried-table (cons (car he-expand-list) (cdr he-tried-table)))
           (setq he-expand-list (cdr he-expand-list))
           t)
-      (if old (he-reset-string))
+      (when old (he-reset-string))
       nil))
 
   (defun try-complete-file-name-partially-with-env (old)
@@ -1349,7 +1341,7 @@ Use as a value for `completion-in-region-function'."
             (he-substitute-string filename)
             (setq he-tried-table (cons expansion (cdr he-tried-table)))
             t)
-        (if old (he-reset-string))
+        (when old (he-reset-string))
         nil))))
 
 
@@ -2112,39 +2104,15 @@ Use as a value for `completion-in-region-function'."
   (mu4e-alert-set-default-style 'libnotify))
 
 
-;;; ORGANIZE
-
-(leaf remember
-  :commands remember-notes-maybe
-
-  :bind (remember-notes-mode-map
-         ("C-c C-c" . nil)
-         ("C-c '"   . remember-notes-save-and-bury-buffer)
-         ("C-c \""  . remember-notes-save-and-kill-terminal))
-
-  :custom
-  `(remember-data-file . ,(expand-file-name "emacs/notes" (xdg-data-home)))
-  '(initial-buffer-choice . #'remember-notes-maybe)
-  '(remember-notes-initial-major-mode . 'outline-mode)
-
-  :config
-  (defun remember-notes-maybe ()
-    (let ((buffer (remember-notes)))
-      (if (zerop (buffer-size buffer))
-          (get-buffer-create "*scratch*")
-        buffer)))
-
-  (defun remember-notes-save-and-kill-terminal ()
-    (interactive)
-    (remember-notes-save-and-bury-buffer)
-    (save-buffers-kill-terminal)))
-
-
-;;;; ORG
+;;; ORG
 
 (leaf org
   :package org-plus-contrib
-  :bind (mode-specific-map :package bindings ("G a a" . org-agenda))
+  :bind
+  (mode-specific-map
+   :package bindings
+   ("G a" . org-agenda)
+   ("G c" . org-capture))
 
   :custom
   '(org-src-tab-acts-natively . t)
@@ -2158,6 +2126,9 @@ Use as a value for `completion-in-region-function'."
   '(org-refile-targets . '((org-agenda-files :level . 1)))
   `(org-id-locations-file
     . ,(expand-file-name "emacs/org/id-locations" (xdg-cache-home)))
+  '(org-capture-templates
+    . '(("r" "Remember" entry (file+headline "~/org/life.org" "Remember")
+         "* TODO %?\n")))
 
   :config
   (org-babel-do-load-languages 'org-babel-load-languages
