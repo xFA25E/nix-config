@@ -344,7 +344,7 @@
 ;;;; CACHE
 
 (leaf savehist
-  :custom `(savehist-file . ,(expand-file-name "emacs/savehist" (xdg-data-home)))
+  :custom `(savehist-file . ,(expand-file-name "emacs/savehist" (xdg-cache-home)))
   :hook
   (after-init-hook    . savehist-mode)
   (savehist-save-hook . savehist-filter-file-name-history)
@@ -363,7 +363,7 @@
 (leaf saveplace
   :hook (after-init-hook . save-place-mode)
   :custom
-  `(save-place-file . ,(expand-file-name "emacs/saveplace" (xdg-data-home)))
+  `(save-place-file . ,(expand-file-name "emacs/saveplace" (xdg-cache-home)))
   '(save-place-forget-unreadable-files . t)
   :config
   (setq save-place-skip-check-regexp
