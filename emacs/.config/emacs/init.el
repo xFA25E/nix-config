@@ -1574,7 +1574,7 @@ Use as a value for `completion-in-region-function'."
     (comint-delete-input)
     (let* ((read-dir (read-directory-name "Change directory: "))
            (dir (or (file-remote-p read-dir 'localname) read-dir)))
-      (insert (concat "cd " (shell-quote-argument dir))))
+      (insert (concat "cd " (shell-quote-argument (expand-file-name dir)))))
     (comint-send-input)))
 
 (leaf shell-pwd
