@@ -1726,6 +1726,7 @@ Use as a value for `completion-in-region-function'."
 
 (leaf eww
   :custom
+  `(eww-bookmarks-directory . ,(expand-file-name "emacs" (xdg-data-home)))
   '(eww-browse-url-new-window-is-tab . nil)
   '(eww-search-prefix . "https://ddg.co/lite/?q="))
 
