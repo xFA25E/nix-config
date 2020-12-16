@@ -1,6 +1,6 @@
 #!/bin/sh
-
-url="${1:-$(xclip -o)}"
+[ -z "${1}" ] && notify-send "Url is empty"
+url="${1:?provide url}"
 
 get_formats() {
     columns='format_id,width,height,ext,filesize,vcodec,acodec'

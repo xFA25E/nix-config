@@ -1,4 +1,5 @@
 #!/bin/sh
-link="${1:-$(xclip -o)}"
+[ -z "${1}" ] && notify-send "Url is empty"
+link="${1:?provide url}"
 dir="${XDG_VIDEOS_DIR:-${HOME}/Videos}/youtube"
 mkdir -p "${dir}" && echo "${link:?}" >>"${dir}/download.txt"
