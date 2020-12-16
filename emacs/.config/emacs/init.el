@@ -352,8 +352,12 @@
   (defun savehist-filter-file-name-history ()
     (setq
      file-name-history
-     (cl-delete-if
-      #'string-empty-p
+     (cl-delete-if-not
+      (lambda (file-name)
+        (and (not (string-empty-p file-name))
+             (or (file-remote-p file-name)
+                 (string-match-p (rx bos "http") file-name)
+                 (file-exists-p file-name))))
       (cl-delete-duplicates
        (mapcar
         (lambda (s) (string-trim-right (expand-file-name s) (rx (+ "/"))))
