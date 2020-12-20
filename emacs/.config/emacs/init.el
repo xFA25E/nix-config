@@ -1165,8 +1165,6 @@
 (leaf eldoc :defer-config (diminish 'eldoc-mode))
 
 (leaf minibuffer
-  :commands completing-read-in-region
-
   :bind
   (minibuffer-local-completion-map
    ("<return>" . minibuffer-force-complete-and-exit)
@@ -1179,28 +1177,7 @@
   '(read-file-name-completion-ignore-case . t)
   '(completion-pcm-complete-word-inserts-delimiters . t)
   '(completion-styles . '(substring partial-completion))
-  '(completion-in-region-function . 'completing-read-in-region)
-  '(completion-category-overrides . '((bookmark (styles basic substring))))
-
-  :config
-  (defun completing-read-in-region (start end collection &optional predicate)
-    "Prompt for completion of region in the minibuffer if non-unique.
-Use as a value for `completion-in-region-function'."
-    (if (and (minibufferp) (not (string= (minibuffer-prompt) "Eval: ")))
-        (completion--in-region start end collection predicate)
-      (let* ((initial (buffer-substring-no-properties start end))
-             (limit (car (completion-boundaries initial collection predicate "")))
-             (all (completion-all-completions initial collection predicate (length initial)))
-             (completion (cond ((atom all) nil)
-                               ((and (consp all) (atom (cdr all)))
-                                (concat (substring initial 0 limit) (car all)))
-                               (t
-                                (completing-read "Completion: " collection predicate t initial)))))
-        (if (null completion)
-            (progn (message "No completion") nil)
-          (delete-region start end)
-          (insert completion)
-          t)))))
+  '(completion-category-overrides . '((bookmark (styles basic substring)))))
 
 (leaf orderless
   :package t
@@ -1218,12 +1195,6 @@ Use as a value for `completion-in-region-function'."
 (leaf map-ynp
   :preface (provide 'map-ynp)
   :custom '(read-answer-short . t))
-
-(leaf completing-history
-  :preface
-  (unless (package-installed-p 'completing-history)
-    (quelpa '(completing-history :repo "oantolin/completing-history" :fetcher github)))
-  :bind ("M-H" . completing-history-insert-item))
 
 (leaf icomplete
   :hook (after-init-hook . icomplete-mode)
@@ -1260,9 +1231,16 @@ Use as a value for `completion-in-region-function'."
   :preface
   (unless (package-installed-p 'consult)
     (quelpa '(consult :repo "minad/consult" :fetcher github)))
+  :custom '(completion-in-region-function . 'consult-completion-in-region)
   :bind
   ("M-y" . consult-yank-replace)
-  (goto-map :package bindings ("o" . consult-outline)))
+  ("M-H" . consult-history)
+  (kmacro-keymap :package kmacro ("c" . consult-kmacro))
+  (ctl-x-r-map :package bindings ("R" . consult-register))
+  (goto-map
+   :package bindings
+   ("o" . consult-outline)
+   ("i" . consult-imenu)))
 
 (leaf icomplete-vertical
   :defun icomplete-vertical-around
@@ -1278,7 +1256,6 @@ Use as a value for `completion-in-region-function'."
   (:around read-file-name icomplete-vertical-around)
   (:around comint-history icomplete-vertical-around)
   (:around mingus-find-and-add-file icomplete-vertical-around)
-  (:around imenu--completion-buffer icomplete-vertical-around)
   (:around consult-yank-replace icomplete-vertical-around)
   (:around consult-outline icomplete-vertical-around)
 
@@ -1432,21 +1409,11 @@ Use as a value for `completion-in-region-function'."
   :hook (xref-backend-functions . dumb-jump-xref-activate))
 
 (leaf imenu
-  :bind (goto-map :package bindings ("i" . imenu))
   :custom
   '(imenu-auto-rescan . t)
   '(imenu-use-popup-menu . nil)
   '(imenu-space-replacement . " ")
   '(imenu-level-separator . "/"))
-
-(leaf flimenu
-  :package t
-  :after imenu
-  :init (flimenu-global-mode))
-
-(leaf imenu-anywhere
-  :package t
-  :bind (goto-map :package bindings ("I" . imenu-anywhere)))
 
 (leaf find-func
   :bind (search-map :package bindings ("f b" . find-library))
