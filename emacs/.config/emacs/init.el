@@ -1782,11 +1782,14 @@ Use as a value for `completion-in-region-function'."
   :preface
   (unless (package-installed-p 'mediainfo-mode)
     (quelpa '(mediainfo-mode :repo "xFA25E/mediainfo-mode" :fetcher github)))
-  :mode "\\.\\(?:3gp\\|a\\(?:iff\\|vi\\)\\|flac\\|m\\(?:4a\\|kv\\|ov\\|p[34g]\\)\\|o\\(?:gg\\|pus\\)\\|vob\\|w\\(?:av\\|ebm\\|mv\\)\\)\\'"
-  :init
+  (add-to-list
+   'auto-mode-alist
+   `(,(rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob" "wmv" "aiff" "wav"))
+     . mediainfo-mode))
   (add-to-list
    'file-name-handler-alist
-   '("\\.\\(?:3gp\\|a\\(?:iff\\|vi\\)\\|flac\\|m\\(?:4a\\|kv\\|ov\\|p[34g]\\)\\|o\\(?:gg\\|pus\\)\\|vob\\|w\\(?:av\\|ebm\\|mv\\)\\)\\'" . mediainfo-mode--file-handler)))
+   `(,(rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob" "wmv" "aiff" "wav"))
+     . mediainfo-mode--file-handler)))
 
 
 
