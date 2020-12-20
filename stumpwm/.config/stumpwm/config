@@ -5,9 +5,8 @@
 (defvar *config-directory*
   (merge-pathnames
    #p"stumpwm/"
-   (if-let ((d (getenv "XDG_CONFIG_HOME")))
-     (pathname (concatenate 'string d "/"))
-     (merge-pathnames ".config/" (user-homedir-pathname)))))
+   (or (uiop:getenv-absolute-directory "XDG_CONFIG_HOME")
+       (merge-pathnames #p".config/" (user-homedir-pathname)))))
 
 (defun config-file (path)
   (merge-pathnames path *config-directory*))

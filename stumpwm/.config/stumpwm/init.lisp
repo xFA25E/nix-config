@@ -26,3 +26,5 @@
 (notify:notify-server-toggle)
 (setf notify:*notify-server-title-color* "^7^B")
 (setf notify:*notify-server-body-color* "^7^B")
+
+(load-module "pass")

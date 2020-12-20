@@ -57,15 +57,7 @@
 
 
 (defcommand show-menu () ()
-  (let* ((menu '(("brightness" :command "set-brightness")
-                 ("lock screen" :shell "lock")
-                 ("suspend" :shell "systemctl suspend")
-                 ("mount" :shell "rmount")
-                 ("unmount" :shell "rumount")
-                 ("screenshot" :shell "screenshot")
-                 ("alsa volume" :command "set-alsa-volume")
-                 ("mpd volume" :command "set-mpd-volume")))
-         (selection (select-from-menu (current-screen) menu nil)))
+  (when-let ((selection (select-from-menu (current-screen) *menu* nil)))
     (destructuring-bind (name type cmd) selection
       (declare (ignore name))
       (ecase type

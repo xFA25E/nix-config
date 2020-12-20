@@ -78,8 +78,7 @@
 
 (defun notify-battery-status ()
   (update-battery-status-variables)
-  (let* ((*queue-messages-p* t)
-         (percentage-difference (- *battery-previous-percentage* *battery-percentage*))
+  (let* ((percentage-difference (- *battery-previous-percentage* *battery-percentage*))
          (criticalp (<= *battery-percentage* 15))
          (chargingp (<= percentage-difference 0))
          (notifyp (<= 10 percentage-difference)))
@@ -92,8 +91,7 @@
 
 (defun notify-date-time ()
   (when (zerop (rem (nth-value 1 (get-decoded-time)) 30))
-    (let ((*queue-messages-p* t))
-      (echo-date))))
+    (echo-date)))
 
 
 
