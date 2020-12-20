@@ -142,7 +142,7 @@
 
 (leaf form-feed
   :package t
-  :hook ((emacs-lisp-mode-hook scheme-mode-hook) . form-feed-mode)
+  :hook ((emacs-lisp-mode-hook scheme-mode-hook lisp-mode-hook) . form-feed-mode)
   :config (diminish 'form-feed-mode))
 
 
