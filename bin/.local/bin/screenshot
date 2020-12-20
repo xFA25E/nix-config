@@ -1,0 +1,9 @@
+#!/bin/sh
+
+directory="${HOME}/Pictures/screenshots"
+name="$(menu -p 'Scrot name (w/o ext): ')"
+filename="${directory}/${name}.png"
+select="$(printf '%s\n\n' --select | menu -p 'Select? ')"
+mkdir -p "${directory}"
+scrot --overwrite --delay 1 ${select} "${filename}" --exec 'image_clipboard $f'
+notify-send Scrot 'Done screenshot'
