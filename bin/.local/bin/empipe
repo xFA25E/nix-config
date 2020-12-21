@@ -1,10 +1,6 @@
 #!/bin/sh
 
-if [ -n "${1}" ]; then
-    temp_file="$(mktemp "${1}")";
-else
-    temp_file="$(mktemp)";
-fi
+temp_file="$(mktemp "${XDG_RUNTIME_DIR}/empipe.${1}.XXXXX")";
 
 cleanup() {
     [ -w "${temp_file}" ] && rm -v "${temp_file}"
