@@ -15,6 +15,7 @@
 (load (config-file "variables.lisp"))
 (load (config-file "utilities.lisp"))
 (load (config-file "commands.lisp"))
+(load (config-file "pass.lisp"))
 (load (config-file "bindings.lisp"))
 (load (config-file "init.lisp"))
 
@@ -39,10 +40,3 @@
 ;; (my-stump-set-color screen-float-focus-color "#6f9fff")
 ;; (my-stump-set-color screen-float-unfocus-color "#20204d")
 ;; (update-colors-all-screens)
-
-;; (send-meta-key (current-screen) (kbd "M-x"))
-;; (window-send-string "shell")
-;; (send-meta-key (current-screen) (kbd "RET"))
-
-;; this is how you do error handling
-;; (throw 'error "Number required.")

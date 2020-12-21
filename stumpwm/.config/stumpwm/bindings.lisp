@@ -53,8 +53,8 @@
 (define-key *open-map* (kbd "C-c") "exec timer add")
 (define-key *open-map* (kbd "c") "exec timer")
 
-(define-key *open-map* (kbd "C-w") "exec rpass type")
-(define-key *open-map* (kbd "w") "exec rpass")
+(define-key *open-map* (kbd "C-w") "type-pass-entry")
+(define-key *open-map* (kbd "w") "menu-pass")
 
 (define-key *open-map* (kbd "C-v") "exec uxterm -e pulsemixer")
 (define-key *open-map* (kbd "C-p") "exec uxterm -e htop")
