@@ -757,7 +757,7 @@
   :custom '(find-ls-option . '("-print0 | sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF")))
 
 (leaf fd-dired
-  :load-path "~/Documents/projects/emacs-lisp/fd-dired"
+  :package t
   :custom '(fd-dired-ls-option . '("| sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
   :bind (search-map :package bindings ("f d" . fd-dired) ("f D" . fd-dired-list-searches)))
 
