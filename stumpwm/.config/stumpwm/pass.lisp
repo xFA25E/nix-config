@@ -55,10 +55,10 @@
          (value (cadr (select-from-menu (current-screen) menu "Type field:"))))
 
     (cond ((eq :autotype value)
-           (when-let ((value (cdr (assoc "login" menu :test #'string=))))
+           (when-let ((value (cadr (assoc "login" menu :test #'string=))))
              (window-send-string value)
              (window-send-string (string #\tab)))
-           (when-let ((value (cdr (assoc "password" menu :test #'string=))))
+           (when-let ((value (cadr (assoc "password" menu :test #'string=))))
              (window-send-string value)))
 
           ((stringp value)
