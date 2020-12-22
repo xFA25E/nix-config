@@ -158,9 +158,9 @@
   :bind (help-map :package help ("M-f" . list-faces-display))
 
   :config
-  (set-face-attribute 'default nil :family "Iosevka" :height 165)
-  (set-face-attribute 'mode-line nil :family "DejaVu Sans" :height 125)
-  (set-face-attribute 'mode-line-inactive nil :family "DejaVu Sans" :height 125)
+  (set-face-attribute 'default nil :family "Iosevka" :height 170)
+  (set-face-attribute 'mode-line nil :family "DejaVu Sans" :height 110)
+  (set-face-attribute 'mode-line-inactive nil :family "DejaVu Sans" :height 110)
   (set-face-attribute 'fixed-pitch-serif nil :family "DejaVu Serif")
   (set-face-attribute 'header-line nil :inverse-video nil :family "Iosevka")
 
