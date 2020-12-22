@@ -30,7 +30,7 @@ xset s noexpose
 xset c on
 xset -dpms
 
-pidof rimer >/dev/null || setsid -f rimer start "${TIMER_UPDATER:-panel_timer}"
+pidof rimer >/dev/null || setsid -f rimer start "${RIMER_CALLBACK:-rimer_callback}"
 pkill sctd; setsid -f sctd --longitude 47.339 --latitude 8.877
 
 exec stumpwm

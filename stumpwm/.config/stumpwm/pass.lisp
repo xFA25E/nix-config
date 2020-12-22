@@ -24,11 +24,11 @@
 
 (defun parse-pass-field (field)
   (when-let ((groups (nth-value 1 (ppcre:scan-to-strings "^([a-zA-Z_]+): (.*)$" field))))
-    (cons (aref groups 0) (aref groups 1))))
+    (list (aref groups 0) (aref groups 1))))
 
 (defun parse-pass-entry-text (text)
   (let* ((lines (split-string text))
-         (password-field `("password" . ,(pop lines))))
+         (password-field `("password" ,(pop lines))))
     (when (string= "---" (car lines))
       (pop lines))
     (sort
@@ -38,8 +38,9 @@
 
 
 (define-stumpwm-type :pass-entry (input prompt)
-  (if-let ((pass-entry (or (argument-pop input) (select-pass-entry prompt))))
-    (first pass-entry)
+  (if-let ((pass-entry (or (argument-pop input)
+                           (first (select-pass-entry prompt)))))
+    pass-entry
     (throw 'error "Pass entry required.")))
 
 
@@ -50,8 +51,8 @@
 
 (defcommand type-pass-entry (pass-entry) ((:pass-entry "Type pass:"))
   (let* ((text (run-shell-command (format nil "pass show '~A'" pass-entry) t))
-         (menu (cons (cons "autotype" :autotype) (parse-pass-entry-text text)))
-         (value (cdr (select-from-menu (current-screen) menu "Type field:"))))
+         (menu (cons (list "autotype" :autotype) (parse-pass-entry-text text)))
+         (value (cadr (select-from-menu (current-screen) menu "Type field:"))))
 
     (cond ((eq :autotype value)
            (when-let ((value (cdr (assoc "login" menu :test #'string=))))
@@ -68,8 +69,8 @@
     (window-send-string text)))
 
 (defcommand menu-pass () ()
-  (let ((menu '(("type" . :type) ("show" . :show) ("otp" . :otp))))
-    (case (cdr (select-from-menu (current-screen) menu "Pass: "))
+  (let ((menu '(("type" :type) ("show" :show) ("otp" :otp))))
+    (case (cadr (select-from-menu (current-screen) menu "Pass: "))
       (:type (eval-command "type-pass-entry" t))
       (:show (eval-command "show-pass-entry" t))
       (:otp (eval-command "otp-pass-entry" t)))))

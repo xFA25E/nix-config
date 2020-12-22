@@ -63,14 +63,7 @@ export ABDUCO_CMD="terminal_wm"
 export ABDUCO_SOCKET_DIR="${XDG_RUNTIME_DIR}/abduco"
 
 # rimer
-export TIMER_UPDATER='panel_timer'
-export TIMER_PROFILES='countdown study 00:25
-countdown pause 00:05
-countdown other 00:25
-countdown work 00:25
-countdown eyes 00:30
-stopwatch study
-stopwatch work'
+export RIMER_CALLBACK='rimer_callback'
 
 # mpd
 export MPD_HOST="localhost"

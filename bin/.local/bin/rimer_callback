@@ -1,0 +1,37 @@
+#!/bin/sh
+
+name="${1:?provide name}"
+elapsed="${2:?provide remain}"
+duration="${3:?provide duration}"
+state="${4:?provide state}"
+
+save_log() {
+    date "+%Y %m %d ${1:?provide activity} ${2:?provide duration}" >> "${3:?provide file}"
+}
+
+case "${state}" in
+    halted)
+        notify-send "Timer" "\"${name}\" finished"
+
+        if [ "${name}" = eyes ]; then
+            notify_sound "${HOME}/Music/solemn_notification.ogg"
+        else
+            notify_sound
+        fi
+
+        case "${name}" in
+            study)
+                mark_file="${HOME}/org/${name}.marks"
+                log_file="${HOME}/org/${name}.log"
+                selected="$(tail -n 1 "${log_file}" | cut -d" " -f4)"
+                what="$(awk '!$3 && $1 {print $1}' "${mark_file}" | menu -p "What")"
+                save_log "${what:?}" "${elapsed}" "${log_file}"
+                ;;
+            *)
+                ;;
+        esac
+        ;;
+    *)
+        # notify-send "Timer" "${name} ${elapsed} $(echo "${duration}" | format_duration) ${state}"
+        ;;
+esac

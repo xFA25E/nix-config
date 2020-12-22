@@ -50,8 +50,7 @@
 (define-key *open-map* (kbd "C-q") "qutebrowser")
 (define-key *open-map* (kbd "C-t") "telegram-desktop")
 
-(define-key *open-map* (kbd "C-c") "exec timer add")
-(define-key *open-map* (kbd "c") "exec timer")
+(define-key *open-map* (kbd "C-c") "menu-rimer")
 
 (define-key *open-map* (kbd "C-w") "type-pass-entry")
 (define-key *open-map* (kbd "w") "menu-pass")
