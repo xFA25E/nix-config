@@ -4,14 +4,11 @@
 
 (clear-window-placement-rules)
 
-(setf *screen-mode-line-format* " [%n] %t ^> L%l V%a B%b %d")
+(setf *screen-mode-line-format* "^B^70[%n] %t L%l V%a B%b %d")
 
 (setf *mode-line-border-width* 0)
 (setf *mode-line-pad-x* 0)
 (setf *mode-line-pad-y* 0)
-(setf *mode-line-background-color* "Black")
-(setf *mode-line-border-color* "Black")
-(setf *mode-line-foreground-color* "White")
 
 (setf *mouse-focus-policy* :click)
 

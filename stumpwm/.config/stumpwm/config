@@ -20,13 +20,11 @@
 (load (config-file "bindings.lisp"))
 (load (config-file "init.lisp"))
 
-;; (setf *colors*
-;;       ;; Yellow and magenta are swapped to show keys in yellow.
-;;       ;; '("black" "red" "green" "magenta" "blue" "yellow" "cyan" "white"))
-;;       ;; '("#20204d" "red" "#6f9fff" "magenta" "blue" "#f0f0f0" "lightskyblue" "cyan"))
-;;       ;; Looks like non-VGA-16 codes do not appear in modules
-;;       '("#20204d" "#ff88b4" "#90ee90" "#ff83fa" "#87cefa" "#eeeed1" "#00ffff" "#f0f0f0"))
-;; (update-color-map (current-screen))     ; which other color maps to upgrade?
+(setf *colors*
+      ;; '("black" "red" "green" "magenta" "blue" "yellow" "cyan" "white"))
+      '("#ffffff" "#ff0086" "#00c918" "#aba800" "#3777e6" "#ad00a1" "#1faaaa" "#101010"))
+
+(update-color-map (current-screen))
 
 ;; (defmacro my-stump-set-color (val color)
 ;;   "Similar to `set-any-color', but without updating colors."

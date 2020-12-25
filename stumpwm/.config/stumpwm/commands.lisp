@@ -1,9 +1,8 @@
 (in-package :stumpwm)
 
-(define-run-or-raise "telegram-desktop" "TelegramDesktop")
 (define-run-or-raise "qutebrowser" "qutebrowser")
 (define-run-or-raise "firefox" "firefox")
-(define-run-or-raise  "brave" "Brave-browser")
+(define-run-or-raise  "chromium" "Chromium-browser")
 (define-run-or-raise "em" "Emacs")
 
 

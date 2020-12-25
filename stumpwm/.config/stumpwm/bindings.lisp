@@ -45,10 +45,9 @@
 
 ;;; OPEN
 
-(define-key *open-map* (kbd "C-b") "brave")
+(define-key *open-map* (kbd "C-b") "chromium")
 (define-key *open-map* (kbd "C-f") "firefox")
 (define-key *open-map* (kbd "C-q") "qutebrowser")
-(define-key *open-map* (kbd "C-t") "telegram-desktop")
 
 (define-key *open-map* (kbd "C-c") "menu-rimer")
 
