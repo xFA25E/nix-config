@@ -24,4 +24,4 @@ if [ "$(printf 'no\nyes' | menu -p 'Playlist?')" = yes ]; then
 fi
 
 
-tsp -u "$(tsp -L "${TSP_TITLE}" ytdla --output "${output}" ${args} "$@")"
+pueue add -- ytdla --output "${output}" ${args} "$@"

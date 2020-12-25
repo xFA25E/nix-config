@@ -18,29 +18,17 @@ select_format() {
 
 case "$(printf "video\naudio\nmusic\nselect video" | menu -p "Download")" in
     video)
-        if [ -n "${2}" ]; then
-            tsp -L "${2}" ytdly "${url}"
-        else
-            tsp ytdly "${url}"
-        fi
+        pueue add -- ytdly "${url}"
         ;;
     audio)
-        if [ -n "${2}" ]; then
-            tsp -L "${2}" ytdlay "${url}"
-        else
-            tsp ytdlay "${url}"
-        fi
+        pueue add -- ytdlay "${url}"
         ;;
     music)
-        TSP_TITLE="${2}" ytdlam "${url}"
+        pueue add -- ytdlam "${url}"
         ;;
     "select video")
         selected_format="$(get_formats | select_format | awk '{print $1}')"
         chosen_format="${selected_format:?}+bestaudio/${selected_format:?}/best"
-        if [ -n "${2}" ]; then
-            tsp -L "${2}" ytdly -f "${chosen_format}" "${url}"
-        else
-            tsp ytdly -f "${chosen_format}" "${url}"
-        fi
+        pueue add -- ytdly -f "${chosen_format}" "${url}"
         ;;
 esac

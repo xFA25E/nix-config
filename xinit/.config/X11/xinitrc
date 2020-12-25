@@ -31,6 +31,7 @@ xset c on
 xset -dpms
 
 pidof rimer >/dev/null || setsid -f rimer start "${RIMER_CALLBACK:-rimer_callback}"
+pidof pueued >/dev/null || setsid -f pueued
 pkill sctd; setsid -f sctd --longitude 47.339 --latitude 8.877
 
 exec stumpwm
