@@ -17,13 +17,13 @@
                            ("melpa" . "https://melpa.org/packages/")
                            ("org"   . "https://orgmode.org/elpa/"))))
 
+(defvar leaf-expand-minimally t)
+(defvar leaf-key-bindlist nil)
+
 (package-initialize)
 (unless (package-installed-p 'leaf)
   (package-refresh-contents)
   (package-install 'leaf))
-
-(defvar leaf-expand-minimally t)
-(defvar leaf-key-bindlist nil)
 
 
 ;;; UTILS
@@ -66,8 +66,6 @@
 ;;; SETTINGS
 
 (leaf emacs
-  :setq-default '(line-spacing . 0.2)
-
   :custom
   '(create-lockfiles . nil)
   '(cursor-in-non-selected-windows . nil)
@@ -277,7 +275,6 @@
   '(bruh-default-browser . 'eww-browse-url)
   '(bruh-videos-browser-function . 'bruh-mpvi-ytdli-or-browse)
   '(browse-url-browser-function . 'bruh-browse-url)
-  '(bruh-mpvi-get-title-functions . nil)
 
   :defer-config
   (defun browse-url-find-file (url &optional _)
@@ -301,13 +298,7 @@
            (start-process (concat "mpv " url) nil "mpvi" url)))
         ("ytdl"
          (let ((process-environment (browse-url-process-environment)))
-           (start-process
-            (concat "ytdl " url) nil "ytdli" url
-            (funcall
-             (or (seq-some
-                  (lambda (args) (when (derived-mode-p (car args)) (cdr args)))
-                  bruh-mpvi-get-title-functions)
-                 (lambda () (read-from-minibuffer "Title: ")))))))
+           (start-process (concat "ytdl " url) nil "ytdli" url)))
         ("default"
          (apply bruh-default-browser url rest)))))
 
@@ -1228,9 +1219,7 @@
         (delete-region (1+ (point)) (point-max))))))
 
 (leaf consult
-  :preface
-  (unless (package-installed-p 'consult)
-    (quelpa '(consult :repo "minad/consult" :fetcher github)))
+  :package t
   :custom '(completion-in-region-function . 'consult-completion-in-region)
   :bind
   ("M-y" . consult-yank-replace)
@@ -1518,7 +1507,7 @@
                          (or "awk" "bash" "cat" "cd" "chmod" "chown" "command"
                           "cp" "cut" "dash" "dd" "df" "dh" "du" "ebook-convert"
                           "echo" "em" "emacs" "env" "exit" "export" "fd" "feh"
-                          "file" "find" "gawk" "gparted" "gpg" "grep" "gzip"
+                          "file" "find" "gawk" "gparted" "grep" "gzip"
                           "hash" "host" "htop" "id" "ln" "locate" "ls" "man"
                           "mbsync" "millisleep" "mkdir" "mpop" "mpv" "mv"
                           "notify-send" "pacman -Rsn" "pacman -S" "ping" "pkill"
@@ -1689,6 +1678,12 @@
   `(bookmark-default-file . ,(expand-file-name "emacs/bookmarks" (xdg-data-home))))
 
 
+(leaf telega
+  :package t
+  :custom
+  `(telega-server-libs-prefix . ,(expand-file-name "~/.nix-profile"))
+  `(telega-directory . ,(expand-file-name "emacs/telega" (xdg-cache-home))))
+
 ;;;; XML
 
 (leaf eww
@@ -1811,11 +1806,7 @@
            (id (ytel-video-id video))
            (link (concat "https://www.youtube.com/watch?v=" id)))
       (kill-new link)
-      (message "Copied %s" link)))
-
-  (with-eval-after-load 'bruh
-    (setf (alist-get 'ytel-mode bruh-mpvi-get-title-functions)
-        (lambda () (ytel-video-title (ytel-get-current-video))))))
+      (message "Copied %s" link))))
 
 (leaf ytel-show
   :defvar ytel-show-comments--video-title
@@ -1824,13 +1815,7 @@
   (unless (package-installed-p 'ytel-show)
     (quelpa '(ytel-show :repo "xFA25E/ytel-show" :fetcher github)))
   :after ytel
-  :bind (ytel-mode-map :package ytel ("RET" . ytel-show))
-  :config
-  (with-eval-after-load 'bruh
-    (setf (alist-get 'ytel-show-mode bruh-mpvi-get-title-functions)
-          #'ytel-show--current-video-id)
-    (setf (alist-get 'ytel-show-comments-mode bruh-mpvi-get-title-functions)
-          (lambda () ytel-show-comments--video-title))))
+  :bind (ytel-mode-map :package ytel ("RET" . ytel-show)))
 
 
 ;;;; VERSION CONTROL
@@ -1866,7 +1851,6 @@
         ("Luke Smith PeerTube" "https://videos.lukesmith.xyz/feeds/videos.xml?accountId=3")
         ("Простая Академия" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8mmPf2oKdfE2pdjqctTWUw")
         ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg")
-        ("Protesilaos Stavrou" "https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g")
         ("Planet Emacslife" "https://planet.emacslife.com/atom.xml")))
 
   :config
@@ -1910,11 +1894,7 @@
     (interactive)
     (let ((link (newsticker--link (newsticker--treeview-get-selected-item))))
       (kill-new link)
-      (message "Copied %s" link)))
-
-  (with-eval-after-load 'bruh
-    (setf (alist-get 'newsticker-treeview-mode bruh-mpvi-get-title-functions)
-          (lambda () (newsticker--title (newsticker--treeview-get-selected-item))))))
+      (message "Copied %s" link))))
 
 
 ;;;; MPD
