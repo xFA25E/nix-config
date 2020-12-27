@@ -96,6 +96,8 @@
   '(x-stretch-cursor . t)
   '(fill-column . 80)
   `(help-char . ,(aref (kbd "C-l") 0))
+  '(scroll-step . 1)
+  '(scroll-conservatively . 10000)
   `(kill-buffer-query-functions
    . ,(remq #'process-kill-buffer-query-function kill-buffer-query-functions))
   '(user-full-name . "Valeriy Litkovskyy")
@@ -235,25 +237,6 @@
    ("<C-tab>" . bicycle-cycle)
    ("<backtab>" . bicycle-cycle-global)
    ("<C-M-tab>" . hs-toggle-hiding)))
-
-
-;;;; GUI
-
-(leaf tool-bar :defer-config (tool-bar-mode -1))
-
-(leaf scroll-bar
-  :custom
-  '(scroll-step . 1)
-  '(scroll-conservatively . 10000)
-  :defer-config (scroll-bar-mode -1))
-
-(leaf menu-bar
-  :bind ("<f10>" . menu-bar-mode)
-  :defer-config (menu-bar-mode -1))
-
-(leaf tooltip :defer-config (tooltip-mode -1))
-
-(leaf frame :advice (:override suspend-frame (lambda ())))
 
 
 ;;;; AUTH
