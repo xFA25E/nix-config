@@ -1,21 +1,30 @@
 ;; -*- lexical-binding: t; -*-
-
-;;; USE-PACKAGE INIT
-
 
-;;;; PACKAGE
+;;; PACKAGE INIT
 
-(let ((cache-home
-       (let ((env (getenv "XDG_CACHE_HOME")))
-         (if (or (null env) (not (file-name-absolute-p env)))
-             (expand-file-name "~/.cache")
-           env))))
-  (setq package-user-dir (expand-file-name "emacs/elpa" cache-home)
-        nsm-settings-file (expand-file-name "emacs/network-security.data" cache-home)
-        gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"
-        package-archives '(("gnu"   . "https://elpa.gnu.org/packages/")
-                           ("melpa" . "https://melpa.org/packages/")
-                           ("org"   . "https://orgmode.org/elpa/"))))
+(defvar package-user-dir
+  (eval-when-compile
+    (expand-file-name
+     "emacs/elpa"
+     (let ((env (getenv "XDG_CACHE_HOME")))
+       (if (or (null env) (not (file-name-absolute-p env)))
+           (expand-file-name "~/.cache")
+         env)))))
+
+(defvar nsm-settings-file
+  (eval-when-compile
+    (expand-file-name
+     "emacs/network-security.data"
+     (let ((env (getenv "XDG_CACHE_HOME")))
+       (if (or (null env) (not (file-name-absolute-p env)))
+           (expand-file-name "~/.cache")
+         env)))))
+
+(defvar gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+(defvar package-archives
+  '(("gnu"   . "https://elpa.gnu.org/packages/")
+    ("melpa" . "https://melpa.org/packages/")
+    ("org"   . "https://orgmode.org/elpa/")))
 
 (defvar leaf-expand-minimally t)
 (defvar leaf-key-bindlist nil)
