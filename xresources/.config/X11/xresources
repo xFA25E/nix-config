@@ -4,3 +4,4 @@
 #include "xqutebrowser"
 #include "xbspwm"
 #include "xsxiv"
+#include "xemacs"

@@ -1,0 +1,5 @@
+! -*- mode: conf-xdefaults; -*-
+emacs.ScrollBars: off
+emacs.ScrollBar: off
+emacs.ToolBar: off
+emacs.MenuBar: off
