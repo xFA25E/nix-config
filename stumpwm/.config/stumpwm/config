@@ -19,23 +19,3 @@
 (load (config-file "rimer.lisp"))
 (load (config-file "bindings.lisp"))
 (load (config-file "init.lisp"))
-
-(setf *colors*
-      ;; '("black" "red" "green" "magenta" "blue" "yellow" "cyan" "white"))
-      '("#ffffff" "#ff0086" "#00c918" "#aba800" "#3777e6" "#ad00a1" "#1faaaa" "#101010"))
-
-(update-color-map (current-screen))
-
-;; (defmacro my-stump-set-color (val color)
-;;   "Similar to `set-any-color', but without updating colors."
-;;   `(dolist (s *screen-list*)
-;;      (setf (,val s) (alloc-color s ,color))))
-
-;; (my-stump-set-color screen-fg-color "#87cefa")
-;; (my-stump-set-color screen-bg-color "#20204d")
-;; (my-stump-set-color screen-focus-color  "#6f9fff")
-;; (my-stump-set-color screen-unfocus-color  "#20204d")
-;; (my-stump-set-color screen-border-color "#6f9fff")
-;; (my-stump-set-color screen-float-focus-color "#6f9fff")
-;; (my-stump-set-color screen-float-unfocus-color "#20204d")
-;; (update-colors-all-screens)
