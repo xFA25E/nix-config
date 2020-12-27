@@ -1162,8 +1162,8 @@
   :custom '(marginalia-annotators . '(marginalia-annotators-heavy marginalia-annotators-light)))
 
 (leaf minibuffer
-  :bind (minibuffer-local-completion-map ("<tab>" . minibuffer-force-complete))
   :custom
+  '(completion-cycle-threshold . 5)
   '(completion-styles . '(orderless substring partial-completion))
   '(read-file-name-completion-ignore-case . t)
   '(completion-pcm-complete-word-inserts-delimiters . t)
@@ -1171,16 +1171,20 @@
 
 (leaf embark
   :package t
-  :hook (minibuffer-setup-hook . embark-live-occur-after-delay)
+
+  :hook
+  (minibuffer-setup-hook . embark-live-occur-after-input)
+  (embark-occur-post-revert-hook . embark-live-occur-fit-window)
+
   :custom
   '(embark-occur-initial-view-alist . '((t . zebra)))
   '(embark-occur-minibuffer-completion . t)
-  '(embark-live-occur-update-delay . 0.5)
-  '(embark-live-occur-initial-delay . 0.8)
+
   :bind
   ("C-," . embark-act)
   (minibuffer-local-completion-map
    :package minibuffer
+   ("<tab>" . minibuffer-force-complete)
    ("C-," . embark-act)
    ("C-." . embark-act-noexit)
    ("M-o" . embark-export)
@@ -1190,7 +1194,14 @@
    ("," . embark-act)
    ("M-o" . embark-export)
    ("C-o" . embark-export)
-   ("M-t" . toggle-truncate-lines)))
+   ("M-t" . toggle-truncate-lines))
+
+  :config
+  (defun embark-live-occur-fit-window ()
+    (when (string-match-p "Live" (buffer-name))
+      (fit-window-to-buffer (get-buffer-window)
+                            (floor (frame-height) 2)
+                            1))))
 
 (leaf consult
   :package t
