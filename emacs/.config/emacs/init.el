@@ -65,7 +65,9 @@
   start-process
   with-current-buffer
   :preface (provide 'subr)
-  :advice (:override yes-or-no-p y-or-n-p))
+  :advice
+  (:override yes-or-no-p y-or-n-p)
+  (:override suspend-frame ignore))
 
 (leaf subr-x :commands thread-last)
 
@@ -176,6 +178,11 @@
   (with-eval-after-load 'man
     (set-face-attribute 'Man-overstrike nil :inherit 'font-lock-variable-name-face :bold t)
     (set-face-attribute 'Man-underline nil :inherit 'font-lock-negation-char-face :underline t))
+
+  (with-eval-after-load 'telega
+    (set-face-attribute 'telega-webpage-fixed nil :family "Terminus")
+    (set-face-attribute 'telega-entity-type-pre nil :family "Terminus")
+    (set-face-attribute 'telega-entity-type-code nil :family "Terminus"))
 
   (when (custom-theme-enabled-p 'acme)
     (with-eval-after-load 'comint
@@ -639,7 +646,7 @@
 
          (list (rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp"
                         "vob" "wmv" "aiff" "wav"))
-               "setsid -f mpv --force-window=yes * >/dev/null 2>&1"
+               "setsid -f mpv --force-window=yes --no-terminal * >/dev/null 2>&1"
                "video_duration * | format_duration"
                "video_duration * | awk '{s+=$1}END{print s}' | format_duration"
                "compress_video * &"
@@ -647,7 +654,7 @@
                "mpv -vo=drm")
 
          (list (rx (ext "cue"))
-               "setsid -f mpv --force-window=yes * >/dev/null 2>&1")
+               "setsid -f mpv --force-window=yes --no-terminal * >/dev/null 2>&1")
 
          (list (rx (ext "rar"))
                "temp=\"$(echo `?` | rev | cut -d. -f 2- | rev)\"; mkdir -p \"${temp}\"; unrar x ? \"${temp}\"")))
@@ -1733,6 +1740,9 @@
   :mode "\\.torrent\\'")
 
 (leaf mediainfo-mode
+  :custom
+  '(mediainfo-mode-open-method
+    . '("setsid" "-f" "mpv" "--force-window=yes" "--no-terminal" file-name))
   :preface
   (unless (package-installed-p 'mediainfo-mode)
     (quelpa '(mediainfo-mode :repo "xFA25E/mediainfo-mode" :fetcher github)))
@@ -2075,7 +2085,7 @@
     . ,(expand-file-name "emacs/org/id-locations" (xdg-cache-home)))
   '(org-capture-templates
     . '(("r" "Remember" entry (file+headline "~/org/life.org" "Remember")
-         "* TODO %?\n")))
+         "* TODO %?\n  SCHEDULED: %t\n")))
 
   :config
   (org-babel-do-load-languages 'org-babel-load-languages
