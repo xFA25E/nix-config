@@ -1148,80 +1148,56 @@
 
 ;;;; MINIBUFFER
 
-(leaf insert-char-preview
-  :package t
-  :bind ([remap insert-char] . insert-char-preview))
-
-(leaf eldoc :defer-config (diminish 'eldoc-mode))
-
-(leaf minibuffer
-  :bind
-  (minibuffer-local-completion-map
-   ("<return>" . minibuffer-force-complete-and-exit)
-   ("RET" . minibuffer-force-complete-and-exit)
-   ("C-j" . exit-minibuffer)
-   ("SPC" . nil))
-
-  :custom
-  '(completion-cycle-threshold . 3)
-  '(read-file-name-completion-ignore-case . t)
-  '(completion-pcm-complete-word-inserts-delimiters . t)
-  '(completion-styles . '(substring partial-completion))
-  '(completion-category-overrides . '((bookmark (styles basic substring)))))
-
 (leaf orderless
   :package t
-  :after minibuffer
   :custom
   `(orderless-component-separator . ,(rx (+ space)))
   '(orderless-matching-styles
     . '(orderless-literal orderless-prefixes orderless-regexp))
-  :init (add-to-list 'completion-styles 'orderless))
+  :bind (minibuffer-local-completion-map :package minibuffer ("SPC" . nil)))
 
-(leaf minibuf-eldef
-  :custom '(minibuffer-eldef-shorten-default . t)
-  :hook (after-init-hook . minibuffer-electric-default-mode))
+(leaf marginalia
+  :package t
+  :hook (after-init-hook . marginalia-mode)
+  :custom '(marginalia-annotators . '(marginalia-annotators-heavy marginalia-annotators-light)))
 
-(leaf map-ynp
-  :preface (provide 'map-ynp)
-  :custom '(read-answer-short . t))
-
-(leaf icomplete
-  :hook (after-init-hook . icomplete-mode)
-
-  :bind
-  (icomplete-minibuffer-map
-   ("<tab>" . icomplete-force-complete)
-   ("M-j"   . icomplete-fido-exit)
-   ("<return>" . icomplete-force-complete-and-exit)
-   ("RET" . icomplete-force-complete-and-exit)
-   ("C-j" . exit-minibuffer)
-   ("C-M-h" . icomplete-fido-updir-always)
-   ("C-h" . backward-delete-char)
-   ("C-n" . icomplete-forward-completions)
-   ("C-p" . icomplete-backward-completions))
-
+(leaf minibuffer
+  :bind (minibuffer-local-completion-map ("<tab>" . minibuffer-force-complete))
   :custom
-  '(icomplete-in-buffer . t)
-  '(icomplete-tidy-shadowed-file-names . t)
-  `(icomplete-separator . ,(propertize " ⋅ " 'face 'shadow))
-  '(icomplete-show-matches-on-no-input . t)
-  '(icomplete-hide-common-prefix . nil)
+  '(completion-styles . '(orderless substring partial-completion))
+  '(read-file-name-completion-ignore-case . t)
+  '(completion-pcm-complete-word-inserts-delimiters . t)
+  '(completion-category-overrides . '((bookmark (styles basic substring)))))
 
-  :config
-  (defun icomplete-fido-updir-always ()
-    "Go up directory, like `ido-mode'."
-    (interactive)
-    (save-excursion
-      (goto-char (1- (point)))
-      (when (search-backward "/" (point-min) t)
-        (delete-region (1+ (point)) (point-max))))))
+(leaf embark
+  :package t
+  :hook (minibuffer-setup-hook . embark-live-occur-after-delay)
+  :custom
+  '(embark-occur-initial-view-alist . '((t . zebra)))
+  '(embark-occur-minibuffer-completion . t)
+  '(embark-live-occur-update-delay . 0.5)
+  '(embark-live-occur-initial-delay . 0.8)
+  :bind
+  ("C-," . embark-act)
+  (minibuffer-local-completion-map
+   :package minibuffer
+   ("C-," . embark-act)
+   ("C-." . embark-act-noexit)
+   ("M-o" . embark-export)
+   ("C-o" . embark-export)
+   ("M-v" . embark-switch-to-live-occur))
+  (embark-occur-mode-map
+   ("," . embark-act)
+   ("M-o" . embark-export)
+   ("C-o" . embark-export)
+   ("M-t" . toggle-truncate-lines)))
 
 (leaf consult
   :package t
   :custom '(completion-in-region-function . 'consult-completion-in-region)
   :bind
   ("M-y" . consult-yank-replace)
+  ("M-X" . consult-mode-command)
   ("M-H" . consult-history)
   (kmacro-keymap :package kmacro ("c" . consult-kmacro))
   (ctl-x-r-map :package bindings ("R" . consult-register))
@@ -1230,27 +1206,19 @@
    ("o" . consult-outline)
    ("i" . consult-imenu)))
 
-(leaf icomplete-vertical
-  :defun icomplete-vertical-around
+(leaf eldoc :defer-config (diminish 'eldoc-mode))
 
+(leaf insert-char-preview
   :package t
-  :after icomplete
-  :require t
-  :leaf-defer nil
-  :bind (icomplete-minibuffer-map :package icomplete ("C-v" . icomplete-vertical-toggle))
+  :bind ([remap insert-char] . insert-char-preview))
 
-  :advice
-  (:around icomplete-complete-minibuffer-history icomplete-vertical-around)
-  (:around read-file-name icomplete-vertical-around)
-  (:around comint-history icomplete-vertical-around)
-  (:around mingus-find-and-add-file icomplete-vertical-around)
-  (:around consult-yank-replace icomplete-vertical-around)
-  (:around consult-outline icomplete-vertical-around)
+(leaf minibuf-eldef
+  :custom '(minibuffer-eldef-shorten-default . t)
+  :hook (after-init-hook . minibuffer-electric-default-mode))
 
-  :config
-  (defun icomplete-vertical-around (fn &rest args)
-    (icomplete-vertical-do nil
-      (apply fn args))))
+(leaf map-ynp
+  :preface (provide 'map-ynp)
+  :custom '(read-answer-short . t))
 
 
 ;;;; HIPPIE-EXP
