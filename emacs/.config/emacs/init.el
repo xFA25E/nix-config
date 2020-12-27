@@ -1658,9 +1658,12 @@
 
 (leaf telega
   :package t
+  :bind (mode-specific-map :package bindings ("o l" . telega))
+  :hook (telega-load-hook . telega-notifications-mode)
   :custom
   `(telega-server-libs-prefix . ,(expand-file-name "~/.nix-profile"))
-  `(telega-directory . ,(expand-file-name "emacs/telega" (xdg-cache-home))))
+  `(telega-directory . ,(expand-file-name "emacs/telega" (xdg-cache-home)))
+  '(telega-completing-read-function . 'completing-read))
 
 ;;;; XML
 
