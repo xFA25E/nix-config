@@ -97,7 +97,7 @@
   '(x-gtk-use-system-tooltips . nil)
   '(x-stretch-cursor . t)
   '(fill-column . 80)
-  `(help-char . ,(aref (kbd "C-l") 0))
+  ;; `(help-char . ,(aref (kbd "C-l") 0))
   '(scroll-step . 1)
   '(scroll-conservatively . 10000)
   `(kill-buffer-query-functions
@@ -1156,20 +1156,39 @@
     . '(orderless-literal orderless-prefixes orderless-regexp))
   :bind (minibuffer-local-completion-map :package minibuffer ("SPC" . nil)))
 
+(leaf minibuffer
+  :custom
+  '(completion-cycle-threshold . 3)
+  '(completion-styles . '(orderless substring partial-completion))
+  '(read-file-name-completion-ignore-case . t)
+  '(completion-pcm-complete-word-inserts-delimiters . t)
+  '(completion-category-overrides . '((bookmark (styles basic substring))))
+  :hook (mu4e-compose-mode-hook . completion-cycle-threshold-kill-local)
+  :config
+  (defun completion-cycle-threshold-kill-local ()
+    (kill-local-variable 'completion-cycle-threshold)))
+
 (leaf marginalia
   :package t
   :hook (after-init-hook . marginalia-mode)
   :custom '(marginalia-annotators . '(marginalia-annotators-heavy marginalia-annotators-light)))
 
-(leaf minibuffer
-  :custom
-  '(completion-cycle-threshold . 5)
-  '(completion-styles . '(orderless substring partial-completion))
-  '(read-file-name-completion-ignore-case . t)
-  '(completion-pcm-complete-word-inserts-delimiters . t)
-  '(completion-category-overrides . '((bookmark (styles basic substring)))))
+(leaf consult
+  :package t
+  :custom '(completion-in-region-function . 'consult-completion-in-region)
+  :bind
+  ("M-y" . consult-yank-replace)
+  ("M-X" . consult-mode-command)
+  ("M-H" . consult-history)
+  (kmacro-keymap :package kmacro ("c" . consult-kmacro))
+  (ctl-x-r-map :package bindings ("R" . consult-register))
+  (goto-map
+   :package bindings
+   ("o" . consult-outline)
+   ("i" . consult-imenu)))
 
 (leaf embark
+  :disabled t
   :package t
 
   :hook
@@ -1184,7 +1203,7 @@
   ("C-," . embark-act)
   (minibuffer-local-completion-map
    :package minibuffer
-   ("<tab>" . minibuffer-force-complete)
+   ;; ("<tab>" . minibuffer-force-complete)
    ("C-," . embark-act)
    ("C-." . embark-act-noexit)
    ("M-o" . embark-export)
@@ -1203,25 +1222,7 @@
                             (floor (frame-height) 2)
                             1))))
 
-(leaf consult
-  :package t
-  :custom '(completion-in-region-function . 'consult-completion-in-region)
-  :bind
-  ("M-y" . consult-yank-replace)
-  ("M-X" . consult-mode-command)
-  ("M-H" . consult-history)
-  (kmacro-keymap :package kmacro ("c" . consult-kmacro))
-  (ctl-x-r-map :package bindings ("R" . consult-register))
-  (goto-map
-   :package bindings
-   ("o" . consult-outline)
-   ("i" . consult-imenu)))
-
 (leaf eldoc :defer-config (diminish 'eldoc-mode))
-
-(leaf insert-char-preview
-  :package t
-  :bind ([remap insert-char] . insert-char-preview))
 
 (leaf minibuf-eldef
   :custom '(minibuffer-eldef-shorten-default . t)
@@ -1230,6 +1231,10 @@
 (leaf map-ynp
   :preface (provide 'map-ynp)
   :custom '(read-answer-short . t))
+
+(leaf insert-char-preview
+  :package t
+  :bind ([remap insert-char] . insert-char-preview))
 
 
 ;;;; HIPPIE-EXP
@@ -1663,7 +1668,10 @@
   :custom
   `(telega-server-libs-prefix . ,(expand-file-name "~/.nix-profile"))
   `(telega-directory . ,(expand-file-name "emacs/telega" (xdg-cache-home)))
-  '(telega-completing-read-function . 'completing-read))
+  '(telega-completing-read-function . 'completing-read)
+  '(telega-root-fill-column . 100)
+  '(telega-chat-fill-column . 100)
+  '(telega-webpage-fill-column . 100))
 
 ;;;; XML
 
