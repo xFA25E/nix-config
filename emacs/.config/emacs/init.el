@@ -1192,14 +1192,13 @@
 
   :bind
   ("C-," . embark-act)
+  (embark-occur-mode-map ("," . embark-act))
   (minibuffer-local-completion-map
    :package minibuffer
    ("C-," . embark-act)
    ("C-." . embark-act-noexit)
    ("M-v" . switch-to-completions)
-   ("M-V" . embark-switch-to-live-occur))
-  (embark-occur-mode-map
-   ("," . embark-act)))
+   ("M-V" . embark-switch-to-live-occur)))
 
 (leaf eldoc :defer-config (diminish 'eldoc-mode))
 
