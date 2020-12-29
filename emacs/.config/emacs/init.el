@@ -77,6 +77,7 @@
 ;;; SETTINGS
 
 (leaf emacs
+  :setq-default '(truncate-lines . t)
   :custom
   '(create-lockfiles . nil)
   '(cursor-in-non-selected-windows . nil)
@@ -97,7 +98,6 @@
   '(x-gtk-use-system-tooltips . nil)
   '(x-stretch-cursor . t)
   '(fill-column . 80)
-  ;; `(help-char . ,(aref (kbd "C-l") 0))
   '(scroll-step . 1)
   '(scroll-conservatively . 10000)
   `(kill-buffer-query-functions
@@ -767,7 +767,6 @@
   (before-save-hook . delete-trailing-whitespace)
   (after-init-hook  . size-indication-mode)
   (after-init-hook  . column-number-mode)
-  ((newsticker-treeview-item-mode-hook ytel-mode-hook) . toggle-truncate-lines)
 
   :bind
   ("C-h"   . backward-delete-char-untabify)
@@ -1148,34 +1147,15 @@
 
 ;;;; MINIBUFFER
 
-(leaf orderless
-  :package t
-  :custom
-  `(orderless-component-separator . ,(rx (+ space)))
-  '(orderless-matching-styles
-    . '(orderless-literal orderless-prefixes orderless-regexp))
-  :bind (minibuffer-local-completion-map :package minibuffer ("SPC" . nil)))
-
 (leaf minibuffer
   :custom
-  '(completion-cycle-threshold . 3)
-  '(completion-styles . '(orderless substring partial-completion))
+  '(completion-styles . '(substring partial-completion))
   '(read-file-name-completion-ignore-case . t)
-  '(completion-pcm-complete-word-inserts-delimiters . t)
-  '(completion-category-overrides . '((bookmark (styles basic substring))))
-  :hook (mu4e-compose-mode-hook . completion-cycle-threshold-kill-local)
-  :config
-  (defun completion-cycle-threshold-kill-local ()
-    (kill-local-variable 'completion-cycle-threshold)))
-
-(leaf marginalia
-  :package t
-  :hook (after-init-hook . marginalia-mode)
-  :custom '(marginalia-annotators . '(marginalia-annotators-heavy marginalia-annotators-light)))
+  '(completion-pcm-complete-word-inserts-delimiters . t))
 
 (leaf consult
   :package t
-  :custom '(completion-in-region-function . 'consult-completion-in-region)
+  ;; :custom '(completion-in-region-function . 'consult-completion-in-region)
   :bind
   ("M-y" . consult-yank-replace)
   ("M-X" . consult-mode-command)
@@ -1187,13 +1167,24 @@
    ("o" . consult-outline)
    ("i" . consult-imenu)))
 
-(leaf embark
-  :disabled t
+(leaf marginalia
   :package t
+  :hook (after-init-hook . marginalia-mode)
+  :custom '(marginalia-annotators . '(marginalia-annotators-heavy marginalia-annotators-light))
+  :advice (:before-until marginalia-annotate-file marginalia-candidate-file-remote-p)
+  :config
+  (defun marginalia-candidate-file-remote-p (cand)
+    (file-remote-p (marginalia--full-candidate cand))))
 
-  :hook
-  (minibuffer-setup-hook . embark-live-occur-after-input)
-  (embark-occur-post-revert-hook . embark-live-occur-fit-window)
+(leaf orderless
+  :package t
+  :custom
+  `(orderless-component-separator . ,(rx (+ space)))
+  '(orderless-matching-styles . '(orderless-regexp))
+  '(completion-styles . '(substring partial-completion orderless)))
+
+(leaf embark
+  :package t
 
   :custom
   '(embark-occur-initial-view-alist . '((t . zebra)))
@@ -1203,24 +1194,12 @@
   ("C-," . embark-act)
   (minibuffer-local-completion-map
    :package minibuffer
-   ;; ("<tab>" . minibuffer-force-complete)
    ("C-," . embark-act)
    ("C-." . embark-act-noexit)
-   ("M-o" . embark-export)
-   ("C-o" . embark-export)
-   ("M-v" . embark-switch-to-live-occur))
+   ("M-v" . switch-to-completions)
+   ("M-V" . embark-switch-to-live-occur))
   (embark-occur-mode-map
-   ("," . embark-act)
-   ("M-o" . embark-export)
-   ("C-o" . embark-export)
-   ("M-t" . toggle-truncate-lines))
-
-  :config
-  (defun embark-live-occur-fit-window ()
-    (when (string-match-p "Live" (buffer-name))
-      (fit-window-to-buffer (get-buffer-window)
-                            (floor (frame-height) 2)
-                            1))))
+   ("," . embark-act)))
 
 (leaf eldoc :defer-config (diminish 'eldoc-mode))
 
