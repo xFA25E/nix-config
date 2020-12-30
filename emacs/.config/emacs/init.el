@@ -83,7 +83,7 @@
   '(cursor-in-non-selected-windows . nil)
   '(enable-recursive-minibuffers . t)
   '(history-delete-duplicates . t)
-  '(history-length . 300)
+  '(history-length . 1000)
   '(hscroll-step . 1)
   '(indent-tabs-mode . nil)
   '(indicate-buffer-boundaries . 'left)
@@ -359,6 +359,7 @@
   :custom
   `(save-place-file . ,(expand-file-name "emacs/saveplace" (xdg-cache-home)))
   '(save-place-forget-unreadable-files . t)
+  '(save-place-limit . 1000)
   :config
   (setq save-place-skip-check-regexp
         (rx (or (regexp save-place-skip-check-regexp)
@@ -382,14 +383,13 @@
 
   :custom
   '(backup-by-copying . t)
-  '(confirm-nonexistent-file-or-buffer . nil)
   '(delete-old-versions . t)
-  '(kept-new-versions . 6)
+  '(kept-new-versions . 10)
   '(kept-old-versions . 2)
   '(require-final-newline . nil)
   '(version-control . t)
   '(backup-enable-predicate . #'custom-backup-enable-predicate)
-  ;; (remote-file-name-inhibit-cache nil "Speed up tramp, caution!")
+  ;; '(remote-file-name-inhibit-cache . nil) ; "Speed up tramp, caution!"
   `(auto-save-file-name-transforms
     . ',`((,(rx (* any)) ,(expand-file-name "emacs/auto-saves/" (xdg-cache-home)) t)))
   `(backup-directory-alist
@@ -1162,10 +1162,7 @@
   ("M-H" . consult-history)
   (kmacro-keymap :package kmacro ("c" . consult-kmacro))
   (ctl-x-r-map :package bindings ("R" . consult-register))
-  (goto-map
-   :package bindings
-   ("o" . consult-outline)
-   ("i" . consult-imenu)))
+  (goto-map :package bindings ("o" . consult-outline) ("i" . consult-imenu)))
 
 (leaf marginalia
   :package t
@@ -1175,13 +1172,6 @@
   :config
   (defun marginalia-candidate-file-remote-p (cand)
     (file-remote-p (marginalia--full-candidate cand))))
-
-(leaf orderless
-  :package t
-  :custom
-  `(orderless-component-separator . ,(rx (+ space)))
-  '(orderless-matching-styles . '(orderless-regexp))
-  '(completion-styles . '(substring partial-completion orderless)))
 
 (leaf embark
   :package t
