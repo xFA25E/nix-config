@@ -159,7 +159,9 @@
 
 ;;;;; THEMES
 
-(leaf custom :commands load-theme custom-theme-enabled-p)
+(leaf custom
+  ;; :init (load-theme 'leuven t)
+  :commands load-theme custom-theme-enabled-p)
 
 (leaf acme-theme
   :package t
@@ -302,7 +304,8 @@
          (apply bruh-default-browser url rest)))))
 
   (dolist (re `(,(rx bos "http" (? "s") "://" (? "www.") "bitchute.com/" (or "embed" "video" "channel"))
-                ,(rx bos "http" (? "s") "://videos.lukesmith.xyz/" (or "static/webseed" "videos/watch"))))
+                ,(rx bos "http" (? "s") "://videos.lukesmith.xyz/" (or "static/webseed" "videos/watch"))
+                ,(rx  "http" (? "s") "://m.youtube.com")))
     (add-to-list 'bruh-videos-re re)))
 
 (leaf url
@@ -448,7 +451,8 @@
                          (xdg-cache-home)))
   '(inhibit-startup-echo-area-message . t)
   '(inhibit-startup-screen . t)
-  '(initial-scratch-message . nil))
+  '(initial-scratch-message . nil)
+  '(initial-major-mode . 'fundamental-mode))
 
 (leaf window
   :preface (provide 'window)
@@ -1064,6 +1068,10 @@
   (emacs-lisp-mode-map
    :package elisp-mode
    ("C-c m" . pp-macroexpand-last-sexp)
+   ("C-c M" . emacs-lisp-macroexpand))
+  (lisp-interaction-mode-map
+   :package elisp-mode
+   ("C-c m" . pp-macroexpand-last-sexp)
    ("C-c M" . emacs-lisp-macroexpand)))
 
 
@@ -1148,21 +1156,24 @@
 ;;;; MINIBUFFER
 
 (leaf minibuffer
+  :bind (completion-in-region-mode-map ("M-v" . switch-to-completions))
   :custom
   '(completion-styles . '(substring partial-completion))
+  '(completion-category-overrides . '((bookmark (styles basic))))
   '(read-file-name-completion-ignore-case . t)
   '(completion-pcm-complete-word-inserts-delimiters . t))
 
 (leaf consult
   :package t
-  ;; :custom '(completion-in-region-function . 'consult-completion-in-region)
   :bind
   ("M-y" . consult-yank-replace)
   ("M-X" . consult-mode-command)
   ("M-H" . consult-history)
   (kmacro-keymap :package kmacro ("c" . consult-kmacro))
-  (ctl-x-r-map :package bindings ("R" . consult-register))
-  (goto-map :package bindings ("o" . consult-outline) ("i" . consult-imenu)))
+  (goto-map
+   :package bindings
+   ("o" . consult-outline)
+   ("i" . consult-imenu)))
 
 (leaf marginalia
   :package t
@@ -1175,20 +1186,24 @@
 
 (leaf embark
   :package t
-
-  :custom
-  '(embark-occur-initial-view-alist . '((t . zebra)))
-  '(embark-occur-minibuffer-completion . t)
-
+  :custom '(embark-occur-initial-view-alist . '((t . zebra)))
   :bind
   ("C-," . embark-act)
   (embark-occur-mode-map ("," . embark-act))
+  (completion-list-mode-map ("," . embark-act))
   (minibuffer-local-completion-map
    :package minibuffer
    ("C-," . embark-act)
-   ("C-." . embark-act-noexit)
-   ("M-v" . switch-to-completions)
-   ("M-V" . embark-switch-to-live-occur)))
+   ("C-." . embark-act-noexit)))
+
+(leaf orderless
+  :package t
+  :custom
+  `(orderless-component-separator . ,(rx (+ space)))
+  '(orderless-matching-styles
+    . '(orderless-literal orderless-prefixes orderless-regexp))
+  '(completion-styles . '(orderless partial-completion))
+  :bind (minibuffer-local-completion-map :package minibuffer ("SPC" . nil)))
 
 (leaf eldoc :defer-config (diminish 'eldoc-mode))
 
@@ -1628,19 +1643,19 @@
   '(bookmark-save-flag . 1)
   `(bookmark-default-file . ,(expand-file-name "emacs/bookmarks" (xdg-data-home))))
 
-
 (leaf telega
   :package t
-  :bind (mode-specific-map :package bindings ("o l" . telega))
+  :bind (mode-specific-map :package bindings ("o l t" . telega))
   :hook (telega-load-hook . telega-notifications-mode)
   :custom
   `(telega-server-libs-prefix . ,(expand-file-name "~/.nix-profile"))
   `(telega-directory . ,(expand-file-name "emacs/telega" (xdg-cache-home)))
-  '(telega-completing-read-function . 'completing-read)
   '(telega-root-fill-column . 100)
   '(telega-chat-fill-column . 100)
-  '(telega-webpage-fill-column . 100))
+  '(telega-webpage-fill-column . 100)
+  :config (define-key mode-specific-map (kbd "o l") telega-prefix-map))
 
+
 ;;;; XML
 
 (leaf eww
@@ -1805,6 +1820,10 @@
   '(newsticker-url-list-defaults . nil)
   '(newsticker-url-list
     . '(("Alt-Hype" "https://www.bitchute.com/feeds/rss/channel/thealthype/")
+        ("Gustav Einarsson" "https://www.youtube.com/feeds/videos.xml?user=johnwaynegacy")
+        ("Sleepy Saxon" "https://www.youtube.com/feeds/videos.xml?channel_id=UCVyzFlPnWjqrgVljH8QUiCQ")
+        ("Sean Last" "https://www.youtube.com/feeds/videos.xml?user=spawktalk")
+        ("Knight's Move" "https://www.youtube.com/feeds/videos.xml?channel_id=UC63HcOlghFQ3pcursLUp3NQ")
         ("American Renaissance" "https://www.bitchute.com/feeds/rss/channel/amrenaissance/")
         ("TealDeer" "https://www.bitchute.com/feeds/rss/channel/tealdeer/")
         ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
@@ -1972,7 +1991,6 @@
   '(mu4e-refile-folder . "/ARCHIVE")
   '(mu4e-view-show-images . t)
   '(mu4e-sent-messages-behavior . 'sent)
-  '(mu4e-completing-read-function . #'completing-read)
   '(mu4e-change-filenames-when-moving . t)
   '(mu4e-context-policy . 'pick-first)
   '(mu4e-compose-context-policy . 'always-ask)
