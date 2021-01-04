@@ -43,6 +43,8 @@
 
 (define-key *root-map* (kbd "C-o") '*open-map*)
 
+(define-key *root-map* (kbd "C-q") "send-raw-key")
+
 ;;; OPEN
 
 (define-key *open-map* (kbd "C-b") "chromium")
@@ -62,3 +64,25 @@
 (define-key *open-map* (kbd "C-d") "show-hardware")
 
 (define-key *open-map* (kbd "C-m") "show-menu")
+
+;;; Remapped keys
+
+(define-remapped-keys
+    '(("(Firefox|Chromium-browser)"
+       ("C-n"   . "Down")
+       ("C-p"   . "Up")
+       ("C-f"   . "Right")
+       ("C-b"   . "Left")
+       ("C-v"   . "Next")
+       ("M-v"   . "Prior")
+       ("M-w"   . "C-c")
+       ("C-w"   . "C-x")
+       ("C-y"   . "C-v")
+       ("M-<"   . "Home")
+       ("M->"   . "End")
+       ("C-M-b" . "M-Left")
+       ("C-M-f" . "M-Right")
+       ("M-f"   . "C-Right")
+       ("M-b"   . "C-Left")
+       ("C-k"   . ("C-S-End" "C-x"))
+       ("M-K"   . "C-w"))))
