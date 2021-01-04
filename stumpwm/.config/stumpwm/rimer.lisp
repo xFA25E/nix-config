@@ -83,26 +83,26 @@
 (define-stumpwm-type-rimer-timer :rimer-timer-running (:running))
 
 (defcommand add-rimer-countdown (name duration)
-    ((:string "Countdown name:") (:duration "Countdown duration ([[t]HH:]MM):"))
+    ((:string "Countdown name: ") (:duration "Countdown duration ([[t]HH:]MM): "))
   (message
    "~A"
    (run-shell-command
     (format nil "rimer add --name '~A' --duration '~D' --step '~D'" name duration duration)
     t)))
 
-(defcommand add-rimer-stopwatch (name) ((:string "Stopwatch name:"))
+(defcommand add-rimer-stopwatch (name) ((:string "Stopwatch name: "))
   (add-rimer-countdown name (1- (expt 2 64))))
 
-(defcommand pause-rimer-timer (timer) ((:rimer-timer-running "Timer:"))
+(defcommand pause-rimer-timer (timer) ((:rimer-timer-running "Running timer: "))
   (message "~A" (run-shell-command (format nil "rimer pause --name '~A'" timer) t)))
 
-(defcommand resume-rimer-timer (timer) ((:rimer-timer-paused "Timer:"))
+(defcommand resume-rimer-timer (timer) ((:rimer-timer-paused "Paused timer: "))
   (message "~A" (run-shell-command (format nil "rimer resume --name '~A'" timer) t)))
 
 (defcommand report-rimer () ()
   (message "~A" (format-report (get-rimer-report))))
 
-(defcommand halt-rimer-timer (timer) ((:rimer-timer "Timer:"))
+(defcommand halt-rimer-timer (timer) ((:rimer-timer "Timer: "))
   (message "~A" (run-shell-command (format nil "rimer halt --name '~A'" timer) t)))
 
 (defcommand quit-rimer () ()
@@ -120,7 +120,7 @@
                 ("pause" :pause) ("resume" :resume)
                 ("report" :report) ("halt" :halt)
                 ("quit" :quit) ("start" :start))))
-    (case (cadr (select-from-menu (current-screen) menu "Rimer:"))
+    (case (cadr (select-from-menu (current-screen) menu "Rimer: "))
       ((:countdown) (eval-command "add-rimer-countdown" t))
       ((:stopwatch) (eval-command "add-rimer-stopwatch" t))
       ((:pause) (eval-command "pause-rimer-timer" t))

@@ -18,7 +18,7 @@
                  :name :wild
                  :type "gpg")))))
 
-(defun select-pass-entry (&optional (prompt "Pass:"))
+(defun select-pass-entry (&optional (prompt "Pass: "))
   (select-from-menu
    (current-screen) (mapcar #'list (list-pass-entries)) prompt))
 
@@ -45,14 +45,14 @@
 
 
 
-(defcommand show-pass-entry (pass-entry) ((:pass-entry "Show pass:"))
+(defcommand show-pass-entry (pass-entry) ((:pass-entry "Show pass: "))
   (let ((cmd (format nil "pass show '~A'" pass-entry)))
     (message "~A" (run-shell-command cmd t))))
 
-(defcommand type-pass-entry (pass-entry) ((:pass-entry "Type pass:"))
+(defcommand type-pass-entry (pass-entry) ((:pass-entry "Type pass: "))
   (let* ((text (run-shell-command (format nil "pass show '~A'" pass-entry) t))
          (menu (cons (list "autotype" :autotype) (parse-pass-entry-text text)))
-         (value (cadr (select-from-menu (current-screen) menu "Type field:"))))
+         (value (cadr (select-from-menu (current-screen) menu "Type field: "))))
 
     (cond ((eq :autotype value)
            (when-let ((value (cadr (assoc "login" menu :test #'string=))))
@@ -64,7 +64,7 @@
           ((stringp value)
            (window-send-string value)))))
 
-(defcommand otp-pass-entry (pass-entry) ((:pass-entry "Otp pass:"))
+(defcommand otp-pass-entry (pass-entry) ((:pass-entry "Otp pass: "))
   (let ((text (run-shell-command (format nil "pass otp '~A'" pass-entry) t)))
     (window-send-string text)))
 
