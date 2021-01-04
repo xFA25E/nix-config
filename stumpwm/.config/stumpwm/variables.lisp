@@ -20,6 +20,6 @@
     ("suspend" :shell "systemctl suspend")
     ("mount" :shell "rmount")
     ("unmount" :shell "rumount")
-    ("screenshot" :shell "screenshot")
+    ("screenshot" :command "screenshot")
     ("alsa volume" :command "set-alsa-volume")
     ("mpd volume" :command "set-mpd-volume")))

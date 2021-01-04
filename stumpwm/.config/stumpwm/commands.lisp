@@ -24,6 +24,19 @@
 (defcommand set-mpd-volume (mpd-volume) ((:mpd-volume "Mpd volume: "))
   (run-shell-command (format nil "mpc -q volume '~D'" mpd-volume)))
 
+(defcommand screenshot (name selectp)
+    ((:string "File name (w/o ext): ") (:y-or-n "Select? "))
+  (let* ((directory
+           (merge-pathnames #p"Pictures/screenshots/" (user-homedir-pathname)))
+         (file-name (make-pathname :directory (pathname-directory directory)
+                                   :name name :type "png")))
+    (ensure-directories-exist file-name)
+    (run-shell-command
+     (format
+      nil
+      "scrot --overwrite --delay 1 ~A '~A' --exec 'image_clipboard $f' && notify-send Scrot 'Done screenshot'"
+      (if selectp "--select" "") (namestring file-name)))))
+
 
 
 (defcommand show-mpd () ()
