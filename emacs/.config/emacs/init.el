@@ -879,7 +879,10 @@
 
 (leaf smartparens
   :defun sp-kill-region sp-backward-kill-word
-  :package t
+  ;; :package t
+  :preface
+  (unless (package-installed-p 'smartparens)
+    (quelpa '(smartparens :url "https://git.sr.ht/~sokolov/granpa" :fetcher git)))
 
   :bind
   ("C-M-u" . sp-backward-up-sexp)
@@ -1820,7 +1823,6 @@
   '(newsticker-url-list-defaults . nil)
   '(newsticker-url-list
     . '(("Alt-Hype" "https://www.bitchute.com/feeds/rss/channel/thealthype/")
-        ("Gustav Einarsson" "https://www.youtube.com/feeds/videos.xml?user=johnwaynegacy")
         ("Sleepy Saxon" "https://www.youtube.com/feeds/videos.xml?channel_id=UCVyzFlPnWjqrgVljH8QUiCQ")
         ("Sean Last" "https://www.youtube.com/feeds/videos.xml?user=spawktalk")
         ("Knight's Move" "https://www.youtube.com/feeds/videos.xml?channel_id=UC63HcOlghFQ3pcursLUp3NQ")
