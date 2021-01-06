@@ -41,7 +41,7 @@
   :commands xdg-download-dir xdg-music-dir xdg-data-home xdg-cache-home
   :config
   (defun xdg-download-dir () (xdg--dir-home "XDG_DOWNLOAD_DIR" "~/Downloads"))
-  (defun xdg-music-dir () (xdg--dir-home "XDG_MUSIC_DIR""~/Music")))
+  (defun xdg-music-dir () (xdg--dir-home "XDG_MUSIC_DIR" "~/Music")))
 
 (leaf diminish :package t)
 
@@ -879,10 +879,10 @@
 
 (leaf smartparens
   :defun sp-kill-region sp-backward-kill-word
-  ;; :package t
-  :preface
-  (unless (package-installed-p 'smartparens)
-    (quelpa '(smartparens :url "https://git.sr.ht/~sokolov/granpa" :fetcher git)))
+  :package t
+  ;; :preface
+  ;; (unless (package-installed-p 'smartparens)
+  ;;   (quelpa '(smartparens :url "https://git.sr.ht/~sokolov/granpa" :fetcher git)))
 
   :bind
   ("C-M-u" . sp-backward-up-sexp)
@@ -1173,10 +1173,13 @@
   ("M-X" . consult-mode-command)
   ("M-H" . consult-history)
   (kmacro-keymap :package kmacro ("c" . consult-kmacro))
+  (ctl-x-map :package subr ("F" . consult-file-externally))
+  (project-prefix-map :package project ("i" . consult-project-imenu))
   (goto-map
    :package bindings
    ("o" . consult-outline)
-   ("i" . consult-imenu)))
+   ("i" . consult-imenu)
+   ("E" . consult-error)))
 
 (leaf marginalia
   :package t
@@ -1193,7 +1196,7 @@
   :bind
   ("C-," . embark-act)
   (embark-occur-mode-map ("," . embark-act))
-  (completion-list-mode-map ("," . embark-act))
+  (completion-list-mode-map :package simple ("," . embark-act))
   (minibuffer-local-completion-map
    :package minibuffer
    ("C-," . embark-act)
