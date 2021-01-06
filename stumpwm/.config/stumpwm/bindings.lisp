@@ -47,7 +47,7 @@
 
 ;;; OPEN
 
-(define-key *open-map* (kbd "C-b") "chromium")
+(define-key *open-map* (kbd "C-b") "chromium-incognito")
 (define-key *open-map* (kbd "C-f") "firefox")
 (define-key *open-map* (kbd "C-q") "qutebrowser")
 

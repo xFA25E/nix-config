@@ -2,7 +2,7 @@
 
 (define-run-or-raise "qutebrowser" "qutebrowser")
 (define-run-or-raise "firefox" "firefox")
-(define-run-or-raise  "chromium" "Chromium-browser")
+(define-run-or-raise  "chromium-incognito" "Chromium-browser")
 (define-run-or-raise "em" "Emacs")
 
 
