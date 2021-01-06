@@ -24,4 +24,4 @@ if [ "$(printf 'no\nyes' | menu -p 'Playlist?')" = yes ]; then
 fi
 
 
-pueue add -- ytdla --output "${output}" ${args} "$@"
+exec ytdla --output "${output}" ${args} "$@"
