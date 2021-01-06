@@ -813,6 +813,7 @@ my_searchengines = {
                 'kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&' +
                 'kak=-1&kax=-1&km=l'),
     'yt'     : 'https://www.youtube.com/results?search_query={}',
+    'bc'     : 'https://www.bitchute.com/search/?query={}',
     'rt'     : 'https://rutracker.net/forum/tracker.php?nm={}',
     'gtr'    : 'https://translate.google.com/#view=home&op=translate&sl=auto&tl=ru&text={}',
     'gte'    : 'https://translate.google.com/#view=home&op=translate&sl=auto&tl=en&text={}',
@@ -881,7 +882,8 @@ js_sites = ["*://vk.com/*", "*://www.youtube.com/*",
             "*://klava.org/*", "*://soundcloud.com/*",
             "*://rutracker.net/*", "*://translate.google.com/*",
             "*://doc.rust-lang.org/*", "*://crates.io/*",
-            "*://mail.protonmail.com/*", "*://github.com/*"]
+            "*://mail.protonmail.com/*", "*://github.com/*",
+            "*://bitchute.com/*", "*://www.bitchute.com/*"]
 
 for site in js_sites:
     config.set('content.javascript.enabled', True, site)
