@@ -1596,14 +1596,6 @@
 
 (leaf vlf :package t)
 
-(leaf sdcv
-  :package t
-  :bind (mode-specific-map :package bindings ("o t" . sdcv-search-input)))
-
-(leaf dictionary
-  :package t
-  :bind (mode-specific-map :package bindings ("o T" . dictionary-search)))
-
 (leaf ediff
   :custom '(ediff-window-setup-function . 'ediff-setup-windows-plain)
   :hook (ediff-before-setup-hook . save-window-configuration-to-w))
@@ -1660,6 +1652,45 @@
   '(telega-chat-fill-column . 100)
   '(telega-webpage-fill-column . 100)
   :config (define-key mode-specific-map (kbd "o l") telega-prefix-map))
+
+(leaf magit
+  :package t
+  :bind ("C-x g" . magit)
+  :custom
+  `(magit-credential-cache-daemon-socket
+    . ,(expand-file-name "git/credential/socket" (xdg-cache-home))))
+
+(leaf project
+  :custom
+  `(project-list-file
+    . ,(expand-file-name "emacs/project.list" (xdg-cache-home))))
+
+(leaf mediainfo-mode
+  :custom
+  '(mediainfo-mode-open-method
+    . '("setsid" "-f" "mpv" "--force-window=yes" "--no-terminal" file-name))
+  :preface
+  (unless (package-installed-p 'mediainfo-mode)
+    (quelpa '(mediainfo-mode :repo "xFA25E/mediainfo-mode" :fetcher github)))
+  (add-to-list
+   'auto-mode-alist
+   `(,(rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob" "wmv" "aiff" "wav"))
+     . mediainfo-mode))
+  (add-to-list
+   'file-name-handler-alist
+   `(,(rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob" "wmv" "aiff" "wav"))
+     . mediainfo-mode--file-handler)))
+
+
+;;;; DICTIONARY
+
+(leaf sdcv
+  :package t
+  :bind (mode-specific-map :package bindings ("o t" . sdcv-search-input)))
+
+(leaf dictionary
+  :package t
+  :bind (mode-specific-map :package bindings ("o T" . dictionary-search)))
 
 
 ;;;; XML
@@ -1718,31 +1749,6 @@
     (quelpa '(torrent-mode :repo "xFA25E/torrent-mode" :fetcher github)))
   :mode "\\.torrent\\'")
 
-(leaf mediainfo-mode
-  :custom
-  '(mediainfo-mode-open-method
-    . '("setsid" "-f" "mpv" "--force-window=yes" "--no-terminal" file-name))
-  :preface
-  (unless (package-installed-p 'mediainfo-mode)
-    (quelpa '(mediainfo-mode :repo "xFA25E/mediainfo-mode" :fetcher github)))
-  (add-to-list
-   'auto-mode-alist
-   `(,(rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob" "wmv" "aiff" "wav"))
-     . mediainfo-mode))
-  (add-to-list
-   'file-name-handler-alist
-   `(,(rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob" "wmv" "aiff" "wav"))
-     . mediainfo-mode--file-handler)))
-
-
-
-;;;; PROJECT
-
-(leaf project
-  :custom
-  `(project-list-file
-    . ,(expand-file-name "emacs/project.list" (xdg-cache-home))))
-
 
 ;;;; YTEL
 
@@ -1797,18 +1803,6 @@
     (quelpa '(ytel-show :repo "xFA25E/ytel-show" :fetcher github)))
   :after ytel
   :bind (ytel-mode-map :package ytel ("RET" . ytel-show)))
-
-
-;;;; VERSION CONTROL
-
-(leaf vc-hooks :custom '(vc-handled-backends . '(Git)))
-
-(leaf magit
-  :package t
-  :bind ("C-x g" . magit)
-  :custom
-  `(magit-credential-cache-daemon-socket
-    . ,(expand-file-name "git/credential/socket" (xdg-cache-home))))
 
 
 ;;;; RSS
