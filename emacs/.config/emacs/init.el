@@ -101,7 +101,7 @@
   '(scroll-step . 1)
   '(scroll-conservatively . 10000)
   `(kill-buffer-query-functions
-   . ,(remq #'process-kill-buffer-query-function kill-buffer-query-functions))
+    . ,(remq #'process-kill-buffer-query-function kill-buffer-query-functions))
   '(user-full-name . "Valeriy Litkovskyy")
   `(read-process-output-max . ,(* 1024 1024))
   '(completion-ignore-case . t)
@@ -164,8 +164,12 @@
   :commands load-theme custom-theme-enabled-p)
 
 (leaf acme-theme
-  :package t
-  :init (load-theme 'acme t))
+  ;; :init (load-theme 'acme t)
+  :package t)
+
+(leaf modus-operandi-theme
+  :init (load-theme 'modus-operandi t)
+  :package t)
 
 (leaf faces
   :bind (help-map :package help ("M-f" . list-faces-display))
@@ -451,8 +455,7 @@
                          (xdg-cache-home)))
   '(inhibit-startup-echo-area-message . t)
   '(inhibit-startup-screen . t)
-  '(initial-scratch-message . nil)
-  '(initial-major-mode . 'fundamental-mode))
+  '(initial-scratch-message . nil))
 
 (leaf window
   :preface (provide 'window)
@@ -716,15 +719,15 @@
   :custom
   '(image-dired-external-viewer . "sxiv")
   `(image-dired-db-file
-   . ,(expand-file-name "emacs/image-dired/db" (xdg-cache-home)))
+    . ,(expand-file-name "emacs/image-dired/db" (xdg-cache-home)))
   `(image-dired-dir
-   . ,(expand-file-name "emacs/image-dired/thumbnails/" (xdg-cache-home)))
+    . ,(expand-file-name "emacs/image-dired/thumbnails/" (xdg-cache-home)))
   `(image-dired-gallery-dir
-   . ,(expand-file-name "emacs/image-dired/gallery/" (xdg-cache-home)))
+    . ,(expand-file-name "emacs/image-dired/gallery/" (xdg-cache-home)))
   `(image-dired-temp-image-file
-   . ,(expand-file-name "emacs/image-dired/temp" (xdg-cache-home)))
+    . ,(expand-file-name "emacs/image-dired/temp" (xdg-cache-home)))
   `(image-dired-temp-rotate-image-file
-   . ,(expand-file-name "emacs/image-dired/rotate_temp" (xdg-cache-home))))
+    . ,(expand-file-name "emacs/image-dired/rotate_temp" (xdg-cache-home))))
 
 (leaf dired-rsync
   :after dired
@@ -1195,7 +1198,7 @@
   :custom '(embark-occur-initial-view-alist . '((t . zebra)))
   :bind
   ("C-," . embark-act)
-  (embark-occur-mode-map ("," . embark-act))
+  ;; (embark-occur-mode-map ("," . embark-act))
   (completion-list-mode-map :package simple ("," . embark-act))
   (minibuffer-local-completion-map
    :package minibuffer
@@ -1477,18 +1480,18 @@
                     (or (and
                          (opt "sudo " (opt "-A "))
                          (or "awk" "bash" "cat" "cd" "chmod" "chown" "command"
-                          "cp" "cut" "dash" "dd" "df" "dh" "du" "ebook-convert"
-                          "echo" "em" "emacs" "env" "exit" "export" "fd" "feh"
-                          "file" "find" "gawk" "gparted" "grep" "gzip"
-                          "hash" "host" "htop" "id" "ln" "locate" "ls" "man"
-                          "mbsync" "millisleep" "mkdir" "mpop" "mpv" "mv"
-                          "notify-send" "pacman -Rsn" "pacman -S" "ping" "pkill"
-                          "printf" "pwgen" "python" "quit" "read" "rg" "rimer"
-                          "rm" "rmdir" "rofi" "setsid" "sh" "sleep" "stow"
-                          "strings" "strip" "studies_" "sxiv" "tail" "time"
-                          "timer" "top" "touch" "tr" "uname" "uptime" "watch"
-                          "wc" "which" "woof" "xclip" "xz" "yay" "youtube-dl"
-                          "ytdl"))
+                             "cp" "cut" "dash" "dd" "df" "dh" "du" "ebook-convert"
+                             "echo" "em" "emacs" "env" "exit" "export" "fd" "feh"
+                             "file" "find" "gawk" "gparted" "grep" "gzip"
+                             "hash" "host" "htop" "id" "ln" "locate" "ls" "man"
+                             "mbsync" "millisleep" "mkdir" "mpop" "mpv" "mv"
+                             "notify-send" "pacman -Rsn" "pacman -S" "ping" "pkill"
+                             "printf" "pwgen" "python" "quit" "read" "rg" "rimer"
+                             "rm" "rmdir" "rofi" "setsid" "sh" "sleep" "stow"
+                             "strings" "strip" "studies_" "sxiv" "tail" "time"
+                             "timer" "top" "touch" "tr" "uname" "uptime" "watch"
+                             "wc" "which" "woof" "xclip" "xz" "yay" "youtube-dl"
+                             "ytdl"))
                         eos))
                 e)))
       (cl-delete-duplicates (cl-delete-if #'match-p elements) :test #'string-equal)))
@@ -1655,7 +1658,6 @@
 
 (leaf magit
   :package t
-  :bind ("C-x g" . magit)
   :custom
   `(magit-credential-cache-daemon-socket
     . ,(expand-file-name "git/credential/socket" (xdg-cache-home))))
