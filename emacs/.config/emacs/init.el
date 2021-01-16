@@ -1761,15 +1761,15 @@
 
   :custom
   '(ytel-instances
-    . '("https://invidious.fdn.fr"
+    . '("https://invidious.kavin.rocks"
         "https://invidious.site"
-        "https://invidious.kavin.rocks"
+        "https://invidious.fdn.fr"
         "https://vid.encryptionin.space"
         "https://invidious.snopyta.org"
         "https://invidious.mservice.ru.com"
         "https://invidious.xyz"
         "https://vid.encryptionin.space"))
-  '(ytel-invidious-api-url . "https://invidious.fdn.fr")
+  '(ytel-invidious-api-url . "https://invidious.kavin.rocks")
 
   :bind
   (mode-specific-map :package bindings ("o Y" . ytel))
