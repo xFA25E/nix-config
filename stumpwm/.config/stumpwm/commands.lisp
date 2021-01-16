@@ -23,7 +23,8 @@
     (message "~A" (string-right-trim (string #\Newline)
                                      (run-shell-command "mpc" t)))))
 
-(define-interactive-keymap mpd-controller-interactive nil
+(define-interactive-keymap mpd-controller-interactive
+    (:on-enter (lambda () (run-with-timer 0.1 nil #'mpd-controller)))
   ((kbd "<") "mpd-controller prev")
   ((kbd ">") "mpd-controller next")
   ((kbd "t") "mpd-controller toggle")
@@ -46,7 +47,7 @@
     (message "Brightness ~A" (read-brightness-status))))
 
 (define-interactive-keymap brightness-controller-interactive
-    nil
+    (:on-enter (lambda () (run-with-timer 0.1 nil #'brightness-controller)))
   ((kbd "i") "brightness-controller")
   ((kbd "N") "brightness-controller -dec 1")
   ((kbd "n") "brightness-controller -dec 10")
@@ -62,7 +63,7 @@
       (message "Alsa-Volume ~A ~A" value state))))
 
 (define-interactive-keymap alsa-controller-interactive
-    nil
+    (:on-enter (lambda () (run-with-timer 0.1 nil #'alsa-controller)))
   ((kbd "i") "alsa-controller")
   ((kbd "t") "alsa-controller -D pulse sset Master toggle")
   ((kbd "N") "alsa-controller -D pulse sset Master 1%-")
