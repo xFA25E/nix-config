@@ -15,11 +15,8 @@
 (defvar *date-time-timer* nil)
 
 (defvar *menu*
-  '(("brightness" :command "set-brightness")
-    ("lock screen" :shell "lock")
-    ("suspend" :shell "systemctl suspend")
+  '(("screenshot" :command "screenshot")
     ("mount" :shell "rmount")
     ("unmount" :shell "rumount")
-    ("screenshot" :command "screenshot")
-    ("alsa volume" :command "set-alsa-volume")
-    ("mpd volume" :command "set-mpd-volume")))
+    ("lock screen" :shell "lock")
+    ("suspend" :shell "systemctl suspend")))

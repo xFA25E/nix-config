@@ -7,16 +7,6 @@
      ,(concatenate 'string "Start " binary " unless it is already running, in which case focus it.")
      (run-or-raise ,binary '(:class ,class))))
 
-(defmacro define-stumpwm-type-number (label form)
-  (check-type label keyword)
-  `(define-stumpwm-type ,label (input prompt)
-     (when-let ((n (or (argument-pop input)
-                       (read-one-line (current-screen) prompt :initial-input ,form))))
-       (handler-case (parse-integer n)
-         (parse-error (c)
-           (declare (ignore c))
-           (throw 'error "Number required."))))))
-
 (defmacro define-screen-mode-line-formatter (character name form)
   (check-type character character)
   (check-type name symbol)
@@ -57,10 +47,12 @@
            (max-brightness (read-number max-brightness-file)))
       (write-to-string (round (* (/ brightness max-brightness) 100))))))
 
-(let ((volume-scanner (ppcre:create-scanner "Front Left:[^[]+\\[([0-9]+)%\\]")))
+(let ((volume-scanner (ppcre:create-scanner "Front Left:[^[]+\\[([0-9]+)%\\]"))
+      (state-scanner (ppcre:create-scanner "Front Left:[^[]+\\[[0-9]+%\\][^[]+\\[(on|off)\\]")))
  (defun read-alsa-volume-status ()
    (let ((output (run-shell-command "amixer -D pulse sget Master" t)))
-     (extract-first-regexp-group volume-scanner output))))
+     (values (extract-first-regexp-group volume-scanner output)
+             (extract-first-regexp-group state-scanner output)))))
 
 (defun read-mpd-volume-status ()
   (let ((output (run-shell-command "mpc -q volume" t)))
@@ -95,9 +87,9 @@
 
 
 
-(define-stumpwm-type-number :brightness (read-brightness-status))
-(define-stumpwm-type-number :alsa-volume (read-alsa-volume-status))
-(define-stumpwm-type-number :mpd-volume (read-mpd-volume-status))
+(define-stumpwm-type :rest-strings (input prompt)
+  (declare (ignore prompt))
+  (or (argument-pop-rest input) ""))
 
 (define-screen-mode-line-formatter #\t fmt-window-title
   (if-let ((window (current-window))) (window-title window) "<no window>"))

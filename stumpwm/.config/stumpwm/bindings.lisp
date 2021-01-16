@@ -56,10 +56,13 @@
 (define-key *open-map* (kbd "C-w") "type-pass-entry")
 (define-key *open-map* (kbd "w") "menu-pass")
 
-(define-key *open-map* (kbd "C-v") "exec uxterm -e pulsemixer")
+(define-key *open-map* (kbd "v") "exec uxterm -e pulsemixer")
 (define-key *open-map* (kbd "C-p") "exec uxterm -e htop")
 
-(define-key *open-map* (kbd "C-s") "show-mpd")
+(define-key *open-map* (kbd "C-s") "mpd-controller-interactive")
+(define-key *open-map* (kbd "C-l") "brightness-controller-interactive")
+(define-key *open-map* (kbd "C-v") "alsa-controller-interactive")
+
 (define-key *open-map* (kbd "C-k") "show-corona")
 (define-key *open-map* (kbd "C-d") "show-hardware")
 
