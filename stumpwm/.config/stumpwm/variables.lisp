@@ -20,3 +20,8 @@
     ("unmount" :shell "rumount")
     ("lock screen" :shell "lock")
     ("suspend" :shell "systemctl suspend")))
+
+(defvar *rimer-timers*
+  '(("study" . "25")
+    ("pause" . "5")
+    ("eyes" . "30")))

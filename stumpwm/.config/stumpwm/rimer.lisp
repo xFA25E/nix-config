@@ -3,7 +3,7 @@
 (defvar *timer-updater* (or (getenv "RIMER_CALLBACK") "rimer_callback"))
 
 (let ((duration-scanner
-        (ppcre:create-scanner "^(?:(t)?([0-1]?[0-9]|2[0-3]):)?([0-5][0-9])$")))
+        (ppcre:create-scanner "^(?:(t)?([0-1]?[0-9]|2[0-3]):)?([0-5]?[0-9])$")))
   (defun parse-duration (duration)
     (when-let ((groups (nth-value 1 (ppcre:scan-to-strings duration-scanner duration))))
       (let* ((hours (parse-integer (or (aref groups 1) "0")))
@@ -61,13 +61,26 @@
    (lambda (timer) (member (nth 3 timer) allowed-states))
    (parse-rimer-report (run-shell-command "rimer report" t))))
 
-(define-stumpwm-type :duration (input prompt)
-  (if-let ((duration (or (argument-pop input)
-                         (read-one-line (current-screen) prompt))))
-    (if-let ((seconds (parse-duration duration)))
-      seconds
-      (throw 'error "Invalid duration."))
-    (throw 'error "Duration required.")))
+(let ((last-name nil))
+  (define-stumpwm-type :rimer-name (input prompt)
+    (if-let ((name (or (argument-pop input)
+                       (completing-read (current-screen) prompt
+                                        (mapcar #'car *rimer-timers*)))))
+      (setf last-name name)
+      (throw 'error "No name")))
+
+  (define-stumpwm-type :rimer-duration (input prompt)
+    (if-let ((duration
+              (or (argument-pop input)
+                  (read-one-line
+                   (current-screen) prompt
+                   :initial-input
+                   (or (cdr (assoc last-name *rimer-timers* :test #'string=))
+                       "")))))
+      (if-let ((seconds (parse-duration duration)))
+        seconds
+        (throw 'error "Invalid duration."))
+      (throw 'error "Duration required."))))
 
 (defmacro define-stumpwm-type-rimer-timer (name allowed-states)
   `(define-stumpwm-type ,name (input prompt)
@@ -83,14 +96,15 @@
 (define-stumpwm-type-rimer-timer :rimer-timer-running (:running))
 
 (defcommand add-rimer-countdown (name duration)
-    ((:string "Countdown name: ") (:duration "Countdown duration ([[t]HH:]MM): "))
+    ((:rimer-name "Countdown name: ")
+     (:rimer-duration "Countdown duration ([[t]HH:]MM): "))
   (message
    "~A"
    (run-shell-command
     (format nil "rimer add --name '~A' --duration '~D' --step '~D'" name duration duration)
     t)))
 
-(defcommand add-rimer-stopwatch (name) ((:string "Stopwatch name: "))
+(defcommand add-rimer-stopwatch (name) ((:rimer-name "Stopwatch name: "))
   (add-rimer-countdown name (1- (expt 2 64))))
 
 (defcommand pause-rimer-timer (timer) ((:rimer-timer-running "Running timer: "))
