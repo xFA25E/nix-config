@@ -7,17 +7,6 @@
      ,(concatenate 'string "Start " binary " unless it is already running, in which case focus it.")
      (run-or-raise ,binary '(:class ,class))))
 
-(defmacro define-screen-mode-line-formatter (character name form)
-  (check-type character character)
-  (check-type name symbol)
-  (let ((mode-line-symbol (gensym "MODE-LINE")))
-    `(progn
-       (defun ,name (,mode-line-symbol)
-         (declare (ignore ,mode-line-symbol))
-         (let ((result ,form))
-           (if (stringp result) result "<>")))
-       (add-screen-mode-line-formatter ,character ',name))))
-
 
 
 (defun extract-first-regexp-group (scanner string)
@@ -90,12 +79,3 @@
 (define-stumpwm-type :rest-strings (input prompt)
   (declare (ignore prompt))
   (or (argument-pop-rest input) ""))
-
-(define-screen-mode-line-formatter #\t fmt-window-title
-  (if-let ((window (current-window))) (window-title window) "<no window>"))
-(define-screen-mode-line-formatter #\l fmt-brightness
-  (read-brightness-status))
-(define-screen-mode-line-formatter #\a fmt-alsa-volume
-  (read-alsa-volume-status))
-(define-screen-mode-line-formatter #\b fmt-battery
-  (read-battery-status))

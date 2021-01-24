@@ -35,9 +35,6 @@
 (define-key *root-map* (kbd "e") "em")
 (define-key *root-map* (kbd "C-e") "em")
 
-(define-key *root-map* (kbd "C-a") "mode-line")
-(define-key *root-map* (kbd "a") "mode-line")
-
 (define-key *root-map* (kbd "C-c") "exec uxterm")
 (define-key *root-map* (kbd "c") "exec uxterm")
 

@@ -26,15 +26,6 @@
 
 (clear-window-placement-rules)
 
-(setf *screen-mode-line-format* "[%n] %t^> L%l V%a B%b %d")
-
-(setf *mode-line-border-color* (nth 0 *colors*))
-(setf *mode-line-foreground-color* (nth 7 *colors*))
-(setf *mode-line-background-color* (nth 0 *colors*))
-(setf *mode-line-border-width* 0)
-(setf *mode-line-pad-x* 0)
-(setf *mode-line-pad-y* 0)
-
 (setf *mouse-focus-policy* :click)
 
 (setf *battery-timer* (stumpwm::run-with-timer 60 60 #'notify-battery-status))
