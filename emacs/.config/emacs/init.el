@@ -652,7 +652,7 @@
                "setsid -f gimp * >/dev/null 2>&1")
 
          (list (rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp"
-                        "vob" "wmv" "aiff" "wav"))
+                        "vob" "wmv" "aiff" "wav" "ogv" "flv"))
                "setsid -f mpv --force-window=yes --no-terminal * >/dev/null 2>&1"
                "video_duration * | format_duration"
                "video_duration * | awk '{s+=$1}END{print s}' | format_duration"
@@ -690,7 +690,7 @@
     (interactive (dired-get-marker-char))
     (dired-mark-extension
      '("flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp"
-       "vob" "wmv" "aiff" "wav")
+       "vob" "wmv" "aiff" "wav" "ogv" "flv")
      marker-char)))
 
 (leaf dired-aux
@@ -1676,11 +1676,12 @@
     (quelpa '(mediainfo-mode :repo "xFA25E/mediainfo-mode" :fetcher github)))
   (add-to-list
    'auto-mode-alist
-   `(,(rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob" "wmv" "aiff" "wav"))
+   `(,(rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob" "wmv" "aiff" "wav" "ogv" "flv"))
      . mediainfo-mode))
   (add-to-list
    'file-name-handler-alist
-   `(,(rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob" "wmv" "aiff" "wav"))
+   `(,(rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob" "wmv" "aiff" "wav" "ogv" "flv"
+               "FLAC" "M4A" "MP3" "OGG" "OPUS" "WEBM" "MKV" "MP4" "AVI" "MPG" "MOV" "3GP" "VOB" "WMV" "AIFF" "WAV" "OGV" "FLV"))
      . mediainfo-mode--file-handler)))
 
 
@@ -1822,6 +1823,8 @@
   '(newsticker-url-list-defaults . nil)
   '(newsticker-url-list
     . '(("Alt-Hype" "https://www.bitchute.com/feeds/rss/channel/thealthype/")
+        ("Mouthy Buddha" "https://www.bitchute.com/feeds/rss/channel/mouthybuddha")
+        ("Styxhexenhammer666" "https://www.bitchute.com/feeds/rss/channel/styxhexenhammer666/")
         ("Sleepy Saxon" "https://www.youtube.com/feeds/videos.xml?channel_id=UCVyzFlPnWjqrgVljH8QUiCQ")
         ("Sean Last" "https://www.youtube.com/feeds/videos.xml?user=spawktalk")
         ("Knight's Move" "https://www.youtube.com/feeds/videos.xml?channel_id=UC63HcOlghFQ3pcursLUp3NQ")
@@ -2022,7 +2025,7 @@
            '(("sxiv"        . ("jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp"))
              ("libreoffice" . ("csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx"))
              ("mpv"         . ("m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov"
-                               "3gp" "vob"  "wmv" "aiff" "wav"))))))
+                               "3gp" "vob"  "wmv" "aiff" "wav" "ogv" "flv"))))))
 
   :config
   (load-file (expand-file-name "emacs/secrets/mu4e.el" (xdg-data-home)))
