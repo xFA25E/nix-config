@@ -85,4 +85,5 @@
        ("M-f"   . "C-Right")
        ("M-b"   . "C-Left")
        ("C-k"   . ("C-S-End" "C-x"))
-       ("M-K"   . "C-w"))))
+       ("M-K"   . "C-w")
+       ("C-m"   . "RET"))))
