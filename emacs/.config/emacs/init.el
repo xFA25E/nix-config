@@ -1824,7 +1824,6 @@
   '(newsticker-url-list
     . '(("Alt-Hype" "https://www.bitchute.com/feeds/rss/channel/thealthype/")
         ("Mouthy Buddha" "https://www.bitchute.com/feeds/rss/channel/mouthybuddha")
-        ("Styxhexenhammer666" "https://www.bitchute.com/feeds/rss/channel/styxhexenhammer666/")
         ("Sleepy Saxon" "https://www.youtube.com/feeds/videos.xml?channel_id=UCVyzFlPnWjqrgVljH8QUiCQ")
         ("Sean Last" "https://www.youtube.com/feeds/videos.xml?user=spawktalk")
         ("Knight's Move" "https://www.youtube.com/feeds/videos.xml?channel_id=UC63HcOlghFQ3pcursLUp3NQ")
