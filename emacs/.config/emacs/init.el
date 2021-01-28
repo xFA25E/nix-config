@@ -788,7 +788,8 @@
   (ctl-x-map
    :package subr
    ("K"   . kill-current-buffer)
-   ("C-r" . overwrite-mode))
+   ("C-r" . overwrite-mode)
+   ("M-t" . toggle-truncate-lines))
   (mode-specific-map :package bindings ("o P" . list-processes))
 
   :custom
