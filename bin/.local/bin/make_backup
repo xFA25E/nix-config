@@ -42,7 +42,7 @@ sudo -A chown val:users "${directory}" || { sudo -A umount "${directory}"; exit_
 # Making backup
 xargs --arg-file="${backup_file}" --max-args=200 -I{} \
       rsync --delete --delete-excluded --archive --verbose --partial --progress --relative \
-      --backup --backup-dir="${directory%/}/backup" --suffix="$(date '+.~%Y%m%d~')" \
+      --backup --backup-dir="${directory%/}/backup" --suffix="$(date '+.~%Y%m%d')" \
       --exclude="${HOME}/.cache" --exclude='lost+found' \
       --exclude='*TelegramDesktop/' \
       --exclude="${directory}" \
