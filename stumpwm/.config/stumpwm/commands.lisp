@@ -2,7 +2,7 @@
 
 (define-run-or-raise "qutebrowser" "qutebrowser")
 (define-run-or-raise "firefox" "firefox")
-(define-run-or-raise  "chromium-incognito" "Chromium-browser")
+(define-run-or-raise "chromium-incognito" "Chromium-browser")
 (define-run-or-raise "em" "Emacs")
 
 
@@ -119,3 +119,8 @@
       (ecase type
         (:shell (run-shell-command cmd))
         (:command (eval-command cmd t))))))
+
+(defcommand type-clipboard (&optional (primary t))
+    ((:y-or-n "Primary or clipboard? "))
+  (let ((*default-selections* (if primary '(:primary) '(:clipboard))))
+    (window-send-string (get-x-selection))))
