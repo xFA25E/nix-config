@@ -1645,18 +1645,6 @@
   '(bookmark-save-flag . 1)
   `(bookmark-default-file . ,(expand-file-name "emacs/bookmarks" (xdg-data-home))))
 
-(leaf telega
-  :package t
-  :bind (mode-specific-map :package bindings ("o l t" . telega))
-  :hook (telega-load-hook . telega-notifications-mode)
-  :custom
-  `(telega-server-libs-prefix . ,(expand-file-name "~/.nix-profile"))
-  `(telega-directory . ,(expand-file-name "emacs/telega" (xdg-cache-home)))
-  '(telega-root-fill-column . 100)
-  '(telega-chat-fill-column . 100)
-  '(telega-webpage-fill-column . 100)
-  :config (define-key mode-specific-map (kbd "o l") telega-prefix-map))
-
 (leaf magit
   :package t
   :custom
