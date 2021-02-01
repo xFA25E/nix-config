@@ -6,7 +6,14 @@
 # Uncomment this to still load settings configured via autoconfig.yml
 # config.load_autoconfig()
 
-from colors import colors
+from subprocess import check_output
+from re import match
+
+colors = {
+    line[12:].split(':\t')[0]: line[12:].split(':\t')[1]
+    for line in check_output(["xrdb", "-query"]).strip().decode("utf-8").splitlines()
+    if match("^qutebrowser\\.", line)
+}
 
 def get_color(color):
     return colors.get(color)
