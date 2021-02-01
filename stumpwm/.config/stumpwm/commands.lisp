@@ -100,14 +100,20 @@
           (concatenate 'string "([0-9]+(?:\\.[0-9]+)?[a-zA-Z]+) +[0-9]+% +" partition "\\n"))))
   (let ((root-scanner (make-scanner "/"))
         (home-scanner (make-scanner "/home"))
-        (second-partition-scanner (make-scanner "/mnt/second_partition")))
+        (second-partition-scanner (make-scanner "/mnt/second_partition"))
+        (backup-scanner (make-scanner "/mnt/backup"))
+        (kindle-scanner (make-scanner "/media/kindle"))
+        (usb-scanner (make-scanner "/media/usb")))
     (defcommand show-hardware () ()
       (update-battery-status-variables)
       (let ((output (run-shell-command "df --si" t)))
-        (message "R ~A~%H ~A~%W ~A~%B~A ~A ~A"
+        (message "R ~A~%H ~A~%W ~A~%BK ~A~%K ~A~%U ~A~%B~A ~A ~A"
                  (extract-first-regexp-group root-scanner output)
                  (extract-first-regexp-group home-scanner output)
                  (extract-first-regexp-group second-partition-scanner output)
+                 (extract-first-regexp-group backup-scanner output)
+                 (extract-first-regexp-group kindle-scanner output)
+                 (extract-first-regexp-group usb-scanner output)
                  *battery-percentage* *battery-state* *battery-time*)))))
 
 
