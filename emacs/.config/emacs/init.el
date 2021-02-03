@@ -1873,8 +1873,11 @@
 (leaf mingus
   :defvar mpd-inter-conn
   :defun mingus-buffer-p mingus-git-out-and-kill mingus-add-files mingus-music-files
-  :advice (:override mingus-git-out mingus-git-out-and-kill)
   :package t
+
+  :advice
+  (:override mingus-git-out mingus-git-out-and-kill)
+  (:override mingus-dired-file mingus-dired-jump-file)
 
   :bind
   (mode-specific-map
@@ -1890,6 +1893,14 @@
   '(mingus-use-mouse-p . nil)
 
   :config
+  (defun mingus-dired-jump-file ()
+    "Open dired with parent dir of song at point."
+    (interactive)
+    (cond
+     ((mingus-directoryp) (dired (mingus-get-absolute-filename)))
+     ((mingus-playlistp) (dired mingus-mpd-playlist-dir))
+     (t (dired-jump nil (mingus-get-absolute-filename)))))
+
   (defun mingus-git-out-and-kill (&optional _)
     (interactive)
     (when (mingus-buffer-p)
