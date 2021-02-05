@@ -266,8 +266,10 @@
 ;;;; URL
 
 (leaf browse-url
-  :custom '(browse-url-secondary-browser-function . #'browse-url-firefox)
-  :bind (ctl-x-map :package subr ("B" . browse-url)))
+  :bind (ctl-x-map :package subr ("B" . browse-url))
+  :custom
+  '(browse-url-secondary-browser-function . #'browse-url-chromium)
+  '(browse-url-chromium-program . "chromium-incognito"))
 
 (leaf bruh
   :defvar bruh-videos-re
@@ -1751,15 +1753,16 @@
 
   :custom
   '(ytel-instances
-    . '("https://invidious.kavin.rocks"
+    . '("https://invidious.snopyta.org"
+        "https://yewtu.be"
+        "https://invidious.kavin.rocks"
         "https://invidious.site"
         "https://invidious.fdn.fr"
         "https://vid.encryptionin.space"
-        "https://invidious.snopyta.org"
         "https://invidious.mservice.ru.com"
         "https://invidious.xyz"
         "https://vid.encryptionin.space"))
-  '(ytel-invidious-api-url . "https://invidious.kavin.rocks")
+  '(ytel-invidious-api-url . "https://invidious.snopyta.org")
 
   :bind
   (mode-specific-map :package bindings ("o Y" . ytel))
@@ -1871,9 +1874,13 @@
 ;;;; MPD
 
 (leaf mingus
-  :defvar mpd-inter-conn
-  :defun mingus-buffer-p mingus-git-out-and-kill mingus-add-files mingus-music-files
+  :defvar mpd-inter-conn mingus-mpd-playlist-dir
   :package t
+
+  :defun
+  mingus-buffer-p mingus-git-out-and-kill mingus-add-files
+  mingus-music-files mingus-directoryp
+  mingus-get-absolute-filename mingus-playlistp
 
   :advice
   (:override mingus-git-out mingus-git-out-and-kill)
