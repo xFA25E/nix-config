@@ -1,2 +1,2 @@
 #!/bin/sh
-exec chromium -incognito
+exec chromium -incognito "$@"
