@@ -46,8 +46,8 @@
 
 
 (defcommand show-pass-entry (pass-entry) ((:pass-entry "Show pass: "))
-  (let ((cmd (format nil "pass show '~A'" pass-entry)))
-    (message "~A" (run-shell-command cmd t))))
+  (run-shell-command
+   (format nil "'~A' '~A~A.gpg'" (getenv "EDITOR") *password-store-directory* pass-entry)))
 
 (defcommand type-pass-entry (pass-entry) ((:pass-entry "Type pass: "))
   (let* ((text (run-shell-command (format nil "pass show '~A'" pass-entry) t))
