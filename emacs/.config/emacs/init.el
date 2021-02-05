@@ -854,9 +854,9 @@
          ("html" (html-mode))))
       (t (normal-mode)))))
 
-
 (leaf paragraphs :bind ("C-M-S-t" . transpose-paragraphs))
 
+
 ;;;; FORMATTING
 
 (leaf whitespace :hook (before-save-hook . whitespace-cleanup))
@@ -2164,5 +2164,5 @@
 (provide 'init)
 
 ;;; Local variables:
-;;; eval: (require 'leaf)
+;;; eval: (require (quote leaf))
 ;;; End:
