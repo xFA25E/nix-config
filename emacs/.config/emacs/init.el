@@ -1693,7 +1693,11 @@
   :custom
   `(eww-bookmarks-directory . ,(expand-file-name "emacs" (xdg-data-home)))
   '(eww-browse-url-new-window-is-tab . nil)
-  '(eww-search-prefix . "https://ddg.co/lite/?q="))
+  '(eww-search-prefix . "https://ddg.co/lite/?q=")
+  :hook (eww-mode-hook . eww-restore-browse-url-browser-function)
+  :config
+  (defun eww-restore-browse-url-browser-function ()
+    (kill-local-variable 'browse-url-browser-function)))
 
 (leaf xml
   :defun xml-parse-string xml-escape-string
