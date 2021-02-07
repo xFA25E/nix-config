@@ -549,7 +549,7 @@
 ;;; MAN
 
 (leaf man
-  :custom '(Man-notify-method . 'aggressive)
+  :custom '(Man-notify-method . 'pushy)
   :bind (help-map :package help ("M-m" . man)))
 
 (leaf apropos :custom '(apropos-sort-by-scores . t))
