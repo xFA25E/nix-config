@@ -1189,11 +1189,7 @@
 (leaf marginalia
   :package t
   :hook (after-init-hook . marginalia-mode)
-  :custom '(marginalia-annotators . '(marginalia-annotators-heavy marginalia-annotators-light))
-  :advice (:before-until marginalia-annotate-file marginalia-candidate-file-remote-p)
-  :config
-  (defun marginalia-candidate-file-remote-p (cand)
-    (file-remote-p (marginalia--full-candidate cand))))
+  :custom '(marginalia-annotators . '(marginalia-annotators-light marginalia-annotators-heavy)))
 
 (leaf embark
   :package t
