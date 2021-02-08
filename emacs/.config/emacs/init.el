@@ -800,7 +800,6 @@
   '(kill-do-not-save-duplicates . t)
   '(kill-read-only-ok . t)
   '(async-shell-command-buffer . 'new-buffer)
-  '(async-shell-command-display-buffer . nil)
 
   :config
   (defun just-one-space-fast (&optional n)
@@ -1463,7 +1462,9 @@
 ;;;; SHELL
 
 (leaf shell
-  :bind (shell-mode-map ("C-c M-d" . shell-change-directory))
+  :bind
+  (mode-specific-map :package bindings ("x s" . shell-list-buffers))
+  (shell-mode-map ("C-c M-d" . shell-change-directory))
 
   :custom
   `(shell-prompt-pattern
@@ -1513,26 +1514,31 @@
     (let* ((read-dir (read-directory-name "Change directory: "))
            (dir (or (file-remote-p read-dir 'localname) read-dir)))
       (insert (concat "cd " (shell-quote-argument (expand-file-name dir)))))
-    (comint-send-input)))
+    (comint-send-input))
+
+  (defun shell-list-buffers ()
+    (interactive)
+    (let ((buffer-name "*Shell buffers*"))
+      (ibuffer t buffer-name `((mode . shell-mode)))
+      (with-current-buffer buffer-name
+        (ibuffer-auto-mode)
+        (set (make-local-variable 'ibuffer-use-header-line) nil)
+        (ibuffer-clear-filter-groups)))))
 
 (leaf shell-pwd
   :defun shell-pwd-generate-buffer-name
   :preface
   (unless (package-installed-p 'shell-pwd)
     (quelpa '(shell-pwd :repo "xFA25E/shell-pwd" :fetcher github)))
-  :bind (mode-specific-map :package bindings ("x s" . shell-pwd-switch-to-buffer))
+  :bind (mode-specific-map :package bindings ("x S" . shell-pwd-shell))
   :config
-  (cl-defun shell-pwd-switch-to-buffer (&optional (directory default-directory))
+  (cl-defun shell-pwd-shell (&optional (directory default-directory))
     (interactive
      (list (if current-prefix-arg
                (expand-file-name (read-directory-name "Default directory: "))
              default-directory)))
-    (cl-flet ((shell-buffer-p (b) (eq (buffer-local-value 'major-mode b) 'shell-mode))
-              (pwd-buffer () (shell-pwd-generate-buffer-name directory)))
-      (let* ((buffer-name (generate-new-buffer-name (pwd-buffer)))
-             (shell-buffers (mapcar #'buffer-name (cl-delete-if-not #'shell-buffer-p (buffer-list))))
-             (name (completing-read "Shell buffer: " (cons buffer-name shell-buffers))))
-        (if-let ((buffer (get-buffer name))) (pop-to-buffer buffer) (shell name))))
+    (shell (generate-new-buffer-name (shell-pwd-generate-buffer-name
+                                      directory)))
     (shell-pwd-enable)))
 
 
