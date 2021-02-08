@@ -466,8 +466,7 @@
   ("C-S-v" . scroll-up-line)
   ("C-M-S-b" . previous-buffer)
   ("C-M-S-f" . next-buffer)
-  ("M-Q" . quit-window)
-  (ctl-x-map :package subr ("C-b" . switch-to-buffer)))
+  ("M-Q" . quit-window))
 
 (leaf time :custom '(display-time-24hr-format . t))
 
@@ -1196,12 +1195,7 @@
   :custom '(embark-occur-initial-view-alist . '((t . zebra)))
   :bind
   ("C-," . embark-act)
-  ;; (embark-occur-mode-map ("," . embark-act))
-  (completion-list-mode-map :package simple ("," . embark-act))
-  (minibuffer-local-completion-map
-   :package minibuffer
-   ("C-," . embark-act)
-   ("C-." . embark-act-noexit)))
+  (minibuffer-local-completion-map :package minibuffer ("C-." . embark-act-noexit)))
 
 (leaf orderless
   :package t
@@ -1458,9 +1452,7 @@
 ;;;; SHELL
 
 (leaf shell
-  :bind
-  (mode-specific-map :package bindings ("x s" . shell-list-buffers))
-  (shell-mode-map ("C-c M-d" . shell-change-directory))
+  :bind (shell-mode-map ("C-c M-d" . shell-change-directory))
 
   :custom
   `(shell-prompt-pattern
@@ -1510,16 +1502,7 @@
     (let* ((read-dir (read-directory-name "Change directory: "))
            (dir (or (file-remote-p read-dir 'localname) read-dir)))
       (insert (concat "cd " (shell-quote-argument (expand-file-name dir)))))
-    (comint-send-input))
-
-  (defun shell-list-buffers ()
-    (interactive)
-    (let ((buffer-name "*Shell buffers*"))
-      (ibuffer t buffer-name `((mode . shell-mode)))
-      (with-current-buffer buffer-name
-        (ibuffer-auto-mode)
-        (set (make-local-variable 'ibuffer-use-header-line) nil)
-        (ibuffer-clear-filter-groups)))))
+    (comint-send-input)))
 
 (leaf shell-pwd
   :defun shell-pwd-generate-buffer-name
@@ -1632,8 +1615,21 @@
 (leaf calendar :custom '(calendar-week-start-day . 1))
 
 (leaf ibuffer
+  :defvar ibuffer-use-header-line
+  :defun ibuffer-auto-mode ibuffer-clear-filter-groups
   :custom '(ibuffer-default-sorting-mode . 'major-mode)
-  :bind (ctl-x-map :package subr ("C-S-b" . ibuffer-jump)))
+  :bind
+  (ctl-x-map :package subr ("C-b" . ibuffer-jump))
+  (mode-specific-map :package bindings ("x s" . shell-list-buffers))
+  :config
+  (defun shell-list-buffers ()
+    (interactive)
+    (let ((buffer-name "*Shell buffers*"))
+      (ibuffer t buffer-name `((mode . shell-mode)))
+      (with-current-buffer buffer-name
+        (ibuffer-auto-mode)
+        (set (make-local-variable 'ibuffer-use-header-line) nil)
+        (ibuffer-clear-filter-groups)))))
 
 (leaf gdb-mi
   :custom
