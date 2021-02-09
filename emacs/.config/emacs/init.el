@@ -62,7 +62,6 @@
   error
   replace-regexp-in-string
   shell-quote-argument
-  start-process
   with-current-buffer
   :preface (provide 'subr)
   :advice
@@ -268,51 +267,97 @@
 (leaf browse-url
   :bind (ctl-x-map :package subr ("B" . browse-url))
   :custom
+  '(browse-url-browser-function . #'browse-url-custom)
   '(browse-url-secondary-browser-function . #'browse-url-chromium)
-  '(browse-url-chromium-program . "chromium-incognito"))
+  '(browse-url-chromium-program . "chromium-incognito")
+  '(browse-url-generic-program . "qutebrowser")
+  :config
 
-(leaf bruh
-  :defvar bruh-videos-re
-  :preface
-  (unless (package-installed-p 'bruh)
-    (quelpa '(bruh :repo "a13/bruh" :fetcher github)))
-  :after browse-url
-  :custom
-  '(bruh-images-browser-function . 'browse-url-find-file)
-  '(bruh-default-browser . 'eww-browse-url)
-  '(bruh-videos-browser-function . 'bruh-mpvi-ytdli-or-browse)
-  '(browse-url-browser-function . 'bruh-browse-url)
+  (defun browse-url-youtube-url-p (url)
+    (string-match-p
+     (rx bos (or (and (? (or "m." "www.")) "youtube.com") "youtu.be") eos)
+     (or (url-host (url-generic-parse-url url)) "")))
 
-  :defer-config
-  (defun browse-url-find-file (url &optional _)
-    (find-file url))
-  (defun bruh-mpvi-ytdli-or-browse (url &rest rest)
-    (let ((actions '("mpv" "ytdl" "default"))
-          (youtube-id
-           (save-match-data
-             (string-match
-              (rx (or (and "youtube.com/watch?" (*? any) "v=") "youtu.be/")
-                  (group (= 11 (any "-_A-Za-z0-9"))))
-              url)
-             (match-string 1 url))))
-      (when youtube-id
-        (push "ytel" actions))
-      (pcase (completing-read (format "Bruh %s: " url) actions nil t)
-        ("ytel"
-         (ytel-show (vector youtube-id)))
-        ("mpv"
-         (let ((process-environment (browse-url-process-environment)))
-           (start-process (concat "mpv " url) nil "mpvi" url)))
-        ("ytdl"
-         (let ((process-environment (browse-url-process-environment)))
-           (start-process (concat "ytdl " url) nil "ytdli" url)))
-        ("default"
-         (apply bruh-default-browser url rest)))))
+  (defun browse-url-select-invidious-instance (url)
+    (completing-read
+     (concat "Invidious instance for " url ": ")
+     '("invidious.snopyta.org"
+       "yewtu.be"
+       "invidious.kavin.rocks"
+       "invidious.site"
+       "invidious.fdn.fr"
+       "vid.encryptionin.space"
+       "invidious.mservice.ru.com"
+       "invidious.xyz"
+       "vid.encryptionin.space")
+     nil t))
 
-  (dolist (re `(,(rx bos "http" (? "s") "://" (? "www.") "bitchute.com/" (or "embed" "video" "channel"))
-                ,(rx bos "http" (? "s") "://videos.lukesmith.xyz/" (or "static/webseed" "videos/watch"))
-                ,(rx  "http" (? "s") "://m.youtube.com")))
-    (add-to-list 'bruh-videos-re re)))
+  (defun browse-url-read-char (prompt choices url)
+    (cl-loop with prompt = (concat prompt " " url)
+             for choice = (read-char prompt)
+             until (memq choice choices)
+             finally return choice))
+
+  (defun browse-url-mpv (url &rest _args)
+    (call-process "setsid" nil 0 nil "-f" "mpvi" url))
+
+  (defun browse-url-custom-browser (url &rest args)
+    (let ((prompt (concat "[c]hromium [q]utebrowser [f]irefox [e]ww"))
+          (choices '(?c ?q ?f ?e)))
+      (apply
+       (cl-case (browse-url-read-char prompt choices url)
+         (?c #'browse-url-chromium)
+         (?q #'browse-url-generic)
+         (?f #'browse-url-firefox)
+         (?e #'eww-browse-url))
+       url args)))
+
+  (defun browse-url-ytdl (url &rest _args)
+    (call-process "ytdli" nil 0 nil url))
+
+  (defun browse-url-invidious (url &rest args)
+    (let ((instance (browse-url-select-invidious-instance url))
+          (url-object (url-generic-parse-url url)))
+      (when (string-equal "youtu.be" (url-host url-object))
+        (let* ((video-id (substring (car (url-path-and-query url-object)) 1 12))
+               (query (url-build-query-string `(("v" ,video-id)))))
+          (setf (url-filename url-object) (concat "/watch?" query))))
+      (setf (url-host url-object) instance)
+      (apply #'eww-browse-url (url-recreate-url url-object) args)))
+
+  (defun browse-url-custom-media (url &rest args)
+    (let ((prompt "[y]tdl [m]pv [b]rowser")
+          (choices '(?y ?m ?b)))
+      (when (browse-url-youtube-url-p url)
+        (setq prompt (concat prompt " [i]nvidious")
+              choices (cons ?i choices)))
+      (apply (cl-case (browse-url-read-char prompt choices url)
+               (?m #'browse-url-mpv)
+               (?b #'browse-url-custom-browser)
+               (?y #'browse-url-ytdl)
+               (?i #'browse-url-invidious))
+             url args)))
+
+  (defun browse-url-custom (url &rest args)
+    (let* ((media-extensions (rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm"
+                                      "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob"
+                                      "wmv" "aiff" "wav" "ogv" "flv")))
+           (media-domains (rx (or "youtube.com" "youtu.be" "bitchute.com"
+                                  "videos.lukesmith.xyz")))
+           (url-object (url-generic-parse-url url))
+           (url-type (url-type url-object))
+           (url-host (url-host url-object))
+           (url-path (car (url-path-and-query url-object))))
+      (cond
+       ((and (member url-type '(nil "file"))
+             (string-match-p media-extensions url-path))
+        (apply #'browse-url-mpv url args))
+       ((and (member url-type '("https" "http"))
+             (or (string-match-p media-extensions url-path)
+                 (string-match-p media-domains url-host)))
+        (apply #'browse-url-custom-media url args))
+       (t
+        (apply #'browse-url-custom-browser url args))))))
 
 (leaf url
   :custom
@@ -1744,62 +1789,6 @@
   (unless (package-installed-p 'torrent-mode)
     (quelpa '(torrent-mode :repo "xFA25E/torrent-mode" :fetcher github)))
   :mode "\\.torrent\\'")
-
-
-;;;; YTEL
-
-(leaf ytel
-  :defvar ytel-mode-map
-  :defun ytel-video-id ytel-get-current-video ytel-video-title
-  :package t
-
-  :custom
-  '(ytel-instances
-    . '("https://invidious.snopyta.org"
-        "https://yewtu.be"
-        "https://invidious.kavin.rocks"
-        "https://invidious.site"
-        "https://invidious.fdn.fr"
-        "https://vid.encryptionin.space"
-        "https://invidious.mservice.ru.com"
-        "https://invidious.xyz"
-        "https://vid.encryptionin.space"))
-  '(ytel-invidious-api-url . "https://invidious.snopyta.org")
-
-  :bind
-  (mode-specific-map :package bindings ("o Y" . ytel))
-  (ytel-mode-map
-   ("c" . ytel-copy-link)
-   ("v" . ytel-current-browse-url))
-
-  :config
-  (defun ytel-switch-instance ()
-    (interactive)
-    (setq ytel-invidious-api-url
-          (completing-read "Instance: " ytel-instances)))
-
-  (defun ytel-current-browse-url ()
-    (interactive)
-    (let* ((id (ytel-video-id (ytel-get-current-video)))
-           (link (concat "https://www.youtube.com/watch?v=" id)))
-      (browse-url link)))
-
-  (defun ytel-copy-link ()
-    (interactive)
-    (let* ((video (ytel-get-current-video))
-           (id (ytel-video-id video))
-           (link (concat "https://www.youtube.com/watch?v=" id)))
-      (kill-new link)
-      (message "Copied %s" link))))
-
-(leaf ytel-show
-  :defvar ytel-show-comments--video-title
-  :defun ytel-show--current-video-id
-  :preface
-  (unless (package-installed-p 'ytel-show)
-    (quelpa '(ytel-show :repo "xFA25E/ytel-show" :fetcher github)))
-  :after ytel
-  :bind (ytel-mode-map :package ytel ("RET" . ytel-show)))
 
 
 ;;;; RSS
