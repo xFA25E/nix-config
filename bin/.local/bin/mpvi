@@ -57,18 +57,17 @@ esac
 if [ "${chosen_format}" = "bestaudio/best" ]; then
     mpd="$(printf 'no\nyes\n' | menu -p "Add to mpd?")"
     if [ "${mpd}" = yes ]; then
-        mpc_add_link "${link}"
-        exit 0
+        exec mpc_add_link "${link}"
     fi
 fi
 
 pause="$(printf '%s\n\n' --pause | menu -p "Start paused?")"
 
-mpv "${link}" \
-    --ytdl-format="${chosen_format:?}" \
-    --force-window=yes \
-    --load-unsafe-playlists \
-    ${pause} \
-    --ytdl-raw-options=yes-playlist= \
-    --loop-playlist=inf
-    # --no-terminal
+exec mpv "${link}" \
+     --ytdl-format="${chosen_format:?}" \
+     --force-window=yes \
+     --load-unsafe-playlists \
+     ${pause} \
+     --ytdl-raw-options=yes-playlist= \
+     --loop-playlist=inf \
+     --no-terminal
