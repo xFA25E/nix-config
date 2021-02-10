@@ -273,40 +273,37 @@
   '(browse-url-generic-program . "qutebrowser")
   :config
 
+  (defvar browse-url-invidious-instances
+    '("yewtu.be" "invidious.namazso.eu" "invidious.fdn.fr" "tube.connect.cafe"
+      "ytprivate.com" "invidious.tube" "vid.puffyan.us" "invidious.himiko.cloud"
+      "invidious.048596.xyz" "invidious.fdn.fr" "invidious.zee.li"
+      "inv.skyn3t.in" "invidiou.site" "invidious.xyz" "au.ytprivate.com"
+      "invidious.site"))
+
+  (defun browse-url-maybe-change-host-to-youtube (url)
+    (let* ((url-object (url-generic-parse-url url))
+           (url-host (url-host url-object)))
+      (when (and (member url-host browse-url-invidious-instances)
+                 (yes-or-no-p (format "Change host to youtube (%s)?" url)))
+        (setf (url-host url-object) "www.youtube.com"
+              url (url-recreate-url url-object))))
+    url)
+
   (defun browse-url-youtube-url-p (url)
     (string-match-p
      (rx bos (or (and (? (or "m." "www.")) "youtube.com") "youtu.be") eos)
      (or (url-host (url-generic-parse-url url)) "")))
 
   (defun browse-url-select-invidious-instance (url)
-    (ido-completing-read
-     (concat "Invidious instance for " url ": ")
-     '("yewtu.be"
-       "invidious.namazso.eu"
-       "invidious.fdn.fr"
-       "tube.connect.cafe"
-       "ytprivate.com"
-       "invidious.tube"
-       "vid.puffyan.us"
-       "invidious.himiko.cloud"
-       "invidious.048596.xyz"
-       "invidious.fdn.fr"
-       "invidious.zee.li"
-       "inv.skyn3t.in"
-       "invidiou.site"
-       "invidious.xyz"
-       "au.ytprivate.com"
-       "invidious.site")
-     nil t))
+    (ido-completing-read (concat "Invidious instance for " url ": ")
+                         browse-url-invidious-instances
+                         nil t))
 
   (defun browse-url-read-char (prompt choices url)
     (cl-loop with prompt = (concat prompt " " url)
              for choice = (read-char prompt)
              until (memq choice choices)
              finally return choice))
-
-  (defun browse-url-mpv (url &rest _args)
-    (call-process "setsid" nil 0 nil "-f" "mpvi" url))
 
   (defun browse-url-custom-browser (url &rest args)
     (let ((prompt (concat "[c]hromium [q]utebrowser [f]irefox [e]ww"))
@@ -319,8 +316,13 @@
          (?e #'eww-browse-url))
        url args)))
 
+  (defun browse-url-mpv (url &rest _args)
+    (let ((url (browse-url-maybe-change-host-to-youtube url)))
+      (call-process "setsid" nil 0 nil "-f" "mpvi" url)))
+
   (defun browse-url-ytdl (url &rest _args)
-    (call-process "ytdli" nil 0 nil url))
+    (let ((url (browse-url-maybe-change-host-to-youtube url)))
+      (call-process "ytdli" nil 0 nil url)))
 
   (defun browse-url-invidious (url &rest args)
     (let ((instance (browse-url-select-invidious-instance url))
@@ -361,7 +363,8 @@
         (apply #'browse-url-mpv url args))
        ((and (member url-type '("https" "http"))
              (or (string-match-p media-extensions url-path)
-                 (string-match-p media-domains url-host)))
+                 (string-match-p media-domains url-host)
+                 (member url-host browse-url-invidious-instances)))
         (apply #'browse-url-custom-media url args))
        (t
         (apply #'browse-url-custom-browser url args))))))
