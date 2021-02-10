@@ -279,17 +279,24 @@
      (or (url-host (url-generic-parse-url url)) "")))
 
   (defun browse-url-select-invidious-instance (url)
-    (completing-read
+    (ido-completing-read
      (concat "Invidious instance for " url ": ")
-     '("invidious.snopyta.org"
-       "yewtu.be"
-       "invidious.kavin.rocks"
-       "invidious.site"
+     '("yewtu.be"
+       "invidious.namazso.eu"
        "invidious.fdn.fr"
-       "vid.encryptionin.space"
-       "invidious.mservice.ru.com"
+       "tube.connect.cafe"
+       "ytprivate.com"
+       "invidious.tube"
+       "vid.puffyan.us"
+       "invidious.himiko.cloud"
+       "invidious.048596.xyz"
+       "invidious.fdn.fr"
+       "invidious.zee.li"
+       "inv.skyn3t.in"
+       "invidiou.site"
        "invidious.xyz"
-       "vid.encryptionin.space")
+       "au.ytprivate.com"
+       "invidious.site")
      nil t))
 
   (defun browse-url-read-char (prompt choices url)
