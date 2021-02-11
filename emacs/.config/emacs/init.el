@@ -274,17 +274,17 @@
   :config
 
   (defvar browse-url-invidious-instances
-    '("yewtu.be" "invidious.namazso.eu" "invidious.fdn.fr" "tube.connect.cafe"
-      "ytprivate.com" "invidious.tube" "vid.puffyan.us" "invidious.himiko.cloud"
-      "invidious.048596.xyz" "invidious.fdn.fr" "invidious.zee.li"
-      "inv.skyn3t.in" "invidiou.site" "invidious.xyz" "au.ytprivate.com"
-      "invidious.site"))
+    '("invidious.namazso.eu" "tube.connect.cafe" "ytprivate.com"
+      "invidious.tube" "vid.puffyan.us" "invidious.himiko.cloud"
+      "invidious.048596.xyz" "invidious.zee.li" "inv.skyn3t.in" "invidiou.site"
+      "au.ytprivate.com"))
 
   (defun browse-url-maybe-change-host-to-youtube (url)
     (let* ((url-object (url-generic-parse-url url))
            (url-host (url-host url-object)))
       (when (and (member url-host browse-url-invidious-instances)
-                 (yes-or-no-p (format "Change host to youtube (%s)?" url)))
+                 ;; (yes-or-no-p (format "Change host to youtube (%s)?" url))
+                 t)
         (setf (url-host url-object) "www.youtube.com"
               url (url-recreate-url url-object))))
     url)
@@ -1743,14 +1743,35 @@
 ;;;; XML
 
 (leaf eww
+  :defvar eww-data eww-mode-map
+  :hook (eww-mode-hook . eww-restore-browse-url-browser-function)
+
   :custom
   `(eww-bookmarks-directory . ,(expand-file-name "emacs" (xdg-data-home)))
   '(eww-browse-url-new-window-is-tab . nil)
   '(eww-search-prefix . "https://ddg.co/lite/?q=")
-  :hook (eww-mode-hook . eww-restore-browse-url-browser-function)
+
+  :bind
+  (mode-specific-map :package bindings ("o y" . eww-invidous-search))
+  (eww-mode-map ("V" . eww-browse-url-current))
+
   :config
   (defun eww-restore-browse-url-browser-function ()
-    (kill-local-variable 'browse-url-browser-function)))
+    (kill-local-variable 'browse-url-browser-function))
+
+  (defun eww-browse-url-current ()
+    (interactive)
+    (when-let ((url (plist-get eww-data :url)))
+      (browse-url url)))
+
+  (defun eww-invidous-search (search instance &optional arg)
+    (interactive (let ((search (read-string "Search term: ")))
+                   (list search
+                         (browse-url-select-invidious-instance search)
+                         current-prefix-arg)))
+    (let ((url (concat "https://" instance "/search?" (url-build-query-string
+                                                       `(("q" ,search))))))
+      (eww url arg))))
 
 (leaf xml
   :defun xml-parse-string xml-escape-string
