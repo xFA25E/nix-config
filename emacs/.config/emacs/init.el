@@ -115,10 +115,6 @@
 
 (leaf rainbow-mode :package t)
 
-(leaf paren
-  :custom '(show-paren-style . 'parentheses)
-  :hook (after-init-hook . show-paren-mode))
-
 (leaf hl-line
   :hook
   ((csv-mode-hook
@@ -934,14 +930,16 @@
 
 ;;;; PAIRS
 
-(leaf elec-pair :hook (after-init-hook . electric-pair-mode))
-
-(leaf smartparens
+(leaf smartparens                       ; look cheat sheet
   :defun sp-kill-region sp-backward-kill-word
   :package t
   ;; :preface
   ;; (unless (package-installed-p 'smartparens)
   ;;   (quelpa '(smartparens :url "https://git.sr.ht/~sokolov/granpa" :fetcher git)))
+
+  :hook
+  (emacs-lisp-mode-hook . smartparens-strict-mode)       ; electric pair mode
+  (smartparens-strict-mode-hook . show-smartparens-mode) ; show paren mode
 
   :bind
   ("C-M-u" . sp-backward-up-sexp)
