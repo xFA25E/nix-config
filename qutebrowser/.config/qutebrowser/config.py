@@ -4,7 +4,7 @@
 #   qute://help/settings.html
 
 # Uncomment this to still load settings configured via autoconfig.yml
-# config.load_autoconfig()
+config.load_autoconfig(False)
 
 from subprocess import check_output
 from re import match
@@ -371,18 +371,19 @@ c.content.headers.referer = "same-domain"
 # User agent to send. Unset to send the default.
 # c.content.headers.user_agent = 'Mozilla/5.0 (Windows NT 6.1; rv:45.0) Gecko/20100101 Firefox/45.0'
 c.content.headers.user_agent = 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0'
+
 # Whether host blocking is enabled.
-c.content.host_blocking.enabled = True
+c.content.blocking.enabled = True
 
 # List of URLs of lists which contain hosts to block.
-c.content.host_blocking.lists = ["https://www.malwaredomainlist.com/hostslist/hosts.txt",
-                                 "http://someonewhocares.org/hosts/hosts",
-                                 "http://winhelp2002.mvps.org/hosts.zip",
-                                 "http://malwaredomains.lehigh.edu/files/justdomains.zip",
-                                 "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext"]
+c.content.blocking.hosts.lists = ["https://www.malwaredomainlist.com/hostslist/hosts.txt",
+                                  "http://someonewhocares.org/hosts/hosts",
+                                  "http://winhelp2002.mvps.org/hosts.zip",
+                                  "http://malwaredomains.lehigh.edu/files/justdomains.zip",
+                                  "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext"]
 
 # List of domains that should always be loaded, despite being ad-blocked.
-c.content.host_blocking.whitelist = []
+c.content.blocking.whitelist = []
 
 # Enable or disable hyperlink auditing (<a ping>).
 c.content.hyperlink_auditing = False
