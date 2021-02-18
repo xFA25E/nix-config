@@ -270,7 +270,9 @@
   :config
 
   (defvar browse-url-invidious-instances
-    '("invidious.namazso.eu" "tube.connect.cafe" "ytprivate.com"
+    '(;; "invidious.namazso.eu"
+      ;; "tube.connect.cafe"
+      "ytprivate.com"
       "invidious.tube" "vid.puffyan.us" "invidious.himiko.cloud"
       "invidious.048596.xyz" "invidious.zee.li" "inv.skyn3t.in" "invidiou.site"
       "au.ytprivate.com"))
@@ -331,8 +333,8 @@
       (apply #'eww-browse-url (url-recreate-url url-object) args)))
 
   (defun browse-url-custom-media (url &rest args)
-    (let ((prompt "[y]tdl [m]pv [b]rowser")
-          (choices '(?y ?m ?b)))
+    (let ((prompt "[y]tdl [m]pv [b]rowser [c]omments")
+          (choices '(?y ?m ?b ?c)))
       (when (browse-url-youtube-url-p url)
         (setq prompt (concat prompt " [i]nvidious")
               choices (cons ?i choices)))
@@ -340,7 +342,8 @@
                (?m #'browse-url-mpv)
                (?b #'browse-url-custom-browser)
                (?y #'browse-url-ytdl)
-               (?i #'browse-url-invidious))
+               (?i #'browse-url-invidious)
+               (?c (lambda (url &rest _) (youtube-comments url))))
              url args)))
 
   (defun browse-url-custom (url &rest args)
@@ -348,7 +351,7 @@
                                       "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob"
                                       "wmv" "aiff" "wav" "ogv" "flv")))
            (media-domains (rx (or "youtube.com" "youtu.be" "bitchute.com"
-                                  "videos.lukesmith.xyz")))
+                                  "videos.lukesmith.xyz" "twitch.tv")))
            (url-object (url-generic-parse-url url))
            (url-type (url-type url-object))
            (url-host (url-host url-object))
@@ -930,16 +933,15 @@
 
 ;;;; PAIRS
 
-(leaf smartparens                       ; look cheat sheet
+(leaf smartparens                       ; look cheat sheet and wiki and tutorial
   :defun sp-kill-region sp-backward-kill-word
   :package t
-  ;; :preface
-  ;; (unless (package-installed-p 'smartparens)
-  ;;   (quelpa '(smartparens :url "https://git.sr.ht/~sokolov/granpa" :fetcher git)))
 
   :hook
-  (emacs-lisp-mode-hook . smartparens-strict-mode)       ; electric pair mode
-  (smartparens-strict-mode-hook . show-smartparens-mode) ; show paren mode
+  ((org-mode-hook
+    emacs-lisp-mode-hook)
+   . smartparens-mode)                            ; electric pair mode
+  (smartparens-mode-hook . show-smartparens-mode) ; show paren mode
 
   :bind
   ("C-M-u" . sp-backward-up-sexp)
@@ -1726,6 +1728,12 @@
                "FLAC" "M4A" "MP3" "OGG" "OPUS" "WEBM" "MKV" "MP4" "AVI" "MPG" "MOV" "3GP" "VOB" "WMV" "AIFF" "WAV" "OGV" "FLV"))
      . mediainfo-mode--file-handler)))
 
+(leaf youtube-comments
+  :custom `(youtube-comments-invidious-hosts . ',browse-url-invidious-instances)
+  :preface
+  (unless (package-installed-p 'youtube-comments)
+    (quelpa '(youtube-comments :repo "xFA25E/emacs-youtube-comments" :fetcher github))))
+
 
 ;;;; DICTIONARY
 
@@ -1759,7 +1767,7 @@
 
   (defun eww-browse-url-current ()
     (interactive)
-    (when-let ((url (plist-get eww-data :url)))
+    (when-let ((url (eww-current-url)))
       (browse-url url)))
 
   (defun eww-invidous-search (search instance &optional arg)
@@ -1845,7 +1853,11 @@
         ("Luke Smith PeerTube" "https://videos.lukesmith.xyz/feeds/videos.xml?accountId=3")
         ("Простая Академия" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8mmPf2oKdfE2pdjqctTWUw")
         ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg")
-        ("Planet Emacslife" "https://planet.emacslife.com/atom.xml")))
+        ("Planet Emacslife" "https://planet.emacslife.com/atom.xml")
+        ("Паучительные истории" "https://www.youtube.com/feeds/videos.xml?channel_id=UC4rpWi42yPqTA0wnfx7MqOA")
+        ("КоверАраб" "https://www.youtube.com/feeds/videos.xml?channel_id=UCjulQNQQJmpYzI-BD1-s03w")
+        ("Uebermarginal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ10M7ftQN7ylM6NaPiEB6w")
+        ("Uebermarginal Twitch" "https://twitchrss.appspot.com/vod/uebermarginal")))
 
   :config
   (defun newsticker-add-thumbnail (_feedname item)
@@ -1873,9 +1885,7 @@
 
   :bind
   (mode-specific-map :package bindings ("o n" . newsticker-show-news))
-  (newsticker-treeview-mode-map
-   ("r" . newsticker-treeview-show-duration)
-   ("c" . newsticker-treeview-copy-link))
+  (newsticker-treeview-mode-map ("w" . newsticker-treeview-copy-link))
 
   :custom
   '(newsticker-treeview-automatically-mark-displayed-items-as-old . nil)
@@ -1911,6 +1921,10 @@
    :package bindings
    ("o s" . mingus)
    ("o S" . mingus-find-and-add-file))
+  (dired-mode-map
+   :package dired
+   ("SPC" . mingus-dired-add)
+   ("S-SPC" . mingus-dired-add-and-play))
 
   :custom
   '(mingus-mode-line-separator . "|")
