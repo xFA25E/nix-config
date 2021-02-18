@@ -55,6 +55,7 @@
 
 (define-key *open-map* (kbd "v") "exec uxterm -e pulsemixer")
 (define-key *open-map* (kbd "C-p") "exec uxterm -e htop")
+(define-key *open-map* (kbd "C-n") "exec uxterm -e nload")
 
 (define-key *open-map* (kbd "C-s") "mpd-controller-interactive")
 (define-key *open-map* (kbd "C-l") "brightness-controller-interactive")
