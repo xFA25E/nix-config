@@ -938,9 +938,11 @@
   :package t
 
   :hook
-  ((org-mode-hook
-    emacs-lisp-mode-hook)
-   . smartparens-mode)                            ; electric pair mode
+  ((minibuffer-inactive-mode-hook
+    emacs-lisp-mode-hook
+    lisp-mode-hook
+    scheme-mode-hook
+    sh-mode-hook) . smartparens-mode)             ; electric pair mode
   (smartparens-mode-hook . show-smartparens-mode) ; show paren mode
 
   :bind
@@ -1691,10 +1693,6 @@
   '(gdb-many-windows . t)
   '(gdb-show-main . t))
 
-(leaf proced
-  :bind (mode-specific-map :package bindings ("o p" . proced))
-  :custom '(proced-tree-flag . t))
-
 (leaf bookmark
   :custom
   '(bookmark-save-flag . 1)
@@ -1733,6 +1731,21 @@
   :preface
   (unless (package-installed-p 'youtube-comments)
     (quelpa '(youtube-comments :repo "xFA25E/emacs-youtube-comments" :fetcher github))))
+
+
+;;;; PROCESSES
+
+(leaf pueue
+  :load-path "~/Documents/projects/emacs-lisp/emacs-pueue/"
+  :commands pueue)
+
+(leaf proced
+  :bind (mode-specific-map :package bindings ("o p" . proced))
+  :custom '(proced-tree-flag . t))
+
+(leaf neato-graph-bar
+  :package t
+  :bind (mode-specific-map :package bindings ("o b" . neato-graph-bar)))
 
 
 ;;;; DICTIONARY
@@ -1841,23 +1854,31 @@
   '(newsticker-automatically-mark-visited-items-as-old . nil)
   `(newsticker-dir . ,(expand-file-name "emacs/newsticker" (xdg-cache-home)))
   '(newsticker-url-list-defaults . nil)
-  '(newsticker-url-list
-    . '(("Alt-Hype" "https://www.bitchute.com/feeds/rss/channel/thealthype/")
-        ("Mouthy Buddha" "https://www.bitchute.com/feeds/rss/channel/mouthybuddha")
-        ("Sleepy Saxon" "https://www.youtube.com/feeds/videos.xml?channel_id=UCVyzFlPnWjqrgVljH8QUiCQ")
-        ("Sean Last" "https://www.youtube.com/feeds/videos.xml?user=spawktalk")
-        ("Knight's Move" "https://www.youtube.com/feeds/videos.xml?channel_id=UC63HcOlghFQ3pcursLUp3NQ")
-        ("American Renaissance" "https://www.bitchute.com/feeds/rss/channel/amrenaissance/")
-        ("TealDeer" "https://www.bitchute.com/feeds/rss/channel/tealdeer/")
-        ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
-        ("Luke Smith PeerTube" "https://videos.lukesmith.xyz/feeds/videos.xml?accountId=3")
-        ("Простая Академия" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8mmPf2oKdfE2pdjqctTWUw")
-        ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg")
-        ("Planet Emacslife" "https://planet.emacslife.com/atom.xml")
-        ("Паучительные истории" "https://www.youtube.com/feeds/videos.xml?channel_id=UC4rpWi42yPqTA0wnfx7MqOA")
-        ("КоверАраб" "https://www.youtube.com/feeds/videos.xml?channel_id=UCjulQNQQJmpYzI-BD1-s03w")
-        ("Uebermarginal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ10M7ftQN7ylM6NaPiEB6w")
-        ("Uebermarginal Twitch" "https://twitchrss.appspot.com/vod/uebermarginal")))
+  `(newsticker-url-list
+    . ',(mapcar
+         (pcase-lambda (`(,name ,(or `(,type ,link) link)))
+           `(,name ,(concat
+                     (cl-case type
+                       (:bc "https://www.bitchute.com/feeds/rss/channel/")
+                       (:yt "https://www.youtube.com/feeds/videos.xml?channel_id="))
+                     link)))
+         '(("Alt-Hype" (:bc "thealthype"))
+           ("Mouthy Buddha" (:bc "mouthybuddha"))
+           ("Sleepy Saxon" (:yt "UCVyzFlPnWjqrgVljH8QUiCQ"))
+           ("Sean Last" (:yt "UCK1Uk2f36aglexxLkfOWnEQ"))
+           ("Knight's Move" (:yt "UC63HcOlghFQ3pcursLUp3NQ"))
+           ("American Renaissance" (:bc "amrenaissance"))
+           ("TealDeer" (:bc "tealdeer"))
+           ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
+           ("Luke Smith PeerTube" "https://lukesmith.xyz/peertube")
+           ("Простая Академия" (:yt "UC8mmPf2oKdfE2pdjqctTWUw"))
+           ("Простые Мысли" (:yt "UCZuRMfF5ZUHqYlKkvU12xvg"))
+           ("Planet Emacslife" "https://planet.emacslife.com/atom.xml")
+           ("Паучительные истории" (:yt "UC4rpWi42yPqTA0wnfx7MqOA"))
+           ("КоверАраб" (:yt "UCjulQNQQJmpYzI-BD1-s03w"))
+           ("Uebermarginal" (:yt "UCJ10M7ftQN7ylM6NaPiEB6w"))
+           ("Uebermarginal Twitch" "https://twitchrss.appspot.com/vod/uebermarginal")
+           ("PewDiePie" (:yt "UC-lHJZR3Gqxm24_Vd_AJ5Yw")))))
 
   :config
   (defun newsticker-add-thumbnail (_feedname item)
@@ -1952,17 +1973,7 @@
            (exts (cdr (mapcan (lambda (e) `("-o" "-iname" ,(concat "*." e)))
                               '("flac" "m4a" "mp3" "ogg" "opus"))))
            (args `("." "(" ,@exts ")" "-type" "f" "-o" "-type" "d")))
-      (with-temp-buffer
-        (apply #'call-process "find" nil t nil args)
-        (let (files)
-          (goto-char (point-max))
-          (beginning-of-line 0)
-          (while (< (point-min) (point))
-            (when (looking-at "\\./")
-              (goto-char (match-end 0)))
-            (push (buffer-substring (point) (line-end-position)) files)
-            (beginning-of-line 0))
-          files))))
+      (apply #'process-lines "find" args)))
 
   (defun mingus-find-and-add-file ()
     (interactive)
@@ -2059,13 +2070,12 @@
         (:from       . 22)
         (:subject)))
   `(mu4e-view-attachment-assoc
-    . ',(eval-when-compile
-          (mapcan
-           (lambda (args) (mapcar (lambda (ext) (cons ext (car args))) (cdr args)))
-           '(("sxiv"        . ("jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp"))
-             ("libreoffice" . ("csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx"))
-             ("mpv"         . ("m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov"
-                               "3gp" "vob"  "wmv" "aiff" "wav" "ogv" "flv"))))))
+    . ',(mapcan
+         (lambda (args) (mapcar (lambda (ext) (cons ext (car args))) (cdr args)))
+         '(("sxiv"        . ("jpeg" "jpg" "gif" "png" "bmp" "tif" "thm" "nef" "jfif" "webp"))
+           ("libreoffice" . ("csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx"))
+           ("mpv"         . ("m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov"
+                             "3gp" "vob"  "wmv" "aiff" "wav" "ogv" "flv")))))
 
   :config
   (load-file (expand-file-name "emacs/secrets/mu4e.el" (xdg-data-home)))
