@@ -13,8 +13,7 @@
     (run-shell-command (format nil "mpc -q ~A" command) t))
 
   (let ((*suppress-echo-timeout* t))
-    (message "~A~%~A" (string-right-trim (string #\Newline)
-                                         (run-shell-command "mpc" t))
+    (message "~A~A" (run-shell-command "mpc" t)
              "i
 < prev
 > next
