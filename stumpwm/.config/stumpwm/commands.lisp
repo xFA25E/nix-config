@@ -1,12 +1,5 @@
 (in-package :stumpwm)
 
-(define-run-or-raise "qutebrowser" "qutebrowser")
-(define-run-or-raise "firefox" "firefox")
-(define-run-or-raise "chromium-incognito" "Chromium-browser")
-(define-run-or-raise "em" "Emacs")
-
-
-
 (defcommand slynk-start () ()
   (slynk:create-server :dont-close t :port *slynk-port*))
 
@@ -20,31 +13,51 @@
     (run-shell-command (format nil "mpc -q ~A" command) t))
 
   (let ((*suppress-echo-timeout* t))
-    (message "~A" (string-right-trim (string #\Newline)
-                                     (run-shell-command "mpc" t)))))
+    (message "~A~%~A" (string-right-trim (string #\Newline)
+                                         (run-shell-command "mpc" t))
+             "i
+< prev
+> next
+t toggle
+r repeat
+z random
+Z shuffle
+c consume
+. single
+N volume -1
+n volume -10
+P volume +1
+p volume +10")))
 
-(define-interactive-keymap mpd-controller-interactive
-    (:on-enter (lambda () (run-with-timer 0.1 nil #'mpd-controller)))
-  ((kbd "<") "mpd-controller prev")
-  ((kbd ">") "mpd-controller next")
-  ((kbd "t") "mpd-controller toggle")
-  ((kbd "r") "mpd-controller repeat")
-  ((kbd "z") "mpd-controller random")
-  ((kbd "Z") "mpd-controller shuffle")
-  ((kbd "c") "mpd-controller consume")
-  ((kbd ".") "mpd-controller single")
-  ((kbd "i") "mpd-controller")
-  ((kbd "N") "mpd-controller volume -1")
-  ((kbd "n") "mpd-controller volume -10")
-  ((kbd "P") "mpd-controller volume +1")
-  ((kbd "p") "mpd-controller volume +10"))
+(let ((timer nil))
+  (define-interactive-keymap mpd-controller-interactive
+      (:on-enter (lambda () (setf timer (run-with-timer 0.1 1 #'mpd-controller)))
+       :on-exit (lambda () (cancel-timer timer)))
+    ((kbd "<") "mpd-controller prev")
+    ((kbd ">") "mpd-controller next")
+    ((kbd "t") "mpd-controller toggle")
+    ((kbd "r") "mpd-controller repeat")
+    ((kbd "z") "mpd-controller random")
+    ((kbd "Z") "mpd-controller shuffle")
+    ((kbd "c") "mpd-controller consume")
+    ((kbd ".") "mpd-controller single")
+    ((kbd "i") "mpd-controller")
+    ((kbd "N") "mpd-controller volume -1")
+    ((kbd "n") "mpd-controller volume -10")
+    ((kbd "P") "mpd-controller volume +1")
+    ((kbd "p") "mpd-controller volume +10")))
 
 (defcommand brightness-controller (&optional command) ((:rest-strings))
   (when command
     (run-shell-command (format nil "xbacklight ~A" command) t))
 
   (let ((*suppress-echo-timeout* t))
-    (message "Brightness ~A" (read-brightness-status))))
+    (message "Brightness ~A~%~A" (read-brightness-status)
+             "i
+N -dec 1
+n -dec 10
+P -inc 1
+p -inc 10")))
 
 (define-interactive-keymap brightness-controller-interactive
     (:on-enter (lambda () (run-with-timer 0.1 nil #'brightness-controller)))
@@ -60,7 +73,13 @@
 
   (let ((*suppress-echo-timeout* t))
     (multiple-value-bind (value state) (read-alsa-volume-status)
-      (message "Alsa-Volume ~A ~A" value state))))
+      (message "Alsa-Volume ~A ~A~%~A" value state
+               "i
+t -D pulse sset Master toggle
+N -D pulse sset Master 1%-
+n -D pulse sset Master 10%-
+P -D pulse sset Master 1%+
+p -D pulse sset Master 10%+"))))
 
 (define-interactive-keymap alsa-controller-interactive
     (:on-enter (lambda () (run-with-timer 0.1 nil #'alsa-controller)))
