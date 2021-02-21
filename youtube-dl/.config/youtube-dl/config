@@ -3,7 +3,6 @@
 --ignore-errors
 --continue
 --no-playlist
---console-title
 --embed-subs
 --output "%(uploader)s/%(upload_date)s - %(title)s.%(ext)s"
 --format '(bestvideo+bestaudio/best)[height<=?768][width<=?1366]'
