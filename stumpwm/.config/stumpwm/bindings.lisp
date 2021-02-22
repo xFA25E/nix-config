@@ -36,7 +36,8 @@
 (define-key *root-map* (kbd "C-q") "send-raw-key")
 (define-key *root-map* (kbd "C-o") '*open-map*)
 
-(defprogram-shortcut em :props '(:class "Emacs") :map *root-map* :key (kbd "C-e"))
+(defprogram-shortcut em :map *root-map* :key (kbd "C-e")
+  :props '(:class "Emacs"))
 
 ;;; OPEN
 
@@ -58,9 +59,11 @@
 
 (define-key *open-map* (kbd "C-m") "show-menu")
 
-(defprogram-shortcut qutebrowser :map *open-map* :key (kbd "C-q"))
 (defprogram-shortcut firefox :map *open-map* :key (kbd "C-f"))
-(defprogram-shortcut chromium-incognito :map *open-map* :key (kbd "C-b"))
+(defprogram-shortcut qutebrowser :map *open-map* :key (kbd "C-q")
+  :props '(:class "qutebrowser"))
+(defprogram-shortcut chromium-incognito :map *open-map* :key (kbd "C-b")
+  :props '(:class "Chromium-browser"))
 
 ;;; Remapped keys
 
