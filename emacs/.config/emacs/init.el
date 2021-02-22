@@ -564,6 +564,7 @@
 
 (leaf transient
   :custom
+  '(transient-enable-popup-navigation . t)
   `(transient-history-file
     . ,(expand-file-name "emacs/transient/history.el" (xdg-cache-home)))
   `(transient-levels-file
@@ -1878,7 +1879,8 @@
            ("КоверАраб" (:yt "UCjulQNQQJmpYzI-BD1-s03w"))
            ("Uebermarginal" (:yt "UCJ10M7ftQN7ylM6NaPiEB6w"))
            ("Uebermarginal Twitch" "https://twitchrss.appspot.com/vod/uebermarginal")
-           ("PewDiePie" (:yt "UC-lHJZR3Gqxm24_Vd_AJ5Yw")))))
+           ("PewDiePie" (:yt "UC-lHJZR3Gqxm24_Vd_AJ5Yw"))
+           ("Internet Historian" (:yt "UCR1D15p_vdP3HkrH8wgjQRw")))))
 
   :config
   (defun newsticker-add-thumbnail (_feedname item)
