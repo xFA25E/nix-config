@@ -270,11 +270,11 @@
   :config
 
   (defvar browse-url-invidious-instances
-    '(;; "invidious.namazso.eu"
-      ;; "tube.connect.cafe"
-      "ytprivate.com"
-      "invidious.tube" "vid.puffyan.us" "invidious.himiko.cloud"
-      "invidious.048596.xyz" "invidious.zee.li" "inv.skyn3t.in" "invidiou.site"
+    '("invidious.ethibox.fr" "invidious.site" "invidious.fdn.fr"
+      "invidious.tube" "invidious.zapashcanon.fr" "tube.connect.cafe"
+      "vid.puffyan.us" "invidious.048596.xyz" "invidious.himiko.cloud"
+      "invidious.zee.li" "invidious.namazso.eu" "yewtu.be" "ytprivate.com"
+      "vid.mint.lgbt" "inv.skyn3t.in" "invidious.kavin.rocks"
       "au.ytprivate.com"))
 
   (defun browse-url-maybe-change-host-to-youtube (url)
@@ -1864,23 +1864,25 @@
                        (:yt "https://www.youtube.com/feeds/videos.xml?channel_id="))
                      link)))
          '(("Alt-Hype" (:bc "thealthype"))
-           ("Mouthy Buddha" (:bc "mouthybuddha"))
-           ("Sleepy Saxon" (:yt "UCVyzFlPnWjqrgVljH8QUiCQ"))
-           ("Sean Last" (:yt "UCK1Uk2f36aglexxLkfOWnEQ"))
-           ("Knight's Move" (:yt "UC63HcOlghFQ3pcursLUp3NQ"))
            ("American Renaissance" (:bc "amrenaissance"))
+           ("Mouthy Buddha" (:bc "mouthybuddha"))
            ("TealDeer" (:bc "tealdeer"))
-           ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
-           ("Luke Smith PeerTube" "https://lukesmith.xyz/peertube")
+           ("Internet Historian" (:yt "UCR1D15p_vdP3HkrH8wgjQRw"))
+           ("Knight's Move" (:yt "UC63HcOlghFQ3pcursLUp3NQ"))
+           ("PewDiePie" (:yt "UC-lHJZR3Gqxm24_Vd_AJ5Yw"))
+           ("Sean Last" (:yt "UCK1Uk2f36aglexxLkfOWnEQ"))
+           ("Sleepy Saxon" (:yt "UCVyzFlPnWjqrgVljH8QUiCQ"))
+           ("Uebermarginal" (:yt "UCJ10M7ftQN7ylM6NaPiEB6w"))
+           ("itpedia" (:yt "UC6bTF68IAV1okfRfwXIP1Cg"))
+           ("Алексей Шевцов" (:yt "UCM7-8EfoIv0T9cCI4FhHbKQ"))
+           ("КоверАраб" (:yt "UCjulQNQQJmpYzI-BD1-s03w"))
+           ("Паучительные истории" (:yt "UC4rpWi42yPqTA0wnfx7MqOA"))
            ("Простая Академия" (:yt "UC8mmPf2oKdfE2pdjqctTWUw"))
            ("Простые Мысли" (:yt "UCZuRMfF5ZUHqYlKkvU12xvg"))
+           ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
+           ("Luke Smith PeerTube" "https://lukesmith.xyz/peertube")
            ("Planet Emacslife" "https://planet.emacslife.com/atom.xml")
-           ("Паучительные истории" (:yt "UC4rpWi42yPqTA0wnfx7MqOA"))
-           ("КоверАраб" (:yt "UCjulQNQQJmpYzI-BD1-s03w"))
-           ("Uebermarginal" (:yt "UCJ10M7ftQN7ylM6NaPiEB6w"))
-           ("Uebermarginal Twitch" "https://twitchrss.appspot.com/vod/uebermarginal")
-           ("PewDiePie" (:yt "UC-lHJZR3Gqxm24_Vd_AJ5Yw"))
-           ("Internet Historian" (:yt "UCR1D15p_vdP3HkrH8wgjQRw")))))
+           ("Uebermarginal Twitch" "https://twitchrss.appspot.com/vod/uebermarginal"))))
 
   :config
   (defun newsticker-add-thumbnail (_feedname item)
