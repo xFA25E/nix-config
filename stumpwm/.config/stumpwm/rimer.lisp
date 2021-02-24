@@ -97,7 +97,7 @@
 
 (defcommand add-rimer-countdown (name duration)
     ((:rimer-name "Countdown name: ")
-     (:rimer-duration "Countdown duration ([[t]HH:]MM): "))
+     (:rimer-duration "Countdown duration ([[t]H:]M): "))
   (message
    "~A"
    (run-shell-command
