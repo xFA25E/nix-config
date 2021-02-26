@@ -1,9 +1,0 @@
-#!/bin/sh
-i=1
-notify_sound
-while true; do
-    sleep "${1:?provide seconds}"
-    echo "${i}"
-    notify_sound
-    i="$((i + 1))"
-done

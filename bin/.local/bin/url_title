@@ -1,7 +1,0 @@
-#!/bin/sh
-wget -qO- "${1:?provide link}" | \
-    perl -l -0777 -n -mHTML::Entities -e \
-         'print HTML::Entities::decode_entities($1) if /<title.*?>\s*(.*?)\s*<\/title/si'
-# Local Variables:
-# Mode: shell-script
-# End:
