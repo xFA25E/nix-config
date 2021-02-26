@@ -143,8 +143,12 @@ export BOOT_HOME="${XDG_CACHE_HOME}/boot"
 # pager
 export PAGER=cat
 
+# nix
 if [ -e "${HOME}/.nix-profile/etc/profile.d/nix.sh" ]; then
     . "${HOME}/.nix-profile/etc/profile.d/nix.sh"
+fi
+if [ -e "${HOME}/.nix-profile/etc/profile.d/my-profile.sh" ]; then
+    . "${HOME}/.nix-profile/etc/profile.d/my-profile.sh"
 fi
 
 # youtube-dl

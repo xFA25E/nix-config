@@ -11,7 +11,6 @@
 (defun config-file (path)
   (merge-pathnames path *config-directory*))
 
-(init-load-path (config-file "modules/"))
 (load (config-file "variables.lisp"))
 (load (config-file "utilities.lisp"))
 (load (config-file "commands.lisp"))

@@ -67,9 +67,19 @@
     sbcl = symlinkJoin {
       name = "sbcl";
       paths = [ pkgs.sbcl ];
-      buildInputs = [ makeWrapper ];
       postBuild = ''
-        wrapProgram "$out/bin/sbcl" --add-flags "--userinit \"\''${XDG_CONFIG_HOME:-\''${HOME}/.config}/sbcl/init.lisp\""
+        mv "$out/bin/sbcl" "$out/bin/.sbcl-wrapped"
+
+        echo '#!${stdenv.shell}' >> "$out/bin/sbcl"
+        echo 'ARGS="$*"' >> "$out/bin/sbcl"
+        echo 'USERINIT="''${XDG_CONFIG_HOME:-''${HOME}/.config}/sbcl/init.lisp"' >> "$out/bin/sbcl"
+        echo 'if test "''${ARGS#*$--userinit}" != "$ARGS" || ! test -r "$USERINIT"; then' >> "$out/bin/sbcl"
+        echo '    exec -a "$0" "'"$out/bin/.sbcl-wrapped"'" "$@"' >> "$out/bin/sbcl"
+        echo 'else' >> "$out/bin/sbcl"
+        echo '    exec -a "$0" "'"$out/bin/.sbcl-wrapped"'" --userinit "$USERINIT" "$@"' >> "$out/bin/sbcl"
+        echo 'fi' >> "$out/bin/sbcl"
+
+        chmod 555 "$out/bin/sbcl"
       '';
     };
 
@@ -127,7 +137,14 @@
     myPackages = pkgs.buildEnv {
       name = "my-packages";
       paths = [
-
+        (let my-profile = writeText "my-profile" ''
+          export PATH=$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
+          export MANPATH=$HOME/.nix-profile/share/man:/nix/var/nix/profiles/default/share/man:/usr/share/man:$MANPATH
+          export INFOPATH=$HOME/.nix-profile/share/info:/nix/var/nix/profiles/default/share/info:/usr/share/info:$INFOPATH
+        ''; in runCommand "profile" {} ''
+          mkdir -p $out/etc/profile.d
+          cp ${my-profile} $out/etc/profile.d/my-profile.sh
+        '')
         checkbashisms dejavu_fonts dmenu eldev emacs fd feh file firefox git
         gnupg hack-font htop iosevka jq ledger leiningen libreoffice-fresh man
         mkpasswd mpc_cli mpd mpop mpv msmtp mtpfs mu p7zip pass-otp pinentry
@@ -138,7 +155,16 @@
         ungoogled-chromium woof xclip xz youtube-dl zip
 
       ];
-      extraOutputsToInstall = [ "man" "doc" ];
+      # pathsToLink = [ "/share/man" "/share/doc" "/share/info" "/bin" "/etc" ];
+      extraOutputsToInstall = [ "man" "doc" "info" ];
+      postBuild = ''
+        if [ -x $out/bin/install-info -a -w $out/share/info ]; then
+          shopt -s nullglob
+          for i in $out/share/info/*.info $out/share/info/*.info.gz; do
+              $out/bin/install-info $i $out/share/info/dir
+          done
+        fi
+      '';
     };
   };
 }
