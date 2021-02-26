@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec dmenu -fn 'Iosevka-20' -i -nb white -nf black -sb black -sf white "$@"

@@ -1,5 +1,0 @@
-#!/bin/sh
-u="${1:?provide user}"
-shift
-# shift
-sudo -u "$u" gdb -fullname "$@"

@@ -1,2 +1,0 @@
-#!/bin/sh
-stalonetray --config "${XDG_CONFIG_HOME}/stalonetray/stalonetrayrc"

@@ -1,11 +1,6 @@
 #!/bin/sh
 STATE="$(nmcli networking connectivity)"
 
-new_mails() {
-    find "${MAILDIR:?}" -type f \
-         \( -path '*/POLIMI/new/*' -o -path '*/EXYS/new/*' \)
-}
-
 if [ "${STATE}" = 'full' ]; then
     exec mpop -Q "$@"
 else

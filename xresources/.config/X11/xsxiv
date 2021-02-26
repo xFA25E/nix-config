@@ -1,5 +1,0 @@
-! -*- mode: conf-xdefaults; -*-
-
-Sxiv.foreground: base05
-Sxiv.background: base00
-Sxiv.font:       Iosevka-15

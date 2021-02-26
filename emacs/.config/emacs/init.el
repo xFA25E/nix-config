@@ -577,6 +577,8 @@
   :hook (emacs-startup-hook . gcmh-mode)
   :config (diminish 'gcmh-mode))
 
+(leaf server :hook (after-init-hook . server-mode))
+
 
 ;;; REMOTE
 
@@ -943,7 +945,9 @@
     emacs-lisp-mode-hook
     lisp-mode-hook
     scheme-mode-hook
-    sh-mode-hook) . smartparens-mode)             ; electric pair mode
+    sh-mode-hook
+    nix-mode-hook)
+   . smartparens-mode)                            ; electric pair mode
   (smartparens-mode-hook . show-smartparens-mode) ; show paren mode
 
   :bind
@@ -1531,7 +1535,7 @@
                          (opt "sudo " (opt "-A "))
                          (or "awk" "bash" "cat" "cd" "chmod" "chown" "command"
                              "cp" "cut" "dash" "dd" "df" "dh" "du" "ebook-convert"
-                             "echo" "em" "emacs" "env" "exit" "export" "fd" "feh"
+                             "echo" "emacs" "env" "exit" "export" "fd" "feh"
                              "file" "find" "gawk" "gparted" "grep" "gzip"
                              "hash" "host" "htop" "id" "ln" "locate" "ls" "man"
                              "mbsync" "millisleep" "mkdir" "mpop" "mpv" "mv"

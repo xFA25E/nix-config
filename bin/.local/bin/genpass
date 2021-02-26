@@ -1,8 +1,0 @@
-#!/bin/sh
-case "${1}" in
-    easy)
-        pwgen -B -c 11 1
-        ;;
-    *)
-        pwgen -s -y 30 1
-esac

@@ -13,7 +13,7 @@ get_formats() {
 }
 
 select_format() {
-    menu -p "Select format" -l 19
+    dmenu -p "Select format" -l 19
 }
 
 menu='480x640
@@ -23,7 +23,7 @@ audio only
 240x320
 144x256
 select video'
-format="$(printf "%s" "${menu}" | menu -p "mpv")"
+format="$(printf "%s" "${menu}" | dmenu -p "mpv")"
 
 case "${format:?}" in
     768x1366)
@@ -50,14 +50,7 @@ case "${format:?}" in
         ;;
 esac
 
-if [ "${chosen_format}" = "bestaudio/best" ]; then
-    mpd="$(printf 'no\nyes\n' | menu -p "Add to mpd?")"
-    if [ "${mpd}" = yes ]; then
-        exec mpc_add_link "${link}"
-    fi
-fi
-
-pause="$(printf '%s\n\n' --pause | menu -p "Start paused?")"
+pause="$(printf '%s\n\n' --pause | dmenu -p "Start paused?")"
 
 exec mpv "${link}" \
      --ytdl-format="${chosen_format:?}" \

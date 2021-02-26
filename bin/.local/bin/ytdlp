@@ -1,4 +1,0 @@
-#!/bin/sh
-exec ytdl --output "%(playlist_uploader)s/%(playlist)s/%(playlist_index)s%(upload_date)s - %(title)s.%(ext)s" \
-     --yes-playlist \
-     "$@"

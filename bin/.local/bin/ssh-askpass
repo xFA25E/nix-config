@@ -3,6 +3,6 @@ STORE="${PASSWORD_STORE_DIR:-~/.password-store}"
 find "${STORE}" -type f \
     | cut -c "$((${#STORE} + 2))-" \
     | sed 's/.gpg$//' \
-    | menu -p "Pass" -l 10 \
+    | dmenu -p "Pass" -l 10 \
     | xargs pass show \
     | head -n 1

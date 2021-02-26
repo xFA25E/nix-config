@@ -1,7 +1,89 @@
 ! -*- mode: conf-xdefaults; -*-
-#include "xcolors"
-#include "xterm"
-#include "xqutebrowser"
-#include "xbspwm"
-#include "xsxiv"
-#include "xemacs"
+
+! COLORS
+
+#define base00 #FFFFFF
+#define base01 #E0E0E0
+#define base02 #D0D0D0
+#define base03 #B0B0B0
+#define base04 #000000
+#define base05 #101010
+#define base06 #151515
+#define base07 #202020
+#define base08 #FF0086
+#define base09 #FD8900
+#define base0A #ABA800
+#define base0B #00C918
+#define base0C #1FAAAA
+#define base0D #3777E6
+#define base0E #AD00A1
+#define base0F #CC6633
+
+! XTERM
+
+xterm*cursorBlink:      false
+xterm*font:             xft:Hack:size=15:antialias=true:hinting=true
+xterm*internalBorder:   0
+xterm*saveLines:        10240
+xterm*scrollTtyOutput:  false
+xterm*termName:         xterm-color
+xterm*eightBitInput:    false
+
+xterm*foreground:       base05
+xterm*background:       base00
+xterm*cursorColor:      base08
+
+xterm*color0:           base00
+xterm*color1:           base08
+xterm*color2:           base0B
+xterm*color3:           base0A
+xterm*color4:           base0D
+xterm*color5:           base0E
+xterm*color6:           base0C
+xterm*color7:           base05
+
+xterm*color8:           base03
+xterm*color9:           base08
+xterm*color10:          base0B
+xterm*color11:          base0A
+xterm*color12:          base0D
+xterm*color13:          base0E
+xterm*color14:          base0C
+xterm*color15:          base07
+
+xterm*color16:          base09
+xterm*color17:          base0F
+xterm*color18:          base01
+xterm*color19:          base02
+xterm*color20:          base04
+xterm*color21:          base06
+
+! QUTEBROWSER
+
+qutebrowser.BG:       base00
+qutebrowser.BGH:      base01
+qutebrowser.SEC:      base02
+qutebrowser.FG:       base04
+qutebrowser.FGH:      base05
+qutebrowser.white:    base07
+qutebrowser.red:      base08
+qutebrowser.orange:   base09
+qutebrowser.yellow:   base0A
+qutebrowser.green:    base0B
+qutebrowser.cyan:     base0C
+qutebrowser.blue:     base0D
+qutebrowser.violet:   base0E
+qutebrowser.magenta:  base0F
+
+! SXIV
+
+Sxiv.foreground: base05
+Sxiv.background: base00
+Sxiv.font:       Iosevka-15
+
+! EMACS
+
+emacs.ScrollBars: off
+emacs.ScrollBar: off
+emacs.ToolBar: off
+emacs.MenuBar: off

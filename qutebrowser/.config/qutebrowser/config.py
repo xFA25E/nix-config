@@ -505,7 +505,7 @@ c.downloads.position = "top"
 c.downloads.remove_finished = 200
 
 # The editor (and arguments) to use for the open-editor command.
-c.editor.command = ['emw', '{file}', '+{line}:{column}']
+c.editor.command = ['emacseditor', '{file}', '+{line}:{column}']
 
 # Encoding to use for the editor.
 c.editor.encoding = "utf-8"

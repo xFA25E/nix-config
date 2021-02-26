@@ -1,5 +1,0 @@
-#!/bin/sh
-YTDIR="${XDG_VIDEOS_DIR:-${HOME}/Videos}/youtube"
-exec ytdl --output "${YTDIR}/%(playlist_uploader)s/%(playlist)s/%(playlist_index)s%(upload_date)s - %(title)s.%(ext)s" \
-     --yes-playlist \
-     "$@"

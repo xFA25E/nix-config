@@ -1,5 +1,0 @@
-#!/bin/sh
-[ -z "${1}" ] && notify-send "Url is empty"
-link="${1:?provide url}"
-url="$(ytdl --no-color --format bestaudio/best --get-url "${link:?}")"
-exec mpc add "${url:?}"

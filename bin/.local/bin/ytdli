@@ -12,11 +12,11 @@ get_formats() {
 }
 
 select_format() {
-    menu -p "Select format" -lines 19
+    dmenu -p "Select format" -lines 19
 }
 
 
-case "$(printf "video\naudio\nmusic\nselect video" | menu -p "Download")" in
+case "$(printf "video\naudio\nmusic\nselect video" | dmenu -p "Download")" in
     video)
         pueue add -- ytdly "${url}"
         ;;

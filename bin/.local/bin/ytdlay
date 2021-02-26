@@ -1,3 +1,0 @@
-#!/bin/sh
-YTDIR="${XDG_VIDEOS_DIR:-${HOME}/Videos}/youtube"
-exec ytdla --output "${YTDIR}/%(uploader)s/%(upload_date)s - %(title)s.%(ext)s" "$@"

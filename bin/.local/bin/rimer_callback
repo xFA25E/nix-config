@@ -24,7 +24,7 @@ case "${state}" in
                 mark_file="${HOME}/org/${name}.marks"
                 log_file="${HOME}/org/${name}.log"
                 selected="$(tail -n 1 "${log_file}" | cut -d" " -f4)"
-                what="$(awk '!$3 && $1 {print $1}' "${mark_file}" | menu -p "What")"
+                what="$(awk '!$3 && $1 {print $1}' "${mark_file}" | dmenu -p "What")"
                 save_log "${what:?}" "${elapsed}" "${log_file}"
                 ;;
             *)

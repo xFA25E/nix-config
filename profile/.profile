@@ -2,7 +2,7 @@ export HOME="${HOME:-/home/$(whoami)}"
 
 # some env vars
 export PATH="${HOME}/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${PATH}"
-export EDITOR="emw"
+export EDITOR="emacseditor"
 export VISUAL="${EDITOR}"
 export MANPATH="/usr/local/man:${MANPATH}"
 export BROWSER="qutebrowser"
@@ -46,10 +46,6 @@ export PATH="${CARGO_HOME}/bin:${PATH}"
 
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
-
-# runel
-export RUNEL_WM_NAME="runel_panel"
-export LEMONBAR_ARGS="-n,${RUNEL_WM_NAME},-f,Iosevka-12"
 
 # less
 export LESSHISFILE="/dev/null"
@@ -150,6 +146,9 @@ export PAGER=cat
 if [ -e "${HOME}/.nix-profile/etc/profile.d/nix.sh" ]; then
     . "${HOME}/.nix-profile/etc/profile.d/nix.sh"
 fi
+
+# youtube-dl
+export YTDL_DIR="${XDG_VIDEOS_DIR:-${HOME}/Videos}/youtube"
 
 # Following automatically calls "startx" when you login:
 [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ] && \

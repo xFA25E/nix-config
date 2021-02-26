@@ -36,9 +36,6 @@
 (define-key *root-map* (kbd "C-q") "send-raw-key")
 (define-key *root-map* (kbd "C-o") '*open-map*)
 
-(defprogram-shortcut em :map *root-map* :key (kbd "C-e")
-  :props '(:class "Emacs"))
-
 ;;; OPEN
 
 (define-key *open-map* (kbd "C-c") "menu-rimer")
