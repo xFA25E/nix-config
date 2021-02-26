@@ -2,4 +2,4 @@
 
 image="${1:?provide image}"
 type="$(file -b --mime-type "${image}")"
-xclip -t "${type:?}" "${image}"
+exec xclip -t "${type:?}" "${image}"

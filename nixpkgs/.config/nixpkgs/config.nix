@@ -134,6 +134,19 @@
       '';
     };
 
+    myScripts = stdenv.mkDerivation {
+      name = "my-scripts";
+      src = fetchFromGitHub {
+        owner = "xFA25E";
+        repo = "dotfiles";
+        rev = "40c7a2b72af7a28dae7e68e732d259d987ae5a98";
+        sha256 = "1l0jmv1jxgrq9dvk8f9yihhas9aym7imp8vi9x5h26chrkddi1bs";
+      };
+      installPhase = ''
+        install -D -v -t "$out/bin" "$src/bin/.local/bin/"*
+      '';
+    };
+
     myPackages = pkgs.buildEnv {
       name = "my-packages";
       paths = [

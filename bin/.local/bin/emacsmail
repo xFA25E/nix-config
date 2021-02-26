@@ -1,2 +1,2 @@
 #!/bin/sh
-emacseditor --no-wait --eval "(browse-url-mail \"$@\")"
+exec emacseditor --no-wait --eval "(browse-url-mail \"$@\")"
