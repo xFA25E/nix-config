@@ -1,5 +1,19 @@
 {
   packageOverrides = pkgs: with pkgs; rec {
+
+    myScripts = stdenv.mkDerivation {
+      name = "my-scripts";
+      src = fetchFromGitHub {
+        owner = "xFA25E";
+        repo = "dotfiles";
+        rev = "40c7a2b72af7a28dae7e68e732d259d987ae5a98";
+        sha256 = "1l0jmv1jxgrq9dvk8f9yihhas9aym7imp8vi9x5h26chrkddi1bs";
+      };
+      installPhase = ''
+        install -D -v -t "$out/bin" "$src/bin/.local/bin/"*
+      '';
+    };
+
     eldev = stdenv.mkDerivation rec {
       pname = "eldev";
       version = "0.8.1";
@@ -10,8 +24,7 @@
       buildInputs = [ makeWrapper emacs ];
       unpackPhase = "true";
       installPhase = ''
-        mkdir -p "$out/bin"
-        install -m555 "$src" "$out/bin/eldev"
+        install -D -v -m555 "$src" "$out/bin/eldev"
         wrapProgram "$out/bin/eldev" --set ELDEV_EMACS "${emacs}/bin/emacs"
       '';
     };
@@ -55,7 +68,7 @@
       };
     };
 
-    stalonetray = symlinkJoin {
+    myStalonetray = symlinkJoin {
       name = "stalonetray";
       paths = [ pkgs.stalonetray ];
       buildInputs = [ makeWrapper ];
@@ -64,26 +77,16 @@
       '';
     };
 
-    sbcl = symlinkJoin {
+    mySbcl = symlinkJoin {
       name = "sbcl";
       paths = [ pkgs.sbcl ];
+      buildInputs = [ makeWrapper ];
       postBuild = ''
-        mv "$out/bin/sbcl" "$out/bin/.sbcl-wrapped"
-
-        echo '#!${stdenv.shell}' >> "$out/bin/sbcl"
-        echo 'ARGS="$*"' >> "$out/bin/sbcl"
-        echo 'USERINIT="''${XDG_CONFIG_HOME:-''${HOME}/.config}/sbcl/init.lisp"' >> "$out/bin/sbcl"
-        echo 'if test "''${ARGS#*$--userinit}" != "$ARGS" || ! test -r "$USERINIT"; then' >> "$out/bin/sbcl"
-        echo '    exec -a "$0" "'"$out/bin/.sbcl-wrapped"'" "$@"' >> "$out/bin/sbcl"
-        echo 'else' >> "$out/bin/sbcl"
-        echo '    exec -a "$0" "'"$out/bin/.sbcl-wrapped"'" --userinit "$USERINIT" "$@"' >> "$out/bin/sbcl"
-        echo 'fi' >> "$out/bin/sbcl"
-
-        chmod 555 "$out/bin/sbcl"
+        wrapProgram "$out/bin/sbcl" --add-flags "--userinit \"\''${XDG_CONFIG_HOME:-\''${HOME}/.config}/sbcl/init.lisp\""
       '';
     };
 
-    ungoogled-chromium = symlinkJoin {
+    myUngoogledChromium = symlinkJoin {
       name = "ungoogled-chromium";
       paths = [ pkgs.ungoogled-chromium ];
       buildInputs = [ makeWrapper ];
@@ -92,7 +95,7 @@
       '';
     };
 
-    emacs = symlinkJoin {
+    myEmacs = symlinkJoin {
       name = "emacs";
       paths = [ pkgs.emacs ];
       buildInputs = [ makeWrapper ];
@@ -101,16 +104,7 @@
       '';
     };
 
-    dmenu = symlinkJoin {
-      name = "dmenu";
-      paths = [ pkgs.dmenu ];
-      buildInputs = [ makeWrapper ];
-      postBuild = ''
-        wrapProgram "$out/bin/dmenu" --add-flags "-fn 'Iosevka-20' -i -nb white -nf black -sb black -sf white"
-      '';
-    };
-
-    youtube-dl = let
+    myYoutubeDl = let
       dir = "\\\${YTDL_DIR:-\\\${XDG_VIDEOS_DIR:-\\\${HOME}/Videos}}";
       title = "%(title)s.%(ext)s";
       vid = "%(upload_date)s - ${title}";
@@ -134,16 +128,12 @@
       '';
     };
 
-    myScripts = stdenv.mkDerivation {
-      name = "my-scripts";
-      src = fetchFromGitHub {
-        owner = "xFA25E";
-        repo = "dotfiles";
-        rev = "40c7a2b72af7a28dae7e68e732d259d987ae5a98";
-        sha256 = "1l0jmv1jxgrq9dvk8f9yihhas9aym7imp8vi9x5h26chrkddi1bs";
-      };
-      installPhase = ''
-        install -D -v -t "$out/bin" "$src/bin/.local/bin/"*
+    dmenu = symlinkJoin {
+      name = "dmenu";
+      paths = [ pkgs.dmenu ];
+      buildInputs = [ makeWrapper ];
+      postBuild = ''
+        wrapProgram "$out/bin/dmenu" --add-flags "-fn 'Iosevka-20' -i -nb white -nf black -sb black -sf white"
       '';
     };
 
@@ -158,14 +148,14 @@
           mkdir -p $out/etc/profile.d
           cp ${my-profile} $out/etc/profile.d/my-profile.sh
         '')
-        checkbashisms dejavu_fonts dmenu eldev emacs fd feh file firefox git
+        checkbashisms dejavu_fonts dmenu eldev myEmacs fd feh file firefox git
         gnupg hack-font htop iosevka jq ledger leiningen libreoffice-fresh man
         mkpasswd mpc_cli mpd mpop mpv msmtp mtpfs mu p7zip pass-otp pinentry
         pueue pulsemixer pwgen qrencode qtox # qutebrowser
         rimer ripgrep rsync
-        rustup sctd sbcl sdcv shellcheck simplescreenrecorder sloccount
-        speedtest-cli stalonetray stow sxiv syncthing tdesktop transmission
-        ungoogled-chromium woof xclip xz youtube-dl zip
+        rustup sctd mySbcl sdcv shellcheck simplescreenrecorder sloccount
+        speedtest-cli myStalonetray stow sxiv syncthing tdesktop transmission
+        myUngoogledChromium woof xclip xz myYoutubeDl zip
 
       ];
       # pathsToLink = [ "/share/man" "/share/doc" "/share/info" "/bin" "/etc" ];
@@ -179,5 +169,6 @@
         fi
       '';
     };
+
   };
 }
