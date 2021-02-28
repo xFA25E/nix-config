@@ -185,7 +185,7 @@
         mkpasswd mpc_cli mpd mpop mpv msmtp mtpfs mu p7zip pass-otp pinentry
         pueue pulsemixer pwgen qrencode qtox # qutebrowser
         rimer ripgrep rsync
-        rustup sctd mySbcl sdcv shellcheck simplescreenrecorder sloccount
+        rustup myScripts sctd mySbcl sdcv shellcheck simplescreenrecorder sloccount
         speedtest-cli myStalonetray stow sxiv syncthing tdesktop transmission
         myUngoogledChromium woof xclip xz myYoutubeDl zip
 
