@@ -6,12 +6,44 @@
       src = fetchFromGitHub {
         owner = "xFA25E";
         repo = "dotfiles";
-        rev = "40c7a2b72af7a28dae7e68e732d259d987ae5a98";
-        sha256 = "1l0jmv1jxgrq9dvk8f9yihhas9aym7imp8vi9x5h26chrkddi1bs";
+        rev = "9f52d14d3e765df622ec3690e0874a70d03cf3ae";
+        sha256 = "000ic83lv3cns6yx18ib0ib9ic7z8w1l29w34xg6vlrwbpa7ad5w";
       };
+      nativeBuildInputs = [ makeWrapper ];
       installPhase = ''
         install -D -v -t "$out/bin" "$src/bin/.local/bin/"*
       '';
+      postFixup = let
+        join = lib.strings.concatStringsSep "\n";
+        makeBins = lib.strings.makeBinPath;
+        makeLine = (s: d: "wrapProgram \"$out/bin/${s}\" --set PATH \"${makeBins d}\"");
+        mapLines = lib.attrsets.mapAttrsToList makeLine;
+        scripts = {
+          "compress_video" = [ ffmpeg ];
+          "emacsdired" = [ myEmacs ];
+          "emacsmail" = [ myEmacs ];
+          "extract_eml" = [ mu coreutils ];
+          "format_duration" = [ gawk ];
+          "image_clipboard" = [ xclip file ];
+          "mailsync" = [ networkmanager mpop ];
+          "make_backup" = [ util-linux gawk dmenu coreutils findutils ];
+          "make_video_queue" = [ findutils coreutils gawk "$out" ];
+          "mpvi" = [ libnotify mpv dmenu myYoutubeDl jq coreutils gawk gnused ];
+          "notify_sound" = [ mpv ];
+          "qrshow" = [ libnotify coreutils qrencode sxiv ];
+          "random_wallpaper" = [ feh findutils coreutils ];
+          "rimer_callback" = [ coreutils libnotify dmenu gawk "$out"];
+          "rmount" = [ coreutils util-linux gawk findutils dmenu sudo libnotify mtpfs ];
+          "rumount" = [ dmenu gawk util-linux libnotify gnugrep coreutils ];
+          "search_ebook" = [ coreutils findutils ];
+          "ssh-askpass" = [ findutils gnused dmenu coreutils pass-otp ];
+          "strip_video" = [ ffmpeg ];
+          "studies_plot" = [ gnuplot ];
+          "sudo_askpass" = [ pass-otp ];
+          "video_duration" = [ mediainfo gnugrep coreutils gawk ];
+          "ytdlam" = [ myYoutubeDl findutils coreutils dmenu ];
+          "ytdli" = [ dmenu libnotify myYoutubeDl jq coreutils pueue ];
+        }; in join (mapLines scripts);
     };
 
     eldev = stdenv.mkDerivation rec {

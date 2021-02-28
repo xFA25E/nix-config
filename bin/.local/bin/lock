@@ -1,6 +1,0 @@
-#!/bin/sh
-screenshot_filename="/tmp/desktop-lock-scrot.png"
-setxkbmap -layout dvorak,ru -variant ,ruu
-scrot -o "${screenshot_filename}"
-convert "${screenshot_filename}" -blur 6x5 "${screenshot_filename}"
-exec i3lock --tiling --ignore-empty-password --show-failed-attempts --pointer win --image="${screenshot_filename}"

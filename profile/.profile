@@ -1,6 +1,3 @@
-export HOME="${HOME:-/home/$(whoami)}"
-
-# some env vars
 export PATH="${HOME}/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${PATH}"
 export EDITOR="emacseditor"
 export VISUAL="${EDITOR}"
