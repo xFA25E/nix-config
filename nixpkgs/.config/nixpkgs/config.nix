@@ -6,8 +6,8 @@
       src = fetchFromGitHub {
         owner = "xFA25E";
         repo = "dotfiles";
-        rev = "fa4b217af81036a4dd77e8d6ecd46ae1ed99959b";
-        sha256 = "0a5bfgdrvri02yr3mjw4j693lwmh3zs8vl0vs2100qzmqjr25hfp";
+        rev = "bde6d63a9cc63637cc350be5bf51cc165c766ca2";
+        sha256 = "0ikk64rmnmnv1grwgcclj2z85rrcpi4dml6mpksp86z8ldfl0h4a";
       };
       nativeBuildInputs = [ makeWrapper ];
       installPhase = ''
@@ -25,7 +25,6 @@
           "extract_eml" = [ mu coreutils ];
           "format_duration" = [ gawk ];
           "image_clipboard" = [ xclip file ];
-          "mailsync" = [ networkmanager mpop ];
           "make_backup" = [ util-linux gawk dmenu coreutils findutils ];
           "make_video_queue" = [ findutils coreutils gawk "$out" ];
           "mpvi" = [ libnotify mpv dmenu myYoutubeDl jq coreutils gawk gnused ];
