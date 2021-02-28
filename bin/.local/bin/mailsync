@@ -1,8 +1,0 @@
-#!/bin/sh
-STATE="$(nmcli networking connectivity)"
-
-if [ "${STATE}" = 'full' ]; then
-    exec mpop -Q "$@"
-else
-    exit 1
-fi

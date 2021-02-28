@@ -2063,7 +2063,7 @@
   '(mu4e-view-show-addresses . t)
   `(mu4e-attachment-dir . ,(expand-file-name (xdg-download-dir)))
   '(mu4e-modeline-max-width . 100)
-  '(mu4e-get-mail-command . "mailsync polimi")
+  '(mu4e-get-mail-command . "mpop -Q polimi")
   '(mu4e-update-interval . 300)
   '(mu4e-maildir-shortcuts
     . '(("/EXYS"    . ?e)
