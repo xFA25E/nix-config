@@ -6,8 +6,8 @@
       src = fetchFromGitHub {
         owner = "xFA25E";
         repo = "dotfiles";
-        rev = "9f52d14d3e765df622ec3690e0874a70d03cf3ae";
-        sha256 = "000ic83lv3cns6yx18ib0ib9ic7z8w1l29w34xg6vlrwbpa7ad5w";
+        rev = "";
+        sha256 = "1111111111111111111111111111111111111111111111111111";
       };
       nativeBuildInputs = [ makeWrapper ];
       installPhase = ''
@@ -40,7 +40,7 @@
           "strip_video" = [ ffmpeg ];
           "studies_plot" = [ gnuplot ];
           "sudo_askpass" = [ pass-otp ];
-          "video_duration" = [ mediainfo gnugrep coreutils gawk ];
+          "video_duration" = [ ffmpeg jq ];
           "ytdlam" = [ myYoutubeDl findutils coreutils dmenu ];
           "ytdli" = [ dmenu libnotify myYoutubeDl jq coreutils pueue ];
         }; in join (mapLines scripts);
