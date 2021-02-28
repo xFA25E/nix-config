@@ -6,8 +6,8 @@
       src = fetchFromGitHub {
         owner = "xFA25E";
         repo = "dotfiles";
-        rev = "";
-        sha256 = "1111111111111111111111111111111111111111111111111111";
+        rev = "fa4b217af81036a4dd77e8d6ecd46ae1ed99959b";
+        sha256 = "0a5bfgdrvri02yr3mjw4j693lwmh3zs8vl0vs2100qzmqjr25hfp";
       };
       nativeBuildInputs = [ makeWrapper ];
       installPhase = ''
