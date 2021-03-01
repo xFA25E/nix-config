@@ -61,6 +61,8 @@
   :props '(:class "qutebrowser"))
 (defprogram-shortcut chromium-incognito :map *open-map* :key (kbd "C-b")
   :props '(:class "Chromium-browser"))
+(defprogram-shortcut telegram-desktop :map *open-map* :key (kbd "C-t")
+  :props '(:class "TelegramDesktop"))
 
 ;;; Remapped keys
 
