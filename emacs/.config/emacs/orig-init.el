@@ -1,10 +1,41 @@
 ;; -*- lexical-binding: t; -*-
-
 
-;;; UTILS
+;;; PACKAGE INIT
+
+(defvar package-user-dir
+  (eval-when-compile
+    (expand-file-name
+     "emacs/elpa"
+     (let ((env (getenv "XDG_CACHE_HOME")))
+       (if (or (null env) (not (file-name-absolute-p env)))
+           (expand-file-name "~/.cache")
+         env)))))
+
+(defvar nsm-settings-file
+  (eval-when-compile
+    (expand-file-name
+     "emacs/network-security.data"
+     (let ((env (getenv "XDG_CACHE_HOME")))
+       (if (or (null env) (not (file-name-absolute-p env)))
+           (expand-file-name "~/.cache")
+         env)))))
+
+(defvar gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+(defvar package-archives
+  '(("gnu"   . "https://elpa.gnu.org/packages/")
+    ("melpa" . "https://melpa.org/packages/")
+    ("org"   . "https://orgmode.org/elpa/")))
 
 (defvar leaf-expand-minimally t)
 (defvar leaf-key-bindlist nil)
+
+(package-initialize)
+(unless (package-installed-p 'leaf)
+  (package-refresh-contents)
+  (package-install 'leaf))
+
+
+;;; UTILS
 
 (leaf xdg
   :commands xdg-download-dir xdg-music-dir xdg-data-home xdg-cache-home
@@ -12,18 +43,13 @@
   (defun xdg-download-dir () (xdg--dir-home "XDG_DOWNLOAD_DIR" "~/Downloads"))
   (defun xdg-music-dir () (xdg--dir-home "XDG_MUSIC_DIR" "~/Music")))
 
-(leaf package
-  :custom
-  '(package-archives . nil)
-  `(package-user-dir . ,(expand-file-name "emacs/nix-elpa" (xdg-cache-home))))
-
-(leaf nsm
-  :custom `(nsm-settings-file . ,(expand-file-name "emacs/network-security.data" (xdg-cache-home))))
+(leaf diminish :package t)
 
 (leaf quelpa
+  :package t
   :custom
-  `(quelpa-build-dir . ,(expand-file-name "emacs/nix-quelpa/build" (xdg-cache-home)))
-  `(quelpa-dir . ,(expand-file-name "emacs/nix-quelpa" (xdg-cache-home)))
+  `(quelpa-build-dir . ,(expand-file-name "emacs/quelpa/build" (xdg-cache-home)))
+  `(quelpa-dir . ,(expand-file-name "emacs/quelpa" (xdg-cache-home)))
   '(quelpa-update-melpa-p . nil))
 
 (leaf rx :config (rx-define ext (&rest exts) (and "." (or exts) string-end)))
@@ -87,6 +113,8 @@
 
 (leaf so-long :hook (after-init-hook . global-so-long-mode))
 
+(leaf rainbow-mode :package t)
+
 (leaf hl-line
   :hook
   ((csv-mode-hook
@@ -98,10 +126,10 @@
     transmission-files-mode-hook
     transmission-mode-hook
     transmission-peers-mode-hook
-    ytel-mode-hook)
-   . hl-line-mode))
+    ytel-mode-hook) . hl-line-mode))
 
 (leaf diff-hl
+  :package t
   :hook
   (magit-post-refresh-hook . diff-hl-magit-post-refresh)
   (dired-mode-hook . diff-hl-dired-mode)
@@ -119,6 +147,7 @@
        compilation-filter-start (point)))))
 
 (leaf form-feed
+  :package t
   :hook ((emacs-lisp-mode-hook scheme-mode-hook lisp-mode-hook) . form-feed-mode)
   :config (diminish 'form-feed-mode))
 
@@ -131,11 +160,11 @@
 
 (leaf acme-theme
   ;; :init (load-theme 'acme t)
-  )
+  :package t)
 
 (leaf modus-operandi-theme
   :init (load-theme 'modus-operandi t)
-  )
+  :package t)
 
 (leaf faces
   :bind (help-map :package help ("M-f" . list-faces-display))
@@ -195,6 +224,7 @@
     (add-hook 'imenu-after-jump-hook #'outline-show-after-jump)))
 
 (leaf outline-minor-faces
+  :package t
   :after outline
   :hook (outline-minor-mode-hook . outline-minor-faces-add-font-lock-keywords))
 
@@ -204,6 +234,7 @@
   :config (diminish 'hs-minor-mode))
 
 (leaf bicycle
+  :package t
   :bind
   (outline-minor-mode-map
    :package outline
@@ -451,6 +482,7 @@
   `(shr-width . ,(current-fill-column)))
 
 (leaf shr-tag-pre-highlight
+  :package t
   :after shr
   :commands shr-tag-pre-highlight
   :leaf-defer nil
@@ -464,7 +496,9 @@
   '(selection-coding-system . 'utf-8)
   '(select-enable-clipboard . t))
 
-(leaf clipmon :hook (after-init-hook . clipmon-mode))
+(leaf clipmon
+  :package t
+  :hook (after-init-hook . clipmon-mode))
 
 
 ;;;; OTHER
@@ -513,6 +547,7 @@
     . ,(expand-file-name "emacs/ede/projects.el" (xdg-cache-home))))
 
 (leaf async
+  :package t
   :after bytecomp
   :config (async-bytecomp-package-mode))
 
@@ -538,6 +573,7 @@
     . ,(expand-file-name "emacs/transient/values.el" (xdg-cache-home))))
 
 (leaf gcmh
+  :package t
   :hook (emacs-startup-hook . gcmh-mode)
   :config (diminish 'gcmh-mode))
 
@@ -560,6 +596,7 @@
   (add-to-list 'tramp-remote-path "~/.local/bin"))
 
 (leaf sudo-edit
+  :package t
   :hook
   (after-init-hook . sudo-edit-indicator-mode)
   (shell-mode-hook . sudo-edit-set-header))
@@ -752,13 +789,16 @@
 
 (leaf dired-rsync
   :after dired
+  :package t
   :bind (dired-mode-map :package dired ("r" . dired-rsync)))
 
 (leaf dired-git-info
+  :package t
   :after dired
   :bind (dired-mode-map :package dired (")" . dired-git-info-mode)))
 
 (leaf dired-async
+  :package async
   :after dired
   :config
   (dired-async-mode)
@@ -772,6 +812,7 @@
   :custom '(find-ls-option . '("-print0 | sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF")))
 
 (leaf fd-dired
+  :package t
   :custom '(fd-dired-ls-option . '("| sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
   :bind (search-map :package bindings ("f d" . fd-dired) ("f D" . fd-dired-list-searches)))
 
@@ -849,6 +890,7 @@
 
 (leaf edit-indirect
   :defun edit-indirect-guess-mode
+  :package t
   :custom '(edit-indirect-guess-mode-function . #'edit-indirect-guess-mode)
   :bind (ctl-x-map :package subr ("E" . edit-indirect-region-or-at-point))
   :config
@@ -874,6 +916,8 @@
 
 (leaf whitespace :hook (before-save-hook . whitespace-cleanup))
 
+(leaf format-all :package t)
+
 
 ;;;; INPUT METHOD
 
@@ -884,6 +928,7 @@
   :require t)
 
 (leaf reverse-im
+  :package t
   :after cyrillic-dvorak-im
   :require t
   :config (reverse-im-activate "cyrillic-dvorak"))
@@ -893,6 +938,7 @@
 
 (leaf smartparens                       ; look cheat sheet and wiki and tutorial
   :defun sp-kill-region sp-backward-kill-word
+  :package t
 
   :hook
   ((minibuffer-inactive-mode-hook
@@ -935,7 +981,9 @@
 
 ;;;; CONF
 
-(leaf ledger-mode :custom '(ledger-default-date-format . "%Y-%m-%d"))
+(leaf ledger-mode
+  :package t
+  :custom '(ledger-default-date-format . "%Y-%m-%d"))
 
 (leaf conf-mode
   :hook (conf-xdefaults-mode-hook . xresources-reload-setup)
@@ -949,6 +997,8 @@
       (let ((xres (expand-file-name "X11/xresources" (xdg-config-home))))
         (shell-command (format "xrdb -load %s" xres))))))
 
+(leaf csv-mode :package t)
+
 (leaf tex-mode
   :defvar ispell-parser
   :hook (tex-mode-hook . setup-tex-mode-ispell-parser)
@@ -956,7 +1006,25 @@
   (defun setup-tex-mode-ispell-parser ()
     (setq-local ispell-parser 'tex)))
 
+
+;;;;; WEB
+
 (leaf css-mode :defvar css-mode-map :bind (css-mode-map ("C-c m" . css-lookup-symbol)))
+
+(leaf json-mode :package t)
+
+(leaf apache-mode :package t)
+
+(leaf robots-txt-mode :package t)
+
+(leaf restclient :package t)
+
+
+;;;;; GIT
+
+(leaf gitconfig-mode :package t)
+
+(leaf gitignore-mode :package t)
 
 
 ;;;;; XML-LIKE
@@ -973,6 +1041,7 @@
 (leaf nxml-mode :custom '(nxml-child-indent . 4))
 
 (leaf emmet-mode
+  :package t
   :hook ((nxml-mode-hook html-mode-hook mhtml-mode-hook web-mode-hook) . emmet-mode)
   :custom
   '(emmet-preview-default . t)
@@ -982,9 +1051,13 @@
 
 ;;;; PROG
 
+(leaf nix-mode :package t)
+
 (leaf cc-mode :custom '(c-default-style . '((java-mode . "java") (other . "awk"))))
 
-(leaf rust-mode :custom '(rust-format-on-save . t))
+(leaf rust-mode
+  :package t
+  :custom '(rust-format-on-save . t))
 
 
 ;;;;; SHELL
@@ -998,16 +1071,23 @@
 
 ;;;;; SQL
 
-(leaf sql-indent :hook (sql-mode-hook . sqlind-minor-mode))
+(leaf sql-indent
+  :package t
+  :hook (sql-mode-hook . sqlind-minor-mode))
 
-(leaf sqlup-mode :hook sql-mode-hook)
+(leaf sqlup-mode
+  :package t
+  :hook sql-mode-hook)
 
 
 ;;;;; WEB
 
-(leaf php-mode :custom '(php-mode-coding-style . 'php))
+(leaf php-mode
+  :package t
+  :custom '(php-mode-coding-style . 'php))
 
 (leaf web-mode
+  :package t
   :mode "\\.twig\\'"
   :custom '(web-mode-markup-indent-offset . 4))
 
@@ -1015,6 +1095,7 @@
 ;;;;; LSP
 
 (leaf eglot
+  :package t
   :custom
   '(eglot-autoshutdown . t)
   '(eglot-confirm-server-initiated-edits . nil)
@@ -1070,13 +1151,17 @@
 (leaf inf-lisp :custom '(inferior-lisp-program . "sbcl"))
 
 (leaf sly
+  :package t
   :custom
   '(sly-default-lisp . 'sbcl)
   '(sly-lisp-implementations . '((sbcl ("sbcl"))))
   `(sly-mrepl-history-file-name
     . ,(expand-file-name "emacs/sly-mrepl-history" (xdg-cache-home))))
 
+(leaf sly-quicklisp :package t)
+
 (leaf sly-asdf
+  :package t
   :after sly
   :config (add-to-list 'sly-contribs 'sly-asdf 'append))
 
@@ -1086,9 +1171,17 @@
 (leaf scheme :custom '(scheme-program-name . "guile"))
 
 (leaf geiser
+  :package t
   :custom
   `(geiser-repl-history-filename
     . ,(expand-file-name "geiser/history" (xdg-cache-home))))
+
+
+;;;;;; CLOJURE
+
+(leaf clojure-mode :package t)
+
+(leaf cider :package t)
 
 
 ;;; CORRECTNESS
@@ -1102,6 +1195,7 @@
 
 (leaf flycheck
   :defvar flycheck-shellcheck-supported-shells
+  :package t
   :custom
   '(flycheck-mode-line-prefix . "FC")
   '(flycheck-clang-pedantic-errors . t)
@@ -1114,6 +1208,7 @@
   (add-to-list 'flycheck-shellcheck-supported-shells 'dash))
 
 (leaf flycheck-checkbashisms
+  :package t
   :after flycheck
   :custom
   '(flycheck-checkbashisms-newline . t)
@@ -1124,6 +1219,7 @@
 ;;; COMPLETION
 
 (leaf bash-completion
+  :package t
   :after shell
   :hook (shell-dynamic-complete-functions . bash-completion-dynamic-complete))
 
@@ -1139,6 +1235,7 @@
   '(completion-pcm-complete-word-inserts-delimiters . t))
 
 (leaf consult
+  :package t
   :bind
   ("M-y" . consult-yank-replace)
   ("M-X" . consult-mode-command)
@@ -1153,16 +1250,19 @@
    ("E" . consult-error)))
 
 (leaf marginalia
+  :package t
   :hook (after-init-hook . marginalia-mode)
   :custom '(marginalia-annotators . '(marginalia-annotators-light marginalia-annotators-heavy)))
 
 (leaf embark
+  :package t
   :custom '(embark-occur-initial-view-alist . '((t . zebra)))
   :bind
   ("C-," . embark-act)
   (minibuffer-local-completion-map :package minibuffer ("C-." . embark-act-noexit)))
 
 (leaf orderless
+  :package t
   :custom
   `(orderless-component-separator . ,(rx (+ space)))
   '(orderless-matching-styles
@@ -1180,7 +1280,9 @@
   :preface (provide 'map-ynp)
   :custom '(read-answer-short . t))
 
-(leaf insert-char-preview :bind ([remap insert-char] . insert-char-preview))
+(leaf insert-char-preview
+  :package t
+  :bind ([remap insert-char] . insert-char-preview))
 
 
 ;;;; HIPPIE-EXP
@@ -1265,10 +1367,13 @@
   (defun grep-expand-template-add-cut (cmd)
     (concat cmd " | cut -c-500")))
 
-(leaf wgrep :custom '(wgrep-auto-save-buffer . t))
+(leaf wgrep
+  :package t
+  :custom '(wgrep-auto-save-buffer . t))
 
 (leaf rg
   :defvar rg-mode-map
+  :package t
   :custom '(rg-executable . "rg")
 
   :bind
@@ -1296,6 +1401,7 @@
 ;;;; ON BUFFER
 
 (leaf avy
+  :package t
   :bind
   ("M-z" . avy-goto-word-0)
   (goto-map
@@ -1311,13 +1417,16 @@
   `(avy-keys . ',(string-to-list "aoeuhtns")))
 
 (leaf ace-link
+  :package t
   :hook (after-init-hook . ace-link-setup-default)
   :bind (goto-map :package bindings ("l" . ace-link)))
 
 
 ;;;; TO DEFINITION
 
-(leaf dumb-jump :hook (xref-backend-functions . dumb-jump-xref-activate))
+(leaf dumb-jump
+  :package t
+  :hook (xref-backend-functions . dumb-jump-xref-activate))
 
 (leaf imenu
   :custom
@@ -1326,7 +1435,11 @@
   '(imenu-space-replacement . " ")
   '(imenu-level-separator . "/"))
 
-(leaf find-func :bind (search-map :package bindings ("f b" . find-library)))
+(leaf find-func
+  :bind (search-map :package bindings ("f b" . find-library))
+  :custom
+  `(find-function-C-source-directory
+    . ,(expand-file-name "programs/emacs-27.1/src" (xdg-download-dir))))
 
 
 ;;; COMPILATION
@@ -1339,6 +1452,7 @@
 
 ;; Add support for cargo error --> file:line:col
 (leaf cargo
+  :package t
   :hook (rust-mode-hook . cargo-minor-mode)
   :custom
   '(cargo-process--command-build . "build --color never")
@@ -1535,6 +1649,8 @@
 
 ;;; APPLICATIONS
 
+(leaf vlf :package t)
+
 (leaf ediff
   :custom '(ediff-window-setup-function . 'ediff-setup-windows-plain)
   :hook (ediff-before-setup-hook . save-window-configuration-to-w))
@@ -1590,6 +1706,7 @@
   `(bookmark-default-file . ,(expand-file-name "emacs/bookmarks" (xdg-data-home))))
 
 (leaf magit
+  :package t
   :custom
   `(magit-credential-cache-daemon-socket
     . ,(expand-file-name "git/credential/socket" (xdg-cache-home))))
@@ -1634,12 +1751,14 @@
   :custom '(proced-tree-flag . t))
 
 (leaf neato-graph-bar
+  :package t
   :bind (mode-specific-map :package bindings ("o b" . neato-graph-bar)))
 
 
 ;;;; DICTIONARY
 
 (leaf sdcv
+  :package t
   :bind (mode-specific-map :package bindings ("o t" . sdcv-search-input)))
 
 
@@ -1696,18 +1815,24 @@
         (goto-char beg)
         (insert text)))))
 
+(leaf htmlize :package t)
+
 
 ;;;; KEYS
 
 (leaf which-key
+  :package t
   :hook (after-init-hook . which-key-mode)
   :config (diminish 'which-key-mode))
+
+(leaf free-keys :package t)
 
 
 ;;;; YO-HO
 
 (leaf transmission
   :defvar transmission-mode-map
+  :package t
   :bind
   (mode-specific-map :package bindings ("o r" . transmission))
   (transmission-mode-map ("M" . transmission-move)))
@@ -1796,6 +1921,7 @@
 
 (leaf mingus
   :defvar mpd-inter-conn mingus-mpd-playlist-dir
+  :package t
 
   :defun
   mingus-buffer-p mingus-git-out-and-kill mingus-add-files
@@ -1858,9 +1984,12 @@
 
 ;;;; E-READER
 
-(leaf pdf-tools :init (pdf-loader-install))
+(leaf pdf-tools
+  :package t
+  :init (pdf-loader-install))
 
 (leaf nov
+  :package t
   :mode "\\.epub\\'"
   :custom `(nov-save-place-file . ,(expand-file-name "emacs/nov-places" (xdg-cache-home))))
 
@@ -1949,6 +2078,7 @@
   (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t))
 
 (leaf mu4e-alert
+  :package t
   :after mu4e
   :config
   (mu4e-alert-enable-notifications)
@@ -1959,6 +2089,7 @@
 ;;; ORG
 
 (leaf org
+  :package org-plus-contrib
   :bind
   (mode-specific-map
    :package bindings
@@ -2005,6 +2136,7 @@
   (:filter-args org-mime-replace-images org-mime-replace-images-fix-cids-and-path)
   (:override org-mime-edit-mail-in-org-mode org-mime-edit-mail-in-org-mode-up-to-signature)
 
+  :package t
   :bind
   (message-mode-map
    :package message
@@ -2067,6 +2199,8 @@
   :custom
   '(org-html-htmlize-output-type . 'css)
   '(org-html-htmlize-font-prefix . "org-"))
+
+(provide 'init)
 
 ;;; Local variables:
 ;;; eval: (require (quote leaf))

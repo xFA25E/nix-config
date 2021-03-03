@@ -126,9 +126,41 @@
       '';
     };
 
+    mssl = openssl.overrideAttrs (oldAttrs: {
+      meta = oldAttrs.meta // { outputsToInstall = [ "out" ]; };
+    });
+
+    myEmacsWithPkgs = emacsWithPackages (epkgs: (with epkgs.melpaPackages; [
+      bui                       # pueue dependencie (delete later)
+
+      ace-link acme-theme apache-mode async avy bash-completion bicycle cargo
+      cider clipmon clojure-mode consult diff-hl diminish dired-rsync dumb-jump
+      edit-indirect eglot embark emmet-mode fd-dired flycheck
+      flycheck-checkbashisms form-feed format-all free-keys gcmh geiser
+      gitconfig-mode gitignore-mode htmlize insert-char-preview ipretty
+      json-mode leaf ledger-mode magit marginalia mingus mu4e-alert
+      neato-graph-bar nix-mode nov orderless org-mime outline-minor-faces
+      pdf-tools php-mode quelpa restclient reverse-im rg robots-txt-mode
+      rust-mode sdcv shr-tag-pre-highlight sly sly-asdf sly-quicklisp
+      smartparens sqlup-mode sudo-edit transmission vlf web-mode wgrep which-key
+
+    ]) ++ (with epkgs.elpaPackages; [
+      (csv-mode.override (oldAttrs: {
+        elpaBuild = (attrs: oldAttrs.elpaBuild (attrs // {
+          version = "1.15";
+          src = oldAttrs.fetchurl {
+            url = "https://elpa.gnu.org/packages/csv-mode-1.15.tar";
+            sha256 = "0pigqhqg5mfza6jdskcr9yvrzdxnd68iyp3vyb8p8wskdacmbiyx";
+          };
+        }));
+      }))
+
+      dired-git-info modus-operandi-theme rainbow-mode sql-indent
+    ]) ++ (with epkgs.orgPackages; [ org-plus-contrib ]));
+
     myEmacs = symlinkJoin {
       name = "emacs";
-      paths = [ pkgs.emacs ];
+      paths = [ myEmacsWithPkgs ];
       buildInputs = [ makeWrapper ];
       postBuild = ''
         makeWrapper "$out/bin/emacsclient" "$out/bin/emacseditor" --add-flags "--create-frame --alternate-editor=\"$out/bin/emacs\""
@@ -145,7 +177,7 @@
       y = "${dir}/%(uploader)s/${vid}";
     in symlinkJoin {
       name = "youtube-dl";
-      paths = [ pkgs.youtube-dl];
+      paths = [ pkgs.youtube-dl ];
       buildInputs = [ makeWrapper ];
       postBuild = ''
         makeWrapper "$out/bin/youtube-dl" "$out/bin/ytdl"
@@ -168,17 +200,20 @@
       '';
     };
 
+    myProfile = writeText "my-profile" ''
+      export PATH=$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
+      export MANPATH=$HOME/.nix-profile/share/man:/nix/var/nix/profiles/default/share/man:/usr/share/man:$MANPATH
+      export INFOPATH=$HOME/.nix-profile/share/info:/nix/var/nix/profiles/default/share/info:/usr/share/info:$INFOPATH
+    '';
+
     myPackages = pkgs.buildEnv {
       name = "my-packages";
       paths = [
-        (let my-profile = writeText "my-profile" ''
-          export PATH=$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
-          export MANPATH=$HOME/.nix-profile/share/man:/nix/var/nix/profiles/default/share/man:/usr/share/man:$MANPATH
-          export INFOPATH=$HOME/.nix-profile/share/info:/nix/var/nix/profiles/default/share/info:/usr/share/info:$INFOPATH
-        ''; in runCommand "profile" {} ''
+        (runCommand "profile" {} ''
           mkdir -p $out/etc/profile.d
-          cp ${my-profile} $out/etc/profile.d/my-profile.sh
+          cp ${myProfile} $out/etc/profile.d/my-profile.sh
         '')
+
         checkbashisms dejavu_fonts dmenu eldev myEmacs fd feh file firefox git
         gnupg hack-font htop iosevka jq ledger leiningen libreoffice-fresh man
         mkpasswd mpc_cli mpd mpop mpv msmtp mtpfs mu p7zip pass-otp pinentry
