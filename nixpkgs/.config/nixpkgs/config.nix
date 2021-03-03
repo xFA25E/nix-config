@@ -3,15 +3,10 @@
 
     myScripts = stdenv.mkDerivation {
       name = "my-scripts";
-      src = fetchFromGitHub {
-        owner = "xFA25E";
-        repo = "dotfiles";
-        rev = "bde6d63a9cc63637cc350be5bf51cc165c766ca2";
-        sha256 = "0ikk64rmnmnv1grwgcclj2z85rrcpi4dml6mpksp86z8ldfl0h4a";
-      };
+      src = /home/val/.dotfiles/bin/.local/bin;
       nativeBuildInputs = [ makeWrapper ];
       installPhase = ''
-        install -D -v -t "$out/bin" "$src/bin/.local/bin/"*
+        install -D -t "$out/bin" "$src/"*
       '';
       postFixup = let
         join = lib.strings.concatStringsSep "\n";
@@ -41,7 +36,7 @@
           "sudo_askpass" = [ pass-otp ];
           "video_duration" = [ ffmpeg jq ];
           "ytdlam" = [ myYoutubeDl findutils coreutils dmenu ];
-          "ytdli" = [ dmenu libnotify myYoutubeDl jq coreutils pueue "$out" ];
+          "ytdli" = [ bash dmenu libnotify myYoutubeDl jq coreutils pueue gawk gnused util-linux "$out" ];
         }; in join (mapLines scripts);
     };
 

@@ -1,4 +1,5 @@
 #!/bin/sh
+
 [ -z "${1}" ] && notify-send "Url is empty"
 url="${1:?provide url}"
 
@@ -12,23 +13,23 @@ get_formats() {
 }
 
 select_format() {
-    dmenu -p "Select format" -lines 19
+    dmenu -p "Select format" -l 19
 }
 
 
 case "$(printf "video\naudio\nmusic\nselect video" | dmenu -p "Download")" in
     video)
-        pueue add -- ytdly "${url}"
+        pueue add "ytdly '${url}'"
         ;;
     audio)
-        pueue add -- ytdlay "${url}"
+        pueue add "ytdlay '${url}'"
         ;;
     music)
-        pueue add -- ytdlam "${url}"
+        pueue add "ytdlam '${url}'"
         ;;
     "select video")
         selected_format="$(get_formats | select_format | awk '{print $1}')"
         chosen_format="${selected_format:?}+bestaudio/${selected_format:?}/best"
-        pueue add -- ytdly -f "${chosen_format}" "${url}"
+        pueue add "ytdly -f '${chosen_format}' '${url}'"
         ;;
 esac
