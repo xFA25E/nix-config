@@ -41,7 +41,7 @@
           "sudo_askpass" = [ pass-otp ];
           "video_duration" = [ ffmpeg jq ];
           "ytdlam" = [ myYoutubeDl findutils coreutils dmenu ];
-          "ytdli" = [ dmenu libnotify myYoutubeDl jq coreutils pueue ];
+          "ytdli" = [ dmenu libnotify myYoutubeDl jq coreutils pueue "$out" ];
         }; in join (mapLines scripts);
     };
 
