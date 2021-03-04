@@ -1,5 +1,13 @@
 {
   packageOverrides = pkgs: with pkgs; rec {
+    myDash = symlinkJoin {
+      name = "dash";
+      paths = [ pkgs.dash ];
+      buildInputs = [ makeWrapper ];
+      postBuild = ''
+        ln -s "$out/bin/dash" "$out/bin/sh"
+      '';
+    };
 
     myScripts = stdenv.mkDerivation {
       name = "my-scripts";
@@ -36,7 +44,7 @@
           "sudo_askpass" = [ pass-otp ];
           "video_duration" = [ ffmpeg jq ];
           "ytdlam" = [ myYoutubeDl findutils coreutils dmenu ];
-          "ytdli" = [ bash dmenu libnotify myYoutubeDl jq coreutils pueue gawk gnused util-linux "$out" ];
+          "ytdli" = [ myDash dmenu libnotify myYoutubeDl jq coreutils pueue gawk gnused util-linux "$out" ];
         }; in join (mapLines scripts);
     };
 
@@ -210,14 +218,14 @@
         '')
 
         checkbashisms dejavu_fonts dmenu eldev myEmacs fd feh file firefox git
-        gnupg hack-font htop iosevka jq ledger leiningen libreoffice-fresh man
-        mkpasswd mpc_cli mpd mpop mpv msmtp mtpfs mu p7zip pass-otp pinentry
-        pueue pulsemixer pwgen qrencode qtox # qutebrowser
-        rimer ripgrep rsync
-        rustup myScripts sctd mySbcl sdcv shellcheck simplescreenrecorder sloccount
-        speedtest-cli myStalonetray stow sxiv syncthing tdesktop transmission
-        myUngoogledChromium woof xclip xz myYoutubeDl zip
+        gnupg hack-font # htop iosevka jq ledger leiningen mkpasswd mpc_cli mpd
+        mpop mpv msmtp mtpfs mu p7zip pass-otp pinentry pueue pulsemixer pwgen
+        qrencode qtox rimer ripgrep rsync rustup myScripts sctd mySbcl sdcv
+        shellcheck simplescreenrecorder sloccount speedtest-cli myStalonetray
+        stow sxiv syncthing tdesktop transmission myUngoogledChromium woof xclip
+        xz myYoutubeDl zip
 
+        # man qutebrowser libreoffice
       ];
       # pathsToLink = [ "/share/man" "/share/doc" "/share/info" "/bin" "/etc" ];
       extraOutputsToInstall = [ "man" "doc" "info" ];
