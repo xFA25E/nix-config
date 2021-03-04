@@ -1,3 +1,4 @@
+#!/bin/sh
 export PATH="${HOME}/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${PATH}"
 export EDITOR="emacseditor"
 export VISUAL="${EDITOR}"
@@ -18,8 +19,7 @@ export XDG_PICTURES_DIR="${HOME}/Pictures"
 export XDG_VIDEOS_DIR="${HOME}/Videos"
 export XDG_CONFIG_DIRS="/usr/etc/xdg:/etc/xdg:${XDG_CONFIG_DIRS}"
 XDG_RUNTIME_DIR="/run/user/$(id -u)"
-if [ ! -d "${XDG_RUNTIME_DIR}" ]
-then
+if [ ! -d "${XDG_RUNTIME_DIR}" ]; then
     XDG_RUNTIME_DIR="/tmp/run$(id -u)"
     mkdir --mode=700 "${XDG_RUNTIME_DIR}"
 fi
@@ -69,10 +69,7 @@ export SUDO_ASKPASS="${XDG_BIN_HOME}/sudo_askpass"
 export SSH_ASKPASS="ssh-askpass"
 
 # env for posix shell initialization
-export ENV="${XDG_CONFIG_HOME}/sh/init"
-
-# c compiler
-# export CFLAGS='-Wall -Wextra -Werror -pedantic'
+export ENV="${HOME}/.shinit"
 
 # java
 export _JAVA_AWT_WM_NONREPARENTING=1
@@ -92,12 +89,6 @@ export GNUPGHOME="${XDG_DATA_HOME}/gnupg"
 
 # pass
 export PASSWORD_STORE_DIR="${XDG_DATA_HOME}/pass"
-
-# readline
-export INPUTRC="${XDG_CONFIG_HOME}/readline/inputrc"
-
-# xinit
-export XINITRC="${XDG_CONFIG_HOME}/X11/xinitrc"
 
 # xauthority
 export XAUTHORITY="${XDG_RUNTIME_DIR}/Xauthority"
@@ -123,9 +114,6 @@ export MYSQL_HISTFILE=/dev/null
 export VAGRANT_HOME="${XDG_DATA_HOME}/vagrant"
 export VAGRANT_ALIAS_FILE="${XDG_DATA_HOME}/vagrant/aliases"
 
-# lein
-export LEIN_HOME="${XDG_CACHE_HOME}/lein"
-
 # gem
 export GEM_HOME="${XDG_DATA_HOME}/gem"
 export GEM_SPEC_CACHE="${XDG_CACHE_HOME}/gem"
@@ -141,16 +129,16 @@ export BOOT_HOME="${XDG_CACHE_HOME}/boot"
 export PAGER=cat
 
 # nix
-if [ -e "${HOME}/.nix-profile/etc/profile.d/nix.sh" ]; then
-    . "${HOME}/.nix-profile/etc/profile.d/nix.sh"
-fi
-if [ -e "${HOME}/.nix-profile/etc/profile.d/my-profile.sh" ]; then
-    . "${HOME}/.nix-profile/etc/profile.d/my-profile.sh"
-fi
+for sh in nix.sh my-profile.sh hm-session-vars.sh; do
+    if [ -e "${HOME}/.nix-profile/etc/profile.d/${sh}" ]; then
+        . "${HOME}/.nix-profile/etc/profile.d/${sh}"
+    fi
+done
 
 # youtube-dl
 export YTDL_DIR="${XDG_VIDEOS_DIR:-${HOME}/Videos}/youtube"
 
 # Following automatically calls "startx" when you login:
-[ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ] && \
-    exec startx "${XINITRC}" -- -keeptty -nolisten tcp >"${XDG_RUNTIME_DIR:?}/xorg.log" 2>&1
+if [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ]; then
+    exec startx "${HOME}/.xinitrc" -- -keeptty -nolisten tcp >"${XDG_RUNTIME_DIR:?}/xorg.log" 2>&1
+fi

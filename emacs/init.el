@@ -937,18 +937,6 @@
 
 (leaf ledger-mode :custom '(ledger-default-date-format . "%Y-%m-%d"))
 
-(leaf conf-mode
-  :hook (conf-xdefaults-mode-hook . xresources-reload-setup)
-  :config
-  (defun xresources-reload-setup ()
-    (add-hook 'after-save-hook 'xresources-reload nil t))
-
-  (defun xresources-reload ()
-    (interactive)
-    (when (yes-or-no-p "Reload xresources?")
-      (let ((xres (expand-file-name "X11/xresources" (xdg-config-home))))
-        (shell-command (format "xrdb -load %s" xres))))))
-
 (leaf tex-mode
   :defvar ispell-parser
   :hook (tex-mode-hook . setup-tex-mode-ispell-parser)

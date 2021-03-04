@@ -1,17 +1,25 @@
 {
   packageOverrides = pkgs: with pkgs; rec {
-    myDash = symlinkJoin {
-      name = "dash";
-      paths = [ pkgs.dash ];
-      buildInputs = [ makeWrapper ];
-      postBuild = ''
-        ln -s "$out/bin/dash" "$out/bin/sh"
-      '';
+
+    stardictDicts = runCommand "stardict-dicts" {
+      srcs = (map fetchzip  (import ./stardict-dicts.nix));
+    } ''
+      mkdir -p "$out/share/stardict/dic"
+      for src in $srcs; do
+          ln -s "$src" "$out/share/stardict/dic/$(stripHash $src)"
+      done
+    '';
+
+    mpvYoutubeQuality = fetchFromGitHub {
+      owner = "jgreco";
+      repo = "mpv-youtube-quality";
+      rev = "1f8c31457459ffc28cd1c3f3c2235a53efad7148";
+      sha256 = "09z6dkypg0ajvlx02270p3zmax58c0pkqkh6kh8gy2mhs3r4z0xy";
     };
 
     myScripts = stdenv.mkDerivation {
       name = "my-scripts";
-      src = /home/val/.dotfiles/bin/.local/bin;
+      src = ./bin;
       nativeBuildInputs = [ makeWrapper ];
       installPhase = ''
         install -D -t "$out/bin" "$src/"*
@@ -44,7 +52,7 @@
           "sudo_askpass" = [ pass-otp ];
           "video_duration" = [ ffmpeg jq ];
           "ytdlam" = [ myYoutubeDl findutils coreutils dmenu ];
-          "ytdli" = [ myDash dmenu libnotify myYoutubeDl jq coreutils pueue gawk gnused util-linux "$out" ];
+          "ytdli" = [ bash dmenu libnotify myYoutubeDl jq coreutils pueue gawk gnused util-linux "$out" ];
         }; in join (mapLines scripts);
     };
 
@@ -102,32 +110,9 @@
       };
     };
 
-    myStalonetray = symlinkJoin {
-      name = "stalonetray";
-      paths = [ pkgs.stalonetray ];
-      buildInputs = [ makeWrapper ];
-      postBuild = ''
-        wrapProgram "$out/bin/stalonetray" --add-flags "--config \"\''${XDG_CONFIG_HOME:-\''${HOME}/.config}/stalonetray/stalonetrayrc\""
-      '';
-    };
-
-    mySbcl = symlinkJoin {
-      name = "sbcl";
-      paths = [ pkgs.sbcl ];
-      buildInputs = [ makeWrapper ];
-      postBuild = ''
-        wrapProgram "$out/bin/sbcl" --add-flags "--userinit \"\''${XDG_CONFIG_HOME:-\''${HOME}/.config}/sbcl/init.lisp\""
-      '';
-    };
-
-    myUngoogledChromium = symlinkJoin {
-      name = "ungoogled-chromium";
-      paths = [ pkgs.ungoogled-chromium ];
-      buildInputs = [ makeWrapper ];
-      postBuild = ''
-        makeWrapper "$out/bin/chromium" "$out/bin/chromium-incognito" --add-flags "-incognito"
-      '';
-    };
+    ungoogledChromiumIncognito = writeShellScriptBin "chromium-incognito" ''
+      exec "${ungoogled-chromium}/bin/chromium" -incognito "$@"
+    '';
 
     mssl = openssl.overrideAttrs (oldAttrs: {
       meta = oldAttrs.meta // { outputsToInstall = [ "out" ]; };
@@ -218,12 +203,12 @@
         '')
 
         checkbashisms dejavu_fonts dmenu eldev myEmacs fd feh file firefox git
-        gnupg hack-font # htop iosevka jq ledger leiningen mkpasswd mpc_cli mpd
-        mpop mpv msmtp mtpfs mu p7zip pass-otp pinentry pueue pulsemixer pwgen
-        qrencode qtox rimer ripgrep rsync rustup myScripts sctd mySbcl sdcv
-        shellcheck simplescreenrecorder sloccount speedtest-cli myStalonetray
-        stow sxiv syncthing tdesktop transmission myUngoogledChromium woof xclip
-        xz myYoutubeDl zip
+        gnupg hack-font iosevka jq ledger leiningen mkpasswd mpc_cli mpd mpop
+        msmtp mtpfs mu p7zip pass-otp pinentry pueue pulsemixer pwgen qrencode
+        qtox rimer ripgrep rsync rustup myScripts sctd sbcl sdcv shellcheck
+        simplescreenrecorder sloccount speedtest-cli stow sxiv syncthing
+        tdesktop transmission ungoogled-chromium ungoogledChromiumIncognito woof
+        xclip xz myYoutubeDl zip
 
         # man qutebrowser libreoffice
       ];

@@ -1,5 +1,5 @@
 # -*- mode: sh; -*-
-resources="${XDG_CONFIG_HOME}/X11/xresources"
+resources="${HOME}/.Xresources"
 [ -f "${resources}" ] && xrdb -merge "${resources}"
 
 # start some nice programs
