@@ -51,7 +51,7 @@ rsync --delete --delete-excluded --archive --verbose --partial --progress --rela
       ~/org \
       /mnt/second_partition \
       /var/spool/cron/val \
-      "{}" "${directory%/}/current"
+      "${directory%/}/current"
 
 sudo -A umount "${directory}"
 rmdir "${directory}"
