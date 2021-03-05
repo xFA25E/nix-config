@@ -1,2 +1,0 @@
-#!/bin/sh
-exec emacseditor --no-wait --eval "(dired \"$@\")"

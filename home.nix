@@ -19,11 +19,58 @@ let
     base0F = "#CC6633";
   };
 in {
-  home.packages = [
-    pkgs.htop
+  home.packages = with pkgs; [
+    # broken packages
+    # qutebrowser libreoffice
+
+    # nixpkgs
+    htop checkbashisms dejavu_fonts dmenu fd feh file firefox git hack-font
+    iosevka jq ledger leiningen mkpasswd mpc_cli mpd mpop msmtp mtpfs mu p7zip
+    pass-otp pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync rustup
+    sbcl sdcv shellcheck simplescreenrecorder sloccount speedtest-cli stow sxiv
+    syncthing tdesktop transmission ungoogled-chromium woof xclip xz zip
+
+    # mypkgs
+    eldev myProfile myScripts myYoutubeDl rimer sctd ungoogledChromiumIncognito
   ];
 
+  home.extraOutputsToInstall = [ "man" "doc" "info" "devdoc" ];
+
   programs = {
+    emacs = {
+      enable = true;
+      extraPackages = epkgs: with epkgs; [
+        bui
+
+        ace-link acme-theme apache-mode async avy bash-completion bicycle cargo
+        cider clipmon clojure-mode consult diff-hl diminish dired-rsync
+        dumb-jump edit-indirect eglot embark emmet-mode fd-dired flycheck
+        flycheck-checkbashisms form-feed format-all free-keys gcmh geiser
+        gitconfig-mode gitignore-mode htmlize insert-char-preview ipretty
+        json-mode leaf ledger-mode magit marginalia mingus mu4e-alert
+        neato-graph-bar nix-mode nov orderless org-mime outline-minor-faces
+        pdf-tools php-mode quelpa restclient reverse-im rg robots-txt-mode
+        rust-mode sdcv shr-tag-pre-highlight sly sly-asdf sly-quicklisp
+        smartparens sqlup-mode sudo-edit transmission vlf web-mode wgrep
+        which-key
+
+        csv-mode dired-git-info modus-operandi-theme rainbow-mode sql-indent
+
+        org-plus-contrib
+      ];
+      overrides = self: super: {
+        csv-mode = self.elpaPackages.csv-mode.override (oldAttrs: {
+          elpaBuild = attrs: oldAttrs.elpaBuild (attrs // {
+            version = "1.15";
+            src = oldAttrs.fetchurl {
+              url = "https://elpa.gnu.org/packages/csv-mode-1.15.tar";
+              sha256 = "0pigqhqg5mfza6jdskcr9yvrzdxnd68iyp3vyb8p8wskdacmbiyx";
+            };
+          });
+        });
+      };
+    };
+
     readline = {
       enable = true;
       variables = {
@@ -40,11 +87,18 @@ in {
       };
     };
 
+    gpg = {
+      enable = true;
+      settings = {
+        encrypt-to = "Litkovskyy Valeriy <vlr.ltkvsk@protonmail.com>";
+      };
+    };
+
+    info.enable = true;
+
     qutebrowser = {
       enable = true;
-      package = pkgs.writeShellScriptBin "fuckthisshit" ''
-        echo fuckthisshit
-      '';
+      package = pkgs.writeShellScriptBin "fuckthisshit" "echo fuckthisshit";
       aliases = {
         "emacs_source" = "spawn --userscript view_source";
       };
@@ -499,6 +553,12 @@ in {
         window_type = "desktop";
       };
     };
+
+    gpg-agent = {
+      enable = true;
+      defaultCacheTtl = 86400;
+      maxCacheTtl = 86400;
+    };
   };
 
   xresources.properties = {
@@ -574,6 +634,9 @@ in {
       init-module = "\${XDG_CONFIG_HOME}/npm/config/npm-init.js";
     };
 
+    "mpop/config".source = ./mpop;
+    "msmtp/config".source = ./msmtp;
+
     "mpd/mpd.conf".text = ''
       music_directory "~/Music"
       db_file         "~/.cache/mpd/database"
@@ -610,58 +673,7 @@ in {
 
   xdg.dataFile = {
     "stardict/dic".source = "${pkgs.stardictDicts}/share/stardict/dic";
-    "applications/emacsdired.desktop".source = ./applications/emacsdired.desktop;
-    "applications/emacsmail.desktop".source = ./applications/emacsmail.desktop;
   };
-
-  # programs.emacs = {
-  #   enable = true;
-  #   extraPackages = epkgs: with epkgs; [
-  #     bui
-
-  #     ace-link acme-theme apache-mode async avy bash-completion bicycle cargo
-  #     cider clipmon clojure-mode consult diff-hl diminish dired-rsync dumb-jump
-  #     edit-indirect eglot embark emmet-mode fd-dired flycheck
-  #     flycheck-checkbashisms form-feed format-all free-keys gcmh geiser
-  #     gitconfig-mode gitignore-mode htmlize insert-char-preview ipretty
-  #     json-mode leaf ledger-mode magit marginalia mingus mu4e-alert
-  #     neato-graph-bar nix-mode nov orderless org-mime outline-minor-faces
-  #     pdf-tools php-mode quelpa restclient reverse-im rg robots-txt-mode
-  #     rust-mode sdcv shr-tag-pre-highlight sly sly-asdf sly-quicklisp
-  #     smartparens sqlup-mode sudo-edit transmission vlf web-mode wgrep which-key
-
-  #     (csv-mode.override (oldAttrs: {
-  #       elpaBuild = (attrs: oldAttrs.elpaBuild (attrs // {
-  #         version = "1.15";
-  #         src = oldAttrs.fetchurl {
-  #           url = "https://elpa.gnu.org/packages/csv-mode-1.15.tar";
-  #           sha256 = "0pigqhqg5mfza6jdskcr9yvrzdxnd68iyp3vyb8p8wskdacmbiyx";
-  #         };
-  #       }));
-  #     }))
-
-  #     dired-git-info modus-operandi-theme rainbow-mode sql-indent
-
-  #     org-plus-contrib
-  #   ];
-  # };
-
-  # programs.firefox = {
-  #   enable = true;
-  #   profiles = {
-  #     myprofile = {
-  #       settings = {
-  #         "general.smoothScroll" = false;
-  #       };
-  #     };
-  #   };
-  # };
-
-  # services.gpg-agent = {
-  #   enable = true;
-  #   defaultCacheTtl = 1800;
-  #   enableSshSupport = true;
-  # };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

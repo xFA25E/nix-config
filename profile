@@ -1,5 +1,5 @@
 #!/bin/sh
-export PATH="${HOME}/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${PATH}"
+export PATH="/usr/bin:/bin:/usr/sbin:/sbin:${PATH}"
 export EDITOR="emacseditor"
 export VISUAL="${EDITOR}"
 export MANPATH="/usr/local/man:${MANPATH}"
@@ -11,7 +11,6 @@ export XDG_CONFIG_HOME="${HOME}/.config"
 export XDG_DATA_HOME="${HOME}/.local/share"
 export XDG_CACHE_HOME="${HOME}/.cache"
 export XDG_BIN_HOME="${HOME}/.local/bin"
-# export XDG_DESKTOP_DIR="${HOME}/Desktop"
 export XDG_DOWNLOAD_DIR="${HOME}/Downloads"
 export XDG_DOCUMENTS_DIR="${HOME}/Documents"
 export XDG_MUSIC_DIR="${HOME}/Music"
@@ -49,7 +48,7 @@ export LESSHISFILE="/dev/null"
 
 # mu/mu4e mail
 export MU_HOME="${XDG_CACHE_HOME}/mu"
-export MAILDIR="${XDG_DATA_HOME}/mail"
+export MAILDIR="${HOME}/.mail"
 
 # abduco
 export ABDUCO_CMD="terminal_wm"
@@ -63,7 +62,7 @@ export MPD_HOST="localhost"
 export MPD_PORT="6600"
 
 # sudo
-export SUDO_ASKPASS="${XDG_BIN_HOME}/sudo_askpass"
+export SUDO_ASKPASS="${HOME}/.nix-profile/bin/sudo_askpass"
 
 # ssh
 export SSH_ASKPASS="ssh-askpass"
@@ -83,12 +82,6 @@ export CUDA_CACHE_PATH="${XDG_CACHE_HOME}/nv"
 
 # npm
 export NPM_CONFIG_USERCONFIG="${XDG_CONFIG_HOME}/npm/npmrc"
-
-# gnupg
-export GNUPGHOME="${XDG_DATA_HOME}/gnupg"
-
-# pass
-export PASSWORD_STORE_DIR="${XDG_DATA_HOME}/pass"
 
 # xauthority
 export XAUTHORITY="${XDG_RUNTIME_DIR}/Xauthority"

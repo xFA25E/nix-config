@@ -2,7 +2,11 @@
   packageOverrides = pkgs: with pkgs; rec {
 
     stardictDicts = runCommand "stardict-dicts" {
-      srcs = (map fetchzip  (import ./stardict-dicts.nix));
+      srcs = let
+        getName = dic: lib.strings.removeSuffix ".tar.bz2" (baseNameOf dic.url);
+        makeAttrs = dic: dic // { name = getName dic; };
+        fetch = dic: fetchzip (makeAttrs dic);
+        in map fetch (import ./stardict-dicts.nix);
     } ''
       mkdir -p "$out/share/stardict/dic"
       for src in $srcs; do
@@ -31,8 +35,6 @@
         mapLines = lib.attrsets.mapAttrsToList makeLine;
         scripts = {
           "compress_video" = [ ffmpeg ];
-          "emacsdired" = [ myEmacs ];
-          "emacsmail" = [ myEmacs ];
           "extract_eml" = [ mu coreutils ];
           "format_duration" = [ gawk ];
           "image_clipboard" = [ xclip file ];
@@ -118,43 +120,6 @@
       meta = oldAttrs.meta // { outputsToInstall = [ "out" ]; };
     });
 
-    myEmacsWithPkgs = emacsWithPackages (epkgs: (with epkgs.melpaPackages; [
-      bui                       # pueue dependencie (delete later)
-
-      ace-link acme-theme apache-mode async avy bash-completion bicycle cargo
-      cider clipmon clojure-mode consult diff-hl diminish dired-rsync dumb-jump
-      edit-indirect eglot embark emmet-mode fd-dired flycheck
-      flycheck-checkbashisms form-feed format-all free-keys gcmh geiser
-      gitconfig-mode gitignore-mode htmlize insert-char-preview ipretty
-      json-mode leaf ledger-mode magit marginalia mingus mu4e-alert
-      neato-graph-bar nix-mode nov orderless org-mime outline-minor-faces
-      pdf-tools php-mode quelpa restclient reverse-im rg robots-txt-mode
-      rust-mode sdcv shr-tag-pre-highlight sly sly-asdf sly-quicklisp
-      smartparens sqlup-mode sudo-edit transmission vlf web-mode wgrep which-key
-
-    ]) ++ (with epkgs.elpaPackages; [
-      (csv-mode.override (oldAttrs: {
-        elpaBuild = (attrs: oldAttrs.elpaBuild (attrs // {
-          version = "1.15";
-          src = oldAttrs.fetchurl {
-            url = "https://elpa.gnu.org/packages/csv-mode-1.15.tar";
-            sha256 = "0pigqhqg5mfza6jdskcr9yvrzdxnd68iyp3vyb8p8wskdacmbiyx";
-          };
-        }));
-      }))
-
-      dired-git-info modus-operandi-theme rainbow-mode sql-indent
-    ]) ++ (with epkgs.orgPackages; [ org-plus-contrib ]));
-
-    myEmacs = symlinkJoin {
-      name = "emacs";
-      paths = [ myEmacsWithPkgs ];
-      buildInputs = [ makeWrapper ];
-      postBuild = ''
-        makeWrapper "$out/bin/emacsclient" "$out/bin/emacseditor" --add-flags "--create-frame --alternate-editor=\"$out/bin/emacs\""
-      '';
-    };
-
     myYoutubeDl = let
       dir = "\\\${YTDL_DIR:-\\\${XDG_VIDEOS_DIR:-\\\${HOME}/Videos}}";
       title = "%(title)s.%(ext)s";
@@ -188,41 +153,10 @@
       '';
     };
 
-    myProfile = writeText "my-profile" ''
-      export PATH=$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
-      export MANPATH=$HOME/.nix-profile/share/man:/nix/var/nix/profiles/default/share/man:/usr/share/man:$MANPATH
+    myProfile = writeTextDir "etc/profile.d/my-profile.sh" ''
+      export PATH=/nix/var/nix/profiles/default/bin:$PATH
+      export MANPATH=/nix/var/nix/profiles/default/share/man::$MANPATH
       export INFOPATH=$HOME/.nix-profile/share/info:/nix/var/nix/profiles/default/share/info:/usr/share/info:$INFOPATH
     '';
-
-    myPackages = pkgs.buildEnv {
-      name = "my-packages";
-      paths = [
-        (runCommand "profile" {} ''
-          mkdir -p $out/etc/profile.d
-          cp ${myProfile} $out/etc/profile.d/my-profile.sh
-        '')
-
-        checkbashisms dejavu_fonts dmenu eldev myEmacs fd feh file firefox git
-        gnupg hack-font iosevka jq ledger leiningen mkpasswd mpc_cli mpd mpop
-        msmtp mtpfs mu p7zip pass-otp pinentry pueue pulsemixer pwgen qrencode
-        qtox rimer ripgrep rsync rustup myScripts sctd sbcl sdcv shellcheck
-        simplescreenrecorder sloccount speedtest-cli stow sxiv syncthing
-        tdesktop transmission ungoogled-chromium ungoogledChromiumIncognito woof
-        xclip xz myYoutubeDl zip
-
-        # man qutebrowser libreoffice
-      ];
-      # pathsToLink = [ "/share/man" "/share/doc" "/share/info" "/bin" "/etc" ];
-      extraOutputsToInstall = [ "man" "doc" "info" ];
-      postBuild = ''
-        if [ -x $out/bin/install-info -a -w $out/share/info ]; then
-          shopt -s nullglob
-          for i in $out/share/info/*.info $out/share/info/*.info.gz; do
-              $out/bin/install-info $i $out/share/info/dir
-          done
-        fi
-      '';
-    };
-
   };
 }

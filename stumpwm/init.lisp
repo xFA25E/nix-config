@@ -35,6 +35,11 @@
 
 
 
+;; quick hot fix
+(setf *load-path*
+      (remove #P"/home/val/.dotfiles/stumpwm/.config/stumpwm/modules/notify/"
+              *load-path* :test #'uiop:pathname-equal))
+
 (load-module "notify")
 (notify:notify-server-toggle)
 (setf notify:*notify-server-title-color* "^7^B")

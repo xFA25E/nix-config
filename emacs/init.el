@@ -1930,11 +1930,51 @@
            ("libreoffice" . ("csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx"))
            ("mpv"         . ("m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov"
                              "3gp" "vob"  "wmv" "aiff" "wav" "ogv" "flv")))))
+  `(mu4e-contexts
+    . ',(list
+         (make-mu4e-context
+          :name "polimi"
+          :vars '((user-mail-address . "valeriy.litkovskyy@mail.polimi.it")
+                  (message-sendmail-extra-arguments . ("-a" "polimi"))
+                  (mu4e-compose-signature . "Cordiali saluti,\nLitkovskyy Valeriy")))
+         (make-mu4e-context
+          :name "exys"
+          :vars '((user-mail-address . "valeriy@exys.it")
+                  (message-sendmail-extra-arguments . ("-a" "exys"))
+                  (mu4e-compose-signature . "<#multipart type=alternative>
+<#part type=text/plain>
+VALERIY LITKOVSKYY
+DEVELOPER
+EXYS
+VIA CADOLINI, 35
+20137 MILANO
+TEL. +39 02 55199744
+https://www.exys.it<#multipart type=related><#part type=text/html>
+<hr/>
+VALERIY LITKOVSKYY<br/>
+DEVELOPER<br/>
+<img src=\"cid:_home_val_Documents_work_logo-exys.png\" alt=\"EXYS WEB SOLUTIONS\" title=\"Exys logo\" /><br/>
+VIA CADOLINI, 35<br/>
+20137 MILANO<br/>
+TEL. +39 02 55199744<br/>
+<a href=\"https://www.exys.it\">www.exys.it</a>
+<#part type=\"image/png\" filename=\"/home/val/Documents/work/logo-exys.png\" disposition=inline id=\"<_home_val_Documents_work_logo-exys.png>\">
+<#/part>
+<#/multipart>
+<#/multipart>")))))
 
   :config
-  (load-file (expand-file-name "emacs/secrets/mu4e.el" (xdg-data-home)))
   (load-library "org-mu4e")
-  (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t))
+  (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t)
+
+  (mu4e-bookmark-define "maildir:\"/EXYS\" AND NOT (from:\"info@exys.it\" OR to:\"assistenza@exys.it\")"
+                        "Exys no info" ?e)
+  (mu4e-bookmark-define "flag:unread AND NOT flag:trashed AND maildir:\"/EXYS\" AND NOT (from:\"info@exys.it\" OR to:\"assistenza@exys.it\")"
+                        "Exys unread" ?w)
+  (mu4e-bookmark-define "maildir:\"/EXYS\" AND (from:\"info@exys.it\" OR to:\"assistenza@exys.it\")"
+                        "Exys info" ?i)
+  (mu4e-bookmark-define "flag:unread AND NOT flag:trashed AND maildir:\"/POLIMI\""
+                        "Polimi unread" ?l))
 
 (leaf mu4e-alert
   :after mu4e

@@ -2,8 +2,7 @@
 
 set -o nounset
 
-# You can provide arguments. For example:
-# make_backup ~/.backup_files /dev/sdb1
+# make_backup /dev/sdb1
 
 # Mounting business
 
@@ -19,33 +18,39 @@ get_directory() {
     mktemp --directory '/tmp/backupXXXXX'
 }
 
-check_backup_file() {
-    while read -r line
-    do [ ! -e "${line}" ] && exit_error "Backup file ${line} does not exist"
-    done < "${1:?provide backup file}"
-}
-
 partition="${1:-$(get_partition)}"
 [ ! -b "${partition:?provide partition}" ] && exit_error "${partition} is not block special"
-
-backup_file="${2:-${HOME}/.backup_files}"
-[ ! -f "${backup_file:?provide backup file}" ] && exit_error "${backup_file} does not exist"
 
 directory="$(get_directory)"
 [ ! -d "${directory:?provide directory}" ] && exit_error "${directory} is not a directory"
 
 # Preparing backup
-check_backup_file "${backup_file}"
 sudo -A mount -o 'data=journal' "${partition}" "${directory}" || exit_error "Can't mount"
 sudo -A chown val:users "${directory}" || { sudo -A umount "${directory}"; exit_error "Can't chown"; }
 
 # Making backup
-xargs --arg-file="${backup_file}" --max-args=200 -I{} \
-      rsync --delete --delete-excluded --archive --verbose --partial --progress --relative \
+rsync --delete --delete-excluded --archive --verbose --partial --progress --relative \
       --backup --backup-dir="${directory%/}/backup" --suffix="$(date '+.~%Y%m%d')" \
       --exclude="${HOME}/.cache" --exclude='lost+found' \
       --exclude='*TelegramDesktop/' \
       --exclude="${directory}" \
+      ~/.authinfo.gpg \
+      ~/.backup_files \
+      ~/.config/nixpkgs \
+      ~/.local/share/emacs \
+      ~/.gnupg \
+      ~/.mail \
+      ~/.password-store \
+      ~/.ssh \
+      ~/Documents \
+      ~/Downloads \
+      ~/Music \
+      ~/Pictures \
+      ~/Videos \
+      ~/archives \
+      ~/org \
+      /mnt/second_partition \
+      /var/spool/cron/val \
       "{}" "${directory%/}/current"
 
 sudo -A umount "${directory}"
