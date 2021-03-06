@@ -15,7 +15,8 @@
 (leaf package
   :custom
   '(package-archives . nil)
-  `(package-user-dir . ,(expand-file-name "emacs/nix-elpa" (xdg-cache-home))))
+  `(package-user-dir . ,(expand-file-name "emacs/nix-elpa" (xdg-cache-home)))
+  :defer-config (package-initialize))
 
 (leaf nsm
   :custom `(nsm-settings-file . ,(expand-file-name "emacs/network-security.data" (xdg-cache-home))))
@@ -1443,20 +1444,10 @@
     (comint-send-input)))
 
 (leaf shell-pwd
-  :defun shell-pwd-generate-buffer-name
   :preface
   (unless (package-installed-p 'shell-pwd)
     (quelpa '(shell-pwd :repo "xFA25E/shell-pwd" :fetcher github)))
-  :bind (mode-specific-map :package bindings ("x S" . shell-pwd-shell))
-  :config
-  (cl-defun shell-pwd-shell (&optional (directory default-directory))
-    (interactive
-     (list (if current-prefix-arg
-               (expand-file-name (read-directory-name "Default directory: "))
-             default-directory)))
-    (shell (generate-new-buffer-name (shell-pwd-generate-buffer-name
-                                      directory)))
-    (shell-pwd-enable)))
+  :bind (mode-specific-map :package bindings ("x S" . shell-pwd-shell)))
 
 
 ;;; TEMPLATES
@@ -1930,18 +1921,30 @@
            ("libreoffice" . ("csv" "doc" "docx" "xlsx" "xls" "odt" "ods" "odp" "ppt" "pptx"))
            ("mpv"         . ("m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov"
                              "3gp" "vob"  "wmv" "aiff" "wav" "ogv" "flv")))))
-  `(mu4e-contexts
-    . ',(list
-         (make-mu4e-context
-          :name "polimi"
-          :vars '((user-mail-address . "valeriy.litkovskyy@mail.polimi.it")
-                  (message-sendmail-extra-arguments . ("-a" "polimi"))
-                  (mu4e-compose-signature . "Cordiali saluti,\nLitkovskyy Valeriy")))
-         (make-mu4e-context
-          :name "exys"
-          :vars '((user-mail-address . "valeriy@exys.it")
-                  (message-sendmail-extra-arguments . ("-a" "exys"))
-                  (mu4e-compose-signature . "<#multipart type=alternative>
+
+  :config
+  (load-library "org-mu4e")
+  (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t)
+
+  (mu4e-bookmark-define "maildir:\"/EXYS\" AND NOT (from:\"info@exys.it\" OR to:\"assistenza@exys.it\")"
+                        "Exys no info" ?e)
+  (mu4e-bookmark-define "flag:unread AND NOT flag:trashed AND maildir:\"/EXYS\" AND NOT (from:\"info@exys.it\" OR to:\"assistenza@exys.it\")"
+                        "Exys unread" ?w)
+  (mu4e-bookmark-define "maildir:\"/EXYS\" AND (from:\"info@exys.it\" OR to:\"assistenza@exys.it\")"
+                        "Exys info" ?i)
+  (mu4e-bookmark-define "flag:unread AND NOT flag:trashed AND maildir:\"/POLIMI\""
+                        "Polimi unread" ?l)
+
+  (setq mu4e-contexts (list (make-mu4e-context
+                             :name "polimi"
+                             :vars '((user-mail-address . "valeriy.litkovskyy@mail.polimi.it")
+                                     (message-sendmail-extra-arguments . ("-a" "polimi"))
+                                     (mu4e-compose-signature . "Cordiali saluti,\nLitkovskyy Valeriy")))
+                            (make-mu4e-context
+                             :name "exys"
+                             :vars '((user-mail-address . "valeriy@exys.it")
+                                     (message-sendmail-extra-arguments . ("-a" "exys"))
+                                     (mu4e-compose-signature . "<#multipart type=alternative>
 <#part type=text/plain>
 VALERIY LITKOVSKYY
 DEVELOPER
@@ -1961,20 +1964,7 @@ TEL. +39 02 55199744<br/>
 <#part type=\"image/png\" filename=\"/home/val/Documents/work/logo-exys.png\" disposition=inline id=\"<_home_val_Documents_work_logo-exys.png>\">
 <#/part>
 <#/multipart>
-<#/multipart>")))))
-
-  :config
-  (load-library "org-mu4e")
-  (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t)
-
-  (mu4e-bookmark-define "maildir:\"/EXYS\" AND NOT (from:\"info@exys.it\" OR to:\"assistenza@exys.it\")"
-                        "Exys no info" ?e)
-  (mu4e-bookmark-define "flag:unread AND NOT flag:trashed AND maildir:\"/EXYS\" AND NOT (from:\"info@exys.it\" OR to:\"assistenza@exys.it\")"
-                        "Exys unread" ?w)
-  (mu4e-bookmark-define "maildir:\"/EXYS\" AND (from:\"info@exys.it\" OR to:\"assistenza@exys.it\")"
-                        "Exys info" ?i)
-  (mu4e-bookmark-define "flag:unread AND NOT flag:trashed AND maildir:\"/POLIMI\""
-                        "Polimi unread" ?l))
+<#/multipart>"))))))
 
 (leaf mu4e-alert
   :after mu4e

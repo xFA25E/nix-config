@@ -28,10 +28,12 @@ in {
     iosevka jq ledger leiningen mkpasswd mpc_cli mpd mpop msmtp mtpfs mu p7zip
     pass-otp pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync rustup
     sbcl sdcv shellcheck simplescreenrecorder sloccount speedtest-cli stow sxiv
-    syncthing tdesktop transmission ungoogled-chromium woof xclip xz zip
+    syncthing tdesktop transmission youtube-dl ungoogled-chromium woof xclip xz
+    zip
 
     # mypkgs
-    eldev myProfile myScripts myYoutubeDl rimer sctd ungoogledChromiumIncognito
+    eldev myProfile myScripts ytdl rimer ungoogledChromiumIncognito sctd
+    myStumpwm
   ];
 
   home.extraOutputsToInstall = [ "man" "doc" "info" "devdoc" ];
@@ -615,6 +617,7 @@ in {
 
   xdg.configFile = {
     "emacs/init.el".source = ./emacs/init.el;
+    "emacs/init.elc".source = ./emacs/init.elc;
     "emacs/abbrev_defs".source = ./emacs/abbrev_defs;
 
     "fontconfig/fonts.conf".source = ./fonts.conf;
@@ -672,7 +675,7 @@ in {
   };
 
   xdg.dataFile = {
-    "stardict/dic".source = "${pkgs.stardictDicts}/share/stardict/dic";
+    "stardict/dic".source = "${pkgs.stardictDictionaries}/share/stardict/dic";
   };
 
   # Let Home Manager install and manage itself.

@@ -67,7 +67,7 @@
 ;;; Remapped keys
 
 (define-remapped-keys
-    '(("(Firefox|Chromium-browser)"
+    '(("(Firefox|Chromium-browser|TelegramDesktop)"
        ("C-n"   . "Down")
        ("C-p"   . "Up")
        ("C-f"   . "Right")
@@ -85,4 +85,5 @@
        ("M-b"   . "C-Left")
        ("C-k"   . ("C-S-End" "C-x"))
        ("M-K"   . "C-w")
-       ("C-m"   . "RET"))))
+       ("C-m"   . "RET")
+       ("C-s"   . "C-f"))))
