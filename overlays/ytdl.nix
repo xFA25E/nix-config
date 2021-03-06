@@ -1,5 +1,5 @@
 self: super: let
-  ytdl-dir = "\\\${YTDL_DIR:-\\\${XDG_VIDEOS_DIR:-\\\${HOME}/Videos}}";
+  ytdl-dir = "\${YTDL_DIR:-\${XDG_VIDEOS_DIR:-\${HOME}/Videos}}";
   title-ext-fmt = "%(title)s.%(ext)s";
   video-title-fmt = "%(upload_date)s - ${title-ext-fmt}";
   playlist-index-fmt = "%(playlist_uploader)s/%(playlist)s/%(playlist_index)s";
