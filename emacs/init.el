@@ -1458,7 +1458,7 @@
   :preface
   (unless (package-installed-p 'skempo-mode)
     (quelpa '(skempo-mode :repo "xFA25E/skempo-mode" :fetcher github)))
-  :hook ((emacs-lisp-mode-hook lisp-mode-hook) . skempo-mode)
+  :hook ((emacs-lisp-mode-hook lisp-mode-hook nix-mode-hook) . skempo-mode)
 
   :bind
   (skempo-mode-map
@@ -1472,6 +1472,26 @@
 
   (defun skempo-mode-elisp-group ()
     (string-trim-right (buffer-name) (rx (? "-mode") ".el" eos)))
+
+  (skempo-mode-define-templates nix-mode
+    ("github" :tempo "fetchFromGitHub {" n>
+     "owner = \"" p "\";" n>
+     "repo = \"" p "\";" n>
+     "rev = \"" p "\";" n>
+     "sha256 = \"" p "1111111111111111111111111111111111111111111111111111\";" n>
+     "}" p >)
+    ("url" :tempo "fetchurl {" n>
+     "url = \"" p "\";" n>
+     "sha256 = \"" p "1111111111111111111111111111111111111111111111111111\";" n>
+     "}" p >)
+    ("zip" :tempo "fetchzip {" n>
+     "url = \"" p "\";" n>
+     "sha256 = \"" p "1111111111111111111111111111111111111111111111111111\";" n>
+     "}" p >)
+    ("git" :tempo "fetchGit {" n>
+     "url = \"" p "\";" n>
+     "rev = \"" p "\";" n>
+     "}" p >))
 
   (skempo-mode-define-templates lisp-mode
     ("defvar" :tempo "(defvar " p n> r> n> "\"" p "\")")
