@@ -617,7 +617,6 @@ in {
 
   xdg.configFile = {
     "emacs/init.el".source = ./emacs/init.el;
-    "emacs/init.elc".source = ./emacs/init.elc;
     "emacs/abbrev_defs".source = ./emacs/abbrev_defs;
 
     "fontconfig/fonts.conf".source = ./fonts.conf;
@@ -672,7 +671,11 @@ in {
       --output "%(uploader)s/%(upload_date)s - %(title)s.%(ext)s"
       --format '(bestvideo+bestaudio/best)[height<=?768][width<=?1366]'
     '';
-  };
+  } // (
+    if (builtins.pathExists ./emacs/init.elc)
+    then { "emacs/init.elc".source = ./emacs/init.elc; }
+    else {}
+  );
 
   xdg.dataFile = {
     "stardict/dic".source = "${pkgs.stardictDictionaries}/share/stardict/dic";
