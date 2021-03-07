@@ -1,0 +1,35 @@
+#!/bin/sh
+
+set -o nounset
+set -o errexit
+
+if test "$#" = 0; then
+    printf 'This is a automatic installer.\n'
+    printf 'Make sure that this repo is linked to %s/nixpkgs.\n\n' "${XDG_CONFIG_HOME:-${HOME}/.config}"
+    printf 'To install 20.09 release of home-manager:\n'
+    printf '$ %s 20.09\n\n' "$0"
+    printf 'To install unstable branch of home-manager:\n'
+    printf '$ %s unstable\n\n' "$0"
+    exit 1
+fi
+
+case "$1" in
+    unstable)
+        name=master
+        ;;
+    20.09)
+        name=release-20.09
+        ;;
+    *)
+        printf 'Invalid arguments! Run %s without arguments for help.' "$0"
+        exit 1
+esac
+
+nix-channel --remove home-manager
+nix-channel --add "https://github.com/nix-community/home-manager/archive/${name}.tar.gz" home-manager
+nix-channel --update
+
+nix-shell '<home-manager>' -A install
+
+nix-collect-garbage -d
+nix-store --optimise -v
