@@ -15,7 +15,9 @@ get_partition() {
 }
 
 get_directory() {
-    mktemp --directory '/tmp/backupXXXXX'
+    # mktemp --directory '/tmp/backupXXXXX'
+    sudo -A mkdir -p /mnt/backup >/dev/null
+    echo /mnt/backup
 }
 
 partition="${1:-$(get_partition)}"
@@ -31,26 +33,12 @@ sudo -A chown val:users "${directory}" || { sudo -A umount "${directory}"; exit_
 # Making backup
 rsync --delete --delete-excluded --archive --verbose --partial --progress --relative \
       --backup --backup-dir="${directory%/}/backup" --suffix="$(date '+.~%Y%m%d')" \
-      --exclude="${HOME}/.cache" --exclude='lost+found' \
-      --exclude='*TelegramDesktop/' \
-      --exclude="${directory}" \
-      ~/.authinfo.gpg \
-      ~/.config/nixpkgs \
-      ~/.local/share/emacs \
-      ~/.gnupg \
-      ~/.mail \
-      ~/.password-store \
-      ~/.ssh \
-      ~/Documents \
-      ~/Downloads \
-      ~/Music \
-      ~/Pictures \
-      ~/Videos \
-      ~/archives \
-      ~/org \
-      /mnt/second_partition \
-      /var/spool/cron/val \
+      --exclude='lost+found' --exclude="${directory}" \
+      ~/Documents ~/Downloads ~/Music ~/Pictures ~/Videos ~/archives ~/org \
+      ~/.authinfo.gpg ~/.gnupg ~/.mail ~/.password-store ~/.ssh \
+      /mnt/second_partition /var/spool/cron/val \
+      ~/.config/nixpkgs ~/.local/share/emacs \
       "${directory%/}/current"
 
 sudo -A umount "${directory}"
-rmdir "${directory}"
+# rmdir "${directory}"
