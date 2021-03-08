@@ -1454,82 +1454,92 @@
 
 (leaf autoinsert :hook (after-init-hook . auto-insert-mode))
 
-(leaf skempo-mode
+(leaf skempo
   :preface
-  (unless (package-installed-p 'skempo-mode)
-    (quelpa '(skempo-mode :repo "xFA25E/skempo-mode" :fetcher github)))
+  (unless (package-installed-p 'skempo)
+    (quelpa '(skempo :repo "xFA25E/skempo" :fetcher github)))
   :hook ((emacs-lisp-mode-hook lisp-mode-hook nix-mode-hook) . skempo-mode)
 
   :bind
   (skempo-mode-map
-   ("C-z" . skempo-mode-complete-tag-or-call-on-region)
-   ("M-g M-e" . tempo-forward-mark)
-   ("M-g M-a" . tempo-backward-mark))
+   ("C-z" . skempo-complete-tag-or-call-on-region)
+   ("M-g M-e" . skempo-forward-mark)
+   ("M-g M-a" . skempo-backward-mark))
 
   :config
-  (defun skempo-mode-elisp-namespace ()
+  (skempo-advice-mode)
+
+  (defun skempo-elisp-namespace ()
     (string-trim-right (buffer-name) (rx ".el" eos)))
 
-  (defun skempo-mode-elisp-group ()
+  (defun skempo-elisp-group ()
     (string-trim-right (buffer-name) (rx (? "-mode") ".el" eos)))
 
-  (skempo-mode-define-templates nix-mode
-    ("github" :tempo "fetchFromGitHub {" n>
-     "owner = \"" p "\";" n>
-     "repo = \"" p "\";" n>
-     "rev = \"" p "\";" n>
-     "sha256 = \"" p "1111111111111111111111111111111111111111111111111111\";" n>
-     "}" p >)
-    ("url" :tempo "fetchurl {" n>
-     "url = \"" p "\";" n>
-     "sha256 = \"" p "1111111111111111111111111111111111111111111111111111\";" n>
-     "}" p >)
-    ("zip" :tempo "fetchzip {" n>
-     "url = \"" p "\";" n>
-     "sha256 = \"" p "1111111111111111111111111111111111111111111111111111\";" n>
-     "}" p >)
-    ("git" :tempo "fetchGit {" n>
-     "url = \"" p "\";" n>
-     "rev = \"" p "\";" n>
-     "}" p >))
+  (skempo-define-tempo (github :tag t :mode nix-mode)
+    "fetchFromGitHub {" n>
+    "owner = \"" p "\";" n>
+    "repo = \"" p "\";" n>
+    "rev = \"" p "\";" n>
+    "sha256 = \"" p "1111111111111111111111111111111111111111111111111111\";" n>
+    "}" p >)
 
-  (skempo-mode-define-templates lisp-mode
-    ("defvar" :tempo "(defvar " p n> r> n> "\"" p "\")")
-    ("defun" :tempo "(defun " p " (" p ")" n> "\"" p "\"" n> r> ")")
-    ("lambda" :tempo "(lambda (" p ") " n> r> ")")
-    ("let" :tempo "(let ((" p "))" n> r> ")"))
+  (skempo-define-tempo (url :tag t :mode nix-mode)
+    "fetchurl {" n>
+    "url = \"" p "\";" n>
+    "sha256 = \"" p "1111111111111111111111111111111111111111111111111111\";" n>
+    "}" p >)
 
-  (skempo-mode-define-templates emacs-lisp-mode
-    ("defvar" :tempo
-     "(defvar " (skempo-mode-elisp-namespace) "-" p n>
+  (skempo-define-tempo (zip :tag t :mode nix-mode)
+    "fetchzip {" n>
+    "url = \"" p "\";" n>
+    "sha256 = \"" p "1111111111111111111111111111111111111111111111111111\";" n>
+    "}" p >)
+
+  (skempo-define-tempo (git :tag t :mode nix-mode)
+    "fetchGit {" n>
+    "url = \"" p "\";" n>
+    "rev = \"" p "\";" n>
+    "}" p >)
+
+  (skempo-define-tempo (lambda :tag t :mode (emacs-lisp-mode lisp-mode))
+    "(lambda (" p ") " n> r> ")")
+
+  (skempo-define-tempo (let :tag t :mode (emacs-lisp-mode lisp-mode))
+    "(let ((" p "))" n> r> ")")
+
+  (skempo-define-tempo (defvar :tag t :mode lisp-mode)
+    "(defvar " p n> r> n> "\"" p "\")")
+
+  (skempo-define-tempo (defun :tag t :mode lisp-mode)
+    "(defun " p " (" p ")" n> "\"" p "\"" n> r> ")")
+
+  (skempo-define-tempo (defvar :tag t :mode emacs-lisp-mode)
+    "(defvar " (skempo-elisp-namespace) "-" p n>
      r> n>
      "\"" p "\")")
 
-    ("defun" :tempo
-     "(defun " (skempo-mode-elisp-namespace) "-" p " (" p ")" n>
+  (skempo-define-tempo (defun :tag t :mode emacs-lisp-mode)
+    "(defun " (skempo-elisp-namespace) "-" p " (" p ")" n>
      "\"" p "\"" n>
      r> ")")
 
-    ("lambda" :tempo "(lambda (" p ") " n> r> ")")
-    ("let" :tempo "(let ((" p "))" n> r> ")")
+  (skempo-define-tempo (defgroup :tag t :mode emacs-lisp-mode)
+    "(defgroup " (skempo-elisp-group) " nil" n>
+    "\"" p "\"" n>
+    ":group " p "nil)")
 
-    ("defgroup" :tempo
-     "(defgroup " (skempo-mode-elisp-group) " nil" n>
-     "\"" p "\"" n>
-     ":group " p "nil)")
+  (skempo-define-tempo (defcustom :tag t :mode emacs-lisp-mode)
+    "(defcustom " (skempo-elisp-namespace) "-" p n>
+    r> n>
+    "\"" p "\"" n>
+    ":type nil" n>
+    ":group '" (skempo-elisp-group) ")" n>)
 
-    ("defcustom" :tempo
-     "(defcustom " (skempo-mode-elisp-namespace) "-" p n>
-     r> n>
-     "\"" p "\"" n>
-     ":type nil" n>
-     ":group '" (skempo-mode-elisp-group) ")" n>)
-
-    ("defface" :tempo
-     "(defface " (skempo-mode-elisp-namespace) "-" p n>
+  (skempo-define-tempo (defface :tag t :mode emacs-lisp-mode)
+    "(defface " (skempo-elisp-namespace) "-" p n>
      "'((t :inherit " p "nil))" n>
      "\"" p "\"" n>
-     ":group '" (skempo-mode-elisp-group) ")")))
+     ":group '" (skempo-elisp-group) ")"))
 
 
 ;;; APPLICATIONS
