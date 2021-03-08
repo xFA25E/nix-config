@@ -846,7 +846,7 @@
   (defun save-window-configuration-to-w (&rest _ignore)
     (window-configuration-to-register ?w)))
 
-(leaf subword :hook ((php-mode-hook rust-mode-hook java-mode-hook) . subword-mode))
+(leaf subword :hook ((php-mode-hook rust-mode-hook java-mode-hook nix-mode-hook) . subword-mode))
 
 (leaf edit-indirect
   :defun edit-indirect-guess-mode

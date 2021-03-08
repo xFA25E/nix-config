@@ -15,7 +15,7 @@ in {
 
     # mypkgs
     eldev myProfile myScripts ytdl rimer ungoogledChromiumIncognito sctd
-    myStumpwm
+    myStumpwm browser
   ];
 
   home.extraOutputsToInstall = [ "man" "doc" "info" "devdoc" ];
@@ -151,6 +151,18 @@ in {
 
   xdg.dataFile = {
     "stardict/dic".source = "${pkgs.stardictDictionaries}/share/stardict/dic";
+
+    "applications/browser.desktop".text = ''
+      [Desktop Entry]
+      Categories=Network;WebBrowser;
+      Comment=
+      Exec=${pkgs.browser}/bin/browser %U
+      GenericName=Web Browser
+      MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp
+      Name=Browser
+      Terminal=false
+      Type=Application
+    '';
   };
 
   # Let Home Manager install and manage itself.

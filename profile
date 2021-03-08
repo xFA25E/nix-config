@@ -3,7 +3,7 @@ export PATH="/usr/bin:/bin:/usr/sbin:/sbin:${PATH}"
 export EDITOR="emacseditor"
 export VISUAL="${EDITOR}"
 export MANPATH="/usr/local/man:${MANPATH}"
-export BROWSER="qutebrowser"
+export BROWSER="browser"
 export TERMINAL="uxterm"
 
 # xdg dirs
