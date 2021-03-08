@@ -1475,24 +1475,27 @@
   (defun skempo-elisp-group ()
     (string-trim-right (buffer-name) (rx (? "-mode") ".el" eos)))
 
+  (defun skempo-nix-hash ()
+    (make-string 52 ?1))
+
   (skempo-define-tempo (github :tag t :mode nix-mode)
     "fetchFromGitHub {" n>
     "owner = \"" p "\";" n>
     "repo = \"" p "\";" n>
     "rev = \"" p "\";" n>
-    "sha256 = \"" p "1111111111111111111111111111111111111111111111111111\";" n>
+    "sha256 = \"" p (skempo-nix-hash) "\";" n>
     "}" p >)
 
   (skempo-define-tempo (url :tag t :mode nix-mode)
     "fetchurl {" n>
     "url = \"" p "\";" n>
-    "sha256 = \"" p "1111111111111111111111111111111111111111111111111111\";" n>
+    "sha256 = \"" p (skempo-nix-hash) "\";" n>
     "}" p >)
 
   (skempo-define-tempo (zip :tag t :mode nix-mode)
     "fetchzip {" n>
     "url = \"" p "\";" n>
-    "sha256 = \"" p "1111111111111111111111111111111111111111111111111111\";" n>
+    "sha256 = \"" p (skempo-nix-hash) "\";" n>
     "}" p >)
 
   (skempo-define-tempo (git :tag t :mode nix-mode)
