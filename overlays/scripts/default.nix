@@ -12,7 +12,7 @@ self: super: let
 in {
   scripts = super.stdenv.mkDerivation {
     name = "scripts";
-    src = ./scripts;
+    src = ./.;
     dontUnpack = true;
     dontPatch = true;
     dontConfigure = true;
@@ -20,6 +20,7 @@ in {
     nativeBuildInputs = [ super.makeWrapper ];
     installPhase = ''
       install -D -t "$out/bin" "$src/"*
+      rm "$out/bin/default.nix"
     '';
     postFixup = let
       wrapScripts = with self; {
