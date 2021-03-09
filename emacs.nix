@@ -19,15 +19,4 @@
 
     org-plus-contrib
   ];
-  overrides = self: super: {
-    csv-mode = super.elpaPackages.csv-mode.override (oldAttrs: {
-      elpaBuild = attrs: oldAttrs.elpaBuild (attrs // {
-        version = "1.15";
-        src = oldAttrs.fetchurl {
-          url = "https://elpa.gnu.org/packages/csv-mode-1.15.tar";
-          sha256 = "0pigqhqg5mfza6jdskcr9yvrzdxnd68iyp3vyb8p8wskdacmbiyx";
-        };
-      });
-    });
-  };
 }

@@ -1120,7 +1120,9 @@
 ;;;; MINIBUFFER
 
 (leaf minibuffer
-  :bind (completion-in-region-mode-map ("M-v" . switch-to-completions))
+  :bind
+  (completion-in-region-mode-map ("M-v" . switch-to-completions))
+  (minibuffer-local-must-match-map ("C-j" . minibuffer-force-complete-and-exit))
   :custom
   '(completion-styles . '(substring partial-completion))
   '(completion-category-overrides . '((bookmark (styles basic))))
@@ -2120,5 +2122,5 @@ TEL. +39 02 55199744<br/>
   '(org-html-htmlize-font-prefix . "org-"))
 
 ;;; Local variables:
-;;; eval: (require (quote leaf))
+;;; eval: (progn (require (quote leaf)) (setq imenu-generic-expression lisp-imenu-generic-expression))
 ;;; End:

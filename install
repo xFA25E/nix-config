@@ -33,3 +33,7 @@ nix-shell '<home-manager>' -A install
 
 nix-collect-garbage -d
 nix-store --optimise -v
+
+printf '\n\n>>> ALL SET!\n\n'
+printf 'Logout and dont forget to activate mu with:\n'
+printf '$ mu init --my-address=my@mail1 --my-address=my@mail2'
