@@ -15,7 +15,6 @@ get_partition() {
 }
 
 get_directory() {
-    # mktemp --directory '/tmp/backupXXXXX'
     sudo -A mkdir -p /mnt/backup >/dev/null
     echo /mnt/backup
 }
@@ -41,4 +40,3 @@ rsync --delete --delete-excluded --archive --verbose --partial --progress --rela
       "${directory%/}/current"
 
 sudo -A umount "${directory}"
-# rmdir "${directory}"

@@ -14,7 +14,7 @@ in {
     zip
 
     # mypkgs
-    eldev myProfile myScripts ytdl rimer ungoogledChromiumIncognito sctd
+    eldev userProfile scripts ytdl rimer ungoogledChromiumIncognito sctd
     myStumpwm browser
   ];
 
