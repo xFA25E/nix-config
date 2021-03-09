@@ -3,12 +3,12 @@
 unmountusb() {
     drives="${1:?provide drives}"
     chosen="$(echo "${drives}" | dmenu -p "Which drive?" -l 19 | awk '{print $1}')"
-    sudo -A umount "${chosen:?}" && notify-send "💻 USB unmounting" "${chosen} unmounted."
+    sudo -A umount "${chosen:?}" && notify-send "USB unmounting" "${chosen} unmounted."
 }
 
 unmountandroid() {
-    chosen="$(awk '$1 == "simple-mtpfs" {print $2}' /etc/mtab | dmenu -p "Which android?" -l 19)"
-    sudo -A umount -l "${chosen:?}" && notify-send "🤖 Android unmounting" "${chosen} unmounted."
+    chosen="$(awk '$1 == "mtpfs" {print $2}' /etc/mtab | dmenu -p "Which android?" -l 19)"
+    sudo -A umount -l "${chosen:?}" && notify-send "Android unmounting" "${chosen} unmounted."
 }
 
 drives="$(lsblk -nrpo "name,type,size,mountpoint" | awk '$2=="part"&&$4!~/\/boot|\/home$|SWAP/&&length($4)>1{printf "%s (%s)\n",$4,$3}')"

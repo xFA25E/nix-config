@@ -45,9 +45,8 @@
 
 
 
-(defcommand show-pass-entry (pass-entry) ((:pass-entry "Show pass: "))
-  (run-shell-command
-   (format nil "'~A' '~A~A.gpg'" (getenv "EDITOR") *password-store-directory* pass-entry)))
+(defcommand edit-pass-entry (pass-entry) ((:pass-entry "Edit pass: "))
+  (run-shell-command (format nil "pass edit '~A'" pass-entry)))
 
 (defcommand type-pass-entry (pass-entry) ((:pass-entry "Type pass: "))
   (let* ((text (run-shell-command (format nil "pass show '~A'" pass-entry) t))
@@ -69,8 +68,8 @@
     (window-send-string text)))
 
 (defcommand menu-pass () ()
-  (let ((menu '(("type" :type) ("show" :show) ("otp" :otp))))
+  (let ((menu '(("type" :type) ("edit" :edit) ("otp" :otp))))
     (case (cadr (select-from-menu (current-screen) menu "Pass: "))
-      (:type (eval-command "type-pass-entry" t))
-      (:show (eval-command "show-pass-entry" t))
-      (:otp (eval-command "otp-pass-entry" t)))))
+      (:type (stumpwm::eval-command "type-pass-entry" t))
+      (:edit (stumpwm::eval-command "edit-pass-entry" t))
+      (:otp (stumpwm::eval-command "otp-pass-entry" t)))))
