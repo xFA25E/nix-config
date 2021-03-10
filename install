@@ -44,7 +44,7 @@ case "$1" in
 
         printf '\n\n>>> ALL SET!\n\n'
         printf 'Logout and dont forget to activate mu with:\n'
-        printf '$ mu init --my-address=my@mail1 --my-address=my@mail2'
+        printf '$ mu init --my-address=my@mail1 --my-address=my@mail2\n'
         ;;
     *)
         printf 'Invalid arguments! Run %s without arguments for help.' "$0"
