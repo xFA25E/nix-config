@@ -476,8 +476,8 @@
   `(auto-save-list-file-prefix
     . ,(expand-file-name (format-time-string "emacs/auto-saves/list/%y-%m-%d-")
                          (xdg-cache-home)))
-  '(inhibit-startup-echo-area-message . t)
   '(inhibit-startup-screen . t)
+  '(inhibit-startup-echo-area-message . t)
   '(initial-scratch-message . nil))
 
 (leaf window
@@ -870,6 +870,12 @@
 
 (leaf paragraphs :bind ("C-M-S-t" . transpose-paragraphs))
 
+(leaf abbrev
+  :hook (text-mode-hook . abbrev-mode)
+  :custom
+  `(abbrev-file-name
+    . ,(expand-file-name "emacs/abbrev_defs" (xdg-data-home))))
+
 
 ;;;; FORMATTING
 
@@ -903,7 +909,9 @@
     sh-mode-hook
     nix-mode-hook
     php-mode-hook
-    comint-mode-hook)
+    comint-mode-hook
+    sql-mode-hook
+    org-mode-hook)
    . smartparens-mode)                            ; electric pair mode
   (smartparens-mode-hook . show-smartparens-mode) ; show paren mode
 
@@ -1661,6 +1669,7 @@
 
 (leaf eww
   :defvar eww-data eww-mode-map
+  :defun eww-current-url
   :hook (eww-mode-hook . eww-restore-browse-url-browser-function)
 
   :custom

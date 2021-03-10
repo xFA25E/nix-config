@@ -3,26 +3,24 @@ let colors = import ./colors.nix;
 in {
   home.packages = with pkgs; [
     # broken packages
-    # qutebrowser libreoffice
+    # qutebrowser
 
     # nixpkgs
     htop checkbashisms dejavu_fonts dmenu fd feh file firefox git hack-font
-    iosevka jq ledger leiningen mkpasswd mpc_cli mpd mpop msmtp mtpfs mu p7zip
-    pass-otp pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync rustup
-    sbcl sdcv shellcheck simplescreenrecorder sloccount speedtest-cli stow sxiv
-    syncthing tdesktop transmission youtube-dl ungoogled-chromium woof xclip xz
-    zip
+    iosevka jq ledger leiningen libreoffice mkpasswd mpc_cli mpd mpop msmtp
+    mtpfs mu p7zip pass-otp pinentry pueue pulsemixer pwgen qrencode qtox
+    ripgrep rsync rustup sbcl sdcv shellcheck simplescreenrecorder sloccount
+    speedtest-cli stow sxiv syncthing tdesktop transmission youtube-dl
+    ungoogled-chromium woof xclip xz zip
 
     # mypkgs
-    eldev userProfile scripts ytdl rimer ungoogledChromiumIncognito sctd
-    myStumpwm browser
+    browser myEmacs rimer scripts sctd stumpwm ungoogledChromiumIncognito
+    userProfile ytdl
   ];
 
   home.extraOutputsToInstall = [ "man" "doc" "info" "devdoc" ];
 
   programs = {
-    emacs = import ./emacs.nix;
-
     readline = {
       enable = true;
       variables = {
@@ -90,9 +88,6 @@ in {
   };
 
   xdg.configFile = {
-    "emacs/init.el".source = ./emacs/init.el;
-    "emacs/abbrev_defs".source = ./emacs/abbrev_defs;
-
     "fontconfig/fonts.conf".source = ./fonts.conf;
 
     "loadkeys/ctrl2caps.map".text = ''
@@ -145,9 +140,7 @@ in {
       --output "%(uploader)s/%(upload_date)s - %(title)s.%(ext)s"
       --format '(bestvideo+bestaudio/best)[height<=?768][width<=?1366]'
     '';
-  } // (if (builtins.pathExists ./emacs/init.elc)
-        then { "emacs/init.elc".source = ./emacs/init.elc; }
-        else {});
+  };
 
   xdg.dataFile = {
     "stardict/dic".source = "${pkgs.stardictDictionaries}/share/stardict/dic";

@@ -290,7 +290,7 @@ self: super: let
       (asdf:load-system dep))
   '';
 in {
-  myStumpwm = super.stdenv.mkDerivation rec {
+  stumpwm = super.stdenv.mkDerivation rec {
     pname = "stumpwm";
     version = "20.11";
     src = super.fetchFromGitHub {
