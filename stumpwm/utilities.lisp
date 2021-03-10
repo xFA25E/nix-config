@@ -1,14 +1,5 @@
 (in-package :stumpwm)
 
-(defmacro define-run-or-raise (binary class)
-  (check-type binary string)
-  (check-type class string)
-  `(defcommand ,(intern (string-upcase binary)) () ()
-     ,(concatenate 'string "Start " binary " unless it is already running, in which case focus it.")
-     (run-or-raise ,binary '(:class ,class))))
-
-
-
 (defun extract-first-regexp-group (scanner string)
   (let ((value (nth-value 1 (ppcre:scan-to-strings scanner string))))
     (when (and (vectorp value) (/= 0 (length value)))
