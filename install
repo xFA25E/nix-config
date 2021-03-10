@@ -10,30 +10,35 @@ if test "$#" = 0; then
     printf '$ %s 20.09\n\n' "$0"
     printf 'To install unstable branch of home-manager:\n'
     printf '$ %s unstable\n\n' "$0"
+    printf 'To install:\n'
+    printf '$ %s install\n\n' "$0"
     exit 1
 fi
 
 case "$1" in
     unstable)
-        name=master
+        nix-channel --remove home-manager
+        nix-channel --add "https://github.com/nix-community/home-manager/archive/master.tar.gz" home-manager
+        nix-channel --update
+        printf '>>> Now logout!\n'
         ;;
     20.09)
-        name=release-20.09
+        nix-channel --remove home-manager
+        nix-channel --add "https://github.com/nix-community/home-manager/archive/release-20.09.tar.gz" home-manager
+        nix-channel --update
+        printf '>>> Now logout!\n'
+        ;;
+    install)
+        nix-shell '<home-manager>' -A install
+
+        nix-collect-garbage -d
+        nix-store --optimise -v
+
+        printf '\n\n>>> ALL SET!\n\n'
+        printf 'Logout and dont forget to activate mu with:\n'
+        printf '$ mu init --my-address=my@mail1 --my-address=my@mail2'
         ;;
     *)
         printf 'Invalid arguments! Run %s without arguments for help.' "$0"
         exit 1
 esac
-
-nix-channel --remove home-manager
-nix-channel --add "https://github.com/nix-community/home-manager/archive/${name}.tar.gz" home-manager
-nix-channel --update
-
-nix-shell '<home-manager>' -A install
-
-nix-collect-garbage -d
-nix-store --optimise -v
-
-printf '\n\n>>> ALL SET!\n\n'
-printf 'Logout and dont forget to activate mu with:\n'
-printf '$ mu init --my-address=my@mail1 --my-address=my@mail2'
