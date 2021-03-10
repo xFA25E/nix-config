@@ -1,8 +1,8 @@
-pkgs: ''
+pkgs: dir: ''
   defaults
   auth           on
   tls            on
-  logfile        ~/.cache/msmtp.log
+  logfile        ${dir.cache}/msmtp.log
 
   account        exys
   host           mail.exys.it

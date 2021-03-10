@@ -1,13 +1,13 @@
 ;; -*- mode: lisp; -*-
-;;; The following lines added by ql:add-to-init-file:
+(require 'uiop)
+
 #-quicklisp
-(let ((quicklisp-init (merge-pathnames ".local/share/quicklisp/setup.lisp"
-                                       (user-homedir-pathname))))
+(let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp" (uiop:xdg-data-home))))
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
 
 #+quicklisp
-(progn
-  (pushnew (merge-pathnames "Documents/projects/common-lisp/"
-                            (user-homedir-pathname))
+(let ((docs-dir (or (uiop:getenv-absolute-directory "XDG_DOCUMENTS_DIR")
+                    (merge-pathnames "Documents/" (user-homedir-pathname)))))
+  (pushnew (merge-pathnames "projects/common-lisp/" docs-dir)
            ql:*local-project-directories*))

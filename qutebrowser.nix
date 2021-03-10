@@ -257,14 +257,14 @@ pkgs: colors: {
       ssl_strict = "ask";
       user_stylesheets = [
         (let youtubeCss = pkgs.writeText "youtube.css" ''
-              html>body>ytd-app>div#content>ytd-page-manager#page-manager>ytd-watch-flexy>div#columns>div#secondary,
-              html>body>ytd-app>div#content>ytd-page-manager#page-manager>ytd-watch-flexy>div#columns>div#primary>div#primary-inner>div#related,
-              html>body>ytd-app>div#content.style-scope.ytd-app>div#masthead-container.style-scope.ytd-app,
-              html>body>ytd-app>div#content.style-scope.ytd-app>app-drawer#guide.style-scope.ytd-app,
-              html>body>ytd-app>div#content>ytd-page-manager#page-manager>ytd-browse>ytd-two-column-browse-results-renderer>div#primary>ytd-rich-grid-renderer {
-                  display: none;
-              }
-            ''; in "${youtubeCss}")
+           html>body>ytd-app>div#content>ytd-page-manager#page-manager>ytd-watch-flexy>div#columns>div#secondary,
+           html>body>ytd-app>div#content>ytd-page-manager#page-manager>ytd-watch-flexy>div#columns>div#primary>div#primary-inner>div#related,
+           html>body>ytd-app>div#content.style-scope.ytd-app>div#masthead-container.style-scope.ytd-app,
+           html>body>ytd-app>div#content.style-scope.ytd-app>app-drawer#guide.style-scope.ytd-app,
+           html>body>ytd-app>div#content>ytd-page-manager#page-manager>ytd-browse>ytd-two-column-browse-results-renderer>div#primary>ytd-rich-grid-renderer {
+               display: none;
+           }
+        ''; in "${youtubeCss}")
       ];
       webgl = false;
       webrtc_ip_handling_policy = "default-public-interface-only";

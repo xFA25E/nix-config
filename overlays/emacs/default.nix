@@ -1,5 +1,5 @@
 self: super: let
-  myEmacsWithPackages =  (super.emacsPackagesGen super.emacs).emacsWithPackages (epkgs: (with epkgs.melpaPackages; [
+  myEmacsWithPackages = (super.emacsPackagesGen super.emacs).emacsWithPackages (epkgs: (with epkgs.melpaPackages; [
     (super.runCommand "default.el" {} ''
       mkdir -p $out/share/emacs/site-lisp
       cp ${./init.el} $out/share/emacs/site-lisp/default.el
