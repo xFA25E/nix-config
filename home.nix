@@ -83,7 +83,10 @@ in {
     '';
     ".profile".source = ./profile;
     ".sbclrc".source = ./sbclrc;
-    ".shinit".source = ./shinit;
+    ".shinit".text = ''
+      ${pkgs.coreutils}/bin/stty -ixon
+      PS1='$? $(${pkgs.coreutils}/bin/whoami) '
+    '';
     ".xinitrc".source = ./xinitrc;
   };
 
@@ -105,8 +108,8 @@ in {
       init-module = "\${XDG_CONFIG_HOME}/npm/config/npm-init.js";
     };
 
-    "mpop/config".source = ./mpop;
-    "msmtp/config".source = ./msmtp;
+    "mpop/config".text = import ./mpop.nix pkgs;
+    "msmtp/config".text = import ./msmtp.nix pkgs;
 
     "mpd/mpd.conf".text = ''
       music_directory "~/Music"

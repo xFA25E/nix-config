@@ -316,7 +316,6 @@ pkgs: colors: {
       auto_follow_timeout = 0;
       border = "1px solid " + colors.base07;
       chars = "aoeuhtns";
-      dictionary = "/usr/share/dict/cracklib-small";
       hide_unmatched_rapid_hints = true;
       min_chars = 1;
       mode = "letter";
