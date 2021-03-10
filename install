@@ -6,6 +6,8 @@ set -o errexit
 if test "$#" = 0; then
     printf 'This is a automatic installer.\n'
     printf 'Make sure that this repo is linked to %s/nixpkgs.\n\n' "${XDG_CONFIG_HOME:-${HOME}/.config}"
+    printf 'To install nixpkgs\n'
+    printf '$ %s nixpkgs\n\n' "$0"
     printf 'To install 20.09 release of home-manager:\n'
     printf '$ %s 20.09\n\n' "$0"
     printf 'To install unstable branch of home-manager:\n'
@@ -16,6 +18,12 @@ if test "$#" = 0; then
 fi
 
 case "$1" in
+    nixpkgs)
+        nix-channel --remove nixpkgs
+        nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
+        nix-channel --update
+        printf '>>> Now logout!\n'
+        ;;
     unstable)
         nix-channel --remove home-manager
         nix-channel --add "https://github.com/nix-community/home-manager/archive/master.tar.gz" home-manager
