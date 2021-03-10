@@ -44,9 +44,9 @@ in {
         "ytdli" = [ libnotify jq gnused unixtools.column dmenu pueue bash ytdly ytdlay "$out" gawk ];
       };
       wrapPrefixScripts = with self; { # sudo required
-        "make_backup" = [ util-linux coreutils rsync ];
-        "rmount" = [ coreutils util-linux gawk findutils dmenu mtpfs ];
-        "rumount" = [ dmenu gawk util-linux libnotify gnugrep ];
+        "make_backup" = [ utillinux coreutils rsync ];
+        "rmount" = [ coreutils utillinux gawk findutils dmenu mtpfs ];
+        "rumount" = [ dmenu gawk utillinux libnotify gnugrep ];
       };
     in ''
       ${wrapPaths wrapScripts}
