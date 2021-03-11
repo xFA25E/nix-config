@@ -1155,12 +1155,6 @@
   :hook (after-init-hook . marginalia-mode)
   :custom '(marginalia-annotators . '(marginalia-annotators-light marginalia-annotators-heavy)))
 
-(leaf embark
-  :custom '(embark-occur-initial-view-alist . '((t . zebra)))
-  :bind
-  ("C-," . embark-act)
-  (minibuffer-local-completion-map :package minibuffer ("C-." . embark-act-noexit)))
-
 (leaf orderless
   :custom
   `(orderless-component-separator . ,(rx (+ space)))

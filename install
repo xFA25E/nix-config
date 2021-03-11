@@ -39,6 +39,7 @@ case "$1" in
     install)
         mkdir ../nix
         echo "max-jobs = auto" >> ../nix/nix.conf
+
         nix-shell '<home-manager>' -A install
 
         nix-collect-garbage -d
