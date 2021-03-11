@@ -7,21 +7,6 @@
 (dolist (s *screen-list*)
   (update-color-map s))
 
-;; (let ((white (nth 7 *colors*))
-;;       (black (nth 0 *colors*))
-;;       (yellow (nth 5 *colors*))
-;;       (blue (nth 4 *colors*))
-;;       (green (nth 2 *colors*)))
-;;   (set-bg-color black)
-;;   (set-border-color white)
-;;   (set-fg-color white)
-;;   (set-float-focus-color yellow)
-;;   (set-float-unfocus-color blue)
-;;   (set-focus-color green)
-;;   (set-unfocus-color white)
-;;   (set-win-bg-color black))
-;; (update-colors-all-screens)
-
 (set-font "-*-terminus-medium-r-*-*-24-*-*-*-*-*-iso10646-1")
 
 (clear-window-placement-rules)
@@ -35,12 +20,6 @@
 
 
 
-;; quick hot fix
-(setf *load-path*
-      (remove #P"/home/val/.dotfiles/stumpwm/.config/stumpwm/modules/notify/"
-              *load-path* :test #'uiop:pathname-equal))
-
-;; (load-module "notify")
 (notify:notify-server-toggle)
 (setf notify:*notify-server-title-color* "^7^B")
 (setf notify:*notify-server-body-color* "^7^B")
