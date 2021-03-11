@@ -7,7 +7,7 @@ in {
   home = {
     username = user;
     homeDirectory = "/home/${user}";
-    stateVersion = "21.05";
+    stateVersion = "21.03";
 
     packages = with pkgs; [
       # broken packages
@@ -30,7 +30,7 @@ in {
 
     file = {
       ".Xresources".onChange = ''
-        ${pkgs.xorg.xrdb}/bin/xrdb -load ~/.Xresources
+        ${pkgs.xorg.xrdb}/bin/xrdb -load ~/.Xresources || true
       '';
       ".profile".source = ./profile;
       ".sbclrc".source = ./sbclrc;

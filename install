@@ -37,10 +37,10 @@ case "$1" in
         printf '>>> Now logout!\n'
         ;;
     install)
-        mkdir ../nix
-        echo "max-jobs = auto" >> ../nix/nix.conf
+        mkdir -p ../nix
+        grep max-jobs ../nix/nix.conf || echo "max-jobs = auto" >> ../nix/nix.conf
 
-        nix-shell '<home-manager>' -A install
+        nix-shell -p git --run "nix-shell '<home-manager>' -A install"
 
         nix-collect-garbage -d
         nix-store --optimise -v
