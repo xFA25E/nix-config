@@ -1636,13 +1636,15 @@
   :custom `(youtube-comments-invidious-hosts . ',browse-url-invidious-instances)
   :preface
   (unless (package-installed-p 'youtube-comments)
-    (quelpa '(youtube-comments :repo "xFA25E/emacs-youtube-comments" :fetcher github))))
+    (quelpa '(youtube-comments :repo "xFA25E/youtube-comments" :fetcher github))))
 
 
 ;;;; PROCESSES
 
 (leaf pueue
-  :load-path "~/Documents/projects/emacs-lisp/emacs-pueue/"
+  :preface
+  (unless (package-installed-p 'pueue)
+    (quelpa '(pueue :repo "xFA25E/pueue" :fetcher github)))
   :commands pueue)
 
 (leaf proced

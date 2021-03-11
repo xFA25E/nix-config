@@ -10,9 +10,6 @@ in {
     stateVersion = "21.03";
 
     packages = with pkgs; [
-      # broken packages
-      # qutebrowser
-
       # nixpkgs
       htop checkbashisms dejavu_fonts dmenu fd feh file firefox git hack-font
       iosevka jq ledger leiningen libreoffice mkpasswd mpc_cli mpd mpop msmtp
