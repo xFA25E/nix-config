@@ -1,6 +1,5 @@
 pkgs: colors: {
   enable = true;
-  package = pkgs.writeShellScriptBin "fuckthisshit" "echo fuckthisshit";
   aliases = {
     "emacs_source" = "spawn --userscript view_source";
   };
@@ -222,16 +221,16 @@ pkgs: colors: {
         referer = "same-domain";
         user_agent = "Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0";
       };
-      blocking = {
-        enabled = true;
-        hosts.lists = [
-          "https://www.malwaredomainlist.com/hostslist/hosts.txt"
-          "http://someonewhocares.org/hosts/hosts"
-          "http://winhelp2002.mvps.org/hosts.zip"
-          "http://malwaredomains.lehigh.edu/files/justdomains.zip"
-          "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext"
-        ];
-      };
+      # blocking = {
+      #   enabled = true;
+      #   hosts.lists = [
+      #     "https://www.malwaredomainlist.com/hostslist/hosts.txt"
+      #     "http://someonewhocares.org/hosts/hosts"
+      #     "http://winhelp2002.mvps.org/hosts.zip"
+      #     "http://malwaredomains.lehigh.edu/files/justdomains.zip"
+      #     "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext"
+      #   ];
+      # };
       hyperlink_auditing = false;
       images = true;
       javascript = {
@@ -431,6 +430,6 @@ pkgs: colors: {
         ]:
             config.set('content.javascript.enabled', True, site)
 
-        config.load_autoconfig(False)
+        # config.load_autoconfig(False)
       '';
 }

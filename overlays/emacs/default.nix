@@ -128,7 +128,7 @@ in {
     paths = [ myEmacsWithPackages ];
     nativeBuildInputs = [ super.makeWrapper ];
     postBuild = ''
-      wrapProgram "$out/bin/emacs" --add-flags '--no-splash-screen'
+      wrapProgram "$out/bin/emacs" --add-flags '--no-splash'
       makeWrapper "$out/bin/emacsclient" "$out/bin/emacseditor" --add-flags "--create-frame --alternate-editor=$out/bin/emacs"
     '';
   };
