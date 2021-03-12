@@ -1668,7 +1668,11 @@
 ;;;; DICTIONARY
 
 (leaf sdcv
-  :bind (mode-specific-map :package bindings ("o t" . sdcv-search-input)))
+  :bind (mode-specific-map :package bindings ("o t" . sdcv-search-input))
+  :advice (:filter-return sdcv-search-with-dictionary-args sdcv-args-force-utf)
+  :config
+  (defun sdcv-args-force-utf (args)
+    (cl-list* "--utf8-output" "--utf8-input" args)))
 
 
 ;;;; XML
