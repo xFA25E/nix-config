@@ -44,9 +44,14 @@ self: super: let
         license = super.lib.licenses.free;
       };
     };
-    marginalia = esuper.trivialBuild {
+    marginalia = esuper.melpaBuild {
       pname = "marginalia";
-      version = "0.3";
+      ename = "marginalia";
+      version = "20210310.1539";
+      recipe = super.fetchurl {
+        url = "https://github.com/melpa/melpa/raw/f89731cc7ea7ea5436ef080110bba22146632102/recipes/marginalia";
+        sha256 = "0wi9fv0xhpm7wz42x7gybqmbvfilmgwkh15rcns53x37zyk6kpxc";
+      };
       src = super.fetchFromGitHub {
         owner = "minad";
         repo = "marginalia";
@@ -59,16 +64,21 @@ self: super: let
         license = super.lib.licenses.free;
       };
     };
-    consult = esuper.trivialBuild {
+    consult = esuper.melpaBuild {
       pname = "consult";
-      version = "0.6";
+      ename = "consult";
+      version = "20210312.1143";
+      recipe = super.fetchurl {
+        url = "https://github.com/melpa/melpa/raw/84410868459e976e3c61e6ca5caac311683f706d/recipes/consult";
+        sha256 = "17zriam6hgz19ms78c9zh0hvb4b6h5hinrinbmbb2jcwi4cykxs3";
+      };
       src = super.fetchFromGitHub {
         owner = "minad";
         repo = "consult";
         rev = "0.6";
         sha256 = "09n3q3dyi83s4fk4z7csnjicbxd69ws4zp4371c1lbxcvvq2fdnd";
       };
-      packageRequires = [ eself.emacs eself.flycheck ];
+      packageRequires = [ eself.emacs ];
       meta = {
         homepage = "https://github.com/minad/consult";
         license = super.lib.licenses.free;
@@ -76,7 +86,12 @@ self: super: let
     };
     insert-char-preview = esuper.trivialBuild {
       pname = "insert-char-preview";
-      version = "0.1";
+      ename = "insert-char-preview";
+      version = "20201023.2108";
+      recipe = super.fetchurl {
+        url = "https://github.com/melpa/melpa/raw/d8f3ae2c4ed25ee4ba28b787270f7abd35d7392c/recipes/insert-char-preview";
+        sha256 = "1zs4rv310ry0a5fhji9b0r6xmyh6lr799c49adg3ghy5y6kgp7ry";
+      };
       src = super.fetchFromGitLab {
         owner = "matsievskiysv";
         repo = "insert-char-preview";

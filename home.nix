@@ -12,13 +12,17 @@ in {
       ".Xresources".onChange = ''
         ${pkgs.xorg.xrdb}/bin/xrdb -load ~/.Xresources || true
       '';
-      ".profile".source = ./profile;
+      ".profile".text = ''
+        for file in nix.sh hm-session-vars.sh; do
+            profile="/home/${user}/.nix-profile/etc/profile.d/''${file}"
+            [ -e "''${profile}" ] && . "''${profile}"
+        done
+      '';
       ".sbclrc".source = ./sbclrc;
       ".shinit".text = ''
         ${pkgs.coreutils}/bin/stty -ixon
-        PS1='$? $(${pkgs.coreutils}/bin/whoami) '
+        export PS1='$? $USER '
       '';
-      ".xinitrc".source = ./xinitrc;
     };
 
     homeDirectory = "/home/${user}";
@@ -33,13 +37,46 @@ in {
       xorg.xbacklight xz zip
 
       # mypkgs
-      browser rimer scripts sctd stumpwm ungoogledChromiumIncognito userProfile
-      ytdl
+      browser rimer scripts sctd stumpwm ungoogledChromiumIncognito ytdl
     ];
 
-    sessionPath = [ "~/.local/bin" ];
-    sessionVariables = {
-      SOMEVAR = "someval";
+    sessionPath = [ "${dir.config}/composer/vendor/bin" ];
+    sessionVariables = rec {
+      # export XDG_DOWNLOAD_DIR="${HOME}/Downloads"
+      # export XDG_DOCUMENTS_DIR="${HOME}/Documents"
+      # export XDG_MUSIC_DIR="${HOME}/Music"
+      # export XDG_PICTURES_DIR="${HOME}/Pictures"
+      # export XDG_VIDEOS_DIR="${HOME}/Videos"
+      EDITOR = "${pkgs.emacsEditor}/bin/emacseditor";
+      VISUAL = EDITOR;
+      TERMINAL = "${pkgs.xterm}/bin/uxterm";
+      CARGO_HOME = "${dir.cache}/cargo";
+      RUSTUP_HOME = "${dir.cache}/rustup";
+      LANG = "en_US.UTF-8";
+      LESSHISFILE = "/dev/null";
+      MU_HOME = "${dir.cache}/mu";
+      MAILDIR = "/home/${user}/.mail";
+      RIMER_CALLBACK = "${pkgs.scripts}/bin/rimer_callback";
+      MPD_HOST = "localhost";
+      MPD_PORT = "6600";
+      SUDO_ASKPASS = "${pkgs.scripts}/bin/sudo_askpass";
+      SSH_ASKPASS = "${pkgs.scripts}/bin/ssh-askpass";
+      ENV = "/home/${user}/.shinit";
+      "_JAVA_AWT_WM_NONREPARENTING" = "1";
+      CUDA_CACHE_PATH = "${dir.cache}/nv";
+      NPM_CONFIG_USERCONFIG = "${dir.config}/npm/npmrc";
+      SDCV_HISTSIZE = "0";
+      HISTFILESIZE = "0";
+      HISTSIZE = "0";
+      HISTFILE = "";
+      SQLITE_HISTORY = "/dev/null";
+      MYSQL_HISTFILE = "/dev/null";
+      GEM_HOME = "${dir.cache}/gem";
+      GEM_SPEC_CACHE = "${dir.cache}/gem";
+      ANDROID_SDK_HOME = "${dir.cache}/android";
+      ADB_VENDOR_KEY = "${dir.cache}/android";
+      BOOT_HOME = "${dir.cache}/boot";
+      YTDL_DIR="${dir.videos}/youtube";
     };
 
     stateVersion = "21.03";
@@ -267,6 +304,7 @@ in {
     userDirs = {
       enable = true;
       music = dir.music;
+      videos = dir.videos;
     };
   };
 
@@ -275,11 +313,26 @@ in {
   xsession = {
     enable = true;
     initExtra = ''
-      echo hellofrominit
+      # xset s on
+      # xset s blank
+      # xset c on
+      # xset +dpms
+
+      ${pkgs.xorg.xrdb}/bin/xrdb -load ~/.Xresources
+      pidof rimer >/dev/null || setsid -f ${pkgs.rimer}/bin/rimer start "${pkgs.scripts}/bin/rimer_callback"
+      pidof pueued >/dev/null || setsid -f ${pkgs.pueue}/bin/pueued
+      pkill sctd; setsid -f ${pkgs.sctd}/bin/sctd --longitude 47.339 --latitude 8.877
     '';
     profileExtra = ''
-      echo hellofromprofile
+      export BROWSER="${pkgs.browser}/bin/browser"
+      export GTK2_RC_FILES="${dir.cache}/gtk-2.0/gtkrc"
+      export GTK_IM_MODULE="ibus"
+      export QT_IM_MODULE="ibus"
+      export XMODIFIERS="ibus"
+      export XAUTHORITY="''${XDG_RUNTIME_DIR}/Xauthority"
+      export SSB_HOME="${dir.cache}/zoom"
     '';
+    scriptPath = ".xinitrc";
     windowManager.command = "${pkgs.stumpwm}/bin/stumpwm";
   };
 }

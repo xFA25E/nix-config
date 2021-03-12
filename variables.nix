@@ -5,6 +5,7 @@ rec {
     data = "/home/${user}/.local/share";
     cache = "/home/${user}/.cache";
     music = "/home/${user}/Music";
+    videos = "/home/${user}/Videos";
     mail = "/home/${user}/.mail";
   };
   colors = {
