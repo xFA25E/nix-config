@@ -1,0 +1,3 @@
+{
+  allowUnfreePredicate = (pkgs: pname == "zoom");
+}

@@ -26,14 +26,15 @@ in {
     packages = with pkgs; [
       # nixpkgs
       checkbashisms dejavu_fonts dmenu fd file firefox hack-font iosevka ledger
-      leiningen libreoffice mkpasswd mpc_cli mpd mpop mtpfs p7zip pass-otp
-      pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync rustup sbcl
-      sdcv shellcheck simplescreenrecorder sloccount speedtest-cli stow sxiv
-      tdesktop transmission youtube-dl ungoogled-chromium woof xclip xz zip
+      leiningen libreoffice mkpasswd mpc_cli mpd mpop mtpfs nix-serve p7zip
+      pass-otp pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync
+      rustup sbcl sdcv shellcheck simplescreenrecorder sloccount speedtest-cli
+      stow sxiv tdesktop transmission youtube-dl ungoogled-chromium woof xclip
+      xz zip
 
       # mypkgs
       browser rimer scripts sctd stumpwm ungoogledChromiumIncognito userProfile
-      ytdl
+      ytdl zoom
     ];
 
     sessionPath = [ "~/.local/bin" ];
