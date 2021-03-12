@@ -1,3 +1,3 @@
 {
-  allowUnfreePredicate = (pkgs: pname == "zoom");
+  allowUnfreePredicate = (pkg: pkg.pname == "zoom");
 }
