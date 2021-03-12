@@ -33,8 +33,8 @@ in {
       leiningen libreoffice mkpasswd mpc_cli mpd mpop mtpfs nix-serve p7zip
       pass-otp pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync
       rustup sbcl sdcv shellcheck simplescreenrecorder sloccount speedtest-cli
-      sxiv tdesktop transmission youtube-dl ungoogled-chromium wget woof xclip
-      xorg.xbacklight xz zip
+      sxiv syncthing tdesktop transmission youtube-dl ungoogled-chromium wget
+      woof xclip xorg.xbacklight xz zip
 
       # mypkgs
       browser rimer scripts sctd stumpwm ungoogledChromiumIncognito ytdl
@@ -77,6 +77,13 @@ in {
       ADB_VENDOR_KEY = "${dir.cache}/android";
       BOOT_HOME = "${dir.cache}/boot";
       YTDL_DIR="${dir.videos}/youtube";
+      BROWSER = "${pkgs.browser}/bin/browser";
+      GTK2_RC_FILES = "${dir.cache}/gtk-2.0/gtkrc";
+      GTK_IM_MODULE = "ibus";
+      QT_IM_MODULE = "ibus";
+      XMODIFIERS = "ibus";
+      XAUTHORITY = "\${XDG_RUNTIME_DIR}/Xauthority";
+      SSB_HOME = "${dir.cache}/zoom";
     };
 
     stateVersion = "21.03";
@@ -162,26 +169,6 @@ in {
       maxCacheTtl = 86400;
       verbose = true;
     };
-
-    stalonetray = {
-      enable = true;
-      config = {
-        background = colors.base04;
-        fuzzy_edges = 3;
-        geometry = "1x1+10+742";
-        grow_gravity = "SW";
-        icon_gravity = "SW";
-        icon_size = 16;
-        skip_taskbar = true;
-        sticky = true;
-        transparent = true;
-        window_layer = "bottom";
-        window_strut = "bottom";
-        window_type = "desktop";
-      };
-    };
-
-    # syncthing.enable = true;
   };
 
   xdg = {
@@ -312,6 +299,7 @@ in {
 
   xsession = {
     enable = true;
+    scriptPath = ".xinitrc";
     initExtra = ''
       # xset s on
       # xset s blank
@@ -323,16 +311,6 @@ in {
       pidof pueued >/dev/null || setsid -f ${pkgs.pueue}/bin/pueued
       pkill sctd; setsid -f ${pkgs.sctd}/bin/sctd --longitude 47.339 --latitude 8.877
     '';
-    profileExtra = ''
-      export BROWSER="${pkgs.browser}/bin/browser"
-      export GTK2_RC_FILES="${dir.cache}/gtk-2.0/gtkrc"
-      export GTK_IM_MODULE="ibus"
-      export QT_IM_MODULE="ibus"
-      export XMODIFIERS="ibus"
-      export XAUTHORITY="''${XDG_RUNTIME_DIR}/Xauthority"
-      export SSB_HOME="${dir.cache}/zoom"
-    '';
-    scriptPath = ".xinitrc";
     windowManager.command = "${pkgs.stumpwm}/bin/stumpwm";
   };
 }
