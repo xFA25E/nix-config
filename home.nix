@@ -30,7 +30,7 @@ in {
       pass-otp pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync
       rustup sbcl sdcv shellcheck simplescreenrecorder sloccount speedtest-cli
       stow sxiv tdesktop transmission youtube-dl ungoogled-chromium wget woof
-      xclip xz zip
+      xclip xorg.xbacklight xz zip
 
       # mypkgs
       browser rimer scripts sctd stumpwm ungoogledChromiumIncognito userProfile
