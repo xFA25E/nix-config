@@ -1,5 +1,8 @@
 ;; -*- lexical-binding: t; -*-
 
+(let ((path (cl-find "elpa/project" load-path :test #'cl-search)))
+  (push path load-path))
+
 
 ;;; UTILS
 
@@ -1606,13 +1609,16 @@
   `(bookmark-default-file . ,(expand-file-name "emacs/bookmarks" (xdg-data-home))))
 
 (leaf magit
-  :bind (project-prefix-map :package project ("m" . magit-project-status))
+  :defvar project-switch-commands
+  :bind
+  (ctl-x-map :package subr ("p m" . magit-project-status))
+  (project-prefix-map :package project ("m" . magit-project-status))
   :custom
   `(magit-credential-cache-daemon-socket
     . ,(expand-file-name "git/credential/socket" (xdg-cache-home)))
   :config
   (with-eval-after-load 'project
-    (setf (alist-get 'magit-project-status project-switch-commands) "Magit")))
+    (setf (alist-get 'magit-project-status project-switch-commands) '("Magit"))))
 
 (leaf project
   :custom

@@ -1,11 +1,4 @@
 self: super: let
-  config = super.runCommand "default.el" {} ''
-    mkdir -p $out/share/emacs/site-lisp
-    cp ${./init.el} $out/share/emacs/site-lisp/default.el
-    ${super.lib.strings.optionalString (builtins.pathExists ./init.elc) ''
-      cp ${./init.elc} $out/share/emacs/site-lisp/default.elc
-    ''}
-  '';
   overrides = eself: esuper: {
     flymake = esuper.elpaBuild {
       pname = "flymake";
@@ -40,7 +33,7 @@ self: super: let
     project = esuper.elpaBuild {
       pname = "project";
       ename = "project";
-      version = "0.5.1";
+      version = "0.5.4";
       src = super.fetchurl {
         url = "https://elpa.gnu.org/packages/project-0.5.4.tar";
         sha256 = "0arjvhzzcf8b80w94yvpgfdlhsjwf5jk1r7vcai5a4dg3bi9cxyb";
@@ -98,11 +91,10 @@ self: super: let
     };
   };
   emacsWithPackages = ((super.emacsPackagesGen super.emacs).overrideScope' overrides).emacsWithPackages;
-  myEmacsWithPackages = emacsWithPackages (epkgs: with epkgs; [
-    bui                         # for pueue
-
+in {
+  myEmacs = emacsWithPackages (epkgs: with epkgs; [
     # my
-    config consult marginalia insert-char-preview
+    consult marginalia insert-char-preview
 
     # melpa
     ace-link acme-theme apache-mode async avy bash-completion bicycle cargo
@@ -122,14 +114,4 @@ self: super: let
     # org
     org-plus-contrib
   ]);
-in {
-  myEmacs = super.symlinkJoin {
-    name = "emacs";
-    paths = [ myEmacsWithPackages ];
-    nativeBuildInputs = [ super.makeWrapper ];
-    postBuild = ''
-      wrapProgram "$out/bin/emacs" --add-flags '--no-splash'
-      makeWrapper "$out/bin/emacsclient" "$out/bin/emacseditor" --add-flags "--create-frame --alternate-editor=$out/bin/emacs"
-    '';
-  };
 }

@@ -279,7 +279,7 @@ pkgs: colors: {
       remove_finished = 200;
     };
     editor = {
-      command = [ "${pkgs.myEmacs}/bin/emacseditor" "{file}" "+{line}:{column}" ];
+      command = [ "${pkgs.emacsEditor}/bin/emacseditor" "{file}" "+{line}:{column}" ];
       encoding = "utf-8";
     };
     fonts = let defaultFont = "15pt default_family"; in {
