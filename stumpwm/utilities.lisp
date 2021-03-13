@@ -19,10 +19,9 @@
 
 (defun read-brightness-status ()
   (flet ((read-number (s)
-           (parse-integer (uiop:read-file-string s) :junk-allowed t)))
-    (let* ((path "/sys/class/backlight/intel_backlight/")
-           (brightness-file (concatenate 'string path "brightness"))
-           (max-brightness-file (concatenate 'string path "max_brightness"))
+           (parse-integer (uiop:read-file-string (car (directory s))) :junk-allowed t)))
+    (let* ((brightness-file "/sys/class/backlight/*/brightness")
+           (max-brightness-file "/sys/class/backlight/*/max_brightness")
            (brightness (read-number brightness-file))
            (max-brightness (read-number max-brightness-file)))
       (write-to-string (round (* (/ brightness max-brightness) 100))))))
