@@ -4,8 +4,9 @@ set -o nounset
 set -o errexit
 
 if test "$#" = 0; then
-    printf '>>> This is a automatic installer.\n'
-    printf '>>> Make sure that this repo is linked to %s/nixpkgs.\n\n' "${XDG_CONFIG_HOME:-${HOME}/.config}"
+    printf '>>> This is an automatic installer.\n'
+    printf '>>> Make sure that this repo is linked to %s/nixpkgs\n' "${XDG_CONFIG_HOME:-${HOME}/.config}"
+    printf '>>> and that you have done nixos-rebuild switch --upgrade\n\n'
     printf '>>> First install home-manager channel:\n'
     printf '>>> $ %s channel\n\n' "$0"
     printf '>>> Then logout and run:\n'
@@ -25,9 +26,6 @@ case "$1" in
         grep max-jobs ../nix/nix.conf || echo "max-jobs = auto" >> ../nix/nix.conf
 
         nix-shell -p git --run "nix-shell '<home-manager>' -A install"
-
-        nix-collect-garbage -d
-        nix-store --optimise -v
 
         printf '\n\n>>> ALL SET!\n\n'
         printf '>>> Logout and dont forget to activate mu with:\n'
