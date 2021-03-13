@@ -2,14 +2,8 @@
 
 (in-package :stumpwm)
 
-(defvar *config-directory*
-  (merge-pathnames
-   #p"stumpwm/"
-   (or (uiop:xdg-config-home)
-       (merge-pathnames #p".config/" (user-homedir-pathname)))))
-
-(defun config-file (path)
-  (merge-pathnames path *config-directory*))
+(defun config-file (&rest path)
+  (apply #'uiop:xdg-config-home "stumpwm" path))
 
 (load (config-file "variables.lisp"))
 (load (config-file "utilities.lisp"))

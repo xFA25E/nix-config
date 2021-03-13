@@ -17,6 +17,7 @@ in {
             profile="/home/${user}/.nix-profile/etc/profile.d/''${file}"
             [ -e "''${profile}" ] && . "''${profile}"
         done
+        unset file profile
       '';
       ".sbclrc".source = ./sbclrc;
       ".shinit".text = ''
@@ -34,7 +35,7 @@ in {
       pass-otp pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync
       rustup sbcl sdcv shellcheck simplescreenrecorder sloccount speedtest-cli
       sxiv syncthing tdesktop transmission youtube-dl ungoogled-chromium wget
-      woof xclip xorg.xbacklight xz zip
+      woof xclip xdg-user-dirs xorg.xbacklight xz zip
 
       # mypkgs
       browser rimer scripts sctd stumpwm ungoogledChromiumIncognito ytdl
@@ -42,11 +43,6 @@ in {
 
     sessionPath = [ "${dir.config}/composer/vendor/bin" ];
     sessionVariables = rec {
-      # export XDG_DOWNLOAD_DIR="${HOME}/Downloads"
-      # export XDG_DOCUMENTS_DIR="${HOME}/Documents"
-      # export XDG_MUSIC_DIR="${HOME}/Music"
-      # export XDG_PICTURES_DIR="${HOME}/Pictures"
-      # export XDG_VIDEOS_DIR="${HOME}/Videos"
       EDITOR = "${pkgs.emacsEditor}/bin/emacseditor";
       VISUAL = EDITOR;
       TERMINAL = "${pkgs.xterm}/bin/uxterm";

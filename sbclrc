@@ -2,12 +2,11 @@
 (require 'uiop)
 
 #-quicklisp
-(let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp" (uiop:xdg-data-home))))
+(let ((quicklisp-init (uiop:xdg-data-home "quicklisp" "setup.lisp")))
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
 
 #+quicklisp
-(let ((docs-dir (or (uiop:getenv-absolute-directory "XDG_DOCUMENTS_DIR")
-                    (merge-pathnames "Documents/" (user-homedir-pathname)))))
-  (pushnew (merge-pathnames "projects/common-lisp/" docs-dir)
+(let ((docs-dir (uiop:run-program '("xdg-user-dir" "DOCUMENTS") :output '(:string :stripped t))))
+  (pushnew (uiop:subpathname* docs-dir "projects/common-lisp/")
            ql:*local-project-directories*))
