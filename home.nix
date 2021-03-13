@@ -301,11 +301,6 @@ in {
     enable = true;
     scriptPath = ".xinitrc";
     initExtra = ''
-      # xset s on
-      # xset s blank
-      # xset c on
-      # xset +dpms
-
       ${pkgs.xorg.xrdb}/bin/xrdb -load ~/.Xresources
       pidof rimer >/dev/null || setsid -f ${pkgs.rimer}/bin/rimer start "${pkgs.scripts}/bin/rimer_callback"
       pidof pueued >/dev/null || setsid -f ${pkgs.pueue}/bin/pueued
