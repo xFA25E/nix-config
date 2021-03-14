@@ -32,7 +32,6 @@ in {
         "mpvi" = [ mpv libnotify jq gnused ytdl unixtools.column dmenu ];
         "notify_sound" = [ mpv ];
         "qrshow" = [ libnotify coreutils qrencode sxiv ];
-        "random_wallpaper" = [ feh coreutils ];
         "rimer_callback" = [ coreutils libnotify "$out" gawk dmenu ];
         "search_ebook" = [ coreutils findutils ];
         "ssh-askpass" = [ pass findutils coreutils gnused dmenu ];

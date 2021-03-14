@@ -108,6 +108,7 @@ self: super: let
   emacsWithPackages = ((super.emacsPackagesGen super.emacs).overrideScope' overrides).emacsWithPackages;
 in {
   myEmacs = emacsWithPackages (epkgs: with epkgs; [
+    bui # pueue
     # my
     consult marginalia insert-char-preview
 

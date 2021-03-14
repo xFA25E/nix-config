@@ -18,6 +18,7 @@ in {
             [ -e "''${profile}" ] && . "''${profile}"
         done
         unset file profile
+        pidof rimer >/dev/null || setsid -f ${pkgs.rimer}/bin/rimer start "${pkgs.scripts}/bin/rimer_callback"
       '';
       ".sbclrc".source = ./sbclrc;
       ".shinit".text = ''
@@ -31,14 +32,14 @@ in {
     packages = with pkgs; [
       # nixpkgs
       checkbashisms dejavu_fonts dmenu fd file firefox hack-font iosevka ledger
-      leiningen libreoffice mkpasswd mpc_cli mpd mpop mtpfs nix-serve p7zip
-      pass-otp pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync
-      rustup sbcl sdcv shellcheck simplescreenrecorder sloccount speedtest-cli
-      sxiv syncthing tdesktop transmission youtube-dl ungoogled-chromium wget
-      woof xclip xdg-user-dirs xorg.xbacklight xz zip
+      leiningen libreoffice mkpasswd mpc_cli mpop mtpfs nix-serve p7zip pass-otp
+      pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync rustup sbcl
+      sdcv shellcheck simplescreenrecorder sloccount speedtest-cli sxiv
+      syncthing tdesktop transmission youtube-dl ungoogled-chromium wget woof
+      xclip xdg-user-dirs xorg.xbacklight xz zip
 
       # mypkgs
-      browser rimer scripts sctd stumpwm ungoogledChromiumIncognito ytdl
+      browser rimer scripts stumpwm ungoogledChromiumIncognito ytdl
     ];
 
     sessionPath = [ "${dir.config}/composer/vendor/bin" ];
@@ -159,11 +160,83 @@ in {
   };
 
   services = {
+    gammastep = {
+      enable = true;
+      latitude = "8.877";
+      longitude = "47.339";
+    };
+
     gpg-agent = {
       enable = true;
       defaultCacheTtl = 86400;
       maxCacheTtl = 86400;
       verbose = true;
+    };
+
+    mpd = {
+      enable = true;
+      dataDir = "${dir.cache}/mpd";
+      musicDirectory = dir.music;
+      extraConfig = ''
+        volume_normalization "yes"
+        filesystem_charset   "UTF-8"
+      '';
+      network.startWhenNeeded = true;
+    };
+
+    random-background = {
+      enable = true;
+      imageDirectory = "${pkgs.wallpapers}";
+      interval = "10min";
+    };
+  };
+
+  systemd.user = {
+    services = {
+      pueue = {
+        Unit = {
+          Description = "Pueue Daemon - CLI process scheduler and manager";
+        };
+        Service = {
+          Restart = "no";
+          ExecStart = "${pkgs.pueue}/bin/pueued";
+          ExecReload = "${pkgs.pueue}/bin/pueued";
+          Environment = "ASYNC_STD_THREAD_COUNT=4";
+        };
+        Install = {
+          WantedBy = [ "default.target" ];
+        };
+      };
+      transmission = {
+        Unit = {
+          Description = "Transmission BitTorrent Daemon";
+          After = [ "network.target" ];
+        };
+        Service = {
+          Type = "notify";
+          ExecStart = "${pkgs.transmission}/bin/transmission-daemon -f --log-error";
+          ExecReload = "${pkgs.utillinux}/bin/kill -s HUP $MAINPID";
+          NoNewPrivileges = true;
+        };
+        Install = {
+          WantedBy = [ "default.target" ];
+        };
+      };
+      xrdb = {
+        Unit = {
+          Description = "Load Xresources with xrdb";
+          After = [ "graphical-session-pre.target" ];
+          PartOf = [ "graphical-session.target" ];
+        };
+        Service = {
+          ExecStart = "${pkgs.xorg.xrdb}/bin/xrdb -load %h/.Xresources";
+          IOSchedulingClass = "idle";
+          Type = "oneshot";
+        };
+        Install = {
+          WantedBy = [ "graphical-session.target" ];
+        };
+      };
     };
   };
 
@@ -296,12 +369,6 @@ in {
   xsession = {
     enable = true;
     scriptPath = ".xinitrc";
-    initExtra = ''
-      ${pkgs.xorg.xrdb}/bin/xrdb -load ~/.Xresources
-      pidof rimer >/dev/null || setsid -f ${pkgs.rimer}/bin/rimer start "${pkgs.scripts}/bin/rimer_callback"
-      pidof pueued >/dev/null || setsid -f ${pkgs.pueue}/bin/pueued
-      pkill sctd; setsid -f ${pkgs.sctd}/bin/sctd --longitude 47.339 --latitude 8.877
-    '';
     windowManager.command = "${pkgs.stumpwm}/bin/stumpwm";
   };
 }

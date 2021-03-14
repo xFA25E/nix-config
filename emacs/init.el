@@ -242,8 +242,10 @@
   '(browse-url-generic-program . "qutebrowser")
   :config
 
-  (defvar browse-url-invidious-instances
-    '("invidious.ethibox.fr" "invidious.site" "invidious.fdn.fr"
+  (setq browse-url-invidious-instances
+    '(;; "invidious.ethibox.fr"
+      ;; "invidious.site"
+      ;; "invidious.fdn.fr"
       "invidious.tube" "invidious.zapashcanon.fr" "tube.connect.cafe"
       "vid.puffyan.us" "invidious.048596.xyz" "invidious.himiko.cloud"
       "invidious.zee.li" "invidious.namazso.eu" "yewtu.be" "ytprivate.com"
