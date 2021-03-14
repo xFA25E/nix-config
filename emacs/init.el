@@ -1606,7 +1606,8 @@
     . ,(expand-file-name "emacs/project.list" (xdg-cache-home))))
 
 (leaf mediainfo-mode
-  :defvar mediainfo-mode--file-handler
+  :defun mediainfo-mode--file-handler
+  :commands mediainfo-mode--file-handler
   :custom
   '(mediainfo-mode-open-method
     . '("setsid" "-f" "mpv" "--force-window=yes" "--no-terminal" file-name))
@@ -1904,6 +1905,7 @@
    ("Q" . mu4e-quit))
 
   :custom
+  '(mail-user-agent . 'mu4e-user-agent)
   '(mu4e-headers-visible-lines . 7)
   '(mu4e-sent-folder . "/SENT")
   '(mu4e-drafts-folder . "/DRAFTS")

@@ -4,6 +4,7 @@
   dir = variables.dir;
   colors = variables.colors;
 in {
+  fonts.fontconfig.enable = true;
   home = {
     # enableDebugInfo = true;     # gdb symbols
     extraOutputsToInstall = [ "man" "doc" "info" "devdoc" ];
@@ -24,21 +25,56 @@ in {
         ${pkgs.coreutils}/bin/stty -ixon
         export PS1='$? $USER '
       '';
+      ".stalonetrayrc".text = ''
+        background "#000000"
+        fuzzy_edges "3"
+        geometry "1x1+10+742"
+        grow_gravity "SW"
+        icon_gravity "SW"
+        icon_size "16"
+        skip_taskbar true
+        sticky true
+        transparent true
+        window_layer "bottom"
+        window_strut "bottom"
+        window_type "desktop"
+      '';
     };
 
     homeDirectory = "/home/${user}";
+
+    keyboard = {
+      layout = "dvorak,ru";
+      options = [ "ctrl:swapcaps" "grp:shifts_toggle" ];
+      variant = ",ruu";
+    };
+
+    language = {
+      address = "en_US.utf8";
+      base = "en_US.utf8";
+      collate = "en_US.utf8";
+      ctype = "en_US.utf8";
+      measurement = "en_US.utf8";
+      messages = "en_US.utf8";
+      monetary = "en_US.utf8";
+      name = "en_US.utf8";
+      numeric = "en_US.utf8";
+      paper = "en_US.utf8";
+      telephone = "en_US.utf8";
+      time = "en_US.utf8";
+    };
 
     packages = with pkgs; [
       # nixpkgs
       checkbashisms dejavu_fonts dmenu fd file firefox hack-font iosevka ledger
       leiningen libreoffice mkpasswd mpc_cli mpop mtpfs nix-serve p7zip pass-otp
       pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync rustup sbcl
-      sdcv shellcheck simplescreenrecorder sloccount speedtest-cli sxiv
-      syncthing tdesktop transmission youtube-dl ungoogled-chromium wget woof
-      xclip xdg-user-dirs xorg.xbacklight xz zip
+      sdcv shellcheck simplescreenrecorder sloccount speedtest-cli stalonetray
+      sxiv syncthing tdesktop transmission youtube-dl ungoogled-chromium wget
+      woof xclip xdg-user-dirs xorg.xbacklight xz zip
 
       # mypkgs
-      browser rimer scripts stumpwm ungoogledChromiumIncognito ytdl
+      browser emacsEditor rimer scripts stumpwm ungoogledChromiumIncognito ytdl
     ];
 
     sessionPath = [ "${dir.config}/composer/vendor/bin" ];
@@ -48,7 +84,6 @@ in {
       TERMINAL = "${pkgs.xterm}/bin/uxterm";
       CARGO_HOME = "${dir.cache}/cargo";
       RUSTUP_HOME = "${dir.cache}/rustup";
-      LANG = "en_US.UTF-8";
       LESSHISFILE = "/dev/null";
       MU_HOME = "${dir.cache}/mu";
       MAILDIR = "/home/${user}/.mail";
@@ -188,6 +223,9 @@ in {
       imageDirectory = "${pkgs.wallpapers}";
       interval = "5min";
     };
+
+    udiskie.enable = true;
+    unclutter.enable = true;
   };
 
   systemd.user = {
@@ -271,27 +309,6 @@ in {
         keycode 58 = Control
       '';
 
-      "mpd/mpd.conf".text = ''
-        music_directory "${dir.music}"
-        db_file         "${dir.cache}/mpd/database"
-        log_file        "${dir.cache}/mpd/log"
-        pid_file        "${dir.cache}/mpd/pid"
-        state_file      "${dir.cache}/mpd/state"
-        sticker_file    "${dir.cache}/mpd/sticker.sql"
-        bind_to_address "localhost"
-        port            "6600"
-        auto_update     "yes"
-        save_absolute_paths_in_playlists "yes"
-
-        audio_output {
-          type "pulse"
-          name "My Pulse Output"
-        }
-
-        volume_normalization "yes"
-        filesystem_charset   "UTF-8"
-      '';
-
       "mpop/config".text = import ./mpop.nix pkgs dir;
 
       "mpv/scripts/youtube-quality.lua".source = "${pkgs.mpvYoutubeQuality}/youtube-quality.lua";
@@ -335,6 +352,18 @@ in {
         Type=Application
       '';
 
+      "applications/emacsdired.desktop".text = ''
+        [Desktop Entry]
+        Encoding=UTF-8
+        Version=1.0
+        Type=Application
+        NoDisplay=true
+        MimeType=application/x-directory;inode/directory;
+        Exec=${pkgs.emacsEditor}/bin/emacseditor --no-wait --eval '(dired "%f")'
+        Name=Dired
+        Comment=Emacs Dired
+      '';
+
       "applications/emacseditor.desktop".text = ''
         [Desktop Entry]
         Name=Emacs
@@ -348,6 +377,19 @@ in {
         Categories=Development;TextEditor;
         StartupWMClass=Emacs
         Keywords=Text;Editor;
+      '';
+
+      "applications/emacsmail.desktop".text = ''
+        [Desktop Entry]
+        Encoding=UTF-8
+        Version=1.0
+        Type=Application
+        MimeType=x-scheme-handler/mailto;message/rfc822;
+        NoDisplay=true
+        Exec=${pkgs.emacsEditor}/bin/emacseditor --no-wait --eval '(browse-url-mail "%U")'
+        Name=EmacsMail
+        Terminal=false
+        Comment=Emacs Compose Mail
       '';
 
       "stardict/dic".source = "${pkgs.stardictDictionaries}/share/stardict/dic";
@@ -367,6 +409,10 @@ in {
       defaultApplications = {
         "application/pdf" = [ "emacseditor.desktop" ];
         "application/epub" = [ "emacseditor.desktop" ];
+        "application/x-directory" = [ "emacsdired.desktop" ];
+        "inode/directory" = [ "emacsdired.desktop" ];
+        "x-scheme-handler/mailto" = [ "emacsmail.desktop" ];
+        "message/rfc822" = [ "emacsmail.desktop" ];
       };
     };
 
