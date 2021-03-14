@@ -10,8 +10,11 @@ in {
   # convert orig -resize 1366x -crop 1366x768+0+200 result
   wallpapers = super.runCommand "wallpapers" {
     srcs = urls ++ [ "https://i.kym-cdn.com/photos/images/original/001/877/857/ff1.jpg" ];
+    nativeBuildInputs = [ self.cacert ];
   } ''
-    ${self.wget}/bin/wget --no-check-certificate --directory-prefix=$out $srcs
+    for src in $srcs; do
+        ${self.curl}/bin/curl --create-dirs --output-dir $out --output $(basename $src) $src
+    done
     ${self.imagemagick}/bin/convert $out/ff1.jpg -resize 1366x -crop 1366x768+0+200 $out/fishing.jpg
     rm $out/ff1.jpg
   '';
