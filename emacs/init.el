@@ -9,26 +9,17 @@
 (defvar leaf-expand-minimally t)
 (defvar leaf-key-bindlist nil)
 
+(leaf package :custom '(package-archives . nil))
+
 (leaf xdg
+  :defun xdg--dir-home
   :commands xdg-download-dir xdg-music-dir xdg-data-home xdg-cache-home
   :config
   (defun xdg-download-dir () (xdg--dir-home "XDG_DOWNLOAD_DIR" "~/Downloads"))
   (defun xdg-music-dir () (xdg--dir-home "XDG_MUSIC_DIR" "~/Music")))
 
-(leaf package
-  :custom
-  '(package-archives . nil)
-  `(package-user-dir . ,(expand-file-name "emacs/nix-elpa" (xdg-cache-home)))
-  :defer-config (package-initialize))
-
 (leaf nsm
   :custom `(nsm-settings-file . ,(expand-file-name "emacs/network-security.data" (xdg-cache-home))))
-
-(leaf quelpa
-  :custom
-  `(quelpa-build-dir . ,(expand-file-name "emacs/nix-quelpa/build" (xdg-cache-home)))
-  `(quelpa-dir . ,(expand-file-name "emacs/nix-quelpa" (xdg-cache-home)))
-  '(quelpa-update-melpa-p . nil))
 
 (leaf rx :config (rx-define ext (&rest exts) (and "." (or exts) string-end)))
 
@@ -395,6 +386,7 @@
        :test #'string-equal)))))
 
 (leaf saveplace
+  :defvar save-place-skip-check-regexp
   :hook (after-init-hook . save-place-mode)
   :custom
   `(save-place-file . ,(expand-file-name "emacs/saveplace" (xdg-cache-home)))
@@ -891,11 +883,7 @@
 
 ;;;; INPUT METHOD
 
-(leaf cyrillic-dvorak-im
-  :preface
-  (unless (package-installed-p 'cyrillic-dvorak-im)
-    (quelpa '(cyrillic-dvorak-im :repo "xFA25E/cyrillic-dvorak-im" :fetcher github)))
-  :require t)
+(leaf cyrillic-dvorak-im :require t)
 
 (leaf reverse-im
   :after cyrillic-dvorak-im
@@ -1454,11 +1442,7 @@
       (insert (concat "cd " (shell-quote-argument (expand-file-name dir)))))
     (comint-send-input)))
 
-(leaf shell-pwd
-  :preface
-  (unless (package-installed-p 'shell-pwd)
-    (quelpa '(shell-pwd :repo "xFA25E/shell-pwd" :fetcher github)))
-  :bind (mode-specific-map :package bindings ("x S" . shell-pwd-shell)))
+(leaf shell-pwd :bind (mode-specific-map :package bindings ("x S" . shell-pwd-shell)))
 
 
 ;;; TEMPLATES
@@ -1466,9 +1450,6 @@
 (leaf autoinsert :hook (after-init-hook . auto-insert-mode))
 
 (leaf skempo
-  :preface
-  (unless (package-installed-p 'skempo)
-    (quelpa '(skempo :repo "xFA25E/skempo" :fetcher github)))
   :hook ((emacs-lisp-mode-hook lisp-mode-hook nix-mode-hook) . skempo-mode)
 
   :bind
@@ -1578,11 +1559,6 @@
    ("n t" . traceroute)
    ("n w" . iwconfig)))
 
-(leaf readelf-mode
-  :preface
-  (unless (package-installed-p 'readelf-mode)
-    (quelpa '(readelf-mode :repo "sirikid/readelf-mode" :fetcher github))))
-
 (leaf calendar :custom '(calendar-week-start-day . 1))
 
 (leaf ibuffer
@@ -1630,12 +1606,11 @@
     . ,(expand-file-name "emacs/project.list" (xdg-cache-home))))
 
 (leaf mediainfo-mode
+  :defvar mediainfo-mode--file-handler
   :custom
   '(mediainfo-mode-open-method
     . '("setsid" "-f" "mpv" "--force-window=yes" "--no-terminal" file-name))
   :preface
-  (unless (package-installed-p 'mediainfo-mode)
-    (quelpa '(mediainfo-mode :repo "xFA25E/mediainfo-mode" :fetcher github)))
   (add-to-list
    'auto-mode-alist
    `(,(rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob" "wmv" "aiff" "wav" "ogv" "flv"))
@@ -1647,19 +1622,14 @@
      . mediainfo-mode--file-handler)))
 
 (leaf youtube-comments
-  :custom `(youtube-comments-invidious-hosts . ',browse-url-invidious-instances)
-  :preface
-  (unless (package-installed-p 'youtube-comments)
-    (quelpa '(youtube-comments :repo "xFA25E/youtube-comments" :fetcher github))))
+  :defun youtube-comments
+  :commands youtube-comments
+  :custom `(youtube-comments-invidious-hosts . ',browse-url-invidious-instances))
 
 
 ;;;; PROCESSES
 
-(leaf pueue
-  :preface
-  (unless (package-installed-p 'pueue)
-    (quelpa '(pueue :repo "xFA25E/pueue" :fetcher github)))
-  :commands pueue)
+(leaf pueue :commands pueue)
 
 (leaf proced
   :bind (mode-specific-map :package bindings ("o p" . proced))
@@ -1749,11 +1719,7 @@
   (mode-specific-map :package bindings ("o r" . transmission))
   (transmission-mode-map ("M" . transmission-move)))
 
-(leaf torrent-mode
-  :preface
-  (unless (package-installed-p 'torrent-mode)
-    (quelpa '(torrent-mode :repo "xFA25E/torrent-mode" :fetcher github)))
-  :mode "\\.torrent\\'")
+(leaf torrent-mode :mode "\\.torrent\\'")
 
 
 ;;;; RSS
@@ -1901,11 +1867,7 @@
   :mode "\\.epub\\'"
   :custom `(nov-save-place-file . ,(expand-file-name "emacs/nov-places" (xdg-cache-home))))
 
-(leaf fb2-mode
-  :preface
-  (unless (package-installed-p 'fb2-mode)
-    (quelpa '(fb2-mode :repo "5k1m1/fb2-mode" :fetcher github)))
-  :custom '(fb2-replace-hard-space . t))
+(leaf fb2-mode :custom '(fb2-replace-hard-space . t))
 
 
 ;;; MAIL
