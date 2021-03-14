@@ -82,7 +82,9 @@
   '(user-full-name . "Valeriy Litkovskyy")
   `(read-process-output-max . ,(* 1024 1024))
   '(completion-ignore-case . t)
-  '(read-buffer-completion-ignore-case . t))
+  '(read-buffer-completion-ignore-case . t)
+  :config
+  (add-to-list 'process-environment "PAGER=cat"))
 
 
 ;;;; FACES
