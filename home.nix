@@ -18,7 +18,6 @@ in {
             [ -e "''${profile}" ] && . "''${profile}"
         done
         unset file profile
-        pidof rimer >/dev/null || setsid -f ${pkgs.rimer}/bin/rimer start "${pkgs.scripts}/bin/rimer_callback"
       '';
       ".sbclrc".source = ./sbclrc;
       ".shinit".text = ''
@@ -187,7 +186,7 @@ in {
     random-background = {
       enable = true;
       imageDirectory = "${pkgs.wallpapers}";
-      interval = "10min";
+      interval = "5min";
     };
   };
 
@@ -202,6 +201,20 @@ in {
           ExecStart = "${pkgs.pueue}/bin/pueued";
           ExecReload = "${pkgs.pueue}/bin/pueued";
           Environment = "ASYNC_STD_THREAD_COUNT=4";
+        };
+        Install = {
+          WantedBy = [ "default.target" ];
+        };
+      };
+
+      rimer = {
+        Unit = {
+          Description = "Rimer Daemon - Concurrent timer";
+        };
+        Service = {
+          Restart = "no";
+          ExecStart = "${pkgs.rimer}/bin/rimer start ${pkgs.scripts}/bin/rimer_callback";
+          ExecStop = "${pkgs.rimer}/bin/rimer quit";
         };
         Install = {
           WantedBy = [ "default.target" ];

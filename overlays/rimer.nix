@@ -5,8 +5,8 @@ self: super: {
     src = super.fetchFromGitHub {
       owner = "xFA25E";
       repo = pname;
-      rev = "ad1dbbef0a116cc115997d54041bec13f69fe43c";
-      sha256 = "061nfws326h4dml7rlr2i1qc9a5xmf8lpkbl81z42v5abzc6f05x";
+      rev = "3d87266899b4f679573b19d707fb2aa9dedadcb1";
+      sha256 = "1l26sw3ysfbzbd7wav2qixwfla3qg77sgmqjd3dv0n1yiv1fdfb1";
     };
     doCheck = false;
     cargoSha256 = "1r03334c8y5kj102cz2f9x57h1v3z3dw7nxhjm7gpin16lwvd5ca";
