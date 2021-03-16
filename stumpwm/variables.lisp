@@ -18,7 +18,6 @@
   '(("screenshot" :command "screenshot")
     ("mount" :shell "rmount")
     ("unmount" :shell "rumount")
-    ("lock screen" :shell "lock")
     ("suspend" :shell "systemctl suspend")))
 
 (defvar *rimer-timers*

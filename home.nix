@@ -3,7 +3,75 @@
   user = variables.user;
   dir = variables.dir;
   colors = variables.colors;
+  mailSync = pkgs.writeShellScript "mailsync" ''
+    ${pkgs.isync}/bin/mbsync $1 || true
+    ${pkgs.mu}/bin/mu index || ${pkgs.myEmacs}/bin/emacsclient --eval "(mu4e-update-mail-and-index t)" || true
+  '';
+  mailNotify = pkgs.writeShellScript "mailnotify" ''
+    count="$(${pkgs.mu}/bin/mu find flag:unread AND NOT flag:trashed | wc -l)"
+    ${pkgs.libnotify}/bin/notify-send "eMail $1" "New email arrived to $2. You have $count new emails." || true
+  '';
 in {
+  accounts.email = {
+    accounts = {
+      "polimi" = {
+        address = "valeriy.litkovskyy@mail.polimi.it";
+        aliases = [ "10622800@polimi.it" ];
+        imap = {
+          host = "outlook.office365.com";
+          tls.enable = true;
+        };
+        imapnotify = {
+          enable = true;
+          boxes = [ "INBOX" "Junk Email" ];
+          onNotify = "${mailSync} polimi";
+          onNotifyPost = {
+            mail = "${mailNotify} polimi \"%s\"";
+          };
+        };
+        mbsync = {
+          enable = true;
+          groups."polimi" = {
+            channels = let makeChannel = master: slave: {
+              extraConfig = {
+                Create = "Slave";
+                Sync = "All";
+                Expunge = "Both";
+                SyncState = "*";
+              };
+              masterPattern = master;
+              slavePattern = slave;
+            }; in {
+              "inbox" = makeChannel "INBOX" "inbox";
+              "archive" = makeChannel "Archive" "archive";
+              "trash" = makeChannel "Deleted Items" "trash";
+              "drafts" = makeChannel "Drafts" "drafts";
+              "spam" = makeChannel "Junk Email" "spam";
+              "sent" = makeChannel "Sent Items" "sent";
+            };
+          };
+        };
+        msmtp = {
+          enable = true;
+          extraConfig.logfile = "${dir.cache}/msmtp-polimi.log";
+        };
+        mu.enable = true;
+        passwordCommand = "${pkgs.pass}/bin/pass show mail/polimi | head -n1";
+        primary = true;
+        realName = "Valeriy Litkovskyy";
+        smtp = {
+          host = "smtp.office365.com";
+          tls = {
+            enable = true;
+            useStartTls = true;
+          };
+        };
+        userName = "10622800@polimi.it";
+      };
+    };
+    maildirBasePath = dir.mail;
+  };
+
   fonts.fontconfig.enable = true;
   home = {
     # enableDebugInfo = true;     # gdb symbols
@@ -25,20 +93,22 @@ in {
         ${pkgs.coreutils}/bin/stty -ixon
         export PS1='$? $USER '
       '';
-      ".stalonetrayrc".text = ''
-        background "#000000"
-        fuzzy_edges "3"
-        geometry "1x1+10+742"
-        grow_gravity "SW"
-        icon_gravity "SW"
-        icon_size "16"
-        skip_taskbar true
-        sticky true
-        transparent true
-        window_layer "bottom"
-        window_strut "bottom"
-        window_type "desktop"
-      '';
+      ".stalonetrayrc".text = pkgs.lib.generators.toKeyValue {
+        mkKeyValue = pkgs.lib.generators.mkKeyValueDefault {} " ";
+      } {
+        background = "#000000";
+        fuzzy_edges = "3";
+        geometry = "1x1+10+742";
+        grow_gravity = "SW";
+        icon_gravity = "SW";
+        icon_size = "16";
+        skip_taskbar = true;
+        sticky = true;
+        transparent = true;
+        window_layer = "bottom";
+        window_strut = "bottom";
+        window_type = "desktop";
+      };
     };
 
     homeDirectory = "/home/${user}";
@@ -66,12 +136,12 @@ in {
 
     packages = with pkgs; [
       # nixpkgs
-      checkbashisms dejavu_fonts dmenu fd file firefox hack-font iosevka ledger
-      leiningen libreoffice mkpasswd mpc_cli mpop mtpfs nix-serve p7zip pass-otp
-      pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync rustup sbcl
-      sdcv shellcheck simplescreenrecorder sloccount speedtest-cli stalonetray
-      sxiv syncthing tdesktop transmission youtube-dl ungoogled-chromium wget
-      woof xclip xdg-user-dirs xorg.xbacklight xz zip
+      acpi checkbashisms dejavu_fonts dmenu fd file firefox gimp hack-font
+      iosevka ledger leiningen libreoffice mkpasswd mpc_cli nix-serve nload
+      p7zip pass-otp pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync
+      rustup sbcl sdcv shellcheck simplescreenrecorder sloccount speedtest-cli
+      stalonetray sxiv syncthing tdesktop transmission youtube-dl
+      ungoogled-chromium wget woof xclip xdg-user-dirs xorg.xbacklight xz zip
 
       # mypkgs
       browser emacsEditor rimer scripts stumpwm ungoogledChromiumIncognito ytdl
@@ -166,7 +236,7 @@ in {
     jq.enable = true;
 
     man.generateCaches = true;
-
+    mbsync.enable = true;
     mpv = {
       enable = true;
       config = {
@@ -175,11 +245,7 @@ in {
       };
     };
 
-    msmtp = {
-      enable = true;
-      extraConfig = import ./msmtp.nix pkgs dir;
-    };
-
+    msmtp.enable = true;
     mu.enable = true;
 
     qutebrowser = import ./qutebrowser.nix pkgs colors;
@@ -207,6 +273,10 @@ in {
       verbose = true;
     };
 
+    grobi.enable = true;
+
+    imapnotify.enable = true;
+
     mpd = {
       enable = true;
       dataDir = "${dir.cache}/mpd";
@@ -230,6 +300,20 @@ in {
 
   systemd.user = {
     services = {
+      mbsync = {
+        Unit = {
+          Description = "Get new email with mbysc";
+          After = [ "graphical-session-pre.target" ];
+          PartOf = [ "graphical-session.target" ];
+        };
+        Service = {
+          ExecStart = "${mailSync} -a";
+          Type = "oneshot";
+        };
+        Install = {
+          WantedBy = [ "graphical-session.target" ];
+        };
+      };
       pueue = {
         Unit = {
           Description = "Pueue Daemon - CLI process scheduler and manager";
@@ -309,8 +393,6 @@ in {
         keycode 58 = Control
       '';
 
-      "mpop/config".text = import ./mpop.nix pkgs dir;
-
       "mpv/scripts/youtube-quality.lua".source = "${pkgs.mpvYoutubeQuality}/youtube-quality.lua";
       "mpv/script-opts/youtube-quality.conf".source = "${pkgs.mpvYoutubeQuality}/youtube-quality.conf";
 
@@ -326,71 +408,77 @@ in {
         recursive = true;
       };
 
-      "youtube-dl/config".text = ''
-        --add-metadata
-        --ignore-errors
-        --continue
-        --no-playlist
-        --embed-subs
-        --output "%(uploader)s/%(upload_date)s - %(title)s.%(ext)s"
-        --format '(bestvideo+bestaudio/best)[height<=?768][width<=?1366]'
-      '';
+      "youtube-dl/config".text = pkgs.lib.generators.toKeyValue {
+        mkKeyValue = pkgs.lib.generators.mkKeyValueDefault {} " ";
+      } {
+        "--add-metadata" = "";
+        "--ignore-errors" = "";
+        "--continue" = "";
+        "--no-playlist" = "";
+        "--embed-subs" = "";
+        "--output" = "'%(uploader)s/%(upload_date)s - %(title)s.%(ext)s'";
+        "--format" = "'(bestvideo+bestaudio/best)[height<=?768][width<=?1366]'";
+      };
     };
 
     configHome = dir.config;
 
     dataFile = {
-      "applications/browser.desktop".text = ''
-        [Desktop Entry]
-        Categories=Network;WebBrowser;
-        Comment=
-        Exec=${pkgs.browser}/bin/browser %U
-        GenericName=Web Browser
-        MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp
-        Name=Browser
-        Terminal=false
-        Type=Application
-      '';
+      "applications/browser.desktop".text = pkgs.lib.generators.toINI {} {
+        "Desktop Entry" = {
+          Categories = "Network;WebBrowser;";
+          Comment = "";
+          Exec = "${pkgs.browser}/bin/browser %U";
+          GenericName = "Web Browser";
+          MimeType = "text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp";
+          Name = "Browser";
+          Terminal = false;
+          Type = "Application";
+        };
+      };
 
-      "applications/emacsdired.desktop".text = ''
-        [Desktop Entry]
-        Encoding=UTF-8
-        Version=1.0
-        Type=Application
-        NoDisplay=true
-        MimeType=application/x-directory;inode/directory;
-        Exec=${pkgs.emacsEditor}/bin/emacseditor --no-wait --eval '(dired "%f")'
-        Name=Dired
-        Comment=Emacs Dired
-      '';
+      "applications/emacsdired.desktop".text = pkgs.lib.generators.toINI {} {
+        "Desktop Entry" = {
+          Encoding = "UTF-8";
+          Version = "1.0";
+          Type = "Application";
+          NoDisplay = "true";
+          MimeType = "application/x-directory;inode/directory;";
+          Exec = ''${pkgs.emacsEditor}/bin/emacseditor --eval \"(dired \\\"%f\\\")\"'';
+          Name = "Dired";
+          Comment = "Emacs Dired";
+        };
+      };
 
-      "applications/emacseditor.desktop".text = ''
-        [Desktop Entry]
-        Name=Emacs
-        GenericName=Text Editor
-        Comment=Edit text
-        MimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;
-        Exec=${pkgs.emacsEditor}/bin/emacseditor %F
-        Icon=emacs
-        Type=Application
-        Terminal=false
-        Categories=Development;TextEditor;
-        StartupWMClass=Emacs
-        Keywords=Text;Editor;
-      '';
+      "applications/emacseditor.desktop".text = pkgs.lib.generators.toINI {} {
+        "Desktop Entry" = {
+          Name = "Emacs";
+          GenericName = "Text Editor";
+          Comment = "Edit text";
+          MimeType = "text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;";
+          Exec = "${pkgs.emacsEditor}/bin/emacseditor %F";
+          Icon = "emacs";
+          Type = "Application";
+          Terminal = "false";
+          Categories = "Development;TextEditor;";
+          StartupWMClass = "Emacs";
+          Keywords = "Text;Editor;";
+        };
+      };
 
-      "applications/emacsmail.desktop".text = ''
-        [Desktop Entry]
-        Encoding=UTF-8
-        Version=1.0
-        Type=Application
-        MimeType=x-scheme-handler/mailto;message/rfc822;
-        NoDisplay=true
-        Exec=${pkgs.emacsEditor}/bin/emacseditor --no-wait --eval '(browse-url-mail "%U")'
-        Name=EmacsMail
-        Terminal=false
-        Comment=Emacs Compose Mail
-      '';
+      "applications/emacsmail.desktop".text = pkgs.lib.generators.toINI {} {
+        "Desktop Entry" = {
+          Encoding = "UTF-8";
+          Version = "1.0";
+          Type = "Application";
+          MimeType = "x-scheme-handler/mailto;message/rfc822;";
+          NoDisplay = "true";
+          Exec = ''${pkgs.emacsEditor}/bin/emacseditor --eval \"(browse-url-mail \\\"%U\\\")\"'';
+          Name = "EmacsMail";
+          Terminal = "false";
+          Comment = "Emacs Compose Mail";
+        };
+      };
 
       "stardict/dic".source = "${pkgs.stardictDictionaries}/share/stardict/dic";
     };
@@ -427,6 +515,9 @@ in {
 
   xsession = {
     enable = true;
+    initExtra = ''
+      systemctl --user restart imapnotify-polimi.service
+    '';
     scriptPath = ".xinitrc";
     windowManager.command = "${pkgs.stumpwm}/bin/stumpwm";
   };

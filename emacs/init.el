@@ -3,6 +3,8 @@
 (let ((path (cl-find "elpa/project" load-path :test #'cl-search)))
   (push path load-path))
 
+(add-to-list 'Info-directory-list "/home/val/.nix-profile/share/info")
+
 
 ;;; UTILS
 
@@ -1894,25 +1896,18 @@
 ;;;; MU4E
 
 (leaf mu4e
-  :defun mu4e-action-view-in-browser-check-parens-fix mu4e-main-mode-map mu4e-view-actions
-  :defvar mu4e-main-mode-map mu4e-view-actions
-  :hook (after-init-hook . mu4e~start)
-
-  :bind
-  (mode-specific-map :package bindings ("o m" . mu4e))
-  (mu4e-main-mode-map
-   ("q" . quit-window)
-   ("Q" . mu4e-quit))
+  :defun mu4e-action-view-in-browser mu4e-make-folder-fn make-mu4e-context
+  :defvar mu4e-main-mode-map mu4e-view-actions mu4e-contexts
+  :bind (mode-specific-map :package bindings ("o m" . mu4e))
 
   :custom
+  '(mu4e-trash-folder . 'mu4e-trash-folder-by-msg)
+  '(mu4e-refile-folder . 'mu4e-archive-folder-by-msg)
+  '(mu4e-sent-folder . 'mu4e-sent-folder-by-msg)
+  '(mu4e-drafts-folder . 'mu4e-drafts-folder-by-msg)
   '(mail-user-agent . 'mu4e-user-agent)
   '(mu4e-headers-visible-lines . 7)
-  '(mu4e-sent-folder . "/SENT")
-  '(mu4e-drafts-folder . "/DRAFTS")
-  '(mu4e-trash-folder . "/TRASH")
-  '(mu4e-refile-folder . "/ARCHIVE")
   '(mu4e-view-show-images . t)
-  '(mu4e-sent-messages-behavior . 'sent)
   '(mu4e-change-filenames-when-moving . t)
   '(mu4e-context-policy . 'pick-first)
   '(mu4e-compose-context-policy . 'always-ask)
@@ -1922,15 +1917,7 @@
   '(mu4e-view-show-addresses . t)
   `(mu4e-attachment-dir . ,(expand-file-name (xdg-download-dir)))
   '(mu4e-modeline-max-width . 100)
-  '(mu4e-get-mail-command . "mpop -Q polimi")
-  '(mu4e-update-interval . 300)
-  '(mu4e-maildir-shortcuts
-    . '(("/EXYS"    . ?e)
-        ("/POLIMI"  . ?p)
-        ("/SENT"    . ?s)
-        ("/TRASH"   . ?t)
-        ("/DRAFTS"  . ?d)
-        ("/ARCHIVE" . ?a)))
+  '(mu4e-maildir-shortcuts . '(("/polimi/inbox" . ?p)))
   '(mu4e-headers-fields
     . '((:human-date . 16)
         (:flags      . 6)
@@ -1945,55 +1932,30 @@
                              "3gp" "vob"  "wmv" "aiff" "wav" "ogv" "flv")))))
 
   :config
+  (defmacro mu4e-make-folder-fn (folder)
+    `(defun ,(intern (concat "mu4e-" folder "-folder-by-msg")) (msg)
+       (when-let ((maildir (and msg (mu4e-message-field msg :maildir))))
+         (save-match-data
+           (string-match (rx bos "/" (group (+ (not "/")))) maildir)
+           (concat "/" (match-string 1 maildir) ,(concat "/" folder))))))
+
+  (mu4e-make-folder-fn "trash")
+  (mu4e-make-folder-fn "archive")
+  (mu4e-make-folder-fn "sent")
+  (mu4e-make-folder-fn "drafts")
+
   (load-library "org-mu4e")
   (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t)
-
-  (mu4e-bookmark-define "maildir:\"/EXYS\" AND NOT (from:\"info@exys.it\" OR to:\"assistenza@exys.it\")"
-                        "Exys no info" ?e)
-  (mu4e-bookmark-define "flag:unread AND NOT flag:trashed AND maildir:\"/EXYS\" AND NOT (from:\"info@exys.it\" OR to:\"assistenza@exys.it\")"
-                        "Exys unread" ?w)
-  (mu4e-bookmark-define "maildir:\"/EXYS\" AND (from:\"info@exys.it\" OR to:\"assistenza@exys.it\")"
-                        "Exys info" ?i)
-  (mu4e-bookmark-define "flag:unread AND NOT flag:trashed AND maildir:\"/POLIMI\""
-                        "Polimi unread" ?l)
-
-  (setq mu4e-contexts (list (make-mu4e-context
-                             :name "polimi"
-                             :vars '((user-mail-address . "valeriy.litkovskyy@mail.polimi.it")
-                                     (message-sendmail-extra-arguments . ("-a" "polimi"))
-                                     (mu4e-compose-signature . "Cordiali saluti,\nLitkovskyy Valeriy")))
-                            (make-mu4e-context
-                             :name "exys"
-                             :vars '((user-mail-address . "valeriy@exys.it")
-                                     (message-sendmail-extra-arguments . ("-a" "exys"))
-                                     (mu4e-compose-signature . "<#multipart type=alternative>
-<#part type=text/plain>
-VALERIY LITKOVSKYY
-DEVELOPER
-EXYS
-VIA CADOLINI, 35
-20137 MILANO
-TEL. +39 02 55199744
-https://www.exys.it<#multipart type=related><#part type=text/html>
-<hr/>
-VALERIY LITKOVSKYY<br/>
-DEVELOPER<br/>
-<img src=\"cid:_home_val_Documents_work_logo-exys.png\" alt=\"EXYS WEB SOLUTIONS\" title=\"Exys logo\" /><br/>
-VIA CADOLINI, 35<br/>
-20137 MILANO<br/>
-TEL. +39 02 55199744<br/>
-<a href=\"https://www.exys.it\">www.exys.it</a>
-<#part type=\"image/png\" filename=\"/home/val/Documents/work/logo-exys.png\" disposition=inline id=\"<_home_val_Documents_work_logo-exys.png>\">
-<#/part>
-<#/multipart>
-<#/multipart>"))))))
-
-(leaf mu4e-alert
-  :after mu4e
-  :config
-  (mu4e-alert-enable-notifications)
-  (mu4e-alert-enable-mode-line-display)
-  (mu4e-alert-set-default-style 'libnotify))
+  (setq
+   mu4e-contexts
+   (list (make-mu4e-context
+          :name "polimi"
+          :vars '((mu4e-sent-folder . "/polimi/sent")
+                  (mu4e-drafts-folder . "/polimi/drafts")
+                  (mu4e-sent-messages-behavior . delete)
+                  (user-mail-address . "valeriy.litkovskyy@mail.polimi.it")
+                  (message-sendmail-extra-arguments . ("-a" "polimi"))
+                  (mu4e-compose-signature . "Cordiali saluti,\nLitkovskyy Valeriy"))))))
 
 
 ;;; ORG
