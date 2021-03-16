@@ -56,7 +56,7 @@ in {
           extraConfig.logfile = "${dir.cache}/msmtp-polimi.log";
         };
         mu.enable = true;
-        passwordCommand = "${pkgs.pass}/bin/pass show mail/polimi | head -n1";
+        passwordCommand = "${pkgs.pass}/bin/pass show mail/polimi | ${pkgs.coreutils}/bin/head -n1";
         primary = true;
         realName = "Valeriy Litkovskyy";
         smtp = {
@@ -273,7 +273,7 @@ in {
       verbose = true;
     };
 
-    grobi.enable = true;
+    # grobi.enable = true;
 
     imapnotify.enable = true;
 
