@@ -1070,10 +1070,6 @@
   `(sly-mrepl-history-file-name
     . ,(expand-file-name "emacs/sly-mrepl-history" (xdg-cache-home))))
 
-(leaf sly-asdf
-  :after sly
-  :config (add-to-list 'sly-contribs 'sly-asdf 'append))
-
 
 ;;;;;; SCHEME
 
