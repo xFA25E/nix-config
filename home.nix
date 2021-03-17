@@ -5,11 +5,15 @@
   colors = variables.colors;
   mailSync = pkgs.writeShellScript "mailsync" ''
     ${pkgs.isync}/bin/mbsync $1 || true
-    ${pkgs.mu}/bin/mu index || ${pkgs.myEmacs}/bin/emacsclient --eval "(mu4e-update-mail-and-index t)" || true
+    ${pkgs.mu}/bin/mu index || ${pkgs.myEmacs}/bin/emacsclient --eval "(mu4e-update-mail-and-index t)" || ${pkgs.coreutils}/bin/true
   '';
   mailNotify = pkgs.writeShellScript "mailnotify" ''
-    count="$(${pkgs.mu}/bin/mu find flag:unread AND NOT flag:trashed | wc -l)"
-    ${pkgs.libnotify}/bin/notify-send "eMail $1" "New email arrived to $2. You have $count new emails." || true
+    count="$(${pkgs.mu}/bin/mu find flag:unread AND NOT flag:trashed | ${pkgs.coreutils}/bin/wc -l)"
+    ${pkgs.libnotify}/bin/notify-send "eMail $1" "New email arrived to $2. You have $count new emails." || ${pkgs.coreutils}/bin/true
+  '';
+  mailNotifyTerm = pkgs.writeShellScript "mailnotifyterm" ''
+    count="$(${pkgs.mu}/bin/mu find flag:unread AND NOT flag:trashed | ${pkgs.coreutils}/bin/wc -l)"
+    ${pkgs.xterm}/bin/uxterm -e "${pkgs.coreutils}/bin/printf 'eMail\nYou have %s new emails.' $count | ${pkgs.less}/bin/less"
   '';
 in {
   accounts.email = {
@@ -308,6 +312,7 @@ in {
         };
         Service = {
           ExecStart = "${mailSync} -a";
+          ExecStartPost = "${mailNotifyTerm}";
           Type = "oneshot";
         };
         Install = {
