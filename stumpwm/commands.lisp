@@ -10,13 +10,13 @@
 
 (defcommand mpd-controller (&optional command) ((:rest-strings))
   (when command
-    (run-shell-command (format nil "mpc -q ~A" command) t))
+    (uiop:run-program (format nil "mpc -q ~A" command)))
   (message "~A
-[<] prev    [N] volume -1  [n] volume -10
-[>] next    [P] volume +1  [p] volume +10
+[<] prev    [N] volume -1  [n] volume -10  [f] seek +00:00:10
+[>] next    [P] volume +1  [p] volume +10  [b] seek -00:00:10
 [t] toggle  [r] repeat     [z] random
 [.] single  [c] consume    [Z] shuffle"
-           (run-shell-command "mpc" t)))
+           (uiop:run-program '("mpc") :output :string)))
 
 (let ((timer nil))
   (define-interactive-keymap mpd-controller-interactive
@@ -33,7 +33,9 @@
     ((kbd "N") "mpd-controller volume -1")
     ((kbd "n") "mpd-controller volume -10")
     ((kbd "P") "mpd-controller volume +1")
-    ((kbd "p") "mpd-controller volume +10")))
+    ((kbd "p") "mpd-controller volume +10")
+    ((kbd "f") "mpd-controller seek +00:00:10")
+    ((kbd "b") "mpd-controller seek -00:00:10")))
 
 (defcommand brightness-controller (&optional command) ((:rest-strings))
   (when command
