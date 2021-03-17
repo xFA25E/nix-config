@@ -7,15 +7,13 @@
 
 
 
-(let ((time-scanner (ppcre:create-scanner "time to (?:full|empty): +([0-9]+\\.[0-9]+ +[a-zA-Z]+)"))
-      (percentage-scanner (ppcre:create-scanner "percentage: +([0-9]+)"))
-      (state-scanner (ppcre:create-scanner "state: +([-a-zA-Z]+)")))
+(let ((scanner (ppcre:create-scanner "[^:]+: ([^,]+), ([^%]+)%(?:, (.*?))?$")))
   (defun read-battery-status ()
-    (when *battery-device*
-      (let ((output (run-shell-command (format nil "upower -i '~A'" *battery-device*) t)))
-        (values (extract-first-regexp-group percentage-scanner output)
-                (extract-first-regexp-group state-scanner output)
-                (extract-first-regexp-group time-scanner output))))))
+    (let ((value (nth-value 1 (ppcre:scan-to-strings scanner (run-shell-command "acpi --battery" t)))))
+      (when (and (vectorp value) (/= 0 (length value)))
+        (values (aref value 1)
+                (aref value 0)
+                (aref value 2))))))
 
 (defun read-brightness-status ()
   (flet ((read-number (s)
