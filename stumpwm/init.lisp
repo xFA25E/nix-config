@@ -13,7 +13,7 @@
 
 (setf *mouse-focus-policy* :click)
 
-;; (setf *battery-timer* (stumpwm::run-with-timer 60 60 #'notify-battery-status))
+(setf *battery-timer* (stumpwm::run-with-timer 60 60 #'notify-battery-status))
 (setf *date-time-timer* (stumpwm::run-with-timer 60 60 #'notify-date-time))
 
 
