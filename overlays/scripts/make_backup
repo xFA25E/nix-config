@@ -1,42 +1,25 @@
 #!/bin/sh
 
+# make_backup /directory
+
 set -o nounset
-
-# make_backup /dev/sdb1
-
-# Mounting business
 
 exit_error() { echo "${1}" >&2; exit "${2:-1}"; }
 
-get_partition() {
-    lsblk -rpo "name,type,size,mountpoint" | \
-        awk '$2=="part"&&$4==""{printf "%s (%s)\n",$1,$3}' | \
-        dmenu -p "Select partition" -l 19 | cut -d" " -f1
-}
-
 get_directory() {
-    sudo -A mkdir -p /mnt/backup >/dev/null
-    echo /mnt/backup
+    lsblk -nrpo "name,type,size,mountpoint" \
+        | awk '$2=="part"&&$4!~/\/boot|\/home$|SWAP/&&length($4)>1{printf "%s %s\n",$3,$4}' \
+        | dmenu -p "Select partition" -l 10 \
+        | cut -d" " -f 2-
 }
 
-partition="${1:-$(get_partition)}"
-[ ! -b "${partition:?provide partition}" ] && exit_error "${partition} is not block special"
-
-directory="$(get_directory)"
+directory="${1:-$(get_directory)}"
 [ ! -d "${directory:?provide directory}" ] && exit_error "${directory} is not a directory"
 
-# Preparing backup
-sudo -A mount -o 'data=journal' "${partition}" "${directory}" || exit_error "Can't mount"
-sudo -A chown val:users "${directory}" || { sudo -A umount "${directory}"; exit_error "Can't chown"; }
-
-# Making backup
 rsync --delete --delete-excluded --archive --verbose --partial --progress --relative \
       --backup --backup-dir="${directory%/}/backup" --suffix="$(date '+.~%Y%m%d')" \
       --exclude='lost+found' --exclude="${directory}" \
       ~/Documents ~/Downloads ~/Music ~/Pictures ~/Videos ~/archives ~/org \
       ~/.authinfo.gpg ~/.gnupg ~/.mail ~/.password-store ~/.ssh \
-      /mnt/second_partition /var/spool/cron/val \
-      ~/.config/nixpkgs ~/.local/share/emacs \
+      /mnt/second_partition ~/.config/nixpkgs ~/.local/share/emacs \
       "${directory%/}/current"
-
-sudo -A umount "${directory}"

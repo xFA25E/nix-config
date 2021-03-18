@@ -28,6 +28,7 @@ in {
         "extract_eml" = [ coreutils mu ];
         "format_duration" = [ gawk ];
         "image_clipboard" = [ file xclip ];
+        "make_backup" = [ utillinux coreutils rsync ];
         "make_video_queue" = [ findutils coreutils gawk "$out" gnused unixtools.column ];
         "mpvi" = [ mpv libnotify jq gnused ytdl unixtools.column dmenu ];
         "notify_sound" = [ mpv ];
@@ -43,7 +44,6 @@ in {
         "ytdli" = [ libnotify jq gnused unixtools.column dmenu pueue bash ytdly ytdlay "$out" gawk ];
       };
       wrapPrefixScripts = with self; { # sudo required
-        "make_backup" = [ utillinux coreutils rsync ];
         "rmount" = [ coreutils utillinux gawk findutils dmenu mtpfs ];
         "rumount" = [ dmenu gawk utillinux libnotify gnugrep ];
       };
