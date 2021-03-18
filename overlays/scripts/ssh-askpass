@@ -1,5 +1,5 @@
 #!/bin/sh
-STORE="${PASSWORD_STORE_DIR:-~/.password-store}"
+STORE="${PASSWORD_STORE_DIR:-${HOME}/.password-store}"
 find "${STORE}" -type f \
     | cut -c "$((${#STORE} + 2))-" \
     | sed 's/.gpg$//' \
