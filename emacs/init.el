@@ -1892,8 +1892,23 @@
 ;;;; MU4E
 
 (leaf mu4e
-  :defun mu4e-action-view-in-browser mu4e-make-folder-fn make-mu4e-context
+  :defun mu4e-action-view-in-browser make-mu4e-context mu4e-message-field
   :defvar mu4e-main-mode-map mu4e-view-actions mu4e-contexts
+
+  :preface
+  (eval-when-compile
+    (defmacro mu4e-make-folder-fn (folder)
+      `(defun ,(intern (concat "mu4e-" folder "-folder-by-msg")) (msg)
+         (when-let ((maildir (and msg (mu4e-message-field msg :maildir))))
+           (save-match-data
+             (string-match (rx bos "/" (group (+ (not "/")))) maildir)
+             (concat "/" (match-string 1 maildir) ,(concat "/" folder)))))))
+
+  (mu4e-make-folder-fn "trash")
+  (mu4e-make-folder-fn "archive")
+  (mu4e-make-folder-fn "sent")
+  (mu4e-make-folder-fn "drafts")
+
   :bind (mode-specific-map :package bindings ("o m" . mu4e))
 
   :custom
@@ -1928,18 +1943,6 @@
                              "3gp" "vob"  "wmv" "aiff" "wav" "ogv" "flv")))))
 
   :config
-  (defmacro mu4e-make-folder-fn (folder)
-    `(defun ,(intern (concat "mu4e-" folder "-folder-by-msg")) (msg)
-       (when-let ((maildir (and msg (mu4e-message-field msg :maildir))))
-         (save-match-data
-           (string-match (rx bos "/" (group (+ (not "/")))) maildir)
-           (concat "/" (match-string 1 maildir) ,(concat "/" folder))))))
-
-  (mu4e-make-folder-fn "trash")
-  (mu4e-make-folder-fn "archive")
-  (mu4e-make-folder-fn "sent")
-  (mu4e-make-folder-fn "drafts")
-
   (load-library "org-mu4e")
   (add-to-list 'mu4e-view-actions '("browser view" . mu4e-action-view-in-browser) t)
   (setq
