@@ -44,7 +44,7 @@
   (uiop:run-program `(,*pass* "edit" ,pass-entry)))
 
 (defcommand type-pass-entry (pass-entry) ((:pass-entry "Type pass: "))
-  (let* ((text (uiop:run-program `(,*pass* "show" "sudo") :output :string))
+  (let* ((text (uiop:run-program `(,*pass* "show" ,pass-entry) :output :string))
          (menu (cons (list "autotype" :autotype) (parse-pass-entry-text text)))
          (value (cadr (select-from-menu (current-screen) menu "Type field: "))))
 
