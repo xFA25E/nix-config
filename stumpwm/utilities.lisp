@@ -1,19 +1,10 @@
 (in-package :stumpwm)
 
-(defun extract-first-regexp-group (scanner string)
-  (let ((value (nth-value 1 (ppcre:scan-to-strings scanner string))))
-    (when (and (vectorp value) (/= 0 (length value)))
-      (aref value 0))))
-
-
-
-(let ((scanner (ppcre:create-scanner "[^:]+: ([^,]+), ([^%]+)%(?:, (.*?))?$")))
-  (defun read-battery-status ()
-    (let ((value (nth-value 1 (ppcre:scan-to-strings scanner (run-shell-command "acpi --battery" t)))))
-      (when (and (vectorp value) (/= 0 (length value)))
-        (values (aref value 1)
-                (aref value 0)
-                (aref value 2))))))
+(defun read-battery-status ()
+  (let ((output (uiop:run-program `(,*acpi* "--battery") :output '(:string :stripped t))))
+    (ppcre:register-groups-bind (state percentage time)
+        ("[^:]+: ([^,]+), ([^%]+)%(?:, (.*?))?" output :sharedp t)
+      (values percentage state time))))
 
 (defun read-brightness-status ()
   (flet ((read-number (s)
@@ -24,16 +15,15 @@
            (max-brightness (read-number max-brightness-file)))
       (write-to-string (round (* (/ brightness max-brightness) 100))))))
 
-(let ((volume-scanner (ppcre:create-scanner "Front Left:[^[]+\\[([0-9]+)%\\]"))
-      (state-scanner (ppcre:create-scanner "Front Left:[^[]+\\[[0-9]+%\\][^[]+\\[(on|off)\\]")))
- (defun read-alsa-volume-status ()
-   (let ((output (run-shell-command "amixer -D pulse sget Master" t)))
-     (values (extract-first-regexp-group volume-scanner output)
-             (extract-first-regexp-group state-scanner output)))))
+(defun read-alsa-volume-status ()
+  (let ((output (uiop:run-program `(,*amixer* "-D" "pulse" "sget" "Master") :output :string)))
+    (ppcre:register-groups-bind (volume state)
+        ("Front Left:[^[]+\\[([0-9]+)%\\][^[]+\\[(on|off)\\]" output :sharedp t)
+      (values volume state))))
 
 (defun read-mpd-volume-status ()
-  (let ((output (run-shell-command "mpc -q volume" t)))
-    (ppcre:scan-to-strings "[0-9]+" output)))
+  (let ((output (uiop:run-program `(,*mpc* "-q" "volume") :output :string)))
+    (parse-integer output :start 8 :junk-allowed t)))
 
 
 
@@ -56,14 +46,8 @@
       (unless chargingp
         (message "BATTERY: ~D ~A ~A" *battery-percentage* *battery-state* *battery-time*))
       (when criticalp
-        (run-shell-command "notify_sound")))))
+        (uiop:launch-program `(,*notify-sound*))))))
 
 (defun notify-date-time ()
   (when (zerop (rem (nth-value 1 (get-decoded-time)) 30))
     (echo-date)))
-
-
-
-(define-stumpwm-type :rest-strings (input prompt)
-  (declare (ignore prompt))
-  (or (argument-pop-rest input) ""))

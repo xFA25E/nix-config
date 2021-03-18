@@ -5,6 +5,10 @@
 (defun config-file (&rest path)
   (apply #'uiop:xdg-config-home "stumpwm" path))
 
+(load (config-file "programs.lisp"))
+(if-let ((nix-programs (probe-file (config-file "nix-programs.lisp"))))
+  (load nix-programs))
+
 (load (config-file "variables.lisp"))
 (load (config-file "utilities.lisp"))
 (load (config-file "commands.lisp"))

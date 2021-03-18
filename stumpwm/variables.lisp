@@ -12,9 +12,9 @@
 (defvar *date-time-timer* nil)
 
 (defvar *menu*
-  '(("screenshot" :command "screenshot")
-    ("mount" :shell "rmount")
-    ("unmount" :shell "rumount")
+  `(("screenshot" :command "screenshot")
+    ("mount" :shell (,*rmount*))
+    ("unmount" :shell (,*rumount*))
     ("suspend" :shell "systemctl suspend")))
 
 (defvar *rimer-timers*

@@ -1,36 +1,29 @@
 (in-package :stumpwm)
 
-(defvar *timer-updater* (or (getenv "RIMER_CALLBACK") "rimer_callback"))
+(defvar *timer-updater* (or (getenv "RIMER_CALLBACK") *rimer-callback*))
 
-(let ((duration-scanner
-        (ppcre:create-scanner "^(?:(t)?([0-1]?[0-9]|2[0-3]):)?([0-5]?[0-9])$")))
-  (defun parse-duration (duration)
-    (when-let ((groups (nth-value 1 (ppcre:scan-to-strings duration-scanner duration))))
-      (let* ((hours (parse-integer (or (aref groups 1) "0")))
-             (minutes (parse-integer (aref groups 2)))
-             (total-seconds (+ (* hours 60 60) (* minutes 60))))
-        (if (aref groups 0)
-            (multiple-value-bind (s m h) (get-decoded-time)
-              (let ((duration (- total-seconds (+ s (* m 60) (* h 60 60)))))
-                (if (minusp duration)
-                    (+ (* 60 60 24) duration)
-                    duration)))
-            total-seconds)))))
+(defun parse-duration (duration)
+  (ppcre:register-groups-bind (till hours minutes)
+      ("^(?:(t)?([0-1]?[0-9]|2[0-3]):)?([0-5]?[0-9])$" duration)
+    (let ((total-seconds (+ (* (parse-integer (or hours "0")) 60 60)
+                            (* (parse-integer minutes) 60))))
+      (if till
+          (multiple-value-bind (s m h) (get-decoded-time)
+            (let ((duration (- total-seconds (+ s (* m 60) (* h 60 60)))))
+              (if (minusp duration)
+                  (+ (* 60 60 24) duration)
+                  duration)))
+          total-seconds))))
 
 (defun parse-rimer-report (text)
-  (delete-if
-   #'null
-   (mapcar
-    (lambda (line)
-      (when-let ((groups (nth-value 1 (ppcre:scan-to-strings "^(.*?) (\\d+) (\\d+) (running|paused|halted)$" line))))
-        (list (aref groups 0)
-              (parse-integer (aref groups 1))
-              (parse-integer (aref groups 2))
-              (let ((state (aref groups 3)))
-                (cond ((string= "running" state) :running)
-                      ((string= "paused" state) :paused)
-                      ((string= "halted" state) :halted))))))
-    (split-string text))))
+  (let ((report nil))
+    (ppcre:do-register-groups (name elapsed duration state)
+        ("(.*?) (\\d+) (\\d+) (running|paused|halted)\\n" text report)
+      (push (list name (parse-integer elapsed) (parse-integer duration)
+                  (cond ((string= "running" state) :running)
+                        ((string= "paused" state) :paused)
+                        ((string= "halted" state) :halted)))
+            report))))
 
 (defun format-duration (tot-s)
   (let* ((s (rem tot-s 60))
@@ -59,7 +52,7 @@
 (defun get-rimer-report (&optional (allowed-states '(:running :paused :halted)))
   (delete-if-not
    (lambda (timer) (member (nth 3 timer) allowed-states))
-   (parse-rimer-report (run-shell-command "rimer report" t))))
+   (parse-rimer-report (uiop:run-program `(,*rimer* "report") :output :string))))
 
 (let ((last-name nil))
   (define-stumpwm-type :rimer-name (input prompt)
@@ -82,6 +75,10 @@
         (throw 'error "Invalid duration."))
       (throw 'error "Duration required."))))
 
+(defun show-rimer-output (output)
+  (unless (zerop (length output))
+    (message "~A" output)))
+
 (defmacro define-stumpwm-type-rimer-timer (name allowed-states)
   `(define-stumpwm-type ,name (input prompt)
      (if-let ((menu (get-rimer-report ',allowed-states)))
@@ -98,48 +95,37 @@
 (defcommand add-rimer-countdown (name duration)
     ((:rimer-name "Countdown name: ")
      (:rimer-duration "Countdown duration ([[t]H:]M): "))
-  (message
-   "~A"
-   (run-shell-command
-    (format nil "rimer add --name '~A' --duration '~D' --step '~D'" name duration duration)
-    t)))
+  (let ((dur (write-to-string duration)))
+    (show-rimer-output
+     (uiop:run-program `(,*rimer* "add" "--name" ,name "--duration" ,dur "--step" ,dur)
+      :output :string))))
 
 (defcommand add-rimer-stopwatch (name) ((:rimer-name "Stopwatch name: "))
   (add-rimer-countdown name (1- (expt 2 64))))
 
 (defcommand pause-rimer-timer (timer) ((:rimer-timer-running "Running timer: "))
-  (message "~A" (run-shell-command (format nil "rimer pause --name '~A'" timer) t)))
+  (show-rimer-output
+   (uiop:run-program `(,*rimer* "pause" "--name" ,timer) :output :string)))
 
 (defcommand resume-rimer-timer (timer) ((:rimer-timer-paused "Paused timer: "))
-  (message "~A" (run-shell-command (format nil "rimer resume --name '~A'" timer) t)))
+  (show-rimer-output
+   (uiop:run-program `(,*rimer* "resume" "--name" ,timer) :output :string)))
 
 (defcommand report-rimer () ()
-  (message "~A" (format-report (get-rimer-report))))
+  (show-rimer-output (format-report (get-rimer-report))))
 
 (defcommand halt-rimer-timer (timer) ((:rimer-timer "Timer: "))
-  (message "~A" (run-shell-command (format nil "rimer halt --name '~A'" timer) t)))
-
-(defcommand quit-rimer () ()
-  (message "~A" (run-shell-command "rimer quit" t)))
-
-(defcommand start-rimer () ()
-  (message
-   "~A"
-   (run-shell-command
-    (format nil "pidof rimer || rimer start '~A'" *timer-updater*)
-    t)))
+  (show-rimer-output
+   (uiop:run-program `(,*rimer* "halt" "--name" ,timer) :output :string)))
 
 (defcommand menu-rimer () ()
   (let ((menu '(("countdown" :countdown) ("stopwatch" :stopwatch)
                 ("pause" :pause) ("resume" :resume)
-                ("report" :report) ("halt" :halt)
-                ("quit" :quit) ("start" :start))))
+                ("report" :report) ("halt" :halt))))
     (case (cadr (select-from-menu (current-screen) menu "Rimer: "))
       ((:countdown) (eval-command "add-rimer-countdown" t))
       ((:stopwatch) (eval-command "add-rimer-stopwatch" t))
       ((:pause) (eval-command "pause-rimer-timer" t))
       ((:resume) (eval-command "resume-rimer-timer" t))
       ((:report) (eval-command "report-rimer" t))
-      ((:halt) (eval-command "halt-rimer-timer" t))
-      ((:quit) (eval-command "quit-rimer" t))
-      ((:start) (eval-command "start-rimer" t)))))
+      ((:halt) (eval-command "halt-rimer-timer" t)))))

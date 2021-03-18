@@ -22,18 +22,13 @@
   (select-from-menu
    (current-screen) (mapcar #'list (list-pass-entries)) prompt))
 
-(defun parse-pass-field (field)
-  (when-let ((groups (nth-value 1 (ppcre:scan-to-strings "^([a-zA-Z_]+): (.*)$" field))))
-    (list (aref groups 0) (aref groups 1))))
-
 (defun parse-pass-entry-text (text)
-  (let* ((lines (split-string text))
-         (password-field `("password" ,(pop lines))))
-    (when (string= "---" (car lines))
-      (pop lines))
-    (sort
-     (cons password-field (delete-if #'null (mapcar #'parse-pass-field lines)))
-     #'string< :key #'car)))
+  (let ((fields nil))
+    (ppcre:do-register-groups (pass) ("^(.*)\\n" text)
+      (push (list "password" pass) fields))
+    (ppcre:do-register-groups (key value) ("\\n([a-zA-Z_]+): (.*)" text)
+      (push (list key value) fields))
+    (sort (delete-if #'null fields) #'string< :key #'car)))
 
 
 
@@ -46,10 +41,10 @@
 
 
 (defcommand edit-pass-entry (pass-entry) ((:pass-entry "Edit pass: "))
-  (run-shell-command (format nil "pass edit '~A'" pass-entry)))
+  (uiop:run-program `(,*pass* "edit" ,pass-entry)))
 
 (defcommand type-pass-entry (pass-entry) ((:pass-entry "Type pass: "))
-  (let* ((text (run-shell-command (format nil "pass show '~A'" pass-entry) t))
+  (let* ((text (uiop:run-program `(,*pass* "show" "sudo") :output :string))
          (menu (cons (list "autotype" :autotype) (parse-pass-entry-text text)))
          (value (cadr (select-from-menu (current-screen) menu "Type field: "))))
 
@@ -64,7 +59,7 @@
            (window-send-string value)))))
 
 (defcommand otp-pass-entry (pass-entry) ((:pass-entry "Otp pass: "))
-  (let ((text (run-shell-command (format nil "pass otp '~A'" pass-entry) t)))
+  (let ((text (uiop:run-program `(,*pass* "otp" ,pass-entry) :output :string)))
     (window-send-string text)))
 
 (defcommand menu-pass () ()

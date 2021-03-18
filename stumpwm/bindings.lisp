@@ -6,19 +6,6 @@
 
 (defvar *open-map* (make-sparse-keymap))
 
-;;; TOP
-
-(define-key *top-map* (kbd "XF86AudioMute") "exec amixer -D pulse sset Master toggle >/dev/null")
-(define-key *top-map* (kbd "XF86AudioLowerVolume") "exec amixer -D pulse sset Master 1%- >/dev/null")
-(define-key *top-map* (kbd "XF86AudioRaiseVolume") "exec amixer -D pulse sset Master 1%+ >/dev/null")
-
-(define-key *top-map* (kbd "XF86AudioPrev") "exec mpc -q prev")
-(define-key *top-map* (kbd "XF86AudioPlay") "exec mpc -q toggle")
-(define-key *top-map* (kbd "XF86AudioNext") "exec mpc -q next")
-
-(define-key *top-map* (kbd "XF86MonBrightnessDown") "exec xbacklight -dec 1")
-(define-key *top-map* (kbd "XF86MonBrightnessUp") "exec xbacklight -inc 1")
-
 ;;; MENU-INPUT
 
 (define-key *single-menu-map* (kbd "C-h") 'menu-backspace)
@@ -32,7 +19,9 @@
 
 ;;; ROOT
 
-(define-key *root-map* (kbd "C-c") "exec uxterm")
+(define-key *root-map* (kbd "C-c") (format nil "exec ~A" *uxterm*))
+(define-key *root-map* (kbd "e") "emacs")
+(define-key *root-map* (kbd "C-e") "emacs")
 (define-key *root-map* (kbd "C-q") "send-raw-key")
 (define-key *root-map* (kbd "C-o") '*open-map*)
 
@@ -43,9 +32,9 @@
 (define-key *open-map* (kbd "C-w") "type-pass-entry")
 (define-key *open-map* (kbd "w") "menu-pass")
 
-(define-key *open-map* (kbd "v") "exec uxterm -e pulsemixer")
-(define-key *open-map* (kbd "C-p") "exec uxterm -e htop")
-(define-key *open-map* (kbd "C-n") "exec uxterm -e nload")
+(define-key *open-map* (kbd "v") (format nil "exec ~A -e ~A" *uxterm* *pulsemixer*))
+(define-key *open-map* (kbd "C-p") (format nil "exec ~A -e ~A" *uxterm* *htop*))
+(define-key *open-map* (kbd "C-n") (format nil "exec ~A -e ~A" *uxterm* *nload*))
 
 (define-key *open-map* (kbd "C-s") "mpd-controller-interactive")
 (define-key *open-map* (kbd "C-l") "brightness-controller-interactive")
@@ -56,13 +45,10 @@
 
 (define-key *open-map* (kbd "C-m") "show-menu")
 
-(defprogram-shortcut firefox :map *open-map* :key (kbd "C-f"))
-(defprogram-shortcut qutebrowser :map *open-map* :key (kbd "C-q")
-  :props '(:class "qutebrowser"))
-(defprogram-shortcut chromium-incognito :map *open-map* :key (kbd "C-b")
-  :props '(:class "Chromium-browser"))
-(defprogram-shortcut telegram-desktop :map *open-map* :key (kbd "C-t")
-  :props '(:class "TelegramDesktop"))
+(define-key *open-map* (kbd "C-f") "firefox")
+(define-key *open-map* (kbd "C-q") "qutebrowser")
+(define-key *open-map* (kbd "C-b") "chromium-incognito")
+(define-key *open-map* (kbd "C-t") "telegram-desktop")
 
 ;;; Remapped keys
 

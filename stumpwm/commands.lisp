@@ -1,5 +1,13 @@
 (in-package :stumpwm)
 
+(defcommand emacs () () (run-or-raise *emacs* '(:class "Emacs")))
+(defcommand firefox () () (run-or-raise *firefox* '(:class "Firefox")))
+(defcommand qutebrowser () () (run-or-raise *qutebrowser* '(:class "qutebrowser")))
+(defcommand chromium-incognito () () (run-or-raise *chromium-incognito* '(:class "Chromium-browser")))
+(defcommand telegram-desktop () () (run-or-raise *telegram-desktop* '(:class "TelegramDesktop")))
+
+
+
 (defcommand slynk-start () ()
   (slynk:create-server :dont-close t :port *slynk-port*))
 
@@ -8,15 +16,15 @@
 
 
 
-(defcommand mpd-controller (&optional command) ((:rest-strings))
-  (when command
-    (uiop:run-program (format nil "mpc -q ~A" command)))
+(defcommand mpd-controller (&optional args) ((:rest))
+  (when args
+    (uiop:run-program (list* *mpc* "-q" (uiop:split-string args))))
   (message "~A
 [<] prev    [N] volume -1  [n] volume -10  [f] seek +00:00:10
 [>] next    [P] volume +1  [p] volume +10  [b] seek -00:00:10
 [t] toggle  [r] repeat     [z] random
 [.] single  [c] consume    [Z] shuffle"
-           (uiop:run-program '("mpc") :output :string)))
+           (uiop:run-program `(,*mpc*) :output :string)))
 
 (let ((timer nil))
   (define-interactive-keymap mpd-controller-interactive
@@ -37,9 +45,9 @@
     ((kbd "f") "mpd-controller seek +00:00:10")
     ((kbd "b") "mpd-controller seek -00:00:10")))
 
-(defcommand brightness-controller (&optional command) ((:rest-strings))
-  (when command
-    (run-shell-command (format nil "xbacklight ~A" command) t))
+(defcommand brightness-controller (&optional args) ((:rest))
+  (when args
+    (uiop:run-program (list* *xbacklight* (uiop:split-string args))))
   (message "Brightness ~A
 [N] -dec 1     [P] -inc 1
 [n] -dec 10    [p] -inc 10
@@ -57,9 +65,9 @@
     ((kbd "p") "brightness-controller -inc 10")
     ((kbd "M-p") "brightness-controller -inc 40")))
 
-(defcommand alsa-controller (&optional command) ((:rest-strings))
-  (when command
-    (run-shell-command (format nil "amixer ~A" command) t))
+(defcommand alsa-controller (&optional args) ((:rest))
+  (when args
+    (uiop:run-program (list* *amixer* (uiop:split-string args))))
   (multiple-value-bind (value state) (read-alsa-volume-status)
     (message "Alsa-Volume ~A ~A
 [N] 1%-     [P] 1%+
@@ -78,16 +86,15 @@
 
 (defcommand screenshot (name selectp)
     ((:string "File name (w/o ext): ") (:y-or-n "Select? "))
-  (let* ((directory
-           (merge-pathnames #p"Pictures/screenshots/" (user-homedir-pathname)))
-         (file-name (make-pathname :directory (pathname-directory directory)
-                                   :name name :type "png")))
+  (let* ((pic-dir (uiop:run-program `(,*xdg-user-dir* "PICTURES") :output '(:string :stripped t)))
+         (directory (uiop:subpathname* pic-dir "screenshots/"))
+         (file-name (make-pathname :directory (pathname-directory directory) :name name :type "png")))
     (ensure-directories-exist file-name)
-    (run-shell-command
-     (format
-      nil
-      "scrot --overwrite --delay 1~:[~; -select~] '~A' --exec 'image_clipboard $f' && notify-send Scrot 'Done screenshot'"
-      selectp (namestring file-name)))))
+    (uiop:run-program (list* *scrot* "--overwrite" "--delay" "1"
+                             "--exec" (format nil "~A $f" *image-clipboard*)
+                             (namestring file-name)
+                             (when selectp '("--select"))))
+    (message "Scrot~%Done screenshot")))
 
 
 
@@ -100,21 +107,27 @@
              (jsown:val data "deaths")
              (jsown:val data "active"))))
 
-(let* ((scanner (ppcre:create-scanner '(:sequence
-                                        (:alternation
-                                         "/" "/home" "/mnt/second_partition"
-                                         "/mnt/backup" "/media/kindle"
-                                         "/media/usb")
-                                        :modeless-end-anchor)
-                                      :case-insensitive-mode t))
-       (needed-partition-p (curry #'ppcre:scan scanner)))
-  (defcommand show-hardware () ()
-    (update-battery-status-variables)
-    (let ((output (run-shell-command "df --si --output=avail,target" t)))
-      (destructuring-bind (head . body) (split-string output)
-        (message "~A~%~{~A~%~}~%B~A ~A ~A"
-                 head (delete-if-not needed-partition-p body)
-                 *battery-percentage* *battery-state* *battery-time*)))))
+(defcommand show-hardware () ()
+  (update-battery-status-variables)
+  (let ((output (uiop:run-program `(,*df* "--si" "--output=avail,target") :output :string))
+        (max-length 0)
+        (partitions nil))
+
+    (ppcre:do-register-groups (avail target)
+        (" *([^ ]+) +(/|/home|/mnt/second_partition|/mnt/backup|/media/kindle|/media/usb)\\n"
+         output nil :sharedp t)
+      (push (cons avail target) partitions)
+      (setf max-length (max max-length (length avail))))
+
+    (message "~{~A~%~}~%B~A ~A ~A"
+             (mapcar (lambda (partition)
+                       (destructuring-bind (avail . target) partition
+                         (format nil "~A~A ~A"
+                                 (make-string (- max-length (length avail)) :initial-element #\Space)
+                                 avail
+                                 target)))
+                     partitions)
+             *battery-percentage* *battery-state* *battery-time*)))
 
 
 
@@ -123,7 +136,7 @@
     (destructuring-bind (name type cmd) selection
       (declare (ignore name))
       (ecase type
-        (:shell (run-shell-command cmd))
+        (:shell (uiop:launch-program cmd))
         (:command (eval-command cmd t))))))
 
 (defcommand type-clipboard (&optional (primary t))
