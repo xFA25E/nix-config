@@ -88,7 +88,7 @@ in {
       ".stalonetrayrc".text = pkgs.lib.generators.toKeyValue {
         mkKeyValue = pkgs.lib.generators.mkKeyValueDefault {} " ";
       } {
-        background = "#000000";
+        background = "\"#000000\"";
         fuzzy_edges = "3";
         geometry = "1x1+10+742";
         grow_gravity = "SW";
