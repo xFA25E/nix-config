@@ -17,13 +17,8 @@
     (uiop:split-string (uiop:stripln output) :separator '(#\Newline))))
 
 (defun main ()
-  (let ((deps (read-deps #p"deps.txt")))
+  (let ((urls (mapcar (lambda (u) (list u (url-hash u))) (deps-urls (read-deps #p"deps.txt")))))
     (with-open-file (file #p"deps.nix" :direction :output
                                        :if-exists :supersede
                                        :if-does-not-exist :create)
-      (format file "[~%")
-      (dolist (url (deps-urls deps))
-        (let ((hash (url-hash url)))
-          (format file "  {~%    url = \"~A\";~%    sha256 = \"~A\";~%  }~%"
-                  url hash)))
-      (format file "]~%"))))
+      (format file "[~%~:{  {~%    url = \"~A\";~%    sha256 = \"~A\";~%  }~%~}]~%" urls))))
