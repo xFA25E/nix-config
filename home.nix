@@ -3,17 +3,13 @@
   user = variables.user;
   dir = variables.dir;
   colors = variables.colors;
-  mailSync = pkgs.writeShellScript "mailsync" ''
-    ${pkgs.isync}/bin/mbsync $1 || true
-    ${pkgs.mu}/bin/mu index || ${pkgs.myEmacs}/bin/emacsclient --eval "(mu4e-update-mail-and-index t)" || ${pkgs.coreutils}/bin/true
-  '';
   mailNotify = pkgs.writeShellScript "mailnotify" ''
+    ${pkgs.mu}/bin/mu index || ${pkgs.myEmacs}/bin/emacsclient --eval "(mu4e-update-mail-and-index t)" || ${pkgs.coreutils}/bin/true
+    ${pkgs.coreutils}/bin/sleep 2
     count="$(${pkgs.mu}/bin/mu find flag:unread AND NOT flag:trashed | ${pkgs.coreutils}/bin/wc -l)"
-    ${pkgs.libnotify}/bin/notify-send "eMail $1" "New email arrived to $2. You have $count new emails." || ${pkgs.coreutils}/bin/true
-  '';
-  mailNotifyTerm = pkgs.writeShellScript "mailnotifyterm" ''
-    count="$(${pkgs.mu}/bin/mu find flag:unread AND NOT flag:trashed | ${pkgs.coreutils}/bin/wc -l)"
-    ${pkgs.xterm}/bin/uxterm -e "${pkgs.coreutils}/bin/printf 'eMail\nYou have %s new emails.' $count | ${pkgs.less}/bin/less"
+    if test 0 -ne $count; then
+        ${pkgs.libnotify}/bin/notify-send "eMail" "You have $count new emails." || ${pkgs.coreutils}/bin/true
+    fi
   '';
 in {
   accounts.email = {
@@ -24,14 +20,6 @@ in {
         imap = {
           host = "outlook.office365.com";
           tls.enable = true;
-        };
-        imapnotify = {
-          enable = true;
-          boxes = [ "INBOX" "Junk Email" ];
-          onNotify = "${mailSync} polimi";
-          onNotifyPost = {
-            mail = "${mailNotify} polimi \"%s\"";
-          };
         };
         mbsync = {
           enable = true;
@@ -240,7 +228,9 @@ in {
     jq.enable = true;
 
     man.generateCaches = true;
+
     mbsync.enable = true;
+
     mpv = {
       enable = true;
       config = {
@@ -277,9 +267,14 @@ in {
       verbose = true;
     };
 
-    # grobi.enable = true;
+    # grobi.enable = true; # does not work on greypc. autorandr?
 
-    imapnotify.enable = true;
+    mbsync = {
+      enable = true;
+      postExec = "${mailNotify}";
+      preExec = "${pkgs.coreutils}/bin/mkdir -p ${dir.mail}";
+      verbose = true;
+    };
 
     mpd = {
       enable = true;
@@ -304,21 +299,6 @@ in {
 
   systemd.user = {
     services = {
-      mbsync = {
-        Unit = {
-          Description = "Get new email with mbysc";
-          After = [ "graphical-session-pre.target" ];
-          PartOf = [ "graphical-session.target" ];
-        };
-        Service = {
-          ExecStart = "${mailSync} -a";
-          ExecStartPost = "${mailNotifyTerm}";
-          Type = "oneshot";
-        };
-        Install = {
-          WantedBy = [ "graphical-session.target" ];
-        };
-      };
       pueue = {
         Unit = {
           Description = "Pueue Daemon - CLI process scheduler and manager";
@@ -412,6 +392,7 @@ in {
         source = ./stumpwm;
         recursive = true;
       };
+      "stumpwm/nix-programs.lisp".text = import ./stumpmw-programs.nix pkgs;
 
       "youtube-dl/config".text = pkgs.lib.generators.toKeyValue {
         mkKeyValue = pkgs.lib.generators.mkKeyValueDefault {} " ";
@@ -520,9 +501,6 @@ in {
 
   xsession = {
     enable = true;
-    initExtra = ''
-      systemctl --user restart imapnotify-polimi.service
-    '';
     scriptPath = ".xinitrc";
     windowManager.command = "${pkgs.stumpwm}/bin/stumpwm";
   };
