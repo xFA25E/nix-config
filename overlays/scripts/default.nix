@@ -28,7 +28,7 @@ in {
         "extract_eml" = [ coreutils mu ];
         "format_duration" = [ gawk ];
         "image_clipboard" = [ file xclip ];
-        "make_backup" = [ utillinux coreutils rsync ];
+        "make_backup" = [ utillinux coreutils rsync gawk dmenu ];
         "make_video_queue" = [ findutils coreutils gawk "$out" gnused unixtools.column ];
         "mpvi" = [ mpv libnotify jq gnused ytdl unixtools.column dmenu ];
         "notify_sound" = [ mpv ];
