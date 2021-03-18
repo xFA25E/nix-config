@@ -392,7 +392,7 @@ in {
         source = ./stumpwm;
         recursive = true;
       };
-      "stumpwm/nix-programs.lisp".text = import ./stumpmw-programs.nix pkgs;
+      "stumpwm/nix-programs.lisp".text = import ./stumpwm-programs.nix pkgs;
 
       "youtube-dl/config".text = pkgs.lib.generators.toKeyValue {
         mkKeyValue = pkgs.lib.generators.mkKeyValueDefault {} " ";

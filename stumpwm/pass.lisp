@@ -58,13 +58,19 @@
           ((stringp value)
            (window-send-string value)))))
 
+(defcommand insert-pass-entry () ()
+  (if-let ((entry (completing-read (current-screen) "Insert or edit: " (list-pass-entries))))
+    (unless (zerop (length entry))
+      (uiop:launch-program `(,*pass* "edit" ,entry)))))
+
 (defcommand otp-pass-entry (pass-entry) ((:pass-entry "Otp pass: "))
   (let ((text (uiop:run-program `(,*pass* "otp" ,pass-entry) :output :string)))
     (window-send-string text)))
 
 (defcommand menu-pass () ()
-  (let ((menu '(("type" :type) ("edit" :edit) ("otp" :otp))))
+  (let ((menu '(("type" :type) ("edit" :edit) ("insert" :insert) ("otp" :otp))))
     (case (cadr (select-from-menu (current-screen) menu "Pass: "))
       (:type (eval-command "type-pass-entry" t))
       (:edit (eval-command "edit-pass-entry" t))
+      (:insert (insert-pass-entry))
       (:otp (eval-command "otp-pass-entry" t)))))
