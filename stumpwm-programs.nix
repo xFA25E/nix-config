@@ -24,4 +24,6 @@ pkgs: with pkgs; ''
   (setf *emacs* "${myEmacs}/bin/emacs")
   ;; (setf *amixer* "${alsaUtils}/bin/amixer")
   ;; (setf *qutebrowser* "${qutebrowser}/bin/qutebrowser")
+
+  (uiop:launch-program '("systemctl" "--user" "start" "random-background.service"))
 ''
