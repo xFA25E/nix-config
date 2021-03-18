@@ -8,14 +8,6 @@
 
 
 
-(defcommand slynk-start () ()
-  (slynk:create-server :dont-close t :port *slynk-port*))
-
-(defcommand slynk-stop () ()
-  (slynk:stop-server *slynk-port*))
-
-
-
 (defcommand mpd-controller (&optional args) ((:rest))
   (when args
     (uiop:run-program (list* *mpc* "-q" (uiop:split-string args))))

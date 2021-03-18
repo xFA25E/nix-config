@@ -6,16 +6,20 @@ self: super: let
     sha256 = "09akdaaya7lga5lzbq1aj1filsyjwvflghkidpmr0nk0jz5xx1g7";
   };
 
-  quicklisp-quickstart = super.fetchurl {
-    url = "https://beta.quicklisp.org/quicklisp.lisp";
-    sha256 = "05rcxg7rrkp925s155p0rk848jp2jxrjcm3q0hbn8wg0xcm5qyja";
-  };
+  deps = super.lib.strings.concatMapStringsSep " "
+    (url: "\"${super.fetchzip url}/\"") (import ./deps.nix) + " \"${contrib}/util/notify/\"";
 
-  quickload-deps = super.writeText "quickload-deps.lisp" ''
-    (ql:quickload "alexandria")
-    (ql:quickload "cl-ppcre")
-    (ql:quickload "clx")
-    (ql:quickload "cffi")
+  my-deps = super.lib.strings.concatMapStringsSep " " (dep: "\"${dep}\"") [
+    "dexador" "jsown" "xml-emitter" "bordeaux-threads" "dbus" "notify"
+  ];
+
+  defineDeps = super.writeText "define-deps.lisp" ''
+    (dolist (dep '(${deps}))
+      (push dep asdf:*central-registry*))
+  '';
+
+  loadMyDeps = super.writeText "load-my-deps.lisp" ''
+    (asdf:load-system "cffi")
     (pushnew #p"${self.libfixposix}/lib/" cffi:*foreign-library-directories* :test #'equal)
     (cffi:define-foreign-library libcrypto
      (:unix "${self.openssl.out}/lib/libcrypto.so"))
@@ -23,20 +27,9 @@ self: super: let
      (:unix "${self.openssl.out}/lib/libssl.so"))
     (cffi:use-foreign-library libcrypto)
     (cffi:use-foreign-library libssl)
-    (ql:quickload "xml-emitter")
-    (ql:quickload "bordeaux-threads")
-    (ql:quickload "jsown")
-    (ql:quickload "slynk")
-    (ql:quickload "dbus")
-    (ql:quickload "dexador")
 
-    (push "${self.emacsPackages.sly-asdf}/share/emacs/site-lisp/elpa/sly-asdf-20200306.433/" asdf:*central-registry*)
-    (asdf:load-system "slynk-asdf")
-  '';
-
-  load-stumpwm-modules = super.writeText "load-asdf-deps.lisp" ''
-    (push "${contrib}/util/notify/" asdf:*central-registry*)
-    (asdf:load-system "notify")
+    (dolist (dep '(${my-deps}))
+      (asdf:load-system dep))
   '';
 
 in {
@@ -56,12 +49,13 @@ in {
       ./configure --prefix=$out --with-module-dir=$out/share/stumpwm/modules
     '';
     preBuild = ''
-      mkdir -p $out/share/quicklisp
-      export HOME=$out/share
-      echo | sbcl --load "${quicklisp-quickstart}" --eval "(quicklisp-quickstart:install :path #p\"$out/share/quicklisp/\")" --eval "(ql:add-to-init-file)"
-      echo '(load "${quickload-deps}")' >>$HOME/.sbclrc
-      echo '(load "${load-stumpwm-modules}")' >>load-stumpwm.lisp
+      mkdir -p $PWD/tmp
+      export HOME=$PWD/tmp
+      substituteInPlace load-stumpwm.lisp --replace "(require 'asdf)" "(require 'asdf) (load \"$defineDeps\")"
+      echo "(load \"$loadMyDeps\")" >>load-stumpwm.lisp
     '';
     dontStrip = true;
+    inherit loadMyDeps;
+    inherit defineDeps;
   };
 }

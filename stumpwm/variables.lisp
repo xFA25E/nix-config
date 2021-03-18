@@ -1,7 +1,5 @@
 (in-package :stumpwm)
 
-(defvar *slynk-port* 4096)
-
 (defvar *battery-percentage* 100)
 (defvar *battery-state* nil)
 (defvar *battery-time* nil)
