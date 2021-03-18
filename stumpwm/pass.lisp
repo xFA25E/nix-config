@@ -41,7 +41,7 @@
 
 
 (defcommand edit-pass-entry (pass-entry) ((:pass-entry "Edit pass: "))
-  (uiop:run-program `(,*pass* "edit" ,pass-entry)))
+  (uiop:launch-program `(,*pass* "edit" ,pass-entry)))
 
 (defcommand type-pass-entry (pass-entry) ((:pass-entry "Type pass: "))
   (let* ((text (uiop:run-program `(,*pass* "show" ,pass-entry) :output :string))
