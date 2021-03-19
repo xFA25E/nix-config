@@ -1448,7 +1448,7 @@
 (leaf autoinsert :hook (after-init-hook . auto-insert-mode))
 
 (leaf skempo
-  :hook ((emacs-lisp-mode-hook lisp-mode-hook nix-mode-hook) . skempo-mode)
+  :hook ((emacs-lisp-mode-hook lisp-mode-hook nix-mode-hook php-mode-hook) . skempo-mode)
 
   :bind
   (skempo-mode-map
@@ -1467,6 +1467,11 @@
 
   (defun skempo-nix-hash ()
     (make-string 52 ?1))
+
+  (skempo-define-tempo (vd :tag t :mode php-mode)
+    "echo '<pre>';" n>
+    "var_dump(" p ");" n>
+    "echo '</pre>';")
 
   (skempo-define-tempo (github :tag t :mode nix-mode)
     "fetchFromGitHub {" n>
