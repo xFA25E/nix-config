@@ -11,11 +11,11 @@
 (defcommand mpd-controller (&optional args) ((:rest))
   (when args
     (uiop:run-program (list* *mpc* "-q" (uiop:split-string args))))
-  (message "~A
-[<] prev    [N] volume -1  [n] volume -10  [f] seek +00:00:10
-[>] next    [P] volume +1  [p] volume +10  [b] seek -00:00:10
-[t] toggle  [r] repeat     [z] random
-[.] single  [c] consume    [Z] shuffle"
+  (message "~A~%~
+            [<] prev    [N] volume -1  [n] volume -10  [f] seek +00:00:10~%~
+            [>] next    [P] volume +1  [p] volume +10  [b] seek -00:00:10~%~
+            [t] toggle  [r] repeat     [z] random~%~
+            [.] single  [c] consume    [Z] shuffle"
            (uiop:run-program `(,*mpc*) :output :string)))
 
 (let ((timer nil))
@@ -40,10 +40,10 @@
 (defcommand brightness-controller (&optional args) ((:rest))
   (when args
     (uiop:run-program (list* *xbacklight* (uiop:split-string args))))
-  (message "Brightness ~A
-[N] -dec 1     [P] -inc 1
-[n] -dec 10    [p] -inc 10
-[M-n] -dec 40  [M-p] -inc 40"
+  (message "Brightness ~A~%~
+            [N] -dec 1     [P] -inc 1~%~
+            [n] -dec 10    [p] -inc 10~%~
+            [M-n] -dec 40  [M-p] -inc 40"
            (read-brightness-status)))
 
 (let ((timer nil))
@@ -61,20 +61,21 @@
   (when args
     (uiop:run-program (list* *amixer* (uiop:split-string args))))
   (multiple-value-bind (value state) (read-alsa-volume-status)
-    (message "Alsa-Volume ~A ~A
-[N] 1%-     [P] 1%+
-[n] 10%-    [p] 10%+
-[t] toggle" value state)))
+    (message "Alsa-Volume ~A ~A~%~
+              [N] 1%-     [P] 1%+~%~
+              [n] 10%-    [p] 10%+~%~
+              [t] toggle"
+             value state)))
 
 (let ((timer nil))
   (define-interactive-keymap alsa-controller-interactive
       (:on-enter (lambda () (setf timer (run-with-timer 0.1 1 #'alsa-controller)))
        :on-exit (lambda () (cancel-timer timer)))
-    ((kbd "t") "alsa-controller -D pulse sset Master toggle")
-    ((kbd "N") "alsa-controller -D pulse sset Master 1%-")
-    ((kbd "n") "alsa-controller -D pulse sset Master 10%-")
-    ((kbd "P") "alsa-controller -D pulse sset Master 1%+")
-    ((kbd "p") "alsa-controller -D pulse sset Master 10%+")))
+    ((kbd "t") "alsa-controller sset Master toggle")
+    ((kbd "N") "alsa-controller sset Master 1%-")
+    ((kbd "n") "alsa-controller sset Master 10%-")
+    ((kbd "P") "alsa-controller sset Master 1%+")
+    ((kbd "p") "alsa-controller sset Master 10%+")))
 
 (defcommand screenshot (name selectp)
     ((:string "File name (w/o ext): ") (:y-or-n "Select? "))

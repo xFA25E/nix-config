@@ -16,7 +16,7 @@
       (write-to-string (round (* (/ brightness max-brightness) 100))))))
 
 (defun read-alsa-volume-status ()
-  (let ((output (uiop:run-program `(,*amixer* "-D" "pulse" "sget" "Master") :output :string)))
+  (let ((output (uiop:run-program `(,*amixer* "sget" "Master") :output :string)))
     (ppcre:register-groups-bind (volume state)
         ("Front Left:[^[]+\\[([0-9]+)%\\][^[]+\\[(on|off)\\]" output :sharedp t)
       (values volume state))))
