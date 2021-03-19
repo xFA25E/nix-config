@@ -1469,9 +1469,7 @@
     (make-string 52 ?1))
 
   (skempo-define-tempo (vd :tag t :mode php-mode)
-    "echo '<pre>';" n>
-    "var_dump(" p ");" n>
-    "echo '</pre>';")
+    "echo '<pre>'; var_dump(" p "); echo '</pre>';")
 
   (skempo-define-tempo (github :tag t :mode nix-mode)
     "fetchFromGitHub {" n>
