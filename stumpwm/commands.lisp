@@ -41,8 +41,8 @@
   (when args
     (uiop:run-program (list* *xbacklight* (uiop:split-string args))))
   (message "Brightness ~A~%~
-            [N] -dec 1     [P] -inc 1~%~
-            [n] -dec 10    [p] -inc 10~%~
+            [N]   -dec 1   [P]   -inc 1~%~
+            [n]   -dec 10  [p]   -inc 10~%~
             [M-n] -dec 40  [M-p] -inc 40"
            (read-brightness-status)))
 
