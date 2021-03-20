@@ -6,6 +6,7 @@
 (defvar *amixer* "amixer")
 (defvar *mpc* "mpc")
 (defvar *notify-sound* "notify_sound")
+(defvar *notify-send* "notify-send")
 (defvar *xbacklight* "xbacklight")
 (defvar *xdg-user-dir* "xdg-user-dir")
 (defvar *scrot* "scrot")

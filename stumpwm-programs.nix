@@ -22,6 +22,7 @@ pkgs: with pkgs; ''
   (setf *chromium-incognito* "${ungoogledChromiumIncognito}/bin/chromium-incognito")
   (setf *telegram-desktop* "${tdesktop}/bin/telegram-desktop")
   (setf *emacs* "${myEmacs}/bin/emacs")
+  (setf *notify-send* "${libnotify}/bin/notify-send")
   ;; (setf *amixer* "${alsaUtils}/bin/amixer")
   ;; (setf *qutebrowser* "${qutebrowser}/bin/qutebrowser")
 

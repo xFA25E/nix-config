@@ -79,15 +79,20 @@
 
 (defcommand screenshot (name selectp)
     ((:string "File name (w/o ext): ") (:y-or-n "Select? "))
-  (let* ((pic-dir (uiop:run-program `(,*xdg-user-dir* "PICTURES") :output '(:string :stripped t)))
+  (let* ((name "hellotherehellothere")
+         (selectp t)
+         (*xdg-user-dir* "xdg-user-dir")
+         (*image-clipboard* "image_clipboard")
+         (*scrot* "scrot")
+         (pic-dir (uiop:run-program `(,*xdg-user-dir* "PICTURES") :output '(:string :stripped t)))
          (directory (uiop:subpathname* pic-dir "screenshots/"))
          (file-name (make-pathname :directory (pathname-directory directory) :name name :type "png")))
     (ensure-directories-exist file-name)
-    (uiop:run-program (list* *scrot* "--overwrite" "--delay" "1"
-                             "--exec" (format nil "~A $f" *image-clipboard*)
-                             (namestring file-name)
-                             (when selectp '("--select"))))
-    (message "Scrot~%Done screenshot")))
+    (uiop:launch-program (list* *scrot* "--overwrite" "--delay" "2"
+                                "--exec" (format nil "~A Scrot 'Done Screenshot'; ~A $f"
+                                                 *notify-send* *image-clipboard*)
+                                (namestring file-name)
+                                (when selectp '("--select"))))))
 
 
 

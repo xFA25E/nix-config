@@ -101,7 +101,10 @@
       :output :string))))
 
 (defcommand add-rimer-stopwatch (name) ((:rimer-name "Stopwatch name: "))
-  (add-rimer-countdown name (1- (expt 2 64))))
+  (let ((dur (write-to-string (1- (expt 2 64)))))
+    (show-rimer-output
+     (uiop:run-program `(,*rimer* "add" "--name" ,name "--duration" ,dur "--step" "3600")
+      :output :string))))
 
 (defcommand pause-rimer-timer (timer) ((:rimer-timer-running "Running timer: "))
   (show-rimer-output

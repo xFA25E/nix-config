@@ -1003,7 +1003,7 @@
 
 (leaf web-mode
   :mode "\\.twig\\'"
-  :custom '(web-mode-markup-indent-offset . 4))
+  :custom '(web-mode-markup-indent-offset . 2))
 
 
 ;;;;; LSP
