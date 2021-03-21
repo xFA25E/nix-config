@@ -76,6 +76,7 @@ in {
       ".profile".text = ''
         test -r "/home/${user}/.nix-profile/etc/profile.d/nix.sh" && . "/home/${user}/.nix-profile/etc/profile.d/nix.sh"
         test -r "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh" && . "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh"
+        ${pkgs.coreutils}/bin/echo unlock | ${pkgs.gnupg}/bin/gpg -s >/dev/null
       '';
       ".sbclrc".source = ./sbclrc;
       ".shinit".text = ''
@@ -192,6 +193,11 @@ in {
     };
 
     direnv = {
+      config = {
+        Whitelist = {
+          exact = [ "/home/val/Documents/projects/rust/rimer/.envrc" ];
+        };
+      };
       enable = true;
       enableBashIntegration = true;
       enableNixDirenvIntegration = true;
