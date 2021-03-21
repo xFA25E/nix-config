@@ -76,7 +76,7 @@ in {
       ".profile".text = ''
         test -r "/home/${user}/.nix-profile/etc/profile.d/nix.sh" && . "/home/${user}/.nix-profile/etc/profile.d/nix.sh"
         test -r "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh" && . "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh"
-        ${pkgs.coreutils}/bin/echo unlock | ${pkgs.gnupg}/bin/gpg -s >/dev/null
+        ${pkgs.coreutils}/bin/echo unlock | ${pkgs.gnupg}/bin/gpg --pinentry-mode=loopback -s >/dev/null
       '';
       ".sbclrc".source = ./sbclrc;
       ".shinit".text = ''
