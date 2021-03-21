@@ -543,7 +543,7 @@
   :hook (emacs-startup-hook . gcmh-mode)
   :config (diminish 'gcmh-mode))
 
-(leaf server :hook (after-init-hook . server-mode))
+(leaf server :hook (after-init-hook . server-start))
 
 
 ;;; REMOTE
@@ -908,7 +908,8 @@
     php-mode-hook
     comint-mode-hook
     sql-mode-hook
-    org-mode-hook)
+    org-mode-hook
+    rust-mode-hook)
    . smartparens-mode)                            ; electric pair mode
   (smartparens-mode-hook . show-smartparens-mode) ; show paren mode
 

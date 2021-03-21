@@ -142,8 +142,6 @@ in {
       EDITOR = "${pkgs.emacsEditor}/bin/emacseditor";
       VISUAL = EDITOR;
       TERMINAL = "${pkgs.xterm}/bin/uxterm";
-      CARGO_HOME = "${dir.cache}/cargo";
-      RUSTUP_HOME = "${dir.cache}/rustup";
       LESSHISFILE = "/dev/null";
       MU_HOME = "${dir.cache}/mu";
       MAILDIR = "/home/${user}/.mail";

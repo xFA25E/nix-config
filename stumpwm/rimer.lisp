@@ -16,14 +16,16 @@
           total-seconds))))
 
 (defun parse-rimer-report (text)
-  (let ((report nil))
-    (ppcre:do-register-groups (name elapsed duration state)
-        ("(.*?) (\\d+) (\\d+) (running|paused|halted)\\n" text report)
-      (push (list name (parse-integer elapsed) (parse-integer duration)
-                  (cond ((string= "running" state) :running)
-                        ((string= "paused" state) :paused)
-                        ((string= "halted" state) :halted)))
-            report))))
+  (mapcar
+   (lambda (obj)
+     (list (jsown:val obj "name")
+           (jsown:val (jsown:val obj "elapsed") "secs")
+           (jsown:val (jsown:val obj "duration") "secs")
+           (let ((state (jsown:val obj "state")))
+             (cond ((string-equal "running" state) :running)
+                   ((string-equal "paused" state) :paused)
+                   ((string-equal "halted" state) :halted)))))
+   (jsown:parse text)))
 
 (defun format-duration (tot-s)
   (let* ((s (rem tot-s 60))
@@ -52,7 +54,7 @@
 (defun get-rimer-report (&optional (allowed-states '(:running :paused :halted)))
   (delete-if-not
    (lambda (timer) (member (nth 3 timer) allowed-states))
-   (parse-rimer-report (uiop:run-program `(,*rimer* "report") :output :string))))
+   (parse-rimer-report (uiop:run-program `(,*rimer* "report" "-j") :output :string))))
 
 (let ((last-name nil))
   (define-stumpwm-type :rimer-name (input prompt)
