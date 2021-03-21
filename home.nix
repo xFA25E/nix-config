@@ -386,11 +386,6 @@ in {
 
       "fontconfig/fonts.conf".source = ./fonts.conf;
 
-      "loadkeys/ctrl2caps.map".text = ''
-        keymaps 0-2,4-6,8-9,12
-        keycode 58 = Control
-      '';
-
       "mpv/scripts/youtube-quality.lua".source = "${pkgs.mpvYoutubeQuality}/youtube-quality.lua";
       "mpv/script-opts/youtube-quality.conf".source = "${pkgs.mpvYoutubeQuality}/youtube-quality.conf";
 
