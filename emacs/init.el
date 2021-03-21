@@ -1342,6 +1342,7 @@
 (leaf comint
   :preface (defvar-local comint-history-filter-function nil)
   :defun comint-filter-input-ring
+  :defvar comint-password-prompt-regexp
   :advice (:before comint-write-input-ring comint-filter-input-ring)
 
   :hook
@@ -1356,6 +1357,10 @@
   '(comint-buffer-maximum-size . 10240)
 
   :config
+  (setq comint-password-prompt-regexp
+        (rx (or (regexp comint-password-prompt-regexp)
+                (and (or "p" "P") "assword " eos))))
+
   (defun save-buffers-comint-input-ring ()
     (dolist (buf (buffer-list))
       (with-current-buffer buf (comint-write-input-ring))))
