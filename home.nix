@@ -210,7 +210,7 @@ in {
 
     git = {
       enable = true;
-      ignores = [ "*.elc" ];
+      ignores = [ "*.elc" ".direnv" ];
       # signing = {
       #   key = "vlr.ltkvsk@protonmail.com";
       #   signByDefault = true;
