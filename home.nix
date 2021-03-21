@@ -74,17 +74,14 @@ in {
         ${pkgs.xorg.xrdb}/bin/xrdb -load ~/.Xresources || true
       '';
       ".profile".text = ''
-        for file in nix.sh hm-session-vars.sh; do
-            profile="/home/${user}/.nix-profile/etc/profile.d/''${file}"
-            [ -e "''${profile}" ] && . "''${profile}"
-        done
-        unset file profile
+        test -r "/home/${user}/.nix-profile/etc/profile.d/nix.sh" && . "/home/${user}/.nix-profile/etc/profile.d/nix.sh"
+        test -r "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh" && . "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh"
       '';
       ".sbclrc".source = ./sbclrc;
       ".shinit".text = ''
-        ${pkgs.coreutils}/bin/stty -ixon
-        export PS1='$? $USER '
-      '';
+         ${pkgs.coreutils}/bin/stty -ixon
+         PS1='$? $USER '
+       '';
       ".stalonetrayrc".text = pkgs.lib.generators.toKeyValue {
         mkKeyValue = pkgs.lib.generators.mkKeyValueDefault {} " ";
       } {
@@ -131,7 +128,7 @@ in {
       acpi checkbashisms dejavu_fonts dmenu fd file firefox gimp hack-font
       iosevka ledger leiningen libreoffice mkpasswd mpc_cli nix-serve nload
       p7zip pass-otp pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync
-      rustup sbcl sdcv shellcheck simplescreenrecorder sloccount speedtest-cli
+      sbcl sdcv shellcheck simplescreenrecorder sloccount speedtest-cli
       stalonetray sxiv syncthing tdesktop transmission youtube-dl
       ungoogled-chromium wget woof xclip xdg-user-dirs xorg.xbacklight xz zip
 
@@ -184,6 +181,22 @@ in {
   };
 
   programs = {
+    bash = {
+      enable = true;
+      historyFile = "/dev/null";
+      historyFileSize = 0;
+      historySize = 0;
+      initExtra = ''
+        [ -n "$ENV" ] && . "$ENV"
+      '';
+    };
+
+    direnv = {
+      enable = true;
+      enableBashIntegration = true;
+      enableNixDirenvIntegration = true;
+    };
+
     emacs = {
       enable = true;
       package = pkgs.myEmacs;
