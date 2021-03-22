@@ -4,6 +4,7 @@ name="${1:?provide name}"
 elapsed="${2:?provide remain}"
 duration="${3:?provide duration}"
 state="${4:?provide state}"
+arg="${5}"
 
 save_log() {
     date "+%Y %m %d ${1:?provide activity} ${2:?provide duration}" >> "${3:?provide file}"
@@ -13,23 +14,53 @@ case "${state}" in
     halted)
         notify-send "Timer" "\"${name}\" finished"
 
-        if [ "${name}" = eyes ]; then
-            notify_sound "${HOME}/Music/solemn_notification.ogg"
-        else
-            notify_sound
-        fi
-
         case "${name}" in
+            eyes)
+                notify_sound "${HOME}/Music/solemn_notification.ogg"
+                ;;
             study)
+                notify_sound
                 mark_file="${HOME}/org/${name}.marks"
                 log_file="${HOME}/org/${name}.log"
                 selected="$(tail -n 1 "${log_file}" | cut -d" " -f4)"
                 what="$(awk '!$3 && $1 {print $1}' "${mark_file}" | dmenu -p "What")"
                 save_log "${what:?}" "${elapsed}" "${log_file}"
                 ;;
+            neck)
+                notify_sound "${HOME}/Music/solemn_notification.ogg"
+                rimer add -n neck30 -d 30 -s 30 -a 12
+                ;;
+            neck30)
+                if test 1 -eq "${arg}"; then
+                    notify_sound "${HOME}/Music/solemn_notification.ogg"
+                    rimer add -n neck30b -d 30 -s 30
+                else
+                    notify_sound
+                    rimer add -n neck30 -d 30 -s 30 -a "$((arg - 1))"
+                fi
+                ;;
+            neck30b)
+                notify_sound
+                sleep 5
+                notify_sound "${HOME}/Music/solemn_notification.ogg"
+                rimer add -n neck15 -d 15 -s 15 -a 6
+                ;;
+            neck15)
+                if test 1 -eq "${arg}"; then
+                    notify_sound "${HOME}/Music/solemn_notification.ogg"
+                    notify-send "Neck" "All done!"
+                else
+                    notify_sound
+                    rimer add -n neck15 -d 15 -s 15 -a "$((arg - 1))"
+                fi
+                ;;
             *)
+                notify_sound
                 ;;
         esac
+        ;;
+    paused)
+        notify-send "Timer" "${name} is paused"
         ;;
     *)
         # notify-send "Timer" "${name} ${elapsed} $(echo "${duration}" | format_duration) ${state}"
