@@ -1,6 +1,6 @@
 self: super: {
   rimer = import (super.fetchurl {
-    url = "https://raw.githubusercontent.com/xFA25E/rimer/eb984f1b5a313e9c1ca46e995403d747eb50c2bb/default.nix";
-    sha256 = "1rxihdnbpmkg4zvs2s1l20sv1n4r9xqs50yfayqd26s1s060n5z0";
+    url = "https://raw.githubusercontent.com/xFA25E/rimer/f7a4f68389fd0055c45490c4a3d3b0a05a6e668a/default.nix";
+    sha256 = "1bgkpvrx3nhds3sh462xghkqpkfwbcpx50s0kagql9gh0m62api2";
   }) { pkgs = self; };
 }

@@ -80,9 +80,9 @@ in {
       '';
       ".sbclrc".source = ./sbclrc;
       ".shinit".text = ''
-         ${pkgs.coreutils}/bin/stty -ixon
-         PS1='$? $USER '
-       '';
+        ${pkgs.coreutils}/bin/stty -ixon
+        PS1='$? $USER '
+      '';
       ".stalonetrayrc".text = pkgs.lib.generators.toKeyValue {
         mkKeyValue = pkgs.lib.generators.mkKeyValueDefault {} " ";
       } {
@@ -193,7 +193,7 @@ in {
     direnv = {
       config = {
         Whitelist = {
-          exact = [ "/home/val/Documents/projects/rust/rimer/.envrc" ];
+          exact = [ "/home/${user}/Documents/projects/rust/rimer/.envrc" ];
         };
       };
       enable = true;
