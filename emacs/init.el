@@ -875,7 +875,7 @@
   :hook (text-mode-hook . abbrev-mode)
   :custom
   `(abbrev-file-name
-    . ,(expand-file-name "emacs/abbrev_defs" (xdg-data-home))))
+    . ,(expand-file-name "nixpkgs/emacs/abbrev_defs" (xdg-config-home))))
 
 
 ;;;; FORMATTING
