@@ -31,9 +31,7 @@ self: super: let
     (dolist (dep '(${my-deps}))
       (asdf:load-system dep))
   '';
-
-in {
-  stumpwm =  super.stdenv.mkDerivation rec {
+  stumpwm = super.stdenv.mkDerivation rec {
     pname = "stumpwm";
     version = "20.11";
     src = super.fetchFromGitHub {
@@ -58,4 +56,7 @@ in {
     inherit loadMyDeps;
     inherit defineDeps;
   };
+in {
+  stumpwm = stumpwm;
+  # stumpwm = (import ./stumpwmDev.nix) self super;
 }
