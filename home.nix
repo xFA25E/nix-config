@@ -128,10 +128,11 @@ in {
       # nixpkgs
       acpi checkbashisms dejavu_fonts dmenu fd file firefox gimp hack-font
       iosevka ledger leiningen libreoffice mkpasswd mpc_cli nix-serve nload
-      p7zip pass-otp pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync
-      sbcl sdcv shellcheck simplescreenrecorder sloccount speedtest-cli
-      stalonetray sxiv syncthing tdesktop transmission youtube-dl
-      ungoogled-chromium wget woof xclip xdg-user-dirs xorg.xbacklight xz zip
+      p7zip pass-otp perlPackages.JSONPP pinentry pueue pulsemixer pwgen
+      qrencode qtox ripgrep rsync sbcl sdcv shellcheck simplescreenrecorder
+      sloccount speedtest-cli stalonetray sxiv syncthing tdesktop transmission
+      youtube-dl ungoogled-chromium wget woof xclip xdg-user-dirs
+      xorg.xbacklight xz zip
 
       # mypkgs
       browser emacsEditor rimer scripts stumpwm ungoogledChromiumIncognito ytdl
