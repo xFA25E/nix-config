@@ -1816,6 +1816,7 @@
   :advice
   (:override mingus-git-out mingus-git-out-and-kill)
   (:override mingus-dired-file mingus-dired-jump-file)
+  (:override mingus-dired-add mingus-dired-add-trim)
 
   :bind
   (mode-specific-map
@@ -1839,28 +1840,41 @@
     "Open dired with parent dir of song at point."
     (interactive)
     (cond
-     ((mingus-directoryp) (dired (mingus-get-absolute-filename)))
-     ((mingus-playlistp) (dired mingus-mpd-playlist-dir))
-     (t (dired-jump nil (mingus-get-absolute-filename)))))
+     ((mingus-directoryp)
+      (dired (concat (xdg-music-dir) (mingus-get-absolute-filename))))
+     ((mingus-playlistp)
+      (dired mingus-mpd-playlist-dir))
+     (t
+      (dired-jump nil (concat (xdg-music-dir) (mingus-get-absolute-filename))))))
+
+  (defun mingus-dired-add-trim ()
+    (interactive)
+    (mingus-add-files (mapcar
+                       (lambda (f)
+                         (string-trim-left f (regexp-quote (xdg-music-dir))))
+                       (dired-get-marked-files))))
 
   (defun mingus-git-out-and-kill (&optional _)
     (interactive)
     (when (mingus-buffer-p)
       (kill-current-buffer)))
 
+  (defvar mingus-music-files nil)
   (defun mingus-music-files ()
     (let* ((default-directory (xdg-music-dir))
            (exts (cdr (mapcan (lambda (e) `("-o" "-iname" ,(concat "*." e)))
                               '("flac" "m4a" "mp3" "ogg" "opus"))))
            (args `("." "(" ,@exts ")" "-type" "f" "-o" "-type" "d")))
-      (apply #'process-lines "find" args)))
+      (mapcar (lambda (m) (substring m 1))
+              (cdr (apply #'process-lines "find" args)))))
 
-  (defun mingus-find-and-add-file ()
-    (interactive)
+  (defun mingus-find-and-add-file (&optional updatep)
+    (interactive "P")
+    (when (or (not mingus-music-files) updatep)
+      (setf mingus-music-files (mingus-music-files)))
+
     (mingus-add-files
-     (list (expand-file-name
-            (completing-read "Add file to mpd: " (mingus-music-files) nil t)
-            (xdg-music-dir))))
+     (list (completing-read "Add file to mpd: " mingus-music-files nil t)))
     (mpd-play mpd-inter-conn)
     (let ((buffer (get-buffer "*Mingus*")))
       (when (buffer-live-p (get-buffer buffer))
