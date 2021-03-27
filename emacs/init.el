@@ -1,4 +1,4 @@
-;; -*- lexical-binding: t; -*-
+;;; -*- lexical-binding: t; -*-
 
 (let ((path (cl-find "elpa/project" load-path :test #'cl-search)))
   (push path load-path))
@@ -1463,6 +1463,7 @@
    ("M-g M-a" . skempo-backward-mark))
 
   :config
+  (diminish 'skempo-mode)
   (skempo-advice-mode)
 
   (defun skempo-elisp-namespace ()
@@ -1951,7 +1952,7 @@
   '(mu4e-view-show-addresses . t)
   `(mu4e-attachment-dir . ,(expand-file-name (xdg-download-dir)))
   '(mu4e-modeline-max-width . 100)
-  '(mu4e-maildir-shortcuts . '(("/polimi/inbox" . ?p)))
+  ;; '(mu4e-maildir-shortcuts . '(("/maildir" . ?m)))
   '(mu4e-headers-fields
     . '((:human-date . 16)
         (:flags      . 6)
