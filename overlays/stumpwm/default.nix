@@ -58,5 +58,5 @@ self: super: let
   };
 in {
   stumpwm = stumpwm;
-  # stumpwm = (import ./stumpwmDev.nix) self super;
+  stumpwmDev = (import ./stumpwmDev.nix) self super;
 }

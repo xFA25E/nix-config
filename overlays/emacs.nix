@@ -171,9 +171,8 @@ in {
     sly-asdf sly-quicklisp smartparens sqlup-mode sudo-edit transmission vlf
     web-mode wgrep which-key
 
-
     # elpa
-    csv-mode dired-git-info modus-operandi-theme rainbow-mode sql-indent
+    csv-mode dired-git-info modus-themes rainbow-mode sql-indent
 
     # org
     org-plus-contrib
