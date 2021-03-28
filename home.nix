@@ -70,6 +70,10 @@ in {
     extraOutputsToInstall = [ "man" "doc" "info" "devdoc" ];
 
     file = {
+      ".abclrc".source = ./common-lisp.lisp;
+      ".ccl-init.lisp".source = ./common-lisp.lisp;
+      ".clisprc.lisp".source = ./common-lisp.lisp;
+      ".eclrc".source = ./common-lisp.lisp;
       ".Xresources".onChange = ''
         ${pkgs.xorg.xrdb}/bin/xrdb -load ~/.Xresources || true
       '';
@@ -78,7 +82,7 @@ in {
         test -r "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh" && . "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh"
         ${pkgs.coreutils}/bin/echo unlock | ${pkgs.gnupg}/bin/gpg --pinentry-mode=loopback -s >/dev/null
       '';
-      ".sbclrc".source = ./sbclrc;
+      ".sbclrc".source = ./common-lisp.lisp;
       ".shinit".text = ''
         ${pkgs.coreutils}/bin/stty -ixon
         PS1='$? $USER '
@@ -129,10 +133,9 @@ in {
       acpi checkbashisms dejavu_fonts dmenu fd file firefox gimp hack-font
       iosevka ledger leiningen libreoffice mkpasswd mpc_cli nix-serve nload
       p7zip pass-otp perlPackages.JSONPP pinentry pueue pulsemixer pwgen
-      qrencode qtox ripgrep rsync sbcl sdcv shellcheck simplescreenrecorder
-      sloccount speedtest-cli stalonetray sxiv syncthing tdesktop transmission
-      youtube-dl ungoogled-chromium wget woof xclip xdg-user-dirs
-      xorg.xbacklight xz zip
+      qrencode qtox ripgrep rsync sdcv shellcheck simplescreenrecorder sloccount
+      speedtest-cli stalonetray sxiv syncthing tdesktop transmission youtube-dl
+      ungoogled-chromium wget woof xclip xdg-user-dirs xorg.xbacklight xz zip
 
       # mypkgs
       browser emacsEditor rimer scripts stumpwm ungoogledChromiumIncognito ytdl
@@ -194,7 +197,7 @@ in {
     direnv = {
       config = {
         Whitelist = {
-          exact = [ "/home/${user}/Documents/projects/rust/rimer/.envrc" ];
+          prefix = [ "/home/${user}/Documents/projects/" ];
         };
       };
       enable = true;

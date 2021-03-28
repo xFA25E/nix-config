@@ -1067,7 +1067,10 @@
 (leaf sly
   :custom
   '(sly-default-lisp . 'sbcl)
-  '(sly-lisp-implementations . '((sbcl ("sbcl"))))
+  '(sly-lisp-implementations . '((sbcl ("sbcl"))
+                                 (ecl ("ecl"))
+                                 (ccl ("ccl"))
+                                 (clisp ("clisp"))))
   `(sly-mrepl-history-file-name
     . ,(expand-file-name "emacs/sly-mrepl-history" (xdg-cache-home))))
 
