@@ -21,5 +21,5 @@ rsync --delete --delete-excluded --archive --verbose --partial --progress --rela
       --exclude='lost+found' --exclude="${directory}" \
       ~/Documents ~/Downloads ~/Music ~/Pictures ~/Videos ~/archives ~/org \
       ~/.authinfo.gpg ~/.gnupg ~/.mail ~/.password-store ~/.ssh \
-      /mnt/second_partition ~/.config/nixpkgs ~/.local/share/emacs \
+      ~/.config/nixpkgs ~/.local/share/emacs \
       "${directory%/}/current"
