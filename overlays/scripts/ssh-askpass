@@ -1,8 +1,0 @@
-#!/bin/sh
-STORE="${PASSWORD_STORE_DIR:-${HOME}/.password-store}"
-find "${STORE}" -type f \
-    | cut -c "$((${#STORE} + 2))-" \
-    | sed 's/.gpg$//' \
-    | dmenu -p "Pass" -l 10 \
-    | xargs pass show \
-    | head -n 1

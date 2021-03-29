@@ -153,7 +153,6 @@ in {
       MPD_HOST = "localhost";
       MPD_PORT = "6600";
       SUDO_ASKPASS = "${pkgs.scripts}/bin/sudo_askpass";
-      SSH_ASKPASS = "${pkgs.scripts}/bin/ssh-askpass";
       ENV = "/home/${user}/.shinit";
       "_JAVA_AWT_WM_NONREPARENTING" = "1";
       CUDA_CACHE_PATH = "${dir.cache}/nv";

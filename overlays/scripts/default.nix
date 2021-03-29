@@ -35,7 +35,6 @@ in {
         "qrshow" = [ libnotify coreutils qrencode sxiv ];
         "rimer_callback" = [ coreutils libnotify "$out" gawk dmenu rimer ];
         "search_ebook" = [ coreutils findutils ];
-        "ssh-askpass" = [ pass findutils coreutils gnused dmenu ];
         "strip_video" = [ ffmpeg ];
         "studies_plot" = [ gnuplot ];
         "sudo_askpass" = [ pass ];
