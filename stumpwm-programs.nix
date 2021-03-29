@@ -23,8 +23,8 @@ pkgs: with pkgs; ''
   (setf *telegram-desktop* "${tdesktop}/bin/telegram-desktop")
   (setf *emacs* "${myEmacs}/bin/emacs")
   (setf *notify-send* "${libnotify}/bin/notify-send")
-  ;; (setf *amixer* "${alsaUtils}/bin/amixer")
-  ;; (setf *qutebrowser* "${qutebrowser}/bin/qutebrowser")
+  (setf *amixer* "${alsaUtils}/bin/amixer")
+  (setf *qutebrowser* "${qutebrowser}/bin/qutebrowser")
 
   (uiop:launch-program '("systemctl" "--user" "start" "random-background.service"))
 ''
