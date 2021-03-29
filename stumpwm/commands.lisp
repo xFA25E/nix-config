@@ -107,7 +107,7 @@
         (partitions nil))
 
     (ppcre:do-register-groups (avail target)
-        (" *([^ ]+) +(/|/home|/mnt/second_partition|/run/media/val/backup)\\n"
+        (" *([^ ]+) +(/|/run/media/val/backup)\\n"
          output nil :sharedp t)
       (push (cons avail target) partitions)
       (setf max-length (max max-length (length avail))))
