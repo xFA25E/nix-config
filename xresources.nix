@@ -34,8 +34,4 @@ colors: {
   "Sxiv.foreground" = colors.base05;
   "Sxiv.background" = colors.base00;
   "Sxiv.font" = "Iosevka-15";
-  "emacs.ScrollBars" = false;
-  "emacs.ScrollBar" = false;
-  "emacs.ToolBar" = false;
-  "emacs.MenuBar" = false;
 }

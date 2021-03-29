@@ -76,6 +76,8 @@
   `(read-process-output-max . ,(* 1024 1024))
   '(completion-ignore-case . t)
   '(read-buffer-completion-ignore-case . t)
+  '(default-frame-alist . '((menu-bar-lines 0)
+                            (tool-bar-lines 0)))
   :config
   (add-to-list 'process-environment "PAGER=cat"))
 
@@ -470,6 +472,8 @@
 
 
 ;;;; OTHER
+
+(leaf frame :custom '(initial-frame-alist . '((vertical-scroll-bars))))
 
 (leaf startup
   :preface (provide 'startup)
