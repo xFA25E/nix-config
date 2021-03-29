@@ -1,41 +1,5 @@
 [
   {
-    url = "http://beta.quicklisp.org/archive/ironclad/2021-01-24/ironclad-v0.54.tgz";
-    sha256 = "07g0wpvfqq2yk23prs890d4qvbnr3xd6w8ssd88g89xdg483wpvk";
-  }
-  {
-    url = "http://beta.quicklisp.org/archive/puri/2020-10-16/puri-20201016-git.tgz";
-    sha256 = "0gq2rsr0aihs0z20v4zqvmdl4szq53b52rh97pvnmwrlbn4mapmd";
-  }
-  {
-    url = "http://beta.quicklisp.org/archive/closure-common/2018-10-18/closure-common-20181018-git.tgz";
-    sha256 = "0k5r2qxn122pxi301ijir3nayi9sg4d7yiy276l36qmzwhp4mg5n";
-  }
-  {
-    url = "http://beta.quicklisp.org/archive/cxml/2020-06-10/cxml-20200610-git.tgz";
-    sha256 = "18fls3bx7vmnxfa6qara8fxp316d8kb3izar0kysvqg6l0a45a51";
-  }
-  {
-    url = "http://beta.quicklisp.org/archive/cl-xmlspam/2010-10-06/cl-xmlspam-20101006-http.tgz";
-    sha256 = "03jw57889b60nsqgb13vrf5q1g2fasah7qv7knjlx2w4mc1ci7ks";
-  }
-  {
-    url = "http://beta.quicklisp.org/archive/ieee-floats/2017-08-30/ieee-floats-20170830-git.tgz";
-    sha256 = "1xyj49j9x3lc84cv3dhbf9ja34ywjk1c46dklx425fxw9mkwm83m";
-  }
-  {
-    url = "http://beta.quicklisp.org/archive/swap-bytes/2019-11-30/swap-bytes-v1.2.tgz";
-    sha256 = "1hw1v1lw26rifyznpnj1csphha9jgzwpiic16ni3pvs6hcsni9rz";
-  }
-  {
-    url = "http://beta.quicklisp.org/archive/idna/2012-01-07/idna-20120107-git.tgz";
-    sha256 = "00nbr3mffxhlq14gg9d16pa6691s4qh35inyw76v906s77khm5a2";
-  }
-  {
-    url = "http://beta.quicklisp.org/archive/iolib/2018-02-28/iolib-v0.8.3.tgz";
-    sha256 = "0pa86bf3jrysnmhasbc0lm6cid9xzril4jsg02g3gziav1xw5x2m";
-  }
-  {
     url = "http://beta.quicklisp.org/archive/trivial-mimes/2020-07-15/trivial-mimes-20200715-git.tgz";
     sha256 = "00kcm17q5plpzdj1qwg83ldhxksilgpcdkf3m9azxcdr968xs9di";
   }
@@ -62,6 +26,10 @@
   {
     url = "http://beta.quicklisp.org/archive/cl-reexport/2021-02-28/cl-reexport-20210228-git.tgz";
     sha256 = "02la6z3ickhmh2m87ymm2ijh9nkn7l6slskj99l8a1rhps394qqc";
+  }
+  {
+    url = "http://beta.quicklisp.org/archive/cl-utilities/2010-10-06/cl-utilities-1.2.4.tgz";
+    sha256 = "1dmbkdr8xm2jw5yx1makqbf1ypqbm0hpkd7zyknxv3cblvz0a87w";
   }
   {
     url = "http://beta.quicklisp.org/archive/quri/2021-02-28/quri-20210228-git.tgz";
@@ -124,6 +92,10 @@
     sha256 = "1l6cvks7slp5a0wag5vhbhn8972lfxamci59jd1ai4icv1vv1jsk";
   }
   {
+    url = "http://beta.quicklisp.org/archive/bordeaux-threads/2020-06-10/bordeaux-threads-v0.8.8.tgz";
+    sha256 = "19i443fz3488v1pbbr9x24y8h8vlyhny9vj6c9jk5prm702awrp6";
+  }
+  {
     url = "http://beta.quicklisp.org/archive/trivial-features/2021-02-28/trivial-features-20210228-git.tgz";
     sha256 = "0phjmkksbfahy3c47ksqpvj3z4ica17xl24b9d8r8kq4p9h8xky5";
   }
@@ -136,28 +108,8 @@
     sha256 = "07ny3v2ivihjffrys1vli57fy6brvdf43ry8xa6d76hm4pyadzhm";
   }
   {
-    url = "http://beta.quicklisp.org/archive/asdf-package-system/2015-06-08/asdf-package-system-20150608-git.tgz";
-    sha256 = "1q4qgvbl64c4zdbq91by1la8licdgam7ybnhvg2bixdhq4v693sj";
-  }
-  {
-    url = "http://beta.quicklisp.org/archive/dbus/2020-06-10/dbus-20200610-git.tgz";
-    sha256 = "1gw5414q7r6yi2bm1wk2fhqnvhxzc5c6812z3qh67c9dyizcjy2a";
-  }
-  {
     url = "http://beta.quicklisp.org/archive/jsown/2020-02-18/jsown-20200218-git.tgz";
     sha256 = "0gadvmf1d9bq35s61z76psrsnzwwk12svi66jigf491hv48wigw7";
-  }
-  {
-    url = "http://beta.quicklisp.org/archive/bordeaux-threads/2020-06-10/bordeaux-threads-v0.8.8.tgz";
-    sha256 = "19i443fz3488v1pbbr9x24y8h8vlyhny9vj6c9jk5prm702awrp6";
-  }
-  {
-    url = "http://beta.quicklisp.org/archive/cl-utilities/2010-10-06/cl-utilities-1.2.4.tgz";
-    sha256 = "1dmbkdr8xm2jw5yx1makqbf1ypqbm0hpkd7zyknxv3cblvz0a87w";
-  }
-  {
-    url = "http://beta.quicklisp.org/archive/xml-emitter/2020-02-18/xml-emitter-20200218-git.tgz";
-    sha256 = "1w9yx8gc4imimvjqkhq8yzpg3kjrp2y37rjix5c1lnz4s7bxvhk9";
   }
   {
     url = "http://beta.quicklisp.org/archive/clx/2020-07-15/clx-20200715-git.tgz";

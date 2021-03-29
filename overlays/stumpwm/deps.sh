@@ -1,4 +1,6 @@
-#!/bin/sh
+#! /usr/bin/env nix-shell
+#! nix-shell -p sbcl -i bash
+
 mkdir "$PWD/temp"
 curl -o "$PWD/temp/quicklisp.lisp" "https://beta.quicklisp.org/quicklisp.lisp"
 

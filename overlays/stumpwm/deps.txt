@@ -1,12 +1,5 @@
 alexandria
 cl-ppcre
 clx
-xml-emitter
-bordeaux-threads
 jsown
-dbus
 dexador
-iolib
-ieee-floats
-cl-xmlspam
-ironclad

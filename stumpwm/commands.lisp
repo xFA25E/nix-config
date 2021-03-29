@@ -79,12 +79,7 @@
 
 (defcommand screenshot (name selectp)
     ((:string "File name (w/o ext): ") (:y-or-n "Select? "))
-  (let* ((name "hellotherehellothere")
-         (selectp t)
-         (*xdg-user-dir* "xdg-user-dir")
-         (*image-clipboard* "image_clipboard")
-         (*scrot* "scrot")
-         (pic-dir (uiop:run-program `(,*xdg-user-dir* "PICTURES") :output '(:string :stripped t)))
+  (let* ((pic-dir (uiop:run-program `(,*xdg-user-dir* "PICTURES") :output '(:string :stripped t)))
          (directory (uiop:subpathname* pic-dir "screenshots/"))
          (file-name (make-pathname :directory (pathname-directory directory) :name name :type "png")))
     (ensure-directories-exist file-name)

@@ -131,11 +131,12 @@ in {
     packages = with pkgs; [
       # nixpkgs
       acpi checkbashisms dejavu_fonts dmenu fd file firefox gimp hack-font
-      iosevka ledger leiningen libreoffice mkpasswd mpc_cli nix-serve nload
+      iosevka ledger leiningen libnotify libreoffice mkpasswd mpc_cli nload
       p7zip pass-otp perlPackages.JSONPP pinentry pueue pulsemixer pwgen
       qrencode qtox ripgrep rsync sdcv shellcheck simplescreenrecorder sloccount
       speedtest-cli stalonetray sxiv syncthing tdesktop transmission youtube-dl
       ungoogled-chromium wget woof xclip xdg-user-dirs xorg.xbacklight xz zip
+      zoom-us
 
       # mypkgs
       browser emacsEditor rimer scripts stumpwm ungoogledChromiumIncognito ytdl
@@ -274,6 +275,37 @@ in {
   };
 
   services = {
+    dunst = {
+      enable = true;
+      settings = {
+        global = {
+          geometry = "0x0-0+0";
+          dmenu = "${pkgs.dmenu}/bin/dmenu";
+          browser = "${pkgs.qutebrowser}/bin/qutebrowser";
+          padding = 8;
+          horizontal_padding = 8;
+          frame_width = 3;
+          frame_color = colors.base04;
+          separator_color = "frame";
+          font = "Iosevka 18";
+          markup = "full";
+          word_wrap = true;
+        };
+        urgency_low = {
+          background = colors.base00;
+          foreground = colors.base0D;
+        };
+        urgency_normal = {
+          background = colors.base00;
+          foreground = colors.base04;
+        };
+        urgency_critical = {
+          background = colors.base00;
+          foreground = colors.base08;
+        };
+      };
+    };
+
     gammastep = {
       enable = true;
       latitude = "8.877";

@@ -1,11 +1,4 @@
 self: super: let
-  contrib = super.fetchFromGitHub {
-    owner = "stumpwm";
-    repo = "stumpwm-contrib";
-    rev = "a7dc1c663d04e6c73a4772c8a6ad56a34381096a";
-    sha256 = "09akdaaya7lga5lzbq1aj1filsyjwvflghkidpmr0nk0jz5xx1g7";
-  };
-
   slynk = super.fetchFromGitHub {
     owner = "joaotavora";
     repo = "sly";
@@ -15,10 +8,10 @@ self: super: let
 
   deps = (super.lib.strings.concatMapStringsSep " "
     (url: "\"${super.fetchzip url}/\"")
-    (import ./deps.nix)) + " \"${contrib}/util/notify/\" \"${slynk}/slynk/\"";
+    (import ./deps.nix)) + " \"${slynk}/slynk/\"";
 
   my-deps = super.lib.strings.concatMapStringsSep " " (dep: "\"${dep}\"") [
-    "dexador" "jsown" "xml-emitter" "bordeaux-threads" "dbus" "notify" "slynk"
+    "dexador" "jsown" "slynk"
   ];
 
   defineDeps = super.writeText "define-deps.lisp" ''
@@ -28,7 +21,6 @@ self: super: let
 
   loadMyDeps = super.writeText "load-my-deps.lisp" ''
     (asdf:load-system "cffi")
-    (pushnew #p"${self.libfixposix}/lib/" cffi:*foreign-library-directories* :test #'equal)
     (cffi:define-foreign-library libcrypto
      (:unix "${self.openssl.out}/lib/libcrypto.so"))
     (cffi:define-foreign-library libssl
