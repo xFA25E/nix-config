@@ -114,18 +114,18 @@ in {
     };
 
     language = {
-      address = "en_US.utf8";
-      base = "en_US.utf8";
-      collate = "en_US.utf8";
-      ctype = "en_US.utf8";
-      measurement = "en_US.utf8";
-      messages = "en_US.utf8";
-      monetary = "en_US.utf8";
-      name = "en_US.utf8";
-      numeric = "en_US.utf8";
-      paper = "en_US.utf8";
-      telephone = "en_US.utf8";
-      time = "en_US.utf8";
+      address = "en_US.UTF-8";
+      base = "en_US.UTF-8";
+      collate = "en_US.UTF-8";
+      ctype = "en_US.UTF-8";
+      measurement = "en_US.UTF-8";
+      messages = "en_US.UTF-8";
+      monetary = "en_US.UTF-8";
+      name = "en_US.UTF-8";
+      numeric = "en_US.UTF-8";
+      paper = "en_US.UTF-8";
+      telephone = "en_US.UTF-8";
+      time = "en_US.UTF-8";
     };
 
     packages = with pkgs; [
@@ -354,6 +354,8 @@ in {
       pueue = {
         Unit = {
           Description = "Pueue Daemon - CLI process scheduler and manager";
+          After = [ "graphical-session-pre.target" ];
+          PartOf = [ "graphical-session.target" ];
         };
         Service = {
           Restart = "no";
@@ -362,13 +364,15 @@ in {
           Environment = "ASYNC_STD_THREAD_COUNT=4";
         };
         Install = {
-          WantedBy = [ "default.target" ];
+          WantedBy = [ "graphical-session.target" ];
         };
       };
 
       rimer = {
         Unit = {
           Description = "Rimer Daemon - Concurrent timer";
+          After = [ "graphical-session-pre.target" ];
+          PartOf = [ "graphical-session.target" ];
         };
         Service = {
           Restart = "no";
@@ -376,13 +380,14 @@ in {
           ExecStop = "${pkgs.rimer}/bin/rimer quit";
         };
         Install = {
-          WantedBy = [ "default.target" ];
+          WantedBy = [ "graphical-session.target" ];
         };
       };
       transmission = {
         Unit = {
           Description = "Transmission BitTorrent Daemon";
-          After = [ "network.target" ];
+          After = [ "network.target" "graphical-session-pre.target" ];
+          PartOf = [ "graphical-session.target" ];
         };
         Service = {
           Type = "notify";
@@ -391,7 +396,7 @@ in {
           NoNewPrivileges = true;
         };
         Install = {
-          WantedBy = [ "default.target" ];
+          WantedBy = [ "graphical-session.target" ];
         };
       };
       xrdb = {

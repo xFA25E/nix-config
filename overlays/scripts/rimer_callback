@@ -1,7 +1,7 @@
 #!/bin/sh
 
 name="${1:?provide name}"
-elapsed="${2:?provide remain}"
+elapsed="${2:?provide elapsed}"
 duration="${3:?provide duration}"
 state="${4:?provide state}"
 arg="${5}"
