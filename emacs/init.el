@@ -1,9 +1,4 @@
-;;; -*- lexical-binding: t; -*-
-
-(let ((path (cl-find "elpa/project" load-path :test #'cl-search)))
-  (push path load-path))
-
-(add-to-list 'Info-directory-list "/home/val/.nix-profile/share/info")
+;;; -*- lexical-binding: t; eval: (progn (require (quote leaf)) (setq imenu-generic-expression lisp-imenu-generic-expression)); -*-
 
 
 ;;; UTILS
@@ -2099,7 +2094,3 @@
   :custom
   '(org-html-htmlize-output-type . 'css)
   '(org-html-htmlize-font-prefix . "org-"))
-
-;;; Local variables:
-;;; eval: (progn (require (quote leaf)) (setq imenu-generic-expression lisp-imenu-generic-expression))
-;;; End:
