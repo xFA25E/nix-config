@@ -134,7 +134,7 @@ in {
       iosevka ledger leiningen libnotify libreoffice mkpasswd mpc_cli nload
       p7zip pass-otp perlPackages.JSONPP pinentry pueue pulsemixer pwgen
       qrencode qtox ripgrep rsync sdcv shellcheck simplescreenrecorder sloccount
-      speedtest-cli stalonetray sxiv syncthing tdesktop transmission youtube-dl
+      speedtest-cli stalonetray sxiv syncthing transmission youtube-dl
       ungoogled-chromium wget woof xclip xdg-user-dirs xorg.xbacklight xz zip
       zoom-us
 
@@ -534,6 +534,9 @@ in {
         "inode/directory" = [ "emacsdired.desktop" ];
         "x-scheme-handler/mailto" = [ "emacsmail.desktop" ];
         "message/rfc822" = [ "emacsmail.desktop" ];
+        "text/html" = [ "browser.desktop" ];
+        "x-scheme-handler/https" = [ "browser.desktop" ];
+        "x-scheme-handler/http" = [ "browser.desktop" ];
       };
     };
 

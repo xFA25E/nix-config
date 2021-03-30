@@ -1761,8 +1761,7 @@
            ("Простая Академия" (:yt "UC8mmPf2oKdfE2pdjqctTWUw"))
            ("Простые Мысли" (:yt "UCZuRMfF5ZUHqYlKkvU12xvg"))
            ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml")
-           ("Luke Smith PeerTube" "https://lukesmith.xyz/peertube")
-           ("Planet Emacslife" "https://planet.emacslife.com/atom.xml"))))
+           ("Luke Smith PeerTube" "https://lukesmith.xyz/peertube"))))
 
   :config
   (defun newsticker-add-thumbnail (_feedname item)
