@@ -47,6 +47,9 @@ case "$1" in
         chmod 700 "${HOME}/.password-store"
         sudo umount "${tempdir}"
         rmdir "${tempdir}"
+        printf '>>> You should trust your key.\n'
+        printf '$ gpg --edit-key "your@mail"\n'
+        printf '$ trust\n'
         ;;
     *)
         printf '>>> Invalid arguments! Run %s without arguments for help.' "$0"
