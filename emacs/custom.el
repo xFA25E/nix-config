@@ -294,6 +294,21 @@
  '(read-file-name-completion-ignore-case t)
  '(register-separator 43)
  '(rust-format-on-save t)
+ '(safe-local-variable-values
+   '((eval progn
+           (add-hook 'after-save-hook
+                     (lambda nil
+                       (byte-recompile-file
+                        (buffer-file-name)))
+                     nil t))
+     (eval progn
+           (require 'leaf)
+           (setq imenu-generic-expression lisp-imenu-generic-expression)
+           (add-hook 'after-save-hook
+                     (lambda nil
+                       (byte-recompile-file
+                        (buffer-file-name)))
+                     nil t))))
  '(save-place-file "/home/val/.cache/emacs/saveplace")
  '(save-place-limit 1000)
  '(save-place-mode t)

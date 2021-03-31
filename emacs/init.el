@@ -5,48 +5,27 @@
 ;; maybe use svin's hack to disable gc during init
 ;; see if you can find in dired-extra selection of mime files
 ;; large chunks of code put in external files (maybe not packages)
+;; maybe rx-ext should be eval-when-compile
 
 (setf completion-ignore-case t
       disabled-command-function nil
       system-uses-terminfo nil)
+
 (setenv "PAGER" "cat")
 
+(defvar message-mode-map)
+(defvar fb2-replace-hard-space t)
+(defvar gamegrid-user-score-file-directory "/home/val/.cache/emacs/games/")
 (defvar leaf-key-bindlist nil)
-(defvar gamegrid-user-score-file-directory
-  (eval-when-compile
-    (require 'xdg)
-    (expand-file-name "emacs/games/" (xdg-cache-home))))
-
 (defvar sly-lisp-implementations
   '((sbcl ("sbcl"))
     (ecl ("ecl"))
     (ccl ("ccl"))
     (clisp ("clisp"))))
 
-(defvar he-file-name-chars "-a-zA-Z0-9_/.,~^#$+={}")
-
-(defvar newsticker--treeview-list-sort-order 'sort-by-time-reverse)
-
-(defvar fb2-replace-hard-space t)
-
 (defun save-window-configuration-to-w (&rest _ignore)
   (window-configuration-to-register ?w))
 
-(with-eval-after-load 'leaf
-  (setf (cl-getf leaf-keywords :custom)
-    (quote `(,@(mapcar
-            (lambda (elm) `(setq ,(car elm) ,(cdr elm)))
-            leaf--value)
-         ,@leaf--body))))
-
-(leaf xdg
-  :defun xdg--dir-home
-  :commands xdg-download-dir xdg-music-dir xdg-data-home xdg-cache-home
-  :config
-  (defun xdg-download-dir () (xdg--dir-home "XDG_DOWNLOAD_DIR" "~/Downloads"))
-  (defun xdg-music-dir () (xdg--dir-home "XDG_MUSIC_DIR" "~/Music")))
-
-;; maybe should be eval-when-compile
 (leaf rx :config (rx-define ext (&rest exts) (and "." (or exts) string-end)))
 
 (leaf subr
@@ -349,10 +328,10 @@
   (defun finder-exit-with-package ()
     (interactive)
     (if (string-match-p (rx "*Finder" (? "-package") "*") (buffer-name))
-    (quit-window t)
+        (quit-window t)
       (dolist (buf '("*Finder*" "*Finder-package*"))
-    (when (get-buffer buf)
-      (kill-buffer buf))))))
+        (when (get-buffer buf)
+          (kill-buffer buf))))))
 
 ;;; DIRED
 
@@ -377,23 +356,23 @@
   (defun dired-copy-filename-as-kill-join-newline (&optional arg)
     (interactive "P")
     (let ((string
-       (or (dired-get-subdir)
-           (mapconcat #'identity
-              (if arg
-                  (cond ((zerop (prefix-numeric-value arg))
-                     (dired-get-marked-files))
-                    ((consp arg)
-                     (dired-get-marked-files t))
-                    (t
-                     (dired-get-marked-files
-                      'no-dir (prefix-numeric-value arg))))
-                (dired-get-marked-files 'no-dir))
-              "\n"))))
+           (or (dired-get-subdir)
+               (mapconcat #'identity
+                          (if arg
+                              (cond ((zerop (prefix-numeric-value arg))
+                                     (dired-get-marked-files))
+                                    ((consp arg)
+                                     (dired-get-marked-files t))
+                                    (t
+                                     (dired-get-marked-files
+                                      'no-dir (prefix-numeric-value arg))))
+                            (dired-get-marked-files 'no-dir))
+                          "\n"))))
       (unless (string= string "")
-    (if (eq last-command 'kill-region)
-        (kill-append string nil)
-      (kill-new string))
-    (message "%s" string)))))
+        (if (eq last-command 'kill-region)
+            (kill-append string nil)
+          (kill-new string))
+        (message "%s" string)))))
 
 (leaf dired-x
   :defun dired-get-marker-char
@@ -412,12 +391,12 @@
      (pcase current-prefix-arg
        ('(4) ?\s)
        ('(16)
-    (let* ((dflt (char-to-string dired-marker-char))
-           (input (read-string
-               (format
-            "Marker character to use (default %s): " dflt)
-               nil nil dflt)))
-      (aref input 0)))
+        (let* ((dflt (char-to-string dired-marker-char))
+               (input (read-string
+                       (format
+                        "Marker character to use (default %s): " dflt)
+                       nil nil dflt)))
+          (aref input 0)))
        (_ dired-marker-char))))
 
   (defun dired-mark-images (&optional marker-char)
@@ -533,7 +512,7 @@
   (defun sp-backward-kill-word-or-region (&optional count)
     (interactive "p")
     (if (use-region-p)
-    (sp-kill-region (region-beginning) (region-end))
+        (sp-kill-region (region-beginning) (region-end))
       (sp-backward-kill-word count)))
 
   (require 'smartparens-config))
@@ -544,11 +523,12 @@
   :defvar ispell-parser
   :hook (tex-mode-hook . (lambda () (setq-local ispell-parser 'tex))))
 
-(leaf css-mode :bind (css-mode-map ("C-c m" . css-lookup-symbol)))
+(leaf css-mode :defvar css-mode-map :bind (css-mode-map ("C-c m" . css-lookup-symbol)))
 
 ;;;;; XML-LIKE
 
 (leaf sgml-mode
+  :defvar sgml-mode-map
   :bind
   (sgml-mode-map
    ("C-M-n" . sgml-skip-tag-forward)
@@ -613,6 +593,7 @@
 ;;;; HIPPIE-EXP
 
 (leaf hippie-exp
+  :preface (defvar he-file-name-chars "-a-zA-Z0-9_/.,~^#$+={}")
   :defvar he-search-string he-tried-table he-expand-list
   :defun
   try-complete-file-name-with-env try-complete-file-name-partially-with-env
@@ -629,47 +610,46 @@
     (unless old
       (he-init-string (he-file-name-beg) (point))
       (let ((name-part (file-name-nondirectory he-search-string))
-        (dir-part (substitute-in-file-name
-               (expand-file-name (or (file-name-directory he-search-string) "")))))
-    (unless (he-string-member name-part he-tried-table)
-      (setq he-tried-table (cons name-part he-tried-table)))
-    (if (and (not (equal he-search-string "")) (file-directory-p dir-part))
-        (setq he-expand-list (sort (file-name-all-completions name-part dir-part) 'string-lessp))
-      (setq he-expand-list ()))))
+            (dir-part (substitute-in-file-name
+                       (expand-file-name (or (file-name-directory he-search-string) "")))))
+        (unless (he-string-member name-part he-tried-table)
+          (setq he-tried-table (cons name-part he-tried-table)))
+        (if (and (not (equal he-search-string "")) (file-directory-p dir-part))
+            (setq he-expand-list (sort (file-name-all-completions name-part dir-part) 'string-lessp))
+          (setq he-expand-list ()))))
 
     (while (and he-expand-list (he-string-member (car he-expand-list) he-tried-table))
       (setq he-expand-list (cdr he-expand-list)))
     (if he-expand-list
-    (let ((filename (he-concat-directory-file-name
-             (file-name-directory he-search-string)
-             (car he-expand-list))))
-      (he-substitute-string filename)
-      (setq he-tried-table (cons (car he-expand-list) (cdr he-tried-table)))
-      (setq he-expand-list (cdr he-expand-list))
-      t)
+        (let ((filename (he-concat-directory-file-name
+                         (file-name-directory he-search-string)
+                         (car he-expand-list))))
+          (he-substitute-string filename)
+          (setq he-tried-table (cons (car he-expand-list) (cdr he-tried-table)))
+          (setq he-expand-list (cdr he-expand-list))
+          t)
       (when old (he-reset-string))
       nil))
 
   (defun try-complete-file-name-partially-with-env (old)
     (let ((expansion ()))
       (unless old
-    (he-init-string (he-file-name-beg) (point))
-    (let ((name-part (file-name-nondirectory he-search-string))
-          (dir-part (substitute-in-file-name
-             (expand-file-name (or (file-name-directory he-search-string) "")))))
-      (when (and (not (equal he-search-string "")) (file-directory-p dir-part))
-        (setq expansion (file-name-completion name-part dir-part)))
-      (when (or (eq expansion t) (string= expansion name-part) (he-string-member expansion he-tried-table))
-        (setq expansion ()))))
+        (he-init-string (he-file-name-beg) (point))
+        (let ((name-part (file-name-nondirectory he-search-string))
+              (dir-part (substitute-in-file-name
+                         (expand-file-name (or (file-name-directory he-search-string) "")))))
+          (when (and (not (equal he-search-string "")) (file-directory-p dir-part))
+            (setq expansion (file-name-completion name-part dir-part)))
+          (when (or (eq expansion t) (string= expansion name-part) (he-string-member expansion he-tried-table))
+            (setq expansion ()))))
 
       (if expansion
-      (let ((filename (he-concat-directory-file-name (file-name-directory he-search-string) expansion)))
-        (he-substitute-string filename)
-        (setq he-tried-table (cons expansion (cdr he-tried-table)))
-        t)
-    (when old (he-reset-string))
-    nil))))
-
+          (let ((filename (he-concat-directory-file-name (file-name-directory he-search-string) expansion)))
+            (he-substitute-string filename)
+            (setq he-tried-table (cons expansion (cdr he-tried-table)))
+            t)
+        (when old (he-reset-string))
+        nil))))
 
 ;;; SEARCHING
 
@@ -685,6 +665,7 @@
     (concat cmd " | cut -c-500")))
 
 (leaf rg
+  :defvar rg-mode-map
   :bind
   (search-map
    :package bindings
@@ -765,32 +746,31 @@
   :config
   (defun shell-history-filter (elements)
     (cl-flet ((match-p
-           (e)
-           (string-match-p
-        (rx bos
-            (or (and
-             (opt "sudo " (opt "-A "))
-             (or "awk" "bash" "cat" "cd" "chmod" "chown" "command"
-                 "cp" "cut" "dash" "dd" "df" "dh" "du" "ebook-convert"
-                 "echo" "emacs" "env" "exit" "export" "fd" "feh"
-                 "file" "find" "gawk" "gparted" "grep" "gzip"
-                 "hash" "host" "htop" "id" "ln" "locate" "ls" "man"
-                 "mbsync" "millisleep" "mkdir" "mpop" "mpv" "mv"
-                 "notify-send" "pacman -Rsn" "pacman -S" "ping" "pkill"
-                 "printf" "pwgen" "python" "quit" "read" "rg" "rimer"
-                 "rm" "rmdir" "rofi" "setsid" "sh" "sleep" "stow"
-                 "strings" "strip" "studies_" "sxiv" "tail" "time"
-                 "timer" "top" "touch" "tr" "uname" "uptime" "watch"
-                 "wc" "which" "woof" "xclip" "xz" "yay" "youtube-dl"
-                 "ytdl"))
-            eos))
-        e)))
+               (e)
+               (string-match-p
+                (rx bos
+                    (or (and
+                         (opt "sudo " (opt "-A "))
+                         (or "awk" "bash" "cat" "cd" "chmod" "chown" "command"
+                             "cp" "cut" "dash" "dd" "df" "dh" "du" "ebook-convert"
+                             "echo" "emacs" "env" "exit" "export" "fd" "feh"
+                             "file" "find" "gawk" "gparted" "grep" "gzip"
+                             "hash" "host" "htop" "id" "ln" "locate" "ls" "man"
+                             "mbsync" "millisleep" "mkdir" "mpop" "mpv" "mv"
+                             "notify-send" "pacman -Rsn" "pacman -S" "ping" "pkill"
+                             "printf" "pwgen" "python" "quit" "read" "rg" "rimer"
+                             "rm" "rmdir" "rofi" "setsid" "sh" "sleep" "stow"
+                             "strings" "strip" "studies_" "sxiv" "tail" "time"
+                             "timer" "top" "touch" "tr" "uname" "uptime" "watch"
+                             "wc" "which" "woof" "xclip" "xz" "yay" "youtube-dl"
+                             "ytdl"))
+                        eos))
+                e)))
       (cl-delete-duplicates (cl-delete-if #'match-p elements) :test #'string-equal)))
 
   (defun shell-enable-comint-history ()
-    (setq-local comint-input-ring-file-name
-        (expand-file-name "emacs/comint/shell_history" (xdg-data-home)))
-    (setq-local comint-history-filter-function #'shell-history-filter)
+    (setq-local comint-input-ring-file-name "/home/val/.local/share/emacs/comint/shell_history"
+                comint-history-filter-function #'shell-history-filter)
     (comint-read-input-ring 'silent))
 
   (defun shell-change-directory ()
@@ -799,7 +779,7 @@
     (comint-show-maximum-output)
     (comint-delete-input)
     (let* ((read-dir (read-directory-name "Change directory: "))
-       (dir (or (file-remote-p read-dir 'localname) read-dir)))
+           (dir (or (file-remote-p read-dir 'localname) read-dir)))
       (insert (concat "cd " (shell-quote-argument (expand-file-name dir)))))
     (comint-send-input)))
 
@@ -871,13 +851,13 @@
 
   (skempo-define-tempo (defvar :tag t :mode emacs-lisp-mode)
     "(defvar " (skempo-elisp-namespace) "-" p n>
-     r> n>
-     "\"" p "\")")
+    r> n>
+    "\"" p "\")")
 
   (skempo-define-tempo (defun :tag t :mode emacs-lisp-mode)
     "(defun " (skempo-elisp-namespace) "-" p " (" p ")" n>
-     "\"" p "\"" n>
-     r> ")")
+    "\"" p "\"" n>
+    r> ")")
 
   (skempo-define-tempo (defgroup :tag t :mode emacs-lisp-mode)
     "(defgroup " (skempo-elisp-group) " nil" n>
@@ -893,9 +873,9 @@
 
   (skempo-define-tempo (defface :tag t :mode emacs-lisp-mode)
     "(defface " (skempo-elisp-namespace) "-" p n>
-     "'((t :inherit " p "nil))" n>
-     "\"" p "\"" n>
-     ":group '" (skempo-elisp-group) ")"))
+    "'((t :inherit " p "nil))" n>
+    "\"" p "\"" n>
+    ":group '" (skempo-elisp-group) ")"))
 
 
 ;;; APPLICATIONS
@@ -928,9 +908,9 @@
     (let ((buffer-name "*Shell buffers*"))
       (ibuffer t buffer-name `((mode . shell-mode)))
       (with-current-buffer buffer-name
-    (ibuffer-auto-mode)
-    (set (make-local-variable 'ibuffer-use-header-line) nil)
-    (ibuffer-clear-filter-groups)))))
+        (ibuffer-auto-mode)
+        (set (make-local-variable 'ibuffer-use-header-line) nil)
+        (ibuffer-clear-filter-groups)))))
 
 (leaf magit
   :bind
@@ -947,7 +927,7 @@
   (add-to-list
    'file-name-handler-alist
    `(,(rx (ext "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob" "wmv" "aiff" "wav" "ogv" "flv"
-           "FLAC" "M4A" "MP3" "OGG" "OPUS" "WEBM" "MKV" "MP4" "AVI" "MPG" "MOV" "3GP" "VOB" "WMV" "AIFF" "WAV" "OGV" "FLV"))
+               "FLAC" "M4A" "MP3" "OGG" "OPUS" "WEBM" "MKV" "MP4" "AVI" "MPG" "MOV" "3GP" "VOB" "WMV" "AIFF" "WAV" "OGV" "FLV"))
      . mediainfo-mode--file-handler)))
 
 (leaf youtube-comments :commands youtube-comments)
@@ -991,16 +971,17 @@
 
   (defun eww-invidous-search (search instance &optional arg)
     (interactive (let ((search (read-string "Search term: ")))
-           (list search
-             (browse-url-select-invidious-instance search)
-             current-prefix-arg)))
+                   (list search
+                         (browse-url-select-invidious-instance search)
+                         current-prefix-arg)))
     (let ((url (concat "https://" instance "/search?" (url-build-query-string
-                               `(("q" ,search))))))
+                                                       `(("q" ,search))))))
       (eww url arg))))
 
 ;;;; YO-HO
 
 (leaf transmission
+  :defvar transmission-mode-map
   :bind
   (mode-specific-map :package bindings ("o r" . transmission))
   (transmission-mode-map ("M" . transmission-move)))
@@ -1016,24 +997,26 @@
   (defun newsticker-add-thumbnail (_feedname item)
     (cl-flet ((d (thumb desc) (format "<img src=\"%s\"/><br/><pre>%s</pre>" thumb desc)))
       (pcase (newsticker--link item)
-    ((rx "youtube.com")
-     (let ((group (alist-get 'group (newsticker--extra item))))
-       (setcar
-        (nthcdr 1 item)
-        (d (alist-get 'url (car (alist-get 'thumbnail group))) (cadr (alist-get 'description group))))))
-    ((rx "bitchute.com")
-     (let ((enclosure (alist-get 'enclosure (newsticker--extra item))))
-       (setcar
-        (nthcdr 1 item)
-        (d (alist-get 'url (car enclosure)) (newsticker--desc item)))))
-    ((rx "videos.lukesmith.xyz")
-     (let ((thumbnail (alist-get 'thumbnail (newsticker--extra item))))
-       (setcar
-        (nthcdr 1 item)
-        (d  (alist-get 'url (car thumbnail)) (newsticker--desc item)))))))))
+        ((rx "youtube.com")
+         (let ((group (alist-get 'group (newsticker--extra item))))
+           (setcar
+            (nthcdr 1 item)
+            (d (alist-get 'url (car (alist-get 'thumbnail group))) (cadr (alist-get 'description group))))))
+        ((rx "bitchute.com")
+         (let ((enclosure (alist-get 'enclosure (newsticker--extra item))))
+           (setcar
+            (nthcdr 1 item)
+            (d (alist-get 'url (car enclosure)) (newsticker--desc item)))))
+        ((rx "videos.lukesmith.xyz")
+         (let ((thumbnail (alist-get 'thumbnail (newsticker--extra item))))
+           (setcar
+            (nthcdr 1 item)
+            (d  (alist-get 'url (car thumbnail)) (newsticker--desc item)))))))))
 
 (leaf newst-treeview
+  :preface (defvar newsticker--treeview-list-sort-order 'sort-by-time-reverse)
   :defun newsticker--treeview-get-selected-item
+  :defvar newsticker-treeview-mode-map
 
   :bind
   (mode-specific-map :package bindings ("o n" . newsticker-show-news))
@@ -1049,6 +1032,7 @@
 ;;;; MPD
 
 (leaf mingus
+  :preface (defvar mingus-music-directory "/home/val/Music")
   :defvar mpd-inter-conn mingus-mpd-playlist-dir
 
   :defun
@@ -1077,18 +1061,18 @@
     (interactive)
     (cond
      ((mingus-directoryp)
-      (dired (concat (xdg-music-dir) (mingus-get-absolute-filename))))
+      (dired (concat mingus-music-directory (mingus-get-absolute-filename))))
      ((mingus-playlistp)
       (dired mingus-mpd-playlist-dir))
      (t
-      (dired-jump nil (concat (xdg-music-dir) (mingus-get-absolute-filename))))))
+      (dired-jump nil (concat mingus-music-directory (mingus-get-absolute-filename))))))
 
   (defun mingus-dired-add-trim ()
     (interactive)
     (mingus-add-files (mapcar
-               (lambda (f)
-             (string-trim-left f (regexp-quote (xdg-music-dir))))
-               (dired-get-marked-files))))
+                       (lambda (f)
+                         (string-trim-left f (regexp-quote mingus-music-directory)))
+                       (dired-get-marked-files))))
 
   (defun mingus-git-out-and-kill (&optional _)
     (interactive)
@@ -1097,12 +1081,12 @@
 
   (defvar mingus-music-files nil)
   (defun mingus-music-files ()
-    (let* ((default-directory (xdg-music-dir))
-       (exts (cdr (mapcan (lambda (e) `("-o" "-iname" ,(concat "*." e)))
-                  '("flac" "m4a" "mp3" "ogg" "opus"))))
-       (args `("." "(" ,@exts ")" "-type" "f" "-o" "-type" "d")))
+    (let* ((default-directory mingus-music-directory)
+           (exts (cdr (mapcan (lambda (e) `("-o" "-iname" ,(concat "*." e)))
+                              '("flac" "m4a" "mp3" "ogg" "opus"))))
+           (args `("." "(" ,@exts ")" "-type" "f" "-o" "-type" "d")))
       (mapcar (lambda (m) (substring m 1))
-          (cdr (apply #'process-lines "find" args)))))
+              (cdr (apply #'process-lines "find" args)))))
 
   (defun mingus-find-and-add-file (&optional updatep)
     (interactive "P")
@@ -1114,7 +1098,7 @@
     (mpd-play mpd-inter-conn)
     (let ((buffer (get-buffer "*Mingus*")))
       (when (buffer-live-p (get-buffer buffer))
-    (kill-buffer buffer)))))
+        (kill-buffer buffer)))))
 
 ;;;; E-READER
 
@@ -1132,10 +1116,10 @@
   (eval-when-compile
     (defmacro mu4e-make-folder-fn (folder)
       `(defun ,(intern (concat "mu4e-" folder "-folder-by-msg")) (msg)
-     (when-let ((maildir (and msg (mu4e-message-field msg :maildir))))
-       (save-match-data
-         (string-match (rx bos "/" (group (+ (not "/")))) maildir)
-         (concat "/" (match-string 1 maildir) ,(concat "/" folder)))))))
+         (when-let ((maildir (and msg (mu4e-message-field msg :maildir))))
+           (save-match-data
+             (string-match (rx bos "/" (group (+ (not "/")))) maildir)
+             (concat "/" (match-string 1 maildir) ,(concat "/" folder)))))))
 
   (mu4e-make-folder-fn "trash")
   (mu4e-make-folder-fn "archive")
@@ -1149,13 +1133,13 @@
   (setq
    mu4e-contexts
    (list (make-mu4e-context
-      :name "polimi"
-      :vars '((mu4e-sent-folder . "/polimi/sent")
-          (mu4e-drafts-folder . "/polimi/drafts")
-          (mu4e-sent-messages-behavior . delete)
-          (user-mail-address . "valeriy.litkovskyy@mail.polimi.it")
-          (message-sendmail-extra-arguments . ("-a" "polimi"))
-          (mu4e-compose-signature . "Cordiali saluti,\nLitkovskyy Valeriy"))))))
+          :name "polimi"
+          :vars '((mu4e-sent-folder . "/polimi/sent")
+                  (mu4e-drafts-folder . "/polimi/drafts")
+                  (mu4e-sent-messages-behavior . delete)
+                  (user-mail-address . "valeriy.litkovskyy@mail.polimi.it")
+                  (message-sendmail-extra-arguments . ("-a" "polimi"))
+                  (mu4e-compose-signature . "Cordiali saluti,\nLitkovskyy Valeriy"))))))
 
 ;;; ORG
 
@@ -1193,17 +1177,17 @@
   :config
   (defun org-mime-beautify-quoted-add-newlines (html)
     (let ((blockquote-count
-       (save-match-data
-         (with-temp-buffer
-           (insert html)
-           (goto-char (point-min))
-           (how-many "blockquote" (point-min) (point-max))))))
+           (save-match-data
+             (with-temp-buffer
+               (insert html)
+               (goto-char (point-min))
+               (how-many "blockquote" (point-min) (point-max))))))
       (if (/= 2 blockquote-count) html
-    (replace-regexp-in-string
-     "\n" "<br/>\n"
-     (replace-regexp-in-string
-      (rx (>= 3 "\n")) "\n\n"
-      html)))))
+        (replace-regexp-in-string
+         "\n" "<br/>\n"
+         (replace-regexp-in-string
+          (rx (>= 3 "\n")) "\n\n"
+          html)))))
 
   (defun org-mime-replace-images-fix-cids-and-path (args)
     (cl-destructuring-bind (first . rest) args
@@ -1218,32 +1202,30 @@
      (t
       (setq org-mime--saved-temp-window-config (current-window-configuration))
       (let* ((beg (copy-marker (org-mime-mail-body-begin)))
-         (end (copy-marker (or (org-mime-mail-signature-begin)
-                   (point-max))))
-         (bufname "OrgMimeMailBody")
-         (buffer (generate-new-buffer bufname))
-         (overlay (org-mime-src--make-source-overlay beg end))
-         (text (buffer-substring-no-properties beg end)))
+             (end (copy-marker (or (org-mime-mail-signature-begin)
+                                   (point-max))))
+             (bufname "OrgMimeMailBody")
+             (buffer (generate-new-buffer bufname))
+             (overlay (org-mime-src--make-source-overlay beg end))
+             (text (buffer-substring-no-properties beg end)))
 
-    (setq org-mime-src--beg-marker beg)
-    (setq org-mime-src--end-marker end)
-    ;; don't use local-variable because only user can't edit multiple emails
-    ;; or multiple embedded org code in one mail
-    (setq org-mime-src--overlay overlay)
+        (setq org-mime-src--beg-marker beg)
+        (setq org-mime-src--end-marker end)
+        ;; don't use local-variable because only user can't edit multiple emails
+        ;; or multiple embedded org code in one mail
+        (setq org-mime-src--overlay overlay)
 
-    (save-excursion
-      (delete-other-windows)
-      (org-switch-to-buffer-other-window buffer)
-      (erase-buffer)
-      (insert org-mime-src--hint)
-      (insert text)
-      (goto-char (point-min))
-      (org-mode)
-      (org-mime-src-mode)))))))
+        (save-excursion
+          (delete-other-windows)
+          (org-switch-to-buffer-other-window buffer)
+          (erase-buffer)
+          (insert org-mime-src--hint)
+          (insert text)
+          (goto-char (point-min))
+          (org-mode)
+          (org-mime-src-mode)))))))
 
 ;;; Custom
 
-(load (setf custom-file (eval-when-compile
-                          (require 'xdg)
-                          (expand-file-name "nixpkgs/emacs/custom.el" (xdg-config-home)))) t)
+(load (setf custom-file "/home/val/.config/nixpkgs/emacs/custom.el") t)
 (set-register register-separator "\n")
