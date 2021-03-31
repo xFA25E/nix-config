@@ -80,15 +80,9 @@
 
 (leaf custom
   ;; :init (load-theme 'leuven t)
-  :commands load-theme custom-theme-enabled-p)
-
-(leaf acme-theme
   ;; :init (load-theme 'acme t)
-  )
-
-(leaf modus-operandi-theme
-  :init (load-theme 'modus-operandi t)
-  )
+  ;; :init (load-theme 'modus-operandi t)
+  :commands load-theme custom-theme-enabled-p)
 
 (leaf faces
   :bind (help-map :package help ("M-f" . list-faces-display))
@@ -103,11 +97,6 @@
   (with-eval-after-load 'man
     (set-face-attribute 'Man-overstrike nil :inherit 'font-lock-variable-name-face :bold t)
     (set-face-attribute 'Man-underline nil :inherit 'font-lock-negation-char-face :underline t))
-
-  (with-eval-after-load 'telega
-    (set-face-attribute 'telega-webpage-fixed nil :family "Terminus")
-    (set-face-attribute 'telega-entity-type-pre nil :family "Terminus")
-    (set-face-attribute 'telega-entity-type-code nil :family "Terminus"))
 
   (when (custom-theme-enabled-p 'acme)
     (with-eval-after-load 'comint
