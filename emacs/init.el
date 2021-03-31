@@ -1118,7 +1118,7 @@
 
 ;;;; E-READER
 
-;; (leaf pdf-tools :init (pdf-loader-install))
+(leaf pdf-tools :config (pdf-loader-install))
 
 (leaf nov :mode "\\.epub\\'")
 
@@ -1240,12 +1240,6 @@
       (goto-char (point-min))
       (org-mode)
       (org-mime-src-mode)))))))
-
-(leaf ox-html
-  :after org
-  :custom
-  '(org-html-htmlize-output-type . 'css)
-  '(org-html-htmlize-font-prefix . "org-"))
 
 ;;; Custom
 

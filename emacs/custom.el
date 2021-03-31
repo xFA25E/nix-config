@@ -269,6 +269,7 @@
       "* TODO %?
   SCHEDULED: %t
 ")))
+ '(org-html-htmlize-output-type 'css)
  '(org-id-locations-file "/home/val/.cache/emacs/org/id-locations")
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
