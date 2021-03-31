@@ -79,9 +79,9 @@
 ;;;;; THEMES
 
 (leaf custom
-  ;; :init (load-theme 'leuven t)
-  ;; :init (load-theme 'acme t)
-  ;; :init (load-theme 'modus-operandi t)
+  ;; :config (load-theme 'leuven t)
+  ;; :config (load-theme 'acme t)
+  ;; :config (load-theme 'modus-operandi t)
   :commands load-theme custom-theme-enabled-p)
 
 (leaf faces
@@ -325,6 +325,8 @@
 ;;; DIRED
 
 (leaf dired
+  :defvar dired-mode-map dired-actual-switches
+  :defun dired-get-subdir
   :commands dired-get-marked-files
   :advice (:override dired-copy-filename-as-kill dired-copy-filename-as-kill-join-newline)
 
@@ -365,6 +367,7 @@
 
 (leaf dired-x
   :defun dired-get-marker-char
+  :defvar dired-marker-char
   :commands dired-omit-mode dired-mark-extension
 
   :bind
@@ -402,6 +405,7 @@
      marker-char)))
 
 (leaf dired-aux
+  :defvar dired-compress-file-suffixes
   :defer-config
   (add-to-list
    'dired-compress-file-suffixes
