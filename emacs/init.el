@@ -1,8 +1,5 @@
 ;;; -*- lexical-binding: t; eval: (progn (require (quote leaf)) (setq imenu-generic-expression lisp-imenu-generic-expression)); -*-
 
-
-;;; UTILS
-
 (defvar leaf-expand-minimally t)
 (defvar leaf-key-bindlist nil)
 
