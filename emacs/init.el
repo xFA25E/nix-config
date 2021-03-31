@@ -78,25 +78,21 @@
 
 ;;;;; THEMES
 
-(leaf custom
-  ;; :config (load-theme 'leuven t)
-  ;; :config (load-theme 'acme t)
-  ;; :config (load-theme 'modus-operandi t)
-  :commands load-theme custom-theme-enabled-p)
+(leaf custom :commands load-theme custom-theme-enabled-p)
 
 (leaf faces
   :bind (help-map :package help ("M-f" . list-faces-display))
 
   :config
+  ;; (load-theme 'leuven t)
+  ;; (load-theme 'acme t)
+  (load-theme 'modus-operandi t)
+
   (set-face-attribute 'default nil :family "Iosevka" :height 170)
   (set-face-attribute 'mode-line nil :family "DejaVu Sans" :height 110)
   (set-face-attribute 'mode-line-inactive nil :family "DejaVu Sans" :height 110)
   (set-face-attribute 'fixed-pitch-serif nil :family "DejaVu Serif")
   (set-face-attribute 'header-line nil :inverse-video nil :family "Iosevka")
-
-  (with-eval-after-load 'man
-    (set-face-attribute 'Man-overstrike nil :inherit 'font-lock-variable-name-face :bold t)
-    (set-face-attribute 'Man-underline nil :inherit 'font-lock-negation-char-face :underline t))
 
   (when (custom-theme-enabled-p 'acme)
     (with-eval-after-load 'comint
