@@ -161,18 +161,17 @@ in {
 
     # melpa
     ace-link acme-theme apache-mode async avy bash-completion bicycle cargo
-    cider clipmon clojure-mode consult diff-hl diminish dired-rsync direnv
-    dumb-jump edit-indirect eglot emmet-mode fd-dired flycheck
-    flycheck-checkbashisms form-feed format-all free-keys gcmh geiser
-    gitconfig-mode gitignore-mode htmlize insert-char-preview ipretty json-mode
-    leaf ledger-mode magit marginalia mingus neato-graph-bar nix-mode nov
-    orderless org-mime outline-minor-faces pdf-tools php-mode quelpa restclient
-    reverse-im rg robots-txt-mode rust-mode sdcv shr-tag-pre-highlight sly
-    sly-asdf sly-quicklisp smartparens sqlup-mode sudo-edit transmission vlf
-    web-mode wgrep which-key
+    cider clojure-mode consult diff-hl dired-rsync direnv dumb-jump
+    edit-indirect eglot emmet-mode fd-dired flycheck flycheck-checkbashisms
+    form-feed format-all gcmh geiser gitconfig-mode gitignore-mode htmlize
+    insert-char-preview ipretty json-mode leaf ledger-mode magit marginalia
+    mingus neato-graph-bar nix-mode nov orderless org-mime outline-minor-faces
+    pdf-tools php-mode restclient reverse-im rg robots-txt-mode rust-mode sdcv
+    shr-tag-pre-highlight sly sly-asdf sly-quicklisp smartparens sqlup-mode
+    sudo-edit transmission vlf web-mode wgrep
 
     # elpa
-    csv-mode dired-git-info modus-themes rainbow-mode sql-indent
+    csv-mode modus-themes rainbow-mode sql-indent
 
     # org
     org-plus-contrib

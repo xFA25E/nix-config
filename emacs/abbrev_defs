@@ -145,6 +145,7 @@
     ("calulated" "calculated" nil :count 0)
     ("candidtae" "candidate" nil :count 0)
     ("candidtaes" "candidates" nil :count 0)
+    ("cant" "can't" nil :count 1)
     ("caontains" "contains" nil :count 0)
     ("capabilites" "capabilities" nil :count 0)
     ("catagory" "category" nil :count 0)
@@ -322,7 +323,7 @@
     ("eforts" "efforts" nil :count 0)
     ("ehr" "her" nil :count 0)
     ("eligable" "eligible" nil :count 0)
-    ("emacs" "Emacs" nil :count 0)
+    ("emacs" "Emacs" nil :count 1)
     ("embarass" "embarrass" nil :count 0)
     ("emigre" "emigre" nil :count 0)
     ("enahancements" "enhancements" nil :count 0)
@@ -926,3 +927,4 @@
     ("yuo" "you" nil :count 0)
     ("yuor" "your" nil :count 0)
    ))
+
