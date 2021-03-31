@@ -85,8 +85,8 @@
 
   :config
   ;; (load-theme 'leuven t)
-  ;; (load-theme 'acme t)
-  (load-theme 'modus-operandi t)
+  (load-theme 'acme t)
+  ;; (load-theme 'modus-operandi t)
 
   (set-face-attribute 'default nil :family "Iosevka" :height 170)
   (set-face-attribute 'mode-line nil :family "DejaVu Sans" :height 110)
@@ -95,6 +95,9 @@
   (set-face-attribute 'header-line nil :inverse-video nil :family "Iosevka")
 
   (when (custom-theme-enabled-p 'acme)
+    (with-eval-after-load 'man
+      (set-face-attribute 'Man-overstrike nil :inherit 'font-lock-variable-name-face :bold t)
+      (set-face-attribute 'Man-underline nil :inherit 'font-lock-negation-char-face :underline t))
     (with-eval-after-load 'comint
       (set-face-attribute 'comint-highlight-input nil :inherit 'diff-added)
       (set-face-attribute 'comint-highlight-prompt nil :inherit 'diff-hl-reverted-hunk-highlight))
@@ -102,6 +105,9 @@
       (set-face-attribute 'isearch-fail nil :background "LightSalmon1")))
 
   (when (custom-theme-enabled-p 'leuven)
+    (with-eval-after-load 'man
+      (set-face-attribute 'Man-overstrike nil :inherit 'font-lock-variable-name-face :bold t)
+      (set-face-attribute 'Man-underline nil :inherit 'font-lock-negation-char-face :underline t))
     (with-eval-after-load 'comint
       (set-face-attribute 'comint-highlight-input nil :inherit 'diff-added)
       (set-face-attribute 'comint-highlight-prompt nil :inherit 'diff-hl-change))

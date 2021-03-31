@@ -79,6 +79,7 @@
  '(eglot-autoshutdown t)
  '(eglot-confirm-server-initiated-edits nil)
  '(eglot-sync-connect nil)
+ '(eldoc-minor-mode-string "")
  '(emacs-lisp-mode-hook
    '(skempo-mode smartparens-mode hs-minor-mode outline-minor-mode form-feed-mode diff-hl-mode))
  '(emmet-preview-default t)
@@ -105,6 +106,7 @@
  '(flycheck-mode-line-prefix "FC")
  '(flycheck-phpcs-standard "PSR12,PSR1,PSR2")
  '(flymake-no-changes-timeout nil)
+ '(form-feed-lighter "")
  '(gdb-many-windows t)
  '(gdb-show-main t)
  '(geiser-repl-history-filename "/home/val/.cache/geiser/history")
