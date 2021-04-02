@@ -1,7 +1,6 @@
 ;;; -*- lexical-binding: t; eval: (progn (require (quote leaf)) (setq imenu-generic-expression lisp-imenu-generic-expression) (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t)); -*-
 
 ;; add to custom: theme, faces, keys (manual talked about it)
-;; decide what to do with single-defuns
 ;; see hooks and add-to-lists that are autoloaded and put them separately
 
 ;;; SETTINGS
@@ -151,9 +150,7 @@
 
 ;;;; FILES
 
-(leaf files
-  :commands read-directory-name
-  :bind (ctl-x-map :package subr ("R" . revert-buffer)))
+(leaf files :bind (ctl-x-map :package subr ("R" . revert-buffer)))
 
 ;;;; OTHER
 
@@ -228,19 +225,26 @@
 
 (leaf simple
   :bind
-  ("C-h"   . backward-delete-char-untabify)
-  ("M-K"   . kill-whole-line)
-  ("M-\\"  . delete-indentation)
-  ("M-c"   . capitalize-dwim)
-  ("M-l"   . downcase-dwim)
-  ("M-u"   . upcase-dwim)
+  ("C-h"  . backward-delete-char-untabify)
+  ("M-K"  . kill-whole-line)
+  ("M-\\" . delete-indentation)
+  ("M-c"  . capitalize-dwim)
+  ("M-l"  . downcase-dwim)
+  ("M-u"  . upcase-dwim)
+  ("C-w"  . kill-region-dwim)
   ([remap newline] . newline-and-indent)
   (ctl-x-map
    :package subr
    ("K"   . kill-current-buffer)
    ("C-r" . overwrite-mode)
    ("M-t" . toggle-truncate-lines))
-  (mode-specific-map :package bindings ("o P" . list-processes)))
+  (mode-specific-map :package bindings ("o P" . list-processes))
+  :config
+  (defun kill-region-dwim (&optional count)
+    (interactive "p")
+    (if (use-region-p)
+        (kill-region (region-beginning) (region-end))
+      (backward-kill-word count))))
 
 (leaf register
   :bind
@@ -276,24 +280,23 @@
   (smartparens-mode-hook . show-smartparens-mode)
 
   :bind
-  ("C-M-u" . sp-backward-up-sexp)
-  ("C-M-d" . sp-down-sexp)
-  ("M-F" . sp-forward-symbol)
-  ("M-B" . sp-backward-symbol)
+  ("C-M-w" . sp-copy-sexp)
+  ("M-[" . sp-unwrap-sexp)
+  ("M-]" . sp-rewrap-sexp)
   ("C-)" . sp-forward-slurp-sexp)
   ("C-M-)" . sp-forward-barf-sexp)
   ("C-(" . sp-backward-slurp-sexp)
   ("C-M-(" . sp-backward-barf-sexp)
-  ("C-M-t" . sp-transpose-sexp)
-  ("C-M-k" . sp-kill-sexp)
-  ("C-M-w" . sp-copy-sexp)
-  ("M-d" . sp-kill-word)
-  ("C-w" . sp-backward-kill-word-or-region)
-  ("M-[" . sp-unwrap-sexp)
-  ("M-]" . sp-rewrap-sexp)
+  (smartparens-mode-map
+   ("C-M-u" . sp-backward-up-sexp)
+   ("C-M-d" . sp-down-sexp)
+   ("C-M-t" . sp-transpose-sexp)
+   ("C-M-k" . sp-kill-sexp)
+   ("M-d" . sp-kill-word)
+   ("C-w" . sp-kill-region-dwim))
 
   :config
-  (defun sp-backward-kill-word-or-region (&optional count)
+  (defun sp-kill-region-dwim (&optional count)
     (interactive "p")
     (if (use-region-p)
         (sp-kill-region (region-beginning) (region-end))
@@ -633,7 +636,7 @@
    ("C-c M-t" . org-mime-revert-to-plain-text-mail))
   :config (load "/home/val/.config/emacs/org-mime-fixes.el" t))
 
-;;; Final
+;;; After Init Lol
 
 ;; EBANIY ROT ETOGO DIRED-X
 (add-hook 'dired-mode-hook 'sudo-edit-set-header)
