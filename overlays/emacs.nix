@@ -165,9 +165,9 @@ in {
     form-feed format-all geiser gitconfig-mode gitignore-mode htmlize
     insert-char-preview ipretty json-mode leaf ledger-mode magit marginalia
     mingus nix-mode nov orderless org-mime outline-minor-faces pdf-tools
-    php-mode restclient reverse-im rg robots-txt-mode rust-mode sdcv
-    shr-tag-pre-highlight sly sly-asdf sly-quicklisp smartparens sqlup-mode
-    sudo-edit transmission vlf web-mode wgrep
+    php-mode restclient reverse-im rg robots-txt-mode rust-mode sdcv sly
+    sly-asdf sly-quicklisp smartparens sqlup-mode sudo-edit transmission vlf
+    web-mode wgrep
 
     # elpa
     csv-mode modus-themes rainbow-mode sql-indent

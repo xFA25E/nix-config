@@ -133,8 +133,7 @@
 ;;;; CACHE
 
 (leaf savehist
-  :commands savehist-filter-file-name-history
-  :config
+  :defer-config
   (defun savehist-filter-file-name-history ()
     (setq
      file-name-history
@@ -150,21 +149,11 @@
         file-name-history)
        :test #'string-equal)))))
 
-
 ;;;; FILES
 
 (leaf files
   :commands read-directory-name
   :bind (ctl-x-map :package subr ("R" . revert-buffer)))
-
-;;;; SHR
-
-(leaf shr-tag-pre-highlight
-  :after shr
-  :commands shr-tag-pre-highlight
-  :leaf-defer nil
-  :defvar shr-external-rendering-functions
-  :config (add-to-list 'shr-external-rendering-functions '(pre . shr-tag-pre-highlight)))
 
 ;;;; OTHER
 
@@ -184,14 +173,13 @@
 
 (leaf async
   :after bytecomp
-  :config (async-bytecomp-package-mode))
+  :init (async-bytecomp-package-mode))
 
 ;;; MAN
 
 (leaf man :bind (help-map :package help ("M-m" . man)))
 
 (leaf finder
-  :defun finder-exit-with-package
   :advice (:override finder-exit finder-exit-with-package)
   :bind (help-map :package help ("M-c" . finder-commentary))
   :config
@@ -355,8 +343,8 @@
 ;;; CORRECTNESS
 
 (leaf flycheck-checkbashisms
-  :after flycheck
-  :config (flycheck-checkbashisms-setup))
+  :after flycheck sh-mode
+  :init (flycheck-checkbashisms-setup))
 
 ;;; COMPLETION
 
