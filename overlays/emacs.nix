@@ -2,7 +2,6 @@ self: super: let
   emacs-overlay = import (builtins.fetchTarball https://github.com/nix-community/emacs-overlay/archive/master.tar.gz) self super;
 
   overrides = eself: esuper: {
-    # my
     cyrillic-dvorak-im = esuper.trivialBuild {
       pname = "cyrillic-dvorak-im";
       ename = "cyrillic-dvorak-im";
@@ -163,10 +162,10 @@ in {
     ace-link acme-theme apache-mode async avy bash-completion bicycle cargo
     cider clojure-mode consult diff-hl dired-rsync direnv dumb-jump
     edit-indirect eglot emmet-mode fd-dired flycheck flycheck-checkbashisms
-    form-feed format-all gcmh geiser gitconfig-mode gitignore-mode htmlize
+    form-feed format-all geiser gitconfig-mode gitignore-mode htmlize
     insert-char-preview ipretty json-mode leaf ledger-mode magit marginalia
-    mingus neato-graph-bar nix-mode nov orderless org-mime outline-minor-faces
-    pdf-tools php-mode restclient reverse-im rg robots-txt-mode rust-mode sdcv
+    mingus nix-mode nov orderless org-mime outline-minor-faces pdf-tools
+    php-mode restclient reverse-im rg robots-txt-mode rust-mode sdcv
     shr-tag-pre-highlight sly sly-asdf sly-quicklisp smartparens sqlup-mode
     sudo-edit transmission vlf web-mode wgrep
 
@@ -180,4 +179,6 @@ in {
   emacsEditor = super.writeShellScriptBin "emacseditor" ''
     "${self.myEmacs}/bin/emacsclient" --create-frame --alternate-editor=${self.myEmacs}/bin/emacs "$@"
   '';
+
+  emacsOverlay = emacs-overlay;
 }

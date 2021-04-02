@@ -85,7 +85,7 @@ in {
       ".sbclrc".source = ./common-lisp.lisp;
       ".shinit".text = ''
         ${pkgs.coreutils}/bin/stty -ixon
-        PS1='$? $USER '
+        PS1='[$USER $?] $(test $UID -eq 0 && echo "#" || echo "$") '
       '';
       ".stalonetrayrc".text = pkgs.lib.generators.toKeyValue {
         mkKeyValue = pkgs.lib.generators.mkKeyValueDefault {} " ";
@@ -131,10 +131,10 @@ in {
     packages = with pkgs; [
       # nixpkgs
       acpi checkbashisms dejavu_fonts dmenu fd file firefox gimp hack-font
-      iosevka ledger leiningen libnotify libreoffice mkpasswd mpc_cli nload
-      p7zip pass-otp perlPackages.JSONPP pinentry pueue pulsemixer pwgen
-      qrencode qtox ripgrep rsync sdcv shellcheck simplescreenrecorder sloccount
-      speedtest-cli stalonetray sxiv syncthing transmission youtube-dl
+      imagemagick iosevka ledger leiningen libnotify libreoffice mkpasswd
+      mpc_cli nload p7zip pass-otp perlPackages.JSONPP pinentry pueue pulsemixer
+      pwgen qrencode qtox ripgrep rsync sdcv shellcheck simplescreenrecorder
+      sloccount speedtest-cli stalonetray sxiv syncthing transmission youtube-dl
       ungoogled-chromium wget woof xclip xdg-user-dirs xorg.xbacklight xz zip
       zoom-us
 

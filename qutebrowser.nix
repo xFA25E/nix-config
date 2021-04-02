@@ -18,8 +18,8 @@ pkgs: colors: {
     };
   };
   searchEngines = {
-    DEFAULT = "https://ddg.co/lite/?q={}";
-    d = "https://ddg.co/?q={}&kk=-1&kah=it-it&kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&kak=-1&kax=-1&km=l";
+    DEFAULT = "https://duckduckgo.com/lite/?q={}";
+    d = "https://duckduckgo.com/?q={}&kk=-1&kah=it-it&kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&kak=-1&kax=-1&km=l";
     yt = "https://www.youtube.com/results?search_query={}";
     bc = "https://www.bitchute.com/search/?query={}";
     rt = "https://rutracker.net/forum/tracker.php?nm={}";

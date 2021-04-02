@@ -38,6 +38,7 @@ case "$1" in
         tempdir="$(mktemp --directory /tmp/secrets.XXXX)"
         sudo mount -t vfat "${2:?provide drive}" "${tempdir}" -o rw,umask=0000
         cp "${tempdir}/keys/authinfo.gpg" "${HOME}/.authinfo.gpg"
+        chmod 600 "${HOME}/.authinfo.gpg"
         mkdir -m 700 -p "${HOME}/.ssh"
         cp "${tempdir}/keys/ssh/"* "${HOME}/.ssh/"
         gpg --import "${tempdir}/keys/gpg/secret.key"
