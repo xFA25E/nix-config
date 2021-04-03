@@ -4,6 +4,7 @@
   dir = variables.dir;
   colors = variables.colors;
   mailNotify = pkgs.writeShellScript "mailnotify" ''
+    export PATH=${pkgs.dbus}/bin:$PATH
     ${pkgs.mu}/bin/mu index || ${pkgs.myEmacs}/bin/emacsclient --eval "(mu4e-update-mail-and-index t)" || ${pkgs.coreutils}/bin/true
     ${pkgs.coreutils}/bin/sleep 2
     count="$(${pkgs.mu}/bin/mu find flag:unread AND NOT flag:trashed | ${pkgs.coreutils}/bin/wc -l)"
@@ -130,16 +131,20 @@ in {
 
     packages = with pkgs; [
       # nixpkgs
-      acpi checkbashisms dejavu_fonts dmenu fd file firefox gimp hack-font
-      imagemagick iosevka ledger leiningen libnotify libreoffice mkpasswd
-      mpc_cli nload p7zip pass-otp perlPackages.JSONPP pinentry pueue pulsemixer
-      pwgen qrencode qtox ripgrep rsync sdcv shellcheck simplescreenrecorder
-      sloccount speedtest-cli stalonetray sxiv syncthing transmission youtube-dl
-      ungoogled-chromium wget woof xclip xdg-user-dirs xorg.xbacklight xz zip
-      zoom-us
+
+      acpi checkbashisms brightnessctl dejavu_fonts dmenu fd file firefox gimp
+      hack-font hunspell hunspellDicts.en_US-large hunspellDicts.it_IT
+      hunspellDicts.ru_RU imagemagick iosevka ledger leiningen libnotify
+      libreoffice mkpasswd mpc_cli nload p7zip pass-otp perlPackages.JSONPP
+      pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync sdcv
+      shellcheck simplescreenrecorder sloccount speedtest-cli stalonetray sxiv
+      syncthing transmission ungoogled-chromium wget woof xclip xdg-user-dirs xz
+      youtube-dl zip zoom-us
 
       # mypkgs
+
       browser emacsEditor rimer scripts stumpwm ungoogledChromiumIncognito ytdl
+
     ];
 
     sessionPath = [ "${dir.config}/composer/vendor/bin" ];
@@ -177,6 +182,7 @@ in {
       XMODIFIERS = "ibus";
       XAUTHORITY = "\${XDG_RUNTIME_DIR}/Xauthority";
       SSB_HOME = "${dir.cache}/zoom";
+      LOCATE_PATH = "${dir.cache}/locatedb";
     };
 
     stateVersion = "21.03";
@@ -360,7 +366,34 @@ in {
   };
 
   systemd.user = {
+    timers = {
+      updatedb = {
+        Unit = {
+          Description = "Updabedb timer";
+        };
+        Timer = {
+          Unit = "updatedb.service";
+          OnCalendar = "02:15";
+        };
+        Install = {
+          WantedBy = [ "timers.target" ];
+        };
+      };
+    };
+
     services = {
+      updatedb = {
+        Unit = {
+          Description = "Updatedb - filesystem database";
+        };
+        Service = {
+          Environment = [ "PATH=${pkgs.gnused}/bin:${pkgs.coreutils}/bin" ];
+          ExecStart = "${pkgs.findutils}/bin/updatedb --output=${dir.cache}/locatedb";
+          IOSchedulingClass = "idle";
+          Type = "oneshot";
+        };
+      };
+
       pueue = {
         Unit = {
           Description = "Pueue Daemon - CLI process scheduler and manager";
@@ -393,6 +426,7 @@ in {
           WantedBy = [ "graphical-session.target" ];
         };
       };
+
       transmission = {
         Unit = {
           Description = "Transmission BitTorrent Daemon";
@@ -409,6 +443,7 @@ in {
           WantedBy = [ "graphical-session.target" ];
         };
       };
+
       xrdb = {
         Unit = {
           Description = "Load Xresources with xrdb";

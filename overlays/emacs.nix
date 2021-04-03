@@ -28,11 +28,7 @@ self: super: let
         rev = "dbb3a1a35fbd8fbfe9592e1529b649a99d015cd2";
         sha256 = "0zq1pn5lk57c7sdrqk1ccy05dm1h9vqbp77h74gpp73xmwj3avbh";
       };
-      packageRequires = [
-        eself.emacs
-        # (require 'tramp)
-        # (require 'files)
-      ];
+      packageRequires = [ eself.emacs ];
       meta = {
         homepage = "https://github.com/xFA25E/shell-pwd";
         license = super.lib.licenses.free;
@@ -155,10 +151,12 @@ self: super: let
 in {
   myEmacs = emacsWithPackages (epkgs: with epkgs; [
     # my
+
     cyrillic-dvorak-im fb2-mode mediainfo-mode pueue readelf-mode shell-pwd
     skempo torrent-mode youtube-comments
 
     # melpa
+
     ace-link apache-mode async avy bash-completion bicycle cargo cider
     clojure-mode consult diff-hl dired-rsync direnv dumb-jump edit-indirect
     eglot emmet-mode fd-dired flycheck flycheck-checkbashisms form-feed

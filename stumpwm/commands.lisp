@@ -39,23 +39,23 @@
 
 (defcommand brightness-controller (&optional args) ((:rest))
   (when args
-    (uiop:run-program (list* *xbacklight* (uiop:split-string args))))
+    (uiop:run-program (list* *brightnessctl* (uiop:split-string args))))
   (message "Brightness ~A~%~
-            [N]   -dec 1   [P]   -inc 1~%~
-            [n]   -dec 10  [p]   -inc 10~%~
-            [M-n] -dec 40  [M-p] -inc 40"
+            [N]   set 1%-   [P]   set +1%~%~
+            [n]   set 10%-  [p]   set +10%~%~
+            [M-n] set 40%-  [M-p] set +40%"
            (read-brightness-status)))
 
 (let ((timer nil))
   (define-interactive-keymap brightness-controller-interactive
       (:on-enter (lambda () (setf timer (run-with-timer 0.1 1 #'brightness-controller)))
        :on-exit (lambda () (cancel-timer timer)))
-    ((kbd "N") "brightness-controller -dec 1")
-    ((kbd "n") "brightness-controller -dec 10")
-    ((kbd "M-n") "brightness-controller -dec 40")
-    ((kbd "P") "brightness-controller -inc 1")
-    ((kbd "p") "brightness-controller -inc 10")
-    ((kbd "M-p") "brightness-controller -inc 40")))
+    ((kbd "N") "brightness-controller set 1%-")
+    ((kbd "n") "brightness-controller set 10%-")
+    ((kbd "M-n") "brightness-controller set 40%-")
+    ((kbd "P") "brightness-controller set +1%")
+    ((kbd "p") "brightness-controller set +10%")
+    ((kbd "M-p") "brightness-controller set +40%")))
 
 (defcommand alsa-controller (&optional args) ((:rest))
   (when args

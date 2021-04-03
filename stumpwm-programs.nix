@@ -6,7 +6,7 @@ pkgs: with pkgs; ''
   (setf *acpi* "${acpi}/bin/acpi")
   (setf *mpc* "${mpc_cli}/bin/mpc")
   (setf *notify-sound* "${scripts}/bin/notify_sound")
-  (setf *xbacklight* "${xorg.xbacklight}/bin/xbacklight")
+  (setf *brightnessctl* "${brightnessctl}/bin/brightnessctl")
   (setf *xdg-user-dir* "${xdg-user-dirs}/bin/xdg-user-dir")
   (setf *scrot* "${scrot}/bin/scrot")
   (setf *image-clipboard* "${scripts}/bin/image_clipboard")

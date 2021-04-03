@@ -7,7 +7,7 @@
 (defvar *mpc* "mpc")
 (defvar *notify-sound* "notify_sound")
 (defvar *notify-send* "notify-send")
-(defvar *xbacklight* "xbacklight")
+(defvar *brightnessctl* "brightnessctl")
 (defvar *xdg-user-dir* "xdg-user-dir")
 (defvar *scrot* "scrot")
 (defvar *image-clipboard* "image_clipboard")
