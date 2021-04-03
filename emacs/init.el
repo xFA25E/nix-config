@@ -50,46 +50,11 @@
 
 (define-key help-map "\M-f" 'list-faces-display)
 
-;; (load-theme 'leuven t)
-;; (load-theme 'acme t)
 (load-theme 'modus-operandi t)
 
 (set-face-attribute 'default nil :family "Iosevka" :height 170)
 (set-face-attribute 'mode-line nil :family "DejaVu Sans" :height 110)
 (set-face-attribute 'mode-line-inactive nil :family "DejaVu Sans" :height 110)
-(set-face-attribute 'fixed-pitch-serif nil :family "DejaVu Serif")
-(set-face-attribute 'header-line nil :inverse-video nil :family "Iosevka")
-
-(unless (custom-theme-enabled-p 'modus-operandi)
-  (with-eval-after-load 'man
-    (set-face-attribute 'Man-overstrike nil :inherit 'font-lock-variable-name-face :bold t)
-    (set-face-attribute 'Man-underline nil :inherit 'font-lock-negation-char-face :underline t)))
-
-(when (custom-theme-enabled-p 'acme)
-  (with-eval-after-load 'comint
-    (set-face-attribute 'comint-highlight-input nil :inherit 'diff-added)
-    (set-face-attribute 'comint-highlight-prompt nil :inherit 'diff-hl-reverted-hunk-highlight))
-  (with-eval-after-load 'isearch
-    (set-face-attribute 'isearch-fail nil :background "LightSalmon1")))
-
-(when (custom-theme-enabled-p 'leuven)
-  (with-eval-after-load 'comint
-    (set-face-attribute 'comint-highlight-input nil :inherit 'diff-added)
-    (set-face-attribute 'comint-highlight-prompt nil :inherit 'diff-hl-change))
-  (with-eval-after-load 'compile
-    (set-face-attribute 'compilation-info nil :foreground "deep sky blue")
-    (set-face-attribute 'compilation-mode-line-exit nil :foreground "lawn green"))
-  (with-eval-after-load 'mu4e
-    (set-face-attribute 'mu4e-context-face nil :foreground "orange")
-    (set-face-attribute 'mu4e-modeline-face nil :foreground "green"))
-  (with-eval-after-load 'org
-    (set-face-attribute 'org-list-dt nil :foreground "sky blue")))
-
-;;;;; OUTLINE
-
-;; outline
-(defun outline-show-after-jump ()
-  (when outline-minor-mode (outline-show-entry)))
 
 ;; outline-minor-faces
 (add-hook 'outline-minor-mode-hook 'outline-minor-faces-add-font-lock-keywords)
