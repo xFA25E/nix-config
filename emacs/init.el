@@ -1,6 +1,5 @@
 ;;; -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
-;; hooks and lists - try with-eval-after-load
 ;; add to custom: theme, faces, keys (manual talked about it)
 
 ;;; SETTINGS
@@ -20,6 +19,8 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 (setenv "PAGER" "cat")
+
+(server-start)
 
 ;;;; FACES
 
@@ -587,6 +588,9 @@
 
 ;;;; E-READER
 
+;; pdf-tools
+(pdf-loader-install t t)
+
 ;; nov
 (add-to-list 'auto-mode-alist (cons (rx ".epub" eos) 'nov-mode))
 
@@ -631,13 +635,3 @@
 ;;; Custom
 
 (load custom-file t)
-
-;;; After init lol
-
-(run-with-idle-timer
- 1 nil
- (lambda ()
-   (server-start)
-   (global-so-long-mode)
-   (pdf-loader-install t t)
-   (marginalia-mode)))

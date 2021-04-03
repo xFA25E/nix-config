@@ -112,6 +112,7 @@
  '(gdb-many-windows t)
  '(gdb-show-main t)
  '(geiser-repl-history-filename "/home/val/.cache/geiser/history")
+ '(global-so-long-mode t)
  '(grep-files-aliases
    '(("php" . "*.php *.phtml")
      ("all" . "* .[!.]* ..?*")
@@ -169,6 +170,7 @@
    '(diff-hl-magit-pre-refresh magit-maybe-save-repository-buffers))
  '(mail-user-agent 'mu4e-user-agent)
  '(marginalia-annotators '(marginalia-annotators-light marginalia-annotators-heavy))
+ '(marginalia-mode t)
  '(mediainfo-mode-open-method
    '("setsid" "-f" "mpv" "--force-window=yes" "--no-terminal" file-name))
  '(message-kill-buffer-on-exit t)
