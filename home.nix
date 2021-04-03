@@ -349,6 +349,12 @@ in {
       dataDir = "${dir.cache}/mpd";
       musicDirectory = dir.music;
       extraConfig = ''
+        audio_output {
+          type "pulse"
+          name "My Pulse Output"
+          mixer_type "software"
+        }
+
         volume_normalization "yes"
         filesystem_charset   "UTF-8"
       '';
