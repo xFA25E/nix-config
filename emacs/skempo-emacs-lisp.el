@@ -1,4 +1,4 @@
-;;; skempo-templates.el --- Skempo templates         -*- lexical-binding: t; eval: (progn (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t)); -*-
+;;; skempo-emacs-lisp.el --- Emacs lisp skempo templates -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
 ;; Copyright (C) 2021  Valeriy Litkovskyy
 
@@ -20,8 +20,6 @@
 
 ;;; Commentary:
 
-;; My skempo templates
-
 ;;; Code:
 
 (require 'skempo)
@@ -34,50 +32,11 @@
   "Return elisp file prefix without -mode.el."
   (string-trim-right (buffer-name) (rx (? "-mode") ".el" eos)))
 
-(defun skempo-nix-hash ()
-  "Return temporary hash with 52 ones."
-  (make-string 52 ?1))
-
-(skempo-define-tempo (vd :tag t :mode php-mode)
-  "echo '<pre>'; var_dump(" p "); echo '</pre>';")
-
-(skempo-define-tempo (github :tag t :mode nix-mode)
-  "fetchFromGitHub {" n>
-  "owner = \"" p "\";" n>
-  "repo = \"" p "\";" n>
-  "rev = \"" p "\";" n>
-  "sha256 = \"" p (skempo-nix-hash) "\";" n>
-  "}" p >)
-
-(skempo-define-tempo (url :tag t :mode nix-mode)
-  "fetchurl {" n>
-  "url = \"" p "\";" n>
-  "sha256 = \"" p (skempo-nix-hash) "\";" n>
-  "}" p >)
-
-(skempo-define-tempo (zip :tag t :mode nix-mode)
-  "fetchzip {" n>
-  "url = \"" p "\";" n>
-  "sha256 = \"" p (skempo-nix-hash) "\";" n>
-  "}" p >)
-
-(skempo-define-tempo (git :tag t :mode nix-mode)
-  "fetchGit {" n>
-  "url = \"" p "\";" n>
-  "rev = \"" p "\";" n>
-  "}" p >)
-
-(skempo-define-tempo (lambda :tag t :mode (emacs-lisp-mode lisp-mode))
+(skempo-define-tempo (lambda :tag t :mode emacs-lisp-mode)
   "(lambda (" p ") " n> r> ")")
 
-(skempo-define-tempo (let :tag t :mode (emacs-lisp-mode lisp-mode))
+(skempo-define-tempo (let :tag t :mode emacs-lisp-mode)
   "(let ((" p "))" n> r> ")")
-
-(skempo-define-tempo (defvar :tag t :mode lisp-mode)
-  "(defvar " p n> r> n> "\"" p "\")")
-
-(skempo-define-tempo (defun :tag t :mode lisp-mode)
-  "(defun " p " (" p ")" n> "\"" p "\"" n> r> ")")
 
 (skempo-define-tempo (defvar :tag t :mode emacs-lisp-mode)
   "(defvar " (skempo-elisp-namespace) "-" p n>
@@ -107,5 +66,5 @@
   "\"" p "\"" n>
   ":group '" (skempo-elisp-group) ")")
 
-(provide 'skempo-templates)
-;;; skempo-templates.el ends here
+(provide 'skempo-emacs-lisp)
+;;; skempo-emacs-lisp.el ends here

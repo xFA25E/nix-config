@@ -186,9 +186,19 @@ in {
   programs = {
     bash = {
       enable = true;
-      historyFile = "/dev/null";
-      historyFileSize = 0;
-      historySize = 0;
+      historyControl = [ "erasedups" "ignoredups" "ignorespace" ];
+      historyFile = "${dir.data}/bash_history";
+      historyIgnore = map (cmd: "${cmd}*") [
+        "awk" "bash" "cat" "cd" "chmod" "chown" "command" "cp" "cut" "dash" "dd"
+        "df" "dh" "du" "ebook-convert" "echo" "emacs" "env" "exit" "export" "fd"
+        "feh" "file" "find" "gawk" "gparted" "grep" "gzip" "hash" "host" "htop"
+        "id" "ln" "locate" "ls" "man" "mbsync" "millisleep" "mkdir" "mpv" "mv"
+        "notify-send" "ping" "pkill" "printf" "pwd" "pwgen" "python" "quit"
+        "read" "rg" "rimer" "rm" "rmdir" "rofi" "setsid" "sh" "sleep" "stow"
+        "strings" "strip" "studies_" "sxiv" "tail" "time" "timer" "top" "touch"
+        "tr" "uname" "uptime" "watch" "wc" "which" "woof" "xclip" "xz" "yay"
+        "youtube-dl" "ytdl"
+      ];
       initExtra = ''
         [ -n "$ENV" ] && . "$ENV"
       '';

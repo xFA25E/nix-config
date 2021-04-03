@@ -10,7 +10,6 @@
  '(apropos-sort-by-scores t)
  '(async-shell-command-buffer 'new-buffer)
  '(auth-sources '("~/.authinfo.gpg" "~/.netrc" "~/.authinfo"))
- '(auto-insert-mode t)
  '(auto-revert-avoid-polling t)
  '(auto-revert-remote-files t)
  '(auto-save-file-name-transforms '((".*" "/home/val/.cache/emacs/auto-saves/" t)))
@@ -44,7 +43,7 @@
  '(comint-buffer-maximum-size 1024)
  '(comint-input-ignoredups t)
  '(comint-input-ring-size 10000)
- '(comint-mode-hook '(smartparens-mode))
+ '(comint-mode-hook '(smartparens-mode comint-read-input-ring))
  '(comint-password-prompt-regexp
    "\\(^ *\\|\\( SMB\\|'s\\|Bad\\|CVS\\|Enter\\(?: \\(?:Auth\\|\\(?:sam\\|th\\)e\\)\\)?\\|Kerberos\\|LDAP\\|New\\|Old\\|PEM\\|Re\\(?:peat\\|type\\)\\|SUDO\\|UNIX\\|\\[sudo]\\|enter\\(?: \\(?:auth\\|\\(?:sam\\|th\\)e\\)\\)?\\|login\\|new\\|old\\) +.*\\)\\(?:\\(?:adgangskode\\|contrase\\(?:\\(?:ny\\|ñ\\)a\\)\\|geslo\\|h\\(?:\\(?:asł\\|esl\\)o\\)\\|iphasiwedi\\|jelszó\\|l\\(?:ozinka\\|ösenord\\)\\|m\\(?:ot de passe\\|ật khẩu\\)\\|p\\(?:a\\(?:rola\\|s\\(?:ahitza\\|s\\(?: phrase\\|code\\|ord\\|phrase\\|wor[dt]\\)\\|vorto\\)\\)\\|in\\)\\|s\\(?:alasana\\|enha\\|laptažodis\\)\\|wachtwoord\\|лозинка\\|пароль\\|ססמה\\|كلمة السر\\|गुप्तशब्द\\|शब्दकूट\\|গুপ্তশব্দ\\|পাসওয়ার্ড\\|ਪਾਸਵਰਡ\\|પાસવર્ડ\\|ପ୍ରବେଶ ସଙ୍କେତ\\|கடவுச்சொல்\\|సంకేతపదము\\|ಗುಪ್ತಪದ\\|അടയാളവാക്ക്\\|රහස්පදය\\|ពាក្យសម្ងាត់\\|パスワード\\|密[码碼]\\|암호\\)\\|Response\\)\\(?:\\(?:, try\\)? *again\\| (empty for no passphrase)\\| (again)\\)?\\(?: [[:alpha:]]+ .+\\)?[[:blank:]]*[:：៖][[:blank:]]*\\'\\|[Pp]assword \\'")
  '(compilation-always-kill t)
@@ -84,7 +83,7 @@
  '(eglot-sync-connect nil)
  '(eldoc-minor-mode-string "")
  '(emacs-lisp-mode-hook
-   '(skempo-mode smartparens-mode hs-minor-mode outline-minor-mode form-feed-mode diff-hl-mode flymake-mode))
+   '(skempo-mode hs-minor-mode outline-minor-mode form-feed-mode diff-hl-mode flymake-mode smartparens-mode))
  '(emmet-preview-default t)
  '(emmet-self-closing-tag-style "")
  '(enable-recursive-minibuffers t)
@@ -113,7 +112,6 @@
  '(gdb-many-windows t)
  '(gdb-show-main t)
  '(geiser-repl-history-filename "/home/val/.cache/geiser/history")
- '(global-so-long-mode t)
  '(grep-files-aliases
    '(("php" . "*.php *.phtml")
      ("all" . "* .[!.]* ..?*")
@@ -166,9 +164,11 @@
  '(lisp-mode-hook
    '(skempo-mode smartparens-mode form-feed-mode sly-editing-mode))
  '(magit-credential-cache-daemon-socket "/home/val/.cache/git/credential/socket")
+ '(magit-post-refresh-hook '(diff-hl-magit-post-refresh))
+ '(magit-pre-refresh-hook
+   '(diff-hl-magit-pre-refresh magit-maybe-save-repository-buffers))
  '(mail-user-agent 'mu4e-user-agent)
  '(marginalia-annotators '(marginalia-annotators-light marginalia-annotators-heavy))
- '(marginalia-mode t)
  '(mediainfo-mode-open-method
    '("setsid" "-f" "mpv" "--force-window=yes" "--no-terminal" file-name))
  '(message-kill-buffer-on-exit t)
@@ -296,20 +296,11 @@
  '(register-separator 43)
  '(rust-format-on-save t)
  '(safe-local-variable-values
-   '((eval progn
-           (add-hook 'after-save-hook
-                     (lambda nil
-                       (byte-recompile-file
-                        (buffer-file-name)))
-                     nil t))
-     (eval progn
-           (require 'leaf)
-           (setq imenu-generic-expression lisp-imenu-generic-expression)
-           (add-hook 'after-save-hook
-                     (lambda nil
-                       (byte-recompile-file
-                        (buffer-file-name)))
-                     nil t))))
+   '((eval add-hook 'after-save-hook
+           (lambda nil
+             (byte-recompile-file
+              (buffer-file-name)))
+           nil t)))
  '(save-place-file "/home/val/.cache/emacs/saveplace")
  '(save-place-limit 1000)
  '(save-place-mode t)
@@ -331,8 +322,7 @@
  '(sh-mode-hook '(sh-electric-here-document-mode smartparens-mode))
  '(shell-dynamic-complete-functions
    '(bash-completion-dynamic-complete comint-c-a-p-replace-by-expanded-history shell-environment-variable-completion shell-command-completion shell-c-a-p-replace-by-expanded-directory pcomplete-completions-at-point shell-filename-completion comint-filename-completion))
- '(shell-mode-hook
-   '(shell-extra-enable-history sudo-edit-set-header ansi-color-for-comint-mode-on))
+ '(shell-mode-hook '(shell-extra-enable-history ansi-color-for-comint-mode-on))
  '(shift-select-mode nil)
  '(shr-max-image-proportion 0.7)
  '(shr-use-fonts nil)
@@ -344,7 +334,6 @@
  '(sql-mode-hook '(sqlup-mode sql-indent-enable smartparens-mode))
  '(sql-mysql-options '("-A"))
  '(sql-sqlite-options '("-column" "-header" "-cmd" "PRAGMA foreign_keys = ON;"))
- '(sudo-edit-indicator-mode t)
  '(tab-width 4)
  '(text-mode-hook '(abbrev-mode text-mode-hook-identify))
  '(tramp-completion-reread-directory-timeout nil)

@@ -1,4 +1,4 @@
-;;; newsticker-extra.el --- Extra features for newsticker  -*- lexical-binding: t; eval: (progn (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t)); -*-
+;;; newsticker-extra.el --- Extra features for newsticker  -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
 ;; Copyright (C) 2021  Valeriy Litkovskyy
 

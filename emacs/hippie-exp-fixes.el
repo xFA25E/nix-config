@@ -1,4 +1,4 @@
-;;; hippie-exp-fixes.el --- Fixes for hippie-exp package  -*- lexical-binding: t; eval: (progn (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t)); -*-
+;;; hippie-exp-fixes.el --- Fixes for hippie-exp package  -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
 ;; Copyright (C) 2021  Valeriy Litkovskyy
 

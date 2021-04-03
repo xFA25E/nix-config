@@ -1,4 +1,4 @@
-;;; browse-url-multi.el --- Browse url multi-browser function  -*- lexical-binding: t; eval: (progn (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t)); -*-
+;;; browse-url-multi.el --- Browse url multi-browser function  -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
 ;; Copyright (C) 2021  Valeriy Litkovskyy
 

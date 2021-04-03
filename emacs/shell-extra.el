@@ -1,4 +1,4 @@
-;;; shell-extra.el --- Shell extra features          -*- lexical-binding: t; eval: (progn (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t)); -*-
+;;; shell-extra.el --- Shell extra features          -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
 ;; Copyright (C) 2021  Valeriy Litkovskyy
 
@@ -32,7 +32,7 @@
   :group 'shell)
 
 (defcustom shell-extra-history-filename
-  "/home/val/.local/share/emacs/comint/shell_history"
+  "/home/val/.local/share/bash_history"
   "Shell history file."
   :type 'file
   :group 'shell-extra)
@@ -47,32 +47,10 @@
     (insert (concat "cd " (shell-quote-argument (expand-file-name dir)))))
   (comint-send-input))
 
-(defun shell-extra-filter-history ()
-  "Filter shell history."
-  (with-temp-file shell-extra-history-filename
-    (insert-file-contents shell-extra-history-filename)
-    (flush-lines
-     (rx bol
-         (opt "sudo " (opt "-A "))
-         (or "awk" "bash" "cat" "cd" "chmod" "chown" "command" "cp" "cut" "dash"
-             "dd" "df" "dh" "du" "ebook-convert" "echo" "emacs" "env" "exit"
-             "export" "fd" "feh" "file" "find" "gawk" "gparted" "grep" "gzip"
-             "hash" "host" "htop" "id" "ln" "locate" "ls" "man" "mbsync"
-             "millisleep" "mkdir" "mpop" "mpv" "mv" "notify-send" "ping" "pkill"
-             "printf" "pwd" "pwgen" "python" "quit" "read" "rg" "rimer" "rm"
-             "rmdir" "rofi" "setsid" "sh" "sleep" "stow" "strings" "strip"
-             "studies_" "sxiv" "tail" "time" "timer" "top" "touch" "tr" "uname"
-             "uptime" "watch" "wc" "which" "woof" "xclip" "xz" "yay"
-             "youtube-dl" "ytdl"))
-     (point-min) (point-max))
-    (delete-duplicate-lines (point-min) (point-max))))
-
 (defun shell-extra-enable-history ()
   "Enable shell history.
 Set `comint-input-ring-file-name' and load input ring."
-  (setq-local comint-input-ring-file-name shell-extra-history-filename)
-  (comint-read-input-ring 'silent)
-  (add-hook 'kill-buffer-hook 'shell-extra-filter-history t t))
+  (setq-local comint-input-ring-file-name shell-extra-history-filename))
 
 (provide 'shell-extra)
 ;;; shell-extra.el ends here
