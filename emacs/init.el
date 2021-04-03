@@ -218,7 +218,7 @@
 (define-key ctl-x-map "K" 'kill-current-buffer)
 (define-key ctl-x-map "\C-r" 'overwrite-mode)
 (define-key ctl-x-map "\M-t" 'toggle-truncate-lines)
-(define-key mode-specific-map "o P" 'list-processes)
+(define-key mode-specific-map "oP" 'list-processes)
 
 ;; register
 (define-key ctl-x-r-map "v" 'view-register)
@@ -550,7 +550,6 @@
           (browse-url (eww-current-url))
         (browse-url url-at-point))))
   (define-key eww-mode-map "V" 'eww-browse-url-custom))
-
 
 ;;;; YO-HO
 
