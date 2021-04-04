@@ -2,148 +2,142 @@ self: super: let
   emacs-overlay = import (builtins.fetchTarball https://github.com/nix-community/emacs-overlay/archive/master.tar.gz) self super;
 
   overrides = eself: esuper: {
-    cyrillic-dvorak-im = esuper.trivialBuild {
+    cyrillic-dvorak-im = esuper.melpaBuild {
       pname = "cyrillic-dvorak-im";
       ename = "cyrillic-dvorak-im";
       version = "20191017.2111";
+      recipe = super.writeText "recipe" ''
+        (cyrillic-dvorak-im
+          :fetcher github
+          :repo "xFA25E/cyrillic-dvorak-im"
+          :commit "09edcbc420ebae3ec069df95a768f79e6edcc76f")
+      '';
       src = super.fetchFromGitHub {
         owner = "xFA25E";
         repo = "cyrillic-dvorak-im";
         rev = "09edcbc420ebae3ec069df95a768f79e6edcc76f";
         sha256 = "1h3y8xj3zcnhxim7g78snsx01a2p0mq0lhg954ly6snna8m3dzvf";
       };
-      packageRequires = [ eself.emacs ];
-      meta = {
-        homepage = "https://github.com/xFA25E/cyrillic-dvorak-im";
-        license = super.lib.licenses.free;
-      };
     };
-    shell-pwd = esuper.trivialBuild {
+    shell-pwd = esuper.melpaBuild {
       pname = "shell-pwd";
       ename = "shell-pwd";
-      version = "20210306.1333";
+      version = "20210306";
+      recipe = super.writeText "recipe" ''
+        (shell-pwd
+          :fetcher github
+          :repo "xFA25E/shell-pwd"
+          :commit "dbb3a1a35fbd8fbfe9592e1529b649a99d015cd2")
+      '';
       src = super.fetchFromGitHub {
         owner = "xFA25E";
         repo = "shell-pwd";
         rev = "dbb3a1a35fbd8fbfe9592e1529b649a99d015cd2";
         sha256 = "0zq1pn5lk57c7sdrqk1ccy05dm1h9vqbp77h74gpp73xmwj3avbh";
       };
-      packageRequires = [ eself.emacs ];
-      meta = {
-        homepage = "https://github.com/xFA25E/shell-pwd";
-        license = super.lib.licenses.free;
-      };
     };
-    skempo = esuper.trivialBuild {
+    skempo = esuper.melpaBuild {
       pname = "skempo";
       ename = "skempo";
-      version = "0.1.0";
+      version = "20210308";
+      recipe = super.writeText "recipe" ''
+        (skempo
+          :fetcher github
+          :repo "xFA25E/skempo"
+          :commit "ff11999e1a4cc034b399a5fa685da1f76f93d5b2")
+      '';
       src = super.fetchFromGitHub {
         owner = "xFA25E";
         repo = "skempo";
         rev = "ff11999e1a4cc034b399a5fa685da1f76f93d5b2";
         sha256 = "0qm3zsz5kivvxrrn26f6a5nsvmany9629jd3dz2k7ahz02mky6rr";
       };
-      packageRequires = [ eself.emacs eself.parent-mode ];
-      meta = {
-        homepage = "https://github.com/xFA25E/skempo";
-        license = super.lib.licenses.free;
-      };
+      packageRequires = [ eself.parent-mode ];
     };
-    readelf-mode = esuper.trivialBuild {
+    readelf-mode = esuper.melpaBuild {
       pname = "readelf-mode";
       ename = "readelf-mode";
-      version = "1.0.0";
+      version = "20201125";
+      recipe = super.writeText "recipe" ''
+        (readelf-mode
+          :fetcher github
+          :repo "sirikid/readelf-mode"
+          :commit "d43ec8e6c34b53c1d86157d5b380759a40076b53")
+      '';
       src = super.fetchFromGitHub {
         owner = "sirikid";
         repo = "readelf-mode";
-        rev = "1.0.0";
+        rev = "d43ec8e6c34b53c1d86157d5b380759a40076b53";
         sha256 = "05rsky6wvgpaidky2cs4xw0ma0j3z6zqdl3djnkp795rr1a9gi0n";
       };
-      packageRequires = [ eself.emacs ];
-      meta = {
-        homepage = "https://github.com/sirikid/readelf-mode";
-        license = super.lib.licenses.free;
-      };
     };
-    mediainfo-mode = esuper.trivialBuild {
+    mediainfo-mode = esuper.melpaBuild {
       pname = "mediainfo-mode";
       ename = "mediainfo-mode";
-      version = "0.2.0";
+      version = "20210203";
+      recipe = super.writeText "recipe" ''
+        (mediainfo-mode
+          :fetcher github
+          :repo "xFA25E/mediainfo-mode"
+          :commit "96aed2e3f0f5bd8959a71f983f5f87b12ec9057c")
+      '';
       src = super.fetchFromGitHub {
         owner = "xFA25E";
         repo = "mediainfo-mode";
         rev = "96aed2e3f0f5bd8959a71f983f5f87b12ec9057c";
         sha256 = "1gmmlvrlpwpsdn764l0lwhabhc6ilmiq264ln0x9w3vvrfxy1mvl";
       };
-      packageRequires = [ eself.emacs ];
-      meta = {
-        homepage = "https://github.com/xFA25E/mediainfo-mode";
-        license = super.lib.licenses.free;
-      };
     };
-    youtube-comments = esuper.trivialBuild {
+    youtube-comments = esuper.melpaBuild {
       pname = "youtube-comments";
       ename = "youtube-comments";
-      version = "20210222.2247";
+      version = "20210222";
+      recipe = super.writeText "recipe" ''
+        (youtube-comments
+          :fetcher github
+          :repo "xFA25E/youtube-comments"
+          :commit "621f9e9677241c06bb02a1b7eee46541b2d9c2c2")
+      '';
       src = super.fetchFromGitHub {
         owner = "xFA25E";
         repo = "youtube-comments";
         rev = "621f9e9677241c06bb02a1b7eee46541b2d9c2c2";
         sha256 = "1h4rn7mpj9y22dq8a13rxzm3bbgh4qap4pwvc9mnr7bl6adc94pi";
       };
-      packageRequires = [ eself.emacs ];
-      meta = {
-        homepage = "https://github.com/xFA25E/youtube-comments";
-        license = super.lib.licenses.free;
-      };
     };
-    pueue = esuper.trivialBuild {
+    pueue = esuper.melpaBuild {
       pname = "pueue";
       ename = "pueue";
-      version = "0.1.0";
+      version = "20210311";
+      recipe = super.writeText "recipe" ''
+        (pueue
+          :fetcher github
+          :repo "xFA25E/pueue"
+          :commit "a4467da565833e83c650740719d1c51fba6658eb")
+      '';
       src = super.fetchFromGitHub {
         owner = "xFA25E";
         repo = "pueue";
         rev = "a4467da565833e83c650740719d1c51fba6658eb";
         sha256 = "1k68mnxbsc8k450y0yfnan2vqa86lrb176mxv4pvqfkz4icpxyqf";
       };
-      packageRequires = [ eself.emacs eself.bui ];
-      meta = {
-        homepage = "https://github.com/xFA25E/pueue";
-        license = super.lib.licenses.free;
-      };
+      packageRequires = [ eself.bui ];
     };
-    torrent-mode = esuper.trivialBuild {
+    torrent-mode = esuper.melpaBuild {
       pname = "torrent-mode";
       ename = "torrent-mode";
-      version = "20201109.910";
+      version = "20201109";
+      recipe = super.writeText "recipe" ''
+        (torrent-mode
+          :fetcher github
+          :repo "xFA25E/torrent-mode"
+          :commit "211f4f6ed8759e3817c636a39b1b26e40375aad9")
+      '';
       src = super.fetchFromGitHub {
         owner = "xFA25E";
         repo = "torrent-mode";
         rev = "211f4f6ed8759e3817c636a39b1b26e40375aad9";
         sha256 = "1m5q9zdcgx7kvaybm6jgn0p5sqkjdrbrqqfhcnywfirh146xi2hx";
-      };
-      packageRequires = [ eself.emacs ];
-      meta = {
-        homepage = "https://github.com/xFA25E/torrent-mode";
-        license = super.lib.licenses.free;
-      };
-    };
-    fb2-mode = esuper.trivialBuild {
-      pname = "fb2-mode";
-      ename = "fb2-mode";
-      version = "20201109.910";
-      src = super.fetchFromGitHub {
-        owner = "spline1986";
-        repo = "fb2-mode";
-        rev = "edd56bfa3966eb6f7a9a9ed513c6463907122b3d";
-        sha256 = "0c8vrljm566pks14bi4zaw3qpwpl27052gq1rm1zwk4qa23cb2mp";
-      };
-      packageRequires = [ eself.emacs ];
-      meta = {
-        homepage = "https://github.com/spline1986/fb2-mode";
-        license = super.lib.licenses.free;
       };
     };
   };
@@ -152,19 +146,21 @@ in {
   myEmacs = emacsWithPackages (epkgs: with epkgs; [
     # my
 
-    cyrillic-dvorak-im fb2-mode mediainfo-mode pueue readelf-mode shell-pwd
-    skempo torrent-mode youtube-comments
+    cyrillic-dvorak-im mediainfo-mode pueue readelf-mode shell-pwd skempo
+    torrent-mode youtube-comments
 
     # melpa
 
     ace-link apache-mode async avy bash-completion bicycle cargo cider
-    clojure-mode consult diff-hl dired-rsync direnv dumb-jump edit-indirect
-    eglot emmet-mode fd-dired flycheck flycheck-checkbashisms form-feed
-    format-all geiser gitconfig-mode gitignore-mode htmlize insert-char-preview
-    ipretty json-mode ledger-mode magit marginalia mingus nix-mode nov orderless
-    org-mime outline-minor-faces pdf-tools php-mode restclient reverse-im rg
-    robots-txt-mode rust-mode sdcv sly sly-asdf sly-quicklisp smartparens
-    sqlup-mode sudo-edit transmission vlf web-mode wgrep
+    clojure-mode consult diff-hl dired-rsync direnv dumb-jump
+    edit-indirect eglot emmet-mode fd-dired flycheck
+    flycheck-checkbashisms form-feed format-all geiser gitconfig-mode
+    gitignore-mode htmlize insert-char-preview ipretty json-mode
+    ledger-mode magit marginalia mingus nix-mode nov orderless
+    org-mime outline-minor-faces pdf-tools php-mode restclient
+    reverse-im rg robots-txt-mode rust-mode sdcv sly sly-asdf
+    sly-quicklisp smartparens sqlup-mode sudo-edit transmission vlf
+    web-mode wgrep
 
     # elpa
     csv-mode modus-themes rainbow-mode sql-indent
@@ -176,6 +172,4 @@ in {
   emacsEditor = super.writeShellScriptBin "emacseditor" ''
     "${self.myEmacs}/bin/emacsclient" --create-frame --alternate-editor=${self.myEmacs}/bin/emacs "$@"
   '';
-
-  emacsOverlay = emacs-overlay;
 }

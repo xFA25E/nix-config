@@ -2,7 +2,6 @@
 
 ;;; SETTINGS
 
-(defvar fb2-replace-hard-space t)
 (defvar gamegrid-user-score-file-directory "/home/val/.cache/emacs/games/")
 (defvar sly-lisp-implementations
   '((sbcl ("sbcl"))
@@ -434,7 +433,6 @@
   (load "/home/val/.config/emacs/shell-extra.el")
   (define-key shell-mode-map "\C-c\M-d" 'shell-extra-change-directory))
 
-(autoload 'shell-pwd-shell "shell-pwd" nil t)
 (define-key mode-specific-map "xS" 'shell-pwd-shell)
 
 ;;; TEMPLATES
@@ -443,7 +441,6 @@
 
 ;;;; SKEMPO
 
-(autoload 'skempo-mode "skempo" nil t)
 (add-hook 'nix-mode-hook 'skempo-mode)
 (with-eval-after-load 'skempo
   (define-key skempo-mode-map "\C-z" 'skempo-complete-tag-or-call-on-region)
@@ -515,7 +512,6 @@
 
 ;;;; MEDIAINFO-MODE
 
-(autoload 'mediainfo-mode--file-handler "mediainfo-mode" nil t)
 (add-to-list 'auto-mode-alist
              (cons (rx "." (or "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob" "wmv" "aiff" "wav" "ogv" "flv") eos)
                    'mediainfo-mode))
@@ -525,17 +521,7 @@
                        eos)
                    'mediainfo-mode--file-handler))
 
-;;;; YOUTUBE-COMMENTS
-
-(autoload 'youtube-comments "youtube-comments" nil t)
-
-;;;; PROCESSES
-
-;;;;; PUEUE
-
-(autoload 'pueue "pueue" nil t)
-
-;;;;; PROCED
+;;;; PROCED
 
 (define-key mode-specific-map "op" 'proced)
 
@@ -573,7 +559,6 @@
 
 ;;;;; TORRENT-MODE
 
-(autoload 'torrent-mode "torrent-mode" nil t)
 (add-to-list 'auto-mode-alist (cons (rx ".torrent" eos) 'torrent-mode))
 
 ;;;; NEWSTICKER
