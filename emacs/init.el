@@ -1,5 +1,8 @@
 ;;; -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
+;; fix loading new version of project by bringing it at the beginning
+(push (cl-find "project" load-path :test 'string-match) load-path)
+
 ;;; SETTINGS
 
 (defvar gamegrid-user-score-file-directory "/home/val/.cache/emacs/games/")
@@ -26,8 +29,6 @@
 (add-hook 'dired-mode-hook 'hl-line-mode)
 (add-hook 'csv-mode-hook 'hl-line-mode)
 (add-hook 'grep-mode-hook 'hl-line-mode)
-(add-hook 'mingus-browse-hook 'hl-line-mode)
-(add-hook 'mingus-playlist-hooks 'hl-line-mode)
 (add-hook 'tar-mode-hook 'hl-line-mode)
 (add-hook 'transmission-files-mode-hook 'hl-line-mode)
 (add-hook 'transmission-mode-hook 'hl-line-mode)
@@ -245,6 +246,7 @@
 (autoload 'sp-forward-slurp-sexp "smartparens" nil t)
 (autoload 'sp-rewrap-sexp "smartparens" nil t)
 (autoload 'sp-unwrap-sexp "smartparens" nil t)
+
 (define-key global-map (eval-when-compile (kbd "C-(")) 'sp-backward-slurp-sexp)
 (define-key global-map (eval-when-compile (kbd "C-)")) 'sp-forward-slurp-sexp)
 (define-key global-map (eval-when-compile (kbd "C-M-(")) 'sp-backward-barf-sexp)
@@ -253,13 +255,14 @@
 (define-key global-map "\M-[" 'sp-unwrap-sexp)
 (define-key global-map "\M-]" 'sp-rewrap-sexp)
 
+(define-key smartparens-mode-map "\C-\M-u" 'sp-backward-up-sexp)
+(define-key smartparens-mode-map "\C-\M-d" 'sp-down-sexp)
+(define-key smartparens-mode-map "\C-\M-t" 'sp-transpose-sexp)
+(define-key smartparens-mode-map "\C-\M-k" 'sp-kill-sexp)
+(define-key smartparens-mode-map "\M-d" 'sp-kill-word)
+(define-key smartparens-mode-map "\C-w" 'sp-kill-region-dwim)
+
 (with-eval-after-load 'smartparens
-  (define-key smartparens-mode-map "\C-\M-u" 'sp-backward-up-sexp)
-  (define-key smartparens-mode-map "\C-\M-d" 'sp-down-sexp)
-  (define-key smartparens-mode-map "\C-\M-t" 'sp-transpose-sexp)
-  (define-key smartparens-mode-map "\C-\M-k" 'sp-kill-sexp)
-  (define-key smartparens-mode-map "\M-d" 'sp-kill-word)
-  (define-key smartparens-mode-map "\C-w" 'sp-kill-region-dwim)
   (require 'smartparens-config))
 
 ;;;; CONF
@@ -336,10 +339,8 @@
 (define-key goto-map "i" 'consult-imenu)
 (define-key goto-map "E" 'consult-compile-error)
 (define-key goto-map "!" 'consult-flymake)
-(with-eval-after-load 'kmacro
-  (define-key kmacro-keymap "c" 'consult-kmacro))
-(with-eval-after-load 'project
-  (define-key project-prefix-map "i" 'consult-project-imenu))
+(define-key project-prefix-map "i" 'consult-project-imenu)
+(define-key kmacro-keymap "c" 'consult-kmacro)
 
 ;;;;; ORDERLESS
 
@@ -507,8 +508,7 @@
 ;;;; MAGIT
 
 (define-key ctl-x-map "pm" 'magit-project-status)
-(with-eval-after-load 'project
-  (define-key project-prefix-map "m" 'magit-project-status))
+(define-key project-prefix-map "m" 'magit-project-status)
 
 ;;;; MEDIAINFO-MODE
 
@@ -570,16 +570,9 @@
   (load "/home/val/.config/emacs/newsticker-extra.el")
   (define-key newsticker-treeview-mode-map "w" 'newsticker-extra-treeview-copy-link))
 
-;;;; MINGUS
+;;;; MPC
 
-(autoload 'mingus-extra-find-and-add-file "/home/val/.config/emacs/mingus-extra.el" nil t)
-(autoload 'mingus-dired-add "mingus" nil t)
-(autoload 'mingus-dired-add-and-play "mingus" nil t)
-(define-key mode-specific-map "os" 'mingus)
-(define-key mode-specific-map "oS" 'mingus-extra-find-and-add-file)
-(with-eval-after-load 'dired
-  (define-key dired-mode-map " " 'mingus-dired-add)
-  (define-key dired-mode-map (eval-when-compile (kbd "S-SPC")) 'mingus-dired-add-and-play))
+(define-key mode-specific-map "os" 'simple-mpc)
 
 ;;;; E-READER
 

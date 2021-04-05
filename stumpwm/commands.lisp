@@ -1,22 +1,14 @@
 (in-package :stumpwm)
 
-(defcommand emacs () () (run-or-raise *emacs* '(:class "Emacs")))
-(defcommand firefox () () (run-or-raise *firefox* '(:class "Firefox")))
-(defcommand qutebrowser () () (run-or-raise *qutebrowser* '(:class "qutebrowser")))
-(defcommand chromium-incognito () () (run-or-raise *chromium-incognito* '(:class "Chromium-browser")))
-(defcommand telegram-desktop () () (run-or-raise *telegram-desktop* '(:class "TelegramDesktop")))
-
-
-
 (defcommand mpd-controller (&optional args) ((:rest))
   (when args
-    (uiop:run-program (list* *mpc* "-q" (uiop:split-string args))))
+    (uiop:run-program (list* "mpc" "-q" (uiop:split-string args))))
   (message "~A~%~
             [<] prev    [N] volume -1  [n] volume -10  [f] seek +00:00:10~%~
             [>] next    [P] volume +1  [p] volume +10  [b] seek -00:00:10~%~
             [t] toggle  [r] repeat     [z] random~%~
             [.] single  [c] consume    [Z] shuffle"
-           (uiop:run-program `(,*mpc*) :output :string)))
+           (uiop:run-program '("mpc") :output :string)))
 
 (let ((timer nil))
   (define-interactive-keymap mpd-controller-interactive
@@ -39,7 +31,7 @@
 
 (defcommand brightness-controller (&optional args) ((:rest))
   (when args
-    (uiop:run-program (list* *brightnessctl* (uiop:split-string args))))
+    (uiop:run-program (list* "brightnessctl" (uiop:split-string args))))
   (message "Brightness ~A~%~
             [N]   set 1%-   [P]   set +1%~%~
             [n]   set 10%-  [p]   set +10%~%~
@@ -59,7 +51,7 @@
 
 (defcommand alsa-controller (&optional args) ((:rest))
   (when args
-    (uiop:run-program (list* *amixer* (uiop:split-string args))))
+    (uiop:run-program (list* "amixer" (uiop:split-string args))))
   (multiple-value-bind (value state) (read-alsa-volume-status)
     (message "Alsa-Volume ~A ~A~%~
               [N] 1%-     [P] 1%+~%~
@@ -79,13 +71,12 @@
 
 (defcommand screenshot (name selectp)
     ((:string "File name (w/o ext): ") (:y-or-n "Select? "))
-  (let* ((pic-dir (uiop:run-program `(,*xdg-user-dir* "PICTURES") :output '(:string :stripped t)))
+  (let* ((pic-dir (uiop:run-program '("xdg-user-dir" "PICTURES") :output '(:string :stripped t)))
          (directory (uiop:subpathname* pic-dir "screenshots/"))
          (file-name (make-pathname :directory (pathname-directory directory) :name name :type "png")))
     (ensure-directories-exist file-name)
-    (uiop:launch-program (list* *scrot* "--overwrite" "--delay" "2"
-                                "--exec" (format nil "~A Scrot 'Done Screenshot'; ~A $f"
-                                                 *notify-send* *image-clipboard*)
+    (uiop:launch-program (list* "scrot" "--overwrite" "--delay" "2"
+                                "--exec" "notify-send Scrot 'Done Screenshot'; image_clipboard $f"
                                 (namestring file-name)
                                 (when selectp '("--select"))))))
 
@@ -102,7 +93,7 @@
 
 (defcommand show-hardware () ()
   (update-battery-status-variables)
-  (let ((output (uiop:run-program `(,*df* "--si" "--output=avail,target") :output :string))
+  (let ((output (uiop:run-program '("df" "--si" "--output=avail,target") :output :string))
         (max-length 0)
         (partitions nil))
 

@@ -1,7 +1,7 @@
 (in-package :stumpwm)
 
 (defun read-battery-status ()
-  (let ((output (uiop:run-program `(,*acpi* "--battery") :output '(:string :stripped t))))
+  (let ((output (uiop:run-program '("acpi" "--battery") :output '(:string :stripped t))))
     (ppcre:register-groups-bind (state percentage time)
         ("[^:]+: ([^,]+), ([^%]+)%(?:, (.*?))?" output :sharedp t)
       (values percentage state time))))
@@ -22,7 +22,7 @@
       (values volume state))))
 
 (defun read-mpd-volume-status ()
-  (let ((output (uiop:run-program `(,*mpc* "-q" "volume") :output :string)))
+  (let ((output (uiop:run-program '("mpc" "-q" "volume") :output :string)))
     (parse-integer output :start 8 :junk-allowed t)))
 
 
@@ -46,7 +46,7 @@
       (unless chargingp
         (message "BATTERY: ~D ~A ~A" *battery-percentage* *battery-state* *battery-time*))
       (when criticalp
-        (uiop:launch-program `(,*notify-sound*))))))
+        (uiop:launch-program '("notify_sound"))))))
 
 (defun notify-date-time ()
   (when (zerop (rem (nth-value 1 (get-decoded-time)) 30))

@@ -183,11 +183,6 @@
  '(message-send-mail-function 'message-send-mail-with-sendmail)
  '(message-subject-re-regexp
    "^[[:blank:]]*\\(?:\\(?:R\\(?:is\\|[Ee]\\)?\\)\\(?:\\[[[:digit:]]*]\\)* ?:[[:blank:]]*\\)*")
- '(mingus-mode-line-separator "|")
- '(mingus-mode-line-string-max 120)
- '(mingus-mpd-config-file "/home/val/.config/mpd/mpd.conf")
- '(mingus-seek-amount 5)
- '(mingus-use-mouse-p nil)
  '(minibuffer-depth-indicate-mode t)
  '(minibuffer-eldef-shorten-default t)
  '(minibuffer-electric-default-mode t)

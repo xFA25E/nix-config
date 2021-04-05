@@ -1,6 +1,6 @@
 (in-package :stumpwm)
 
-(defvar *timer-updater* (or (getenv "RIMER_CALLBACK") *rimer-callback*))
+(defvar *timer-updater* (or (getenv "RIMER_CALLBACK") "rimer_callback"))
 
 (defun parse-duration (duration)
   (ppcre:register-groups-bind (till hours minutes)
@@ -54,7 +54,7 @@
 (defun get-rimer-report (&optional (allowed-states '(:running :paused :halted)))
   (delete-if-not
    (lambda (timer) (member (nth 3 timer) allowed-states))
-   (parse-rimer-report (uiop:run-program `(,*rimer* "report" "-j") :output :string))))
+   (parse-rimer-report (uiop:run-program '("rimer" "report" "-j") :output :string))))
 
 (let ((last-name nil))
   (define-stumpwm-type :rimer-name (input prompt)
@@ -99,29 +99,29 @@
      (:rimer-duration "Countdown duration ([[t]H:]M): "))
   (let ((dur (write-to-string duration)))
     (show-rimer-output
-     (uiop:run-program `(,*rimer* "add" "--name" ,name "--duration" ,dur "--step" ,dur)
+     (uiop:run-program `("rimer" "add" "--name" ,name "--duration" ,dur "--step" ,dur)
       :output :string))))
 
 (defcommand add-rimer-stopwatch (name) ((:rimer-name "Stopwatch name: "))
   (let ((dur (write-to-string (1- (expt 2 64)))))
     (show-rimer-output
-     (uiop:run-program `(,*rimer* "add" "--name" ,name "--duration" ,dur "--step" "3600")
+     (uiop:run-program `("rimer" "add" "--name" ,name "--duration" ,dur "--step" "3600")
       :output :string))))
 
 (defcommand pause-rimer-timer (timer) ((:rimer-timer-running "Running timer: "))
   (show-rimer-output
-   (uiop:run-program `(,*rimer* "pause" "--name" ,timer) :output :string)))
+   (uiop:run-program `("rimer" "pause" "--name" ,timer) :output :string)))
 
 (defcommand resume-rimer-timer (timer) ((:rimer-timer-paused "Paused timer: "))
   (show-rimer-output
-   (uiop:run-program `(,*rimer* "resume" "--name" ,timer) :output :string)))
+   (uiop:run-program `("rimer" "resume" "--name" ,timer) :output :string)))
 
 (defcommand report-rimer () ()
   (show-rimer-output (format-report (get-rimer-report))))
 
 (defcommand halt-rimer-timer (timer) ((:rimer-timer "Timer: "))
   (show-rimer-output
-   (uiop:run-program `(,*rimer* "halt" "--name" ,timer) :output :string)))
+   (uiop:run-program `("rimer" "halt" "--name" ,timer) :output :string)))
 
 (defcommand menu-rimer () ()
   (let ((menu '(("countdown" :countdown) ("stopwatch" :stopwatch)
