@@ -436,9 +436,10 @@
 (defvar shell-mode-map)
 (with-eval-after-load 'shell
   (load "/home/val/.config/emacs/shell-extra.el")
-  (define-key shell-mode-map "\C-c\M-d" 'shell-extra-change-directory))
+  (define-key shell-mode-map "\C-c\M-d" 'shell-extra-change-directory)
+  (define-key mode-specific-map "xS" 'shell-extra-list-buffers))
 
-(define-key mode-specific-map "xS" 'shell-pwd-shell)
+(define-key mode-specific-map "xs" 'shell-pwd-shell)
 
 ;;; TEMPLATES
 
@@ -492,18 +493,6 @@
 ;;;; IBUFFER
 
 (define-key ctl-x-map "\C-b" 'ibuffer-jump)
-(defvar ibuffer-use-header-line)
-(declare-function ibuffer-auto-mode "ibuffer")
-(declare-function ibuffer-clear-filter-groups "ibuffer")
-(defun shell-list-buffers ()
-  (interactive)
-  (let ((buffer-name "*Shell buffers*"))
-    (ibuffer t buffer-name `((mode . shell-mode)))
-    (with-current-buffer buffer-name
-      (ibuffer-auto-mode)
-      (set (make-local-variable 'ibuffer-use-header-line) nil)
-      (ibuffer-clear-filter-groups))))
-(define-key mode-specific-map "xs" 'shell-list-buffers)
 
 ;;;; MAGIT
 

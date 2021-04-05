@@ -26,6 +26,8 @@
 ;;; Code:
 
 (require 'shell)
+(require 'ibuffer)
+(require 'cl-macs)
 
 (defgroup shell-extra nil
   "Extra shell features."
@@ -51,6 +53,25 @@
   "Enable shell history.
 Set `comint-input-ring-file-name' and load input ring."
   (setq-local comint-input-ring-file-name shell-extra-history-filename))
+
+(defun shell-extra-count-shell-buffers ()
+  "Count shell buffers."
+  (cl-loop
+   for buffer being the buffers
+   count (provided-mode-derived-p
+          (buffer-local-value 'major-mode buffer) 'shell-mode)))
+
+(defun shell-extra-list-buffers ()
+  "Open shell buffers in ibuffer."
+  (interactive)
+  (if (zerop (shell-extra-count-shell-buffers))
+      (message "No shell buffers!")
+    (let ((buffer-name "*Shell buffers*"))
+      (ibuffer t buffer-name `((mode . shell-mode)))
+      (with-current-buffer buffer-name
+        (set (make-local-variable 'ibuffer-use-header-line) nil)
+        (ibuffer-auto-mode)
+        (ibuffer-clear-filter-groups)))))
 
 (provide 'shell-extra)
 ;;; shell-extra.el ends here
