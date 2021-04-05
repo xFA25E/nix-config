@@ -315,6 +315,10 @@
 
 ;;; CORRECTNESS
 
+;;;; FLYSPELL
+
+(add-hook 'org-mode-hook 'flyspell-mode)
+
 ;;;; FLYCHECK-CHECKBASHISMS
 
 (with-eval-after-load 'flycheck
@@ -463,10 +467,6 @@
 
 ;;; APPLICATIONS
 
-;;;; FLYSPELL
-
-(add-hook 'org-mode-hook 'flyspell-mode)
-
 ;;;; SUDO-EDIT
 
 (with-eval-after-load 'sudo-edit
@@ -510,17 +510,6 @@
 (define-key ctl-x-map "pm" 'magit-project-status)
 (define-key project-prefix-map "m" 'magit-project-status)
 
-;;;; MEDIAINFO-MODE
-
-(add-to-list 'auto-mode-alist
-             (cons (rx "." (or "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob" "wmv" "aiff" "wav" "ogv" "flv") eos)
-                   'mediainfo-mode))
-(add-to-list 'file-name-handler-alist
-             (cons (rx "." (or "flac" "m4a" "mp3" "ogg" "opus" "webm" "mkv" "mp4" "avi" "mpg" "mov" "3gp" "vob" "wmv" "aiff" "wav" "ogv" "flv"
-                               "FLAC" "M4A" "MP3" "OGG" "OPUS" "WEBM" "MKV" "MP4" "AVI" "MPG" "MOV" "3GP" "VOB" "WMV" "AIFF" "WAV" "OGV" "FLV")
-                       eos)
-                   'mediainfo-mode--file-handler))
-
 ;;;; PROCED
 
 (define-key mode-specific-map "op" 'proced)
@@ -548,18 +537,12 @@
         (browse-url url-at-point))))
   (define-key eww-mode-map "V" 'eww-browse-url-custom))
 
-;;;; YO-HO
-
-;;;;; TRANSMISSION
+;;;; TRANSMISSION
 
 (defvar transmission-mode-map)
 (define-key mode-specific-map "or" 'transmission)
 (with-eval-after-load 'transmission
   (define-key transmission-mode-map "M" 'transmission-move))
-
-;;;;; TORRENT-MODE
-
-(add-to-list 'auto-mode-alist (cons (rx ".torrent" eos) 'torrent-mode))
 
 ;;;; NEWSTICKER
 

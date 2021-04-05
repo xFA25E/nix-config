@@ -79,13 +79,13 @@ self: super: let
         (mediainfo-mode
           :fetcher github
           :repo "xFA25E/mediainfo-mode"
-          :commit "96aed2e3f0f5bd8959a71f983f5f87b12ec9057c")
+          :commit "b2793ae0f5f8029d296544715e92326bada463ae")
       '';
       src = super.fetchFromGitHub {
         owner = "xFA25E";
         repo = "mediainfo-mode";
-        rev = "96aed2e3f0f5bd8959a71f983f5f87b12ec9057c";
-        sha256 = "1gmmlvrlpwpsdn764l0lwhabhc6ilmiq264ln0x9w3vvrfxy1mvl";
+        rev = "b2793ae0f5f8029d296544715e92326bada463ae";
+        sha256 = "1420n3vfjpby3cd6hbzdxvirk3kfik0hdpivgddcdgln6dwji95m";
       };
     };
     youtube-comments = esuper.melpaBuild {
@@ -131,13 +131,13 @@ self: super: let
         (torrent-mode
           :fetcher github
           :repo "xFA25E/torrent-mode"
-          :commit "211f4f6ed8759e3817c636a39b1b26e40375aad9")
+          :commit "f90ec549ac307e8222f9a30a8e0fd5c6115142f4")
       '';
       src = super.fetchFromGitHub {
         owner = "xFA25E";
         repo = "torrent-mode";
-        rev = "211f4f6ed8759e3817c636a39b1b26e40375aad9";
-        sha256 = "1m5q9zdcgx7kvaybm6jgn0p5sqkjdrbrqqfhcnywfirh146xi2hx";
+        rev = "f90ec549ac307e8222f9a30a8e0fd5c6115142f4";
+        sha256 = "112cyrpi741h2rjyg9w8a1kj4yd3xbr4vjigjgwc19fbnnckhb99";
       };
     };
 

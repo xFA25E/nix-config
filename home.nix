@@ -132,14 +132,15 @@ in {
     packages = with pkgs; [
       # nixpkgs
 
-      acpi alsaUtils checkbashisms brightnessctl dejavu_fonts dmenu fd file
-      firefox gimp hack-font hunspell hunspellDicts.en_US-large
+      acpi alsaUtils checkbashisms brightnessctl dejavu_fonts dmenu fd ffmpeg
+      file firefox gimp hack-font hunspell hunspellDicts.en_US-large
       hunspellDicts.it_IT hunspellDicts.ru_RU imagemagick iosevka ledger
-      leiningen libnotify libreoffice mkpasswd mpc_cli nload p7zip pass-otp
-      perlPackages.JSONPP pinentry pueue pulsemixer pwgen qrencode qtox ripgrep
-      rsync scrot sdcv shellcheck simplescreenrecorder sloccount speedtest-cli
-      stalonetray sxiv syncthing tdesktop transmission ungoogled-chromium wget
-      woof xclip xdg-user-dirs xterm xz youtube-dl zip zoom-us unzip
+      leiningen libnotify libreoffice mediainfo mkpasswd mpc_cli nload p7zip
+      pass-otp perlPackages.JSONPP pinentry pueue pulsemixer pwgen qrencode qtox
+      ripgrep rsync scrot sdcv shellcheck simplescreenrecorder sloccount
+      speedtest-cli stalonetray sxiv syncthing tdesktop transmission
+      ungoogled-chromium wget woof xclip xdg-user-dirs xterm xz youtube-dl zip
+      zoom-us unzip
 
       # mypkgs
 
