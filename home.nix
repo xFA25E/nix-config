@@ -132,15 +132,14 @@ in {
     packages = with pkgs; [
       # nixpkgs
 
-      acpi alsaUtils checkbashisms brightnessctl dejavu_fonts dmenu fd ffmpeg
-      file firefox gimp hack-font hunspell hunspellDicts.en_US-large
-      hunspellDicts.it_IT hunspellDicts.ru_RU imagemagick iosevka ledger
-      leiningen libnotify libreoffice mediainfo mkpasswd mpc_cli nload p7zip
-      pass-otp perlPackages.JSONPP pinentry pueue pulsemixer pwgen qrencode qtox
-      ripgrep rsync scrot sdcv shellcheck simplescreenrecorder sloccount
-      speedtest-cli stalonetray sxiv syncthing tdesktop transmission
-      ungoogled-chromium wget woof xclip xdg-user-dirs xterm xz youtube-dl zip
-      zoom-us unzip
+      acpi alsaUtils checkbashisms brightnessctl dmenu fd ffmpeg file firefox
+      gimp hunspell hunspellDicts.en_US-large hunspellDicts.it_IT
+      hunspellDicts.ru_RU imagemagick ledger leiningen libnotify libreoffice
+      mediainfo mkpasswd mpc_cli nload p7zip pass-otp perlPackages.JSONPP
+      pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync scrot sdcv
+      shellcheck simplescreenrecorder sloccount speedtest-cli stalonetray sxiv
+      syncthing tdesktop transmission ungoogled-chromium wget woof xclip
+      xdg-user-dirs xterm xz youtube-dl zip zoom-us unzip
 
       # mypkgs
 
@@ -304,7 +303,7 @@ in {
           frame_width = 3;
           frame_color = colors.base04;
           separator_color = "frame";
-          font = "Iosevka 18";
+          font = "monospace 15";
           markup = "full";
           word_wrap = true;
         };
@@ -607,6 +606,9 @@ in {
 
   xsession = {
     enable = true;
+    initExtra = ''
+      xset +fp ${pkgs.terminus_font}/share/fonts/terminus
+    '';
     scriptPath = ".xinitrc";
     windowManager.command = "${pkgs.stumpwm}/bin/stumpwm";
   };

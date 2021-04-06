@@ -282,15 +282,15 @@ pkgs: colors: {
       command = [ "${pkgs.emacsEditor}/bin/emacseditor" "{file}" "+{line}:{column}" ];
       encoding = "utf-8";
     };
-    fonts = let defaultFont = "15pt default_family"; in {
-      default_family = [ "Iosevka" "lucy tewi" ];
+    fonts = let defaultFont = "13pt default_family"; in {
+      default_family = [ "monospace" ];
       completion = {
         entry = defaultFont;
         category = "bold " + defaultFont;
       };
       debug_console = defaultFont;
       downloads = defaultFont;
-      hints = "bold 18pt default_family";
+      hints = "bold 16pt default_family";
       keyhint = defaultFont;
       messages = {
         error = defaultFont;

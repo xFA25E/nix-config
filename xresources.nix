@@ -33,5 +33,5 @@ colors: {
   "xterm*color21" = colors.base06;
   "Sxiv.foreground" = colors.base05;
   "Sxiv.background" = colors.base00;
-  "Sxiv.font" = "Iosevka-15";
+  "Sxiv.font" = "monospace-14";
 }

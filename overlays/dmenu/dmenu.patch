@@ -6,7 +6,7 @@ diff -ruN dmenu-5.0/config.def.h dmenu-5.0-new/config.def.h
  /* -fn option overrides fonts[0]; default X11 font or font set */
  static const char *fonts[] = {
 -	"monospace:size=10"
-+	"Iosevka-20", "monospace:size=10"
++	"monospace:size=16"
  };
  static const char *prompt      = NULL;      /* -p  option; prompt to the left of input field */
  static const char *colors[SchemeLast][2] = {
@@ -24,8 +24,8 @@ diff -ruN dmenu-5.0/dmenu.c dmenu-5.0-new/dmenu.c
 @@ -700,6 +700,9 @@
  	XWindowAttributes wa;
  	int i, fast = 0;
- 
-+    fstrncmp = strncasecmp;
+
++   fstrncmp = strncasecmp;
 +	fstrstr = cistrstr;
 +
  	for (i = 1; i < argc; i++)

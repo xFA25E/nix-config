@@ -140,24 +140,6 @@ self: super: let
         sha256 = "112cyrpi741h2rjyg9w8a1kj4yd3xbr4vjigjgwc19fbnnckhb99";
       };
     };
-
-    simple-mpc = esuper.melpaBuild {
-      pname = "simple-mpc";
-      ename = "simple-mpc";
-      version = "20210405";
-      recipe = super.writeText "recipe" ''
-        (simple-mpc
-          :fetcher github
-          :repo "xFA25E/simple-mpc"
-          :commit "2dcc8d1b81282e4d3f70f4b1ee2dcdc985a44e0f")
-      '';
-      src = super.fetchFromGitHub {
-        owner = "xFA25E";
-        repo = "simple-mpc";
-        rev = "2dcc8d1b81282e4d3f70f4b1ee2dcdc985a44e0f";
-        sha256 = "1k1qk83jkzisyf0xrciw11ymw3c0iaw15caqk87xlmb50v2rizqb";
-      };
-    };
   };
   emacsWithPackages = ((emacs-overlay.emacsPackagesFor super.emacs).overrideScope' overrides).emacsWithPackages;
 in {
@@ -175,8 +157,8 @@ in {
     format-all geiser gitconfig-mode gitignore-mode htmlize insert-char-preview
     ipretty json-mode ledger-mode magit marginalia nix-mode nov orderless
     org-mime outline-minor-faces pdf-tools php-mode restclient reverse-im rg
-    robots-txt-mode rust-mode sdcv simple-mpc sly sly-asdf sly-quicklisp
-    smartparens sqlup-mode sudo-edit transmission vlf web-mode wgrep
+    robots-txt-mode rust-mode sdcv sly sly-asdf sly-quicklisp smartparens
+    sqlup-mode sudo-edit transmission vlf web-mode wgrep
 
     # elpa
     csv-mode modus-themes rainbow-mode sql-indent
