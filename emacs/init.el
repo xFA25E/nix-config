@@ -474,7 +474,6 @@
 (defvar mpc-songs-mode-map)
 (with-eval-after-load 'mpc
   (define-key mpc-mode-map "p" 'mpc-playlist)
-  (define-key mpc-mode-map "U" 'mpc-playlist)
   (define-key mpc-mode-map "u" 'mpc-update)
   (define-key mpc-mode-map "a" 'mpc-playlist-add)
   (define-key mpc-mode-map "A" 'mpc-play)
