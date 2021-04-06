@@ -33,6 +33,8 @@
 (add-hook 'transmission-files-mode-hook 'hl-line-mode)
 (add-hook 'transmission-mode-hook 'hl-line-mode)
 (add-hook 'transmission-peers-mode-hook 'hl-line-mode)
+(add-hook 'mpc-songs-mode-hook 'hl-line-mode)
+(add-hook 'mpc-tagbrowser-mode-hook 'hl-line-mode)
 
 ;;;;; DIFF-HL
 
