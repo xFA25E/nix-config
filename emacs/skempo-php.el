@@ -24,7 +24,7 @@
 
 (require 'skempo)
 
-(skempo-define-tempo (vd :tag t :mode php-mode)
+(skempo-define-tempo (vd :mode php-mode)
   "echo '<pre>'; var_dump(" p "); echo '</pre>';")
 
 (provide 'skempo-php)

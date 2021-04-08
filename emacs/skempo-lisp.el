@@ -24,16 +24,16 @@
 
 (require 'skempo)
 
-(skempo-define-tempo (lambda :tag t :mode lisp-mode)
+(skempo-define-tempo (lambda :mode lisp-mode)
   "(lambda (" p ") " n> r> ")")
 
-(skempo-define-tempo (let :tag t :mode lisp-mode)
+(skempo-define-tempo (let :mode lisp-mode)
   "(let ((" p "))" n> r> ")")
 
-(skempo-define-tempo (defvar :tag t :mode lisp-mode)
+(skempo-define-tempo (defvar :mode lisp-mode)
   "(defvar " p n> r> n> "\"" p "\")")
 
-(skempo-define-tempo (defun :tag t :mode lisp-mode)
+(skempo-define-tempo (defun :mode lisp-mode)
   "(defun " p " (" p ")" n> "\"" p "\"" n> r> ")")
 
 (provide 'skempo-lisp)

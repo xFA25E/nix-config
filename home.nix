@@ -193,7 +193,7 @@ in {
     bash = {
       enable = true;
       historyControl = [ "erasedups" "ignoredups" "ignorespace" ];
-      historyFile = "${dir.data}/bash_history";
+      historyFile = "${dir.data}/history/bash";
       historyIgnore = map (cmd: "${cmd}*") [
         "awk" "bash" "cat" "cd" "chmod" "chown" "command" "cp" "cut" "dash" "dd"
         "df" "dh" "du" "ebook-convert" "echo" "emacs" "env" "exit" "export" "fd"
@@ -230,7 +230,7 @@ in {
 
     git = {
       enable = true;
-      ignores = [ "*.elc" ".direnv" ];
+      ignores = [ "*.elc" ".direnv" ".eldev" ];
       # signing = {
       #   key = "vlr.ltkvsk@protonmail.com";
       #   signByDefault = true;

@@ -23,15 +23,13 @@
 ;; Browse url function that adds additional actions for special urls.  It lets
 ;; the user to select one of: qutebrowser, chromium, firefox.  Additionally, if
 ;; it detects that a url is a media url, it will offer to open in using mpv, or
-;; ytdl, or a invidious instance in eww, or youtube-comments.
+;; ytdl, or a invidious instance in eww.
 
 ;;; Code:
 
 (require 'cl-macs)
 (require 'url-parse)
 (require 'browse-url)
-
-;; (declare-function youtube-comments "youtube-comments")
 
 (defgroup browse-url-multi nil
   "A multi-browser browse-url function."
@@ -103,7 +101,6 @@
         (choices '(("ytdl" ?y nil browse-url-multi-ytdl)
                    ("mpv" ?m nil browse-url-multi-mpv)
                    ("browser" ?b nil browse-url-multi-browser)
-                   ("comments" ?c nil (lambda (url &rest _) (youtube-comments url)))
                    ("invidious" ?i nil browse-url-multi-invidious))))
     (apply (nth 3 (assoc (read-answer prompt choices) choices)) url args)))
 

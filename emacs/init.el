@@ -53,11 +53,12 @@
 
 (define-key help-map "\M-f" 'list-faces-display)
 
-(load-theme 'modus-operandi t)
+;; (load-theme 'modus-operandi t)
 
 (set-face-attribute 'default nil :height 150)
 (set-face-attribute 'mode-line nil :height 105)
 (set-face-attribute 'mode-line-inactive nil :height 105)
+(set-face-attribute 'header-line nil :height 150)
 
 ;;;;; OUTLINE
 
@@ -454,7 +455,6 @@
   (define-key skempo-mode-map "\C-z" 'skempo-complete-tag-or-call-on-region)
   (define-key skempo-mode-map "\M-g\M-e" 'skempo-forward-mark)
   (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
-  (skempo-advice-mode)
 
   (with-eval-after-load 'elisp-mode
     (load "/home/val/.config/emacs/skempo-emacs-lisp.el"))
@@ -542,15 +542,13 @@
 ;;;; EWW
 
 (declare-function eww-links-at-point "eww")
-(declare-function eww-current-url "eww")
 (defvar eww-mode-map)
 (with-eval-after-load 'eww
-  (defun eww-browse-url-custom (&optional current)
-    (interactive "P")
+  (defun eww-browse-url-custom ()
+    (interactive)
     (let ((browse-url-browser-function (default-value 'browse-url-browser-function))
           (url-at-point (car (eww-links-at-point))))
-      (if (or current (not url-at-point))
-          (browse-url (eww-current-url))
+      (when url-at-point
         (browse-url url-at-point))))
   (define-key eww-mode-map "V" 'eww-browse-url-custom))
 
