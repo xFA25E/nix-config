@@ -85,8 +85,6 @@
  '(eldoc-minor-mode-string "")
  '(emacs-lisp-mode-hook
    '(skempo-mode hs-minor-mode outline-minor-mode form-feed-mode diff-hl-mode flymake-mode smartparens-mode))
- '(emmet-preview-default t)
- '(emmet-self-closing-tag-style "")
  '(enable-recursive-minibuffers t)
  '(eval-expression-print-length t)
  '(eval-expression-print-level t)
@@ -178,6 +176,7 @@
  '(mail-user-agent 'mu4e-user-agent)
  '(marginalia-annotators '(marginalia-annotators-light marginalia-annotators-heavy))
  '(marginalia-mode t)
+ '(max-mini-window-height 1.0)
  '(mediainfo-mode-open-method
    '("setsid" "-f" "mpv" "--force-window=yes" "--no-terminal" file-name))
  '(message-kill-buffer-on-exit t)
@@ -374,9 +373,7 @@
  '(wgrep-auto-save-buffer t)
  '(x-gtk-use-system-tooltips nil)
  '(x-stretch-cursor t)
- '(xref-after-jump-hook '(outline-show-after-jump recenter xref-pulse-momentarily))
- '(youtube-comments-invidious-hosts
-   '("invidious.tube" "invidious.zapashcanon.fr" "tube.connect.cafe" "vid.puffyan.us" "invidious.048596.xyz" "invidious.himiko.cloud" "invidious.zee.li" "invidious.namazso.eu" "yewtu.be" "ytprivate.com" "vid.mint.lgbt" "inv.skyn3t.in" "invidious.kavin.rocks" "au.ytprivate.com")))
+ '(xref-after-jump-hook '(outline-show-after-jump recenter xref-pulse-momentarily)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

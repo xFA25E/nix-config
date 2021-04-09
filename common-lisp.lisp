@@ -1,8 +1,10 @@
 #-clisp (require "asdf")
 
 #-quicklisp
-(let ((quicklisp-init #-clisp (uiop:xdg-data-home "quicklisp" "setup.lisp")
-                      #+clisp (concatenate 'string (ext:getenv "XDG_DATA_HOME") "/quicklisp/setup.lisp")))
+(let ((quicklisp-init (concatenate 'string
+                                    #-clisp (uiop:getenv "QUICKLISP")
+                                    #+clisp (ext:getenv "QUICKLISP")
+                                    "/setup.lisp")))
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
 

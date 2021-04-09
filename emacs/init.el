@@ -53,8 +53,6 @@
 
 (define-key help-map "\M-f" 'list-faces-display)
 
-;; (load-theme 'modus-operandi t)
-
 (set-face-attribute 'default nil :height 150)
 (set-face-attribute 'mode-line nil :height 105)
 (set-face-attribute 'mode-line-inactive nil :height 105)
@@ -111,6 +109,11 @@
 (define-key global-map [?\C-\M-\S-b] 'previous-buffer)
 (define-key global-map [?\C-\M-\S-f] 'next-buffer)
 (define-key global-map "\M-Q" 'quit-window)
+(define-key global-map "\M-O" 'other-window)
+
+;;;; TAB BAR
+
+(define-key global-map "\C-xtt" 'toggle-tab-bar-mode-from-frame)
 
 ;;;; MULE
 
@@ -493,7 +496,6 @@
   (define-key mpc-mode-map "M" 'mpc-select-extend)
   (define-key mpc-mode-map "\M-m" 'mpc-select)
   (define-key mpc-mode-map "\C-m" 'mpc-songs-jump-to)
-  (define-key mpc-mode-map "o" 'other-window)
   (define-key mpc-songs-mode-map [remap mpc-select] nil))
 
 ;;;; SUDO-EDIT
@@ -527,9 +529,10 @@
 (define-key ctl-x-map "pm" 'magit-project-status)
 (define-key project-prefix-map "m" 'magit-project-status)
 
-;;;; PROCED
+;;;; PROCESSES
 
 (define-key mode-specific-map "op" 'proced)
+(define-key mode-specific-map "ou" 'pueue)
 
 ;;;; SDCV
 

@@ -147,7 +147,7 @@ in {
 
     ];
 
-    sessionPath = [ "${dir.config}/composer/vendor/bin" ];
+    sessionPath = [ "${dir.config}/composer/vendor/bin" "${dir.data}/npm/bin" ];
     sessionVariables = rec {
       EDITOR = "${pkgs.emacsEditor}/bin/emacseditor";
       VISUAL = EDITOR;
@@ -183,6 +183,10 @@ in {
       XAUTHORITY = "\${XDG_RUNTIME_DIR}/Xauthority";
       SSB_HOME = "${dir.cache}/zoom";
       LOCATE_PATH = "${dir.cache}/locatedb";
+      RUSTUP_HOME = "${dir.cache}/rustup";
+      CARGO_HOME = "${dir.cache}/cargo";
+      QUICKLISP = "${dir.cache}/quicklisp";
+      ELDEV_DIR = "${dir.cache}/eldev";
     };
 
     stateVersion = "21.03";

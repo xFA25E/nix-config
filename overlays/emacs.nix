@@ -38,23 +38,12 @@ self: super: let
       checksum = "08f9spkv54lmkg06p2mhhk164rcwvp6fvqh275iwsclwjaylbljh";
     };
 
-    pueue = esuper.melpaBuild {
-      pname = "pueue";
-      ename = "pueue";
-      version = "20210311";
-      recipe = super.writeText "recipe" ''
-        (pueue
-          :fetcher github
-          :repo "xFA25E/pueue"
-          :commit "a4467da565833e83c650740719d1c51fba6658eb")
-      '';
-      src = super.fetchFromGitHub {
-        owner = "xFA25E";
-        repo = "pueue";
-        rev = "a4467da565833e83c650740719d1c51fba6658eb";
-        sha256 = "1k68mnxbsc8k450y0yfnan2vqa86lrb176mxv4pvqfkz4icpxyqf";
-      };
-      packageRequires = [ eself.bui ];
+    pueue = make-melpa {
+      owner = "xFA25E";
+      name = "pueue";
+      version = "0.1.0";
+      checksum = "0vxk0npry0wi1h7wpzq4bcpkzvv4px5k14rxkjbnznjbhy82kciz";
+      deps = [ eself.bui ];
     };
 
     skempo = make-melpa {
@@ -69,7 +58,6 @@ self: super: let
 in {
   myEmacs = emacsWithPackages (epkgs: with epkgs; [
     # my
-
     cyrillic-dvorak-im pueue shell-pwd skempo
 
     # melpa
@@ -85,8 +73,7 @@ in {
     sqlup-mode sudo-edit transmission vlf web-mode wgrep
 
     # elpa
-    csv-mode # modus-themes
-    rainbow-mode sql-indent
+    csv-mode rainbow-mode sql-indent
 
     # org
     org-plus-contrib
