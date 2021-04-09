@@ -1,4 +1,15 @@
 self: super: let
+  emacs-source = super.fetchFromGitHub {
+    owner = "emacs-mirror";
+    repo = "emacs";
+    rev = "emacs-27.1";
+    sha256 = "1i50ksf96fxa3ymdb1irpc82vi67861sr4xlcmh9f64qw9imm3ks";
+  };
+
+  emacs-default = super.writeTextDir "share/emacs/site-lisp/default.el" ''
+    (setq find-function-C-source-directory "${emacs-source}/src")
+  '';
+
   emacs-overlay = import (builtins.fetchTarball https://github.com/nix-community/emacs-overlay/archive/master.tar.gz) self super;
 
   overrides = eself: esuper: let
@@ -57,6 +68,8 @@ self: super: let
   emacsWithPackages = ((emacs-overlay.emacsPackagesFor super.emacs).overrideScope' overrides).emacsWithPackages;
 in {
   myEmacs = emacsWithPackages (epkgs: with epkgs; [
+    emacs-default
+
     # my
     cyrillic-dvorak-im pueue shell-pwd skempo
 
