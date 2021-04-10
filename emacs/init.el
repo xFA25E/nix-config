@@ -237,6 +237,7 @@
 (add-hook 'nix-mode-hook 'smartparens-mode)
 (add-hook 'org-mode-hook 'smartparens-mode)
 (add-hook 'rust-mode-hook 'smartparens-mode)
+(add-hook 'js-mode-hook 'smartparens-mode)
 (add-hook 'smartparens-mode-hook 'show-smartparens-mode)
 
 (defun sp-kill-region-dwim (&optional count)

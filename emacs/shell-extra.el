@@ -61,14 +61,33 @@ Set `comint-input-ring-file-name' and load input ring."
    count (provided-mode-derived-p
           (buffer-local-value 'major-mode buffer) 'shell-mode)))
 
-(defun shell-extra-list-buffers ()
-  "Open shell buffers in ibuffer."
+(defun shell-extra-visit-buffer ()
+  "Like `ibuffer-visit-buffer', but kill ibuffer buffer."
   (interactive)
+  (let ((buffer (current-buffer)))
+    (call-interactively 'ibuffer-visit-buffer)
+    (kill-buffer buffer)))
+
+(defun shell-extra-quit-ibuffer ()
+  "Quit and kill window."
+  (interactive)
+  (quit-window t))
+
+(defun shell-extra-list-buffers (&optional other-window-p)
+  "Open shell buffers in ibuffer.
+`OTHER-WINDOW-P' is like in `ibuffer'."
+  (interactive "P")
   (if (zerop (shell-extra-count-shell-buffers))
       (message "No shell buffers!")
     (let ((buffer-name "*Shell buffers*"))
-      (ibuffer t buffer-name `((mode . shell-mode)))
+      (ibuffer other-window-p buffer-name `((mode . shell-mode)))
       (with-current-buffer buffer-name
+        (let ((map (make-sparse-keymap)))
+          (set-keymap-parent map (current-local-map))
+          (define-key map "\C-m" 'shell-extra-visit-buffer)
+          (define-key map "q" 'shell-extra-quit-ibuffer)
+          (use-local-map map))
+
         (set (make-local-variable 'ibuffer-use-header-line) nil)
         (ibuffer-auto-mode)
         (ibuffer-clear-filter-groups)))))
