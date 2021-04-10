@@ -22,6 +22,8 @@ self: super: let
 
     (dolist (dep '(${my-deps}))
       (asdf:load-system dep))
+
+    (defun stumpwm::data-dir () (uiop:xdg-cache-home "stumpwm/"))
   '';
   stumpwm = super.stdenv.mkDerivation rec {
     pname = "stumpwm";
