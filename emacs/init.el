@@ -326,6 +326,12 @@
 
 (add-hook 'org-mode-hook 'flyspell-mode)
 
+;;;; FLYMAKE
+
+(with-eval-after-load 'flymake
+  (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error)
+  (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error))
+
 ;;;; FLYCHECK-CHECKBASHISMS
 
 (with-eval-after-load 'flycheck
