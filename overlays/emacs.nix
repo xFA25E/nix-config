@@ -75,14 +75,11 @@ in {
 
     # melpa
 
-    ace-link apache-mode async avy bash-completion bicycle cargo cider
-    clojure-mode consult diff-hl dired-rsync direnv dumb-jump edit-indirect
-    eglot emmet-mode fd-dired flycheck flycheck-checkbashisms form-feed
-    format-all # geiser
-    gitconfig-mode gitignore-mode htmlize insert-char-preview
-    ipretty json-mode ledger-mode magit marginalia nix-mode nov orderless
-    org-mime outline-minor-faces pdf-tools php-mode restclient reverse-im rg
-    robots-txt-mode rust-mode sdcv sly sly-asdf sly-quicklisp smartparens
+    ace-link async avy bash-completion bicycle cargo consult dired-rsync direnv
+    dumb-jump edit-indirect eglot emmet-mode fd-dired form-feed format-all
+    htmlize insert-char-preview ipretty ledger-mode magit marginalia nix-mode
+    nov orderless org-mime outline-minor-faces pdf-tools php-mode restclient
+    reverse-im rg rust-mode sdcv sly sly-asdf sly-quicklisp smartparens
     sqlup-mode sudo-edit transmission vlf web-mode wgrep
 
     # elpa

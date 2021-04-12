@@ -84,7 +84,7 @@
  '(eglot-sync-connect nil)
  '(eldoc-minor-mode-string "")
  '(emacs-lisp-mode-hook
-   '(skempo-mode hs-minor-mode outline-minor-mode form-feed-mode diff-hl-mode flymake-mode smartparens-mode))
+   '(skempo-mode hs-minor-mode outline-minor-mode form-feed-mode flymake-mode smartparens-mode))
  '(enable-recursive-minibuffers t)
  '(eval-expression-print-length t)
  '(eval-expression-print-level t)
@@ -97,15 +97,6 @@
  '(fill-column 80)
  '(find-ls-option
    '("-print0 | sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
- '(flycheck-check-syntax-automatically '(save mode-enabled))
- '(flycheck-checkbashisms-newline t)
- '(flycheck-checkbashisms-posix t)
- '(flycheck-clang-pedantic t)
- '(flycheck-clang-pedantic-errors t)
- '(flycheck-gcc-pedantic t)
- '(flycheck-gcc-pedantic-errors t)
- '(flycheck-mode-line-prefix "FC")
- '(flycheck-phpcs-standard "PSR12,PSR1,PSR2")
  '(flymake-no-changes-timeout nil)
  '(flyspell-default-dictionary "russian")
  '(flyspell-dictionaries-that-consider-dash-as-word-delimiter '("francais" "deutsch8" "norsk" "russian"))
@@ -170,9 +161,6 @@
  '(lisp-mode-hook
    '(skempo-mode smartparens-mode form-feed-mode sly-editing-mode))
  '(magit-credential-cache-daemon-socket "/home/val/.cache/git/credential/socket")
- '(magit-post-refresh-hook '(diff-hl-magit-post-refresh))
- '(magit-pre-refresh-hook
-   '(diff-hl-magit-pre-refresh magit-maybe-save-repository-buffers))
  '(mail-user-agent 'mu4e-user-agent)
  '(marginalia-annotators '(marginalia-annotators-light marginalia-annotators-heavy))
  '(marginalia-mode t)

@@ -1,7 +1,8 @@
 ;;; -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
-;; fix loading new version of project by bringing it at the beginning
+;; project fixes
 (push (cl-find "project" load-path :test 'string-match) load-path)
+(autoload 'project--process-file-region "/home/val/.config/emacs/project-fixes.el")
 
 ;;; SETTINGS
 
@@ -36,11 +37,6 @@
 (add-hook 'mpc-songs-mode-hook 'hl-line-mode)
 (add-hook 'mpc-tagbrowser-mode-hook 'hl-line-mode)
 
-;;;;; DIFF-HL
-
-(add-hook 'dired-mode-hook 'diff-hl-dired-mode)
-(add-hook 'org-mode-hook 'diff-hl-mode)
-
 ;;;;; ANSI-COLOR
 
 (with-eval-after-load 'compile
@@ -54,8 +50,10 @@
 (define-key help-map "\M-f" 'list-faces-display)
 
 (set-face-attribute 'default nil :height 150)
-(set-face-attribute 'mode-line nil :height 105)
-(set-face-attribute 'mode-line-inactive nil :height 105)
+(let ((bg (face-attribute 'mode-line :background))
+      (bg-in (face-attribute 'mode-line-inactive :background)))
+  (set-face-attribute 'mode-line nil :height 105 :background bg-in :box nil)
+  (set-face-attribute 'mode-line-inactive nil :height 105 :background bg))
 (set-face-attribute 'header-line nil :height 150)
 
 ;;;;; OUTLINE
@@ -332,12 +330,6 @@
   (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error)
   (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error))
 
-;;;; FLYCHECK-CHECKBASHISMS
-
-(with-eval-after-load 'flycheck
-  (with-eval-after-load 'sh-mode
-    (flycheck-checkbashisms-setup)))
-
 ;;; COMPLETION
 
 ;;;; MINIBUFFER
@@ -520,7 +512,6 @@
 (define-key mode-specific-map "nh" 'nslookup-host)
 (define-key mode-specific-map "ni" 'ifconfig)
 (define-key mode-specific-map "nn" 'netstat)
-(define-key mode-specific-map "np" 'ping)
 (define-key mode-specific-map "np" 'ping)
 (define-key mode-specific-map "nr" 'route)
 (define-key mode-specific-map "ns" 'smbclient)
