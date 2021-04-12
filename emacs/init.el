@@ -50,10 +50,8 @@
 (define-key help-map "\M-f" 'list-faces-display)
 
 (set-face-attribute 'default nil :height 150)
-(let ((bg (face-attribute 'mode-line :background))
-      (bg-in (face-attribute 'mode-line-inactive :background)))
-  (set-face-attribute 'mode-line nil :height 105 :background bg-in :box nil)
-  (set-face-attribute 'mode-line-inactive nil :height 105 :background bg))
+(set-face-attribute 'mode-line nil :height 105 :background "white smoke" :box nil)
+(set-face-attribute 'mode-line-inactive nil :height 105 :background "dark gray")
 (set-face-attribute 'header-line nil :height 150)
 
 ;;;;; OUTLINE

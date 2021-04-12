@@ -137,9 +137,9 @@ in {
       imagemagick ledger leiningen libnotify libreoffice mediainfo mkpasswd
       mpc_cli nload p7zip pass-otp perlPackages.JSONPP pinentry pueue pulsemixer
       pwgen qrencode qtox ripgrep rsync scrot sdcv simplescreenrecorder
-      sloccount speedtest-cli stalonetray sxiv syncthing tdesktop
-      tor-browser-bundle-bin transmission ungoogled-chromium wget woof xclip
-      xdg-user-dirs xterm xz youtube-dl zip zoom-us unzip
+      sloccount speedtest-cli stalonetray sxiv syncthing tor-browser-bundle-bin
+      transmission ungoogled-chromium wget woof xclip xdg-user-dirs xterm xz
+      youtube-dl zip zoom-us unzip
 
       # mypkgs
 
