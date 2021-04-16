@@ -83,13 +83,19 @@
 
 
 (defcommand show-corona () ()
-  (let* ((link "https://corona-stats.online/Italy?format=json")
-         (data (first (jsown:val (jsown:parse (dex:get link)) "data"))))
-    (message "COVID-19 Italy~%Confirmed: ~:D~%Recovered: ~:D~%Deaths: ~:D~%Active: ~:D"
-             (jsown:val data "cases")
-             (jsown:val data "recovered")
-             (jsown:val data "deaths")
-             (jsown:val data "active"))))
+  (if-let ((jsown-package (find-package "JSOWN"))
+           (dexador-package (find-package "DEXADOR")))
+    (let* ((parse (symbol-function (find-symbol "PARSE" jsown-package)))
+           (val (symbol-function (find-symbol "VAL" jsown-package)))
+           (get (symbol-function (find-symbol "GET" dexador-package)))
+           (link "https://corona-stats.online/Italy?format=json")
+           (data (first (funcall val (funcall parse (funcall get link)) "data"))))
+      (message "COVID-19 Italy~%Confirmed: ~:D~%Recovered: ~:D~%Deaths: ~:D~%Active: ~:D"
+               (funcall val data "cases")
+               (funcall val data "recovered")
+               (funcall val data "deaths")
+               (funcall val data "active")))
+    (progn (message "No jsown or dexador!") nil)))
 
 (defcommand show-hardware () ()
   (update-battery-status-variables)
