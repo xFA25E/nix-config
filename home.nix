@@ -82,6 +82,9 @@ in {
         test -r "/home/${user}/.nix-profile/etc/profile.d/nix.sh" && . "/home/${user}/.nix-profile/etc/profile.d/nix.sh"
         test -r "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh" && . "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh"
         ${pkgs.coreutils}/bin/echo unlock | ${pkgs.gnupg}/bin/gpg --pinentry-mode=loopback -s >/dev/null
+
+        test -r "/home/${user}/.guix-profile/etc/profile" && . "/home/${user}/.guix-profile/etc/profile"
+        test -r "${dir.config}/guix/current/etc/profile" && . "${dir.config}/guix/current/etc/profile"
       '';
       ".sbclrc".source = ./common-lisp.lisp;
       ".shinit".text = ''
@@ -147,7 +150,7 @@ in {
 
     ];
 
-    sessionPath = [ "${dir.config}/composer/vendor/bin" "${dir.data}/npm/bin" ];
+    sessionPath = [ "${dir.config}/composer/vendor/bin" "${dir.data}/npm/bin" "/usr/local/bin" ];
     sessionVariables = rec {
       EDITOR = "${pkgs.emacsEditor}/bin/emacseditor";
       VISUAL = EDITOR;
@@ -187,6 +190,7 @@ in {
       CARGO_HOME = "${dir.cache}/cargo";
       QUICKLISP = "${dir.cache}/quicklisp";
       ELDEV_DIR = "${dir.cache}/eldev";
+      INFOPATH = "$INFOPATH\${INFOPATH:+:}/usr/local/share/info";
     };
 
     stateVersion = "21.03";
@@ -211,6 +215,10 @@ in {
       ];
       initExtra = ''
         [ -n "$ENV" ] && . "$ENV"
+
+        for f in ${dir.config}/guix/current/etc/bash_completion.d/* ; do
+            test -r "$f" && . "$f"
+        done
       '';
     };
 
