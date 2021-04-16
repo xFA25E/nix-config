@@ -470,31 +470,6 @@
 
 ;;; APPLICATIONS
 
-;;;; MPC
-
-(defvar mpc-mode-map)
-(defvar mpc-songs-mode-map)
-(with-eval-after-load 'mpc
-  (define-key mpc-mode-map "p" 'mpc-playlist)
-  (define-key mpc-mode-map "u" 'mpc-update)
-  (define-key mpc-mode-map "a" 'mpc-playlist-add)
-  (define-key mpc-mode-map "A" 'mpc-play)
-  (define-key mpc-mode-map "c" 'mpc-toggle-consume)
-  (define-key mpc-mode-map "r" 'mpc-toggle-repeat)
-  (define-key mpc-mode-map "." 'mpc-toggle-single)
-  (define-key mpc-mode-map "z" 'mpc-toggle-shuffle)
-  (define-key mpc-mode-map "t" 'mpc-toggle-play)
-  (define-key mpc-mode-map "s" 'mpc-songs-search)
-  (define-key mpc-mode-map "k" 'mpc-songs-kill-search)
-  (define-key mpc-mode-map "f" 'mpc-ffwd)
-  (define-key mpc-mode-map "b" 'mpc-rewind)
-  (define-key mpc-mode-map "D" 'mpc-playlist-delete)
-  (define-key mpc-mode-map "m" 'mpc-select-toggle)
-  (define-key mpc-mode-map "M" 'mpc-select-extend)
-  (define-key mpc-mode-map "\M-m" 'mpc-select)
-  (define-key mpc-mode-map "\C-m" 'mpc-songs-jump-to)
-  (define-key mpc-songs-mode-map [remap mpc-select] nil))
-
 ;;;; SUDO-EDIT
 
 (with-eval-after-load 'sudo-edit
@@ -570,6 +545,30 @@
 ;;;; MPC
 
 (define-key mode-specific-map "os" 'mpc)
+
+(defvar mpc-mode-map)
+(defvar mpc-songs-mode-map)
+(with-eval-after-load 'mpc
+  (define-key mpc-mode-map "p" 'mpc-playlist)
+  (define-key mpc-mode-map "u" 'mpc-update)
+  (define-key mpc-mode-map "a" 'mpc-playlist-add)
+  (define-key mpc-mode-map "A" 'mpc-play)
+  (define-key mpc-mode-map "c" 'mpc-toggle-consume)
+  (define-key mpc-mode-map "r" 'mpc-toggle-repeat)
+  (define-key mpc-mode-map "." 'mpc-toggle-single)
+  (define-key mpc-mode-map "z" 'mpc-toggle-shuffle)
+  (define-key mpc-mode-map "t" 'mpc-toggle-play)
+  (define-key mpc-mode-map "s" 'mpc-songs-search)
+  (define-key mpc-mode-map "k" 'mpc-songs-kill-search)
+  (define-key mpc-mode-map "f" 'mpc-ffwd)
+  (define-key mpc-mode-map "b" 'mpc-rewind)
+  (define-key mpc-mode-map "D" 'mpc-playlist-delete)
+  (define-key mpc-mode-map "m" 'mpc-select-toggle)
+  (define-key mpc-mode-map "M" 'mpc-select-extend)
+  (define-key mpc-mode-map "\M-m" 'mpc-select)
+  (define-key mpc-mode-map "\C-m" 'mpc-songs-jump-to)
+  (define-key mpc-songs-mode-map [remap mpc-select] nil))
+
 
 ;;;; E-READER
 
