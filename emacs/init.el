@@ -56,8 +56,9 @@
 
 ;;;;; OUTLINE
 
-(defun outline-show-after-jump ()
-  (when outline-minor-mode (outline-show-entry)))
+(with-eval-after-load 'outline
+  (defun outline-show-after-jump ()
+    (when outline-minor-mode (outline-show-entry))))
 
 ;;;;; OUTLINE-MINOR-FACES
 
@@ -84,15 +85,15 @@
 
 (with-eval-after-load 'savehist
   (defun savehist-filter-file-name-history ()
-    (let* ((trim-slashes (lambda (s) (string-trim-right (expand-file-name s) (rx (+ "/")))))
-           (trimmed (mapcar trim-slashes file-name-history))
-           (no-dups (cl-delete-duplicates trimmed :test #'string-equal))
-           (remote-or-exist (lambda (file-name)
-                              (and (not (string-empty-p file-name))
-                                   (or (file-remote-p file-name)
-                                       (string-match-p (rx bos "http") file-name)
-                                       (file-exists-p file-name))))))
-      (setq file-name-history (cl-delete-if-not remote-or-exist no-dups)))))
+    (let (result)
+      (dolist (file-name file-name-history)
+        (let ((f (string-trim-right (expand-file-name file-name) "/+")))
+          (unless (string-empty-p f)
+            (when (or (file-remote-p f)
+                      (string-match-p "\\`http" f)
+                      (file-exists-p f))
+              (cl-pushnew f result :test #'string-equal)))))
+      (setq file-name-history result))))
 
 ;;;; FILES
 
@@ -132,7 +133,7 @@
 (with-eval-after-load 'finder
   (defun finder-exit-with-package ()
     (interactive)
-    (if (string-match-p (rx "*Finder" (opt "-package") "*") (buffer-name))
+    (if (string-match-p (rx "*Finder" (? "-package") "*") (buffer-name))
         (quit-window t)
       (when (get-buffer "*Finder-package*") (kill-buffer "*Finder-package*"))
       (when (get-buffer "*Finder*") (kill-buffer "*Finder*"))))
@@ -516,9 +517,8 @@
 (with-eval-after-load 'eww
   (defun eww-browse-url-custom ()
     (interactive)
-    (let ((browse-url-browser-function (default-value 'browse-url-browser-function))
-          (url-at-point (car (eww-links-at-point))))
-      (when url-at-point
+    (let ((browse-url-browser-function (default-value 'browse-url-browser-function)))
+      (when-let ((url-at-point (car (eww-links-at-point))))
         (browse-url url-at-point))))
   (define-key eww-mode-map "V" 'eww-browse-url-custom))
 
@@ -564,7 +564,6 @@
   (define-key mpc-mode-map "\M-m" 'mpc-select)
   (define-key mpc-mode-map "\C-m" 'mpc-songs-jump-to)
   (define-key mpc-songs-mode-map [remap mpc-select] nil))
-
 
 ;;;; E-READER
 

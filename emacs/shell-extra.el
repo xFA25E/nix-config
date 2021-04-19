@@ -88,7 +88,7 @@ Set `comint-input-ring-file-name' and load input ring."
           (define-key map "q" 'shell-extra-quit-ibuffer)
           (use-local-map map))
 
-        (set (make-local-variable 'ibuffer-use-header-line) nil)
+        (setq-local ibuffer-use-header-line nil)
         (ibuffer-auto-mode)
         (ibuffer-clear-filter-groups)))))
 
