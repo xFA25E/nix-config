@@ -34,18 +34,18 @@
     (pcase (newsticker--link item)
       ((rx "youtube.com")
        (let ((group (alist-get 'group (newsticker--extra item))))
-         (setcar
-          (nthcdr 1 item)
+         (setf
+          (nth 1 item)
           (d (alist-get 'url (car (alist-get 'thumbnail group))) (cadr (alist-get 'description group))))))
       ((rx "bitchute.com")
        (let ((enclosure (alist-get 'enclosure (newsticker--extra item))))
-         (setcar
-          (nthcdr 1 item)
+         (setf
+          (nth 1 item)
           (d (alist-get 'url (car enclosure)) (newsticker--desc item)))))
       ((rx "videos.lukesmith.xyz")
        (let ((thumbnail (alist-get 'thumbnail (newsticker--extra item))))
-         (setcar
-          (nthcdr 1 item)
+         (setf
+          (nth 1 item)
           (d  (alist-get 'url (car thumbnail)) (newsticker--desc item))))))))
 
 (defun newsticker-extra-treeview-copy-link ()
