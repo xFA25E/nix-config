@@ -294,7 +294,8 @@
  '(register-separator 43)
  '(rust-format-on-save t)
  '(safe-local-variable-values
-   '((eval add-hook 'after-save-hook
+   '((eval hl-line-mode t)
+     (eval add-hook 'after-save-hook
            (lambda nil
              (byte-recompile-file
               (buffer-file-name)))
@@ -340,7 +341,7 @@
  '(sql-mysql-options '("-A"))
  '(sql-sqlite-options '("-column" "-header" "-cmd" "PRAGMA foreign_keys = ON;"))
  '(tab-width 4)
- '(text-mode-hook '(abbrev-mode text-mode-hook-identify))
+ '(text-mode-hook '(turn-on-flyspell abbrev-mode text-mode-hook-identify))
  '(tramp-completion-reread-directory-timeout nil)
  '(tramp-default-method "ssh")
  '(tramp-histfile-override t)

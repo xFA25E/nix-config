@@ -318,10 +318,6 @@
 
 ;;; CORRECTNESS
 
-;;;; FLYSPELL
-
-(add-hook 'org-mode-hook 'flyspell-mode)
-
 ;;;; FLYMAKE
 
 (with-eval-after-load 'flymake
