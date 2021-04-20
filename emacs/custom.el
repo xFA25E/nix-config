@@ -257,6 +257,7 @@
  '(newsticker-url-list-defaults nil)
  '(next-screen-context-lines 10)
  '(nov-save-place-file "/home/val/.cache/emacs/nov-places")
+ '(nov-text-width 80)
  '(nsm-settings-file "/home/val/.cache/emacs/network-security.data")
  '(nxml-child-indent 4)
  '(orderless-component-separator "[[:space:]]+")

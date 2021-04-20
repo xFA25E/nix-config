@@ -55,5 +55,12 @@
     (kill-new link)
     (message "Copied %s" link)))
 
+(defun newsticker-handle-url (nt-link)
+  "Newsticker button action on `NT-LINK'."
+  (interactive (list (get-text-property (point) 'nt-link)))
+  (when nt-link
+    (call-process "transmission-remote" nil 0 nil
+                  "--start-paused" "--add" nt-link)))
+
 (provide 'newsticker-extra)
 ;;; newsticker-extra.el ends here
