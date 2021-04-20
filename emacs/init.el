@@ -7,20 +7,8 @@
 ;;; SETTINGS
 
 (defvar gamegrid-user-score-file-directory "/home/val/.cache/emacs/games/")
-(defvar sly-lisp-implementations
-  '((sbcl ("sbcl"))
-    (ecl ("ecl"))
-    (ccl ("ccl"))
-    (clisp ("clisp"))))
-
-(setq completion-ignore-case t
-      disabled-command-function nil
-      custom-file "/home/val/.config/nixpkgs/emacs/custom.el")
-
-(defalias 'yes-or-no-p 'y-or-n-p)
-
+(setq disabled-command-function nil)
 (setenv "PAGER" "cat")
-
 (server-start)
 
 ;;;; FACES
@@ -34,8 +22,7 @@
 (add-hook 'transmission-files-mode-hook 'hl-line-mode)
 (add-hook 'transmission-mode-hook 'hl-line-mode)
 (add-hook 'transmission-peers-mode-hook 'hl-line-mode)
-(add-hook 'mpc-songs-mode-hook 'hl-line-mode)
-(add-hook 'mpc-tagbrowser-mode-hook 'hl-line-mode)
+(add-hook 'mpc-mode-hook 'hl-line-mode)
 
 ;;;;; ANSI-COLOR
 
@@ -116,7 +103,6 @@
 
 (prefer-coding-system 'utf-8)
 (set-terminal-coding-system 'utf-8)
-(set-language-environment "UTF-8")
 
 ;;;; BYTECOMP-ASYNC
 
@@ -144,9 +130,6 @@
 (defvar dired-mode-map)
 (add-hook 'dired-mode-hook 'dired-hide-details-mode)
 (with-eval-after-load 'dired
-  (define-key dired-mode-map "*&" 'dired-flag-garbage-files)
-  (define-key dired-mode-map "*d" 'dired-flag-files-regexp)
-  (define-key dired-mode-map "*g" 'dired-mark-files-containing-regexp)
   (define-key dired-mode-map "r" 'dired-rsync)
   (dired-async-mode))
 
@@ -170,9 +153,7 @@
 
 ;;;; FD-DIRED
 
-(autoload 'fd-dired-list-searches "fd-dired" nil t)
 (define-key search-map "fd" 'fd-dired)
-(define-key search-map "fD" 'fd-dired-list-searches)
 
 ;;;; LOCATE
 
@@ -190,14 +171,11 @@
 
 (define-key global-map "\C-h" 'backward-delete-char-untabify)
 (define-key global-map "\M-K" 'kill-whole-line)
-(define-key global-map "\M-\\" 'delete-indentation)
 (define-key global-map "\M-c" 'capitalize-dwim)
 (define-key global-map "\M-l" 'downcase-dwim)
 (define-key global-map "\M-u" 'upcase-dwim)
 (define-key global-map "\C-w" 'kill-region-dwim)
-(define-key global-map [remap newline] 'newline-and-indent)
 (define-key ctl-x-map "K" 'kill-current-buffer)
-(define-key ctl-x-map "\C-r" 'overwrite-mode)
 (define-key ctl-x-map "\M-t" 'toggle-truncate-lines)
 (define-key mode-specific-map "oP" 'list-processes)
 
@@ -207,7 +185,6 @@
 (define-key ctl-x-r-map "L" 'list-registers)
 (define-key ctl-x-r-map "p" 'prepend-to-register)
 (define-key ctl-x-r-map "a" 'append-to-register)
-(set-register register-separator "\n")
 
 ;;;; SUBWORD
 
@@ -335,14 +312,11 @@
 ;;;;; CONSULT
 
 (define-key global-map "\M-y" 'consult-yank-replace)
-(define-key global-map "\M-X" 'consult-mode-command)
 (define-key global-map "\M-H" 'consult-history)
-(define-key ctl-x-map "F" 'consult-file-externally)
-(define-key ctl-x-map "M" 'consult-minor-mode-menu)
 (define-key goto-map "o" 'consult-outline)
 (define-key goto-map "i" 'consult-imenu)
 (define-key goto-map "E" 'consult-compile-error)
-(define-key goto-map "!" 'consult-flymake)
+(define-key goto-map "f" 'consult-flymake)
 (define-key project-prefix-map "i" 'consult-project-imenu)
 (define-key kmacro-keymap "c" 'consult-kmacro)
 
@@ -377,21 +351,9 @@
 
 ;;;; RG
 
-(defvar rg-mode-map)
 (define-key search-map "rr" 'rg)
-(define-key search-map "r." 'rg-dwim)
-(define-key search-map "rl" 'rg-list-searches)
 (define-key search-map "rt" 'rg-literal)
 (define-key search-map "rp" 'rg-project)
-(define-key search-map "rk" 'rg-kill-saved-searches)
-(define-key search-map "rs" 'rg-save-search-as-name)
-(with-eval-after-load 'rg
-  (define-key rg-mode-map "\C-n" 'next-line)
-  (define-key rg-mode-map "\C-p" 'previous-line)
-  (define-key rg-mode-map "{" 'rg-prev-file)
-  (define-key rg-mode-map "\M-{" 'rg-prev-file)
-  (define-key rg-mode-map "}" 'rg-next-file)
-  (define-key rg-mode-map "\M-}" 'rg-next-file))
 
 ;;; JUMPING
 
@@ -455,13 +417,10 @@
 
   (with-eval-after-load 'elisp-mode
     (load "/home/val/.config/emacs/skempo-emacs-lisp.el"))
-
   (with-eval-after-load 'sly
     (load "/home/val/.config/emacs/skempo-lisp.el"))
-
   (with-eval-after-load 'nix-mode
     (load "/home/val/.config/emacs/skempo-nix.el"))
-
   (with-eval-after-load 'php-mode
     (load "/home/val/.config/emacs/skempo-php.el")))
 
@@ -476,25 +435,14 @@
 
 ;;;; NET-UTILS
 
-(autoload 'smbclient "net-utils" nil t)
-(define-key mode-specific-map "na" 'arp)
-(define-key mode-specific-map "nd" 'dig)
 (define-key mode-specific-map "nh" 'nslookup-host)
 (define-key mode-specific-map "ni" 'ifconfig)
 (define-key mode-specific-map "nn" 'netstat)
 (define-key mode-specific-map "np" 'ping)
-(define-key mode-specific-map "nr" 'route)
-(define-key mode-specific-map "ns" 'smbclient)
-(define-key mode-specific-map "nt" 'traceroute)
 (define-key mode-specific-map "nw" 'iwconfig)
-
-;;;; IBUFFER
-
-(define-key ctl-x-map "\C-b" 'ibuffer-jump)
 
 ;;;; MAGIT
 
-(define-key ctl-x-map "pm" 'magit-project-status)
 (define-key project-prefix-map "m" 'magit-project-status)
 
 ;;;; PROCESSES
@@ -547,7 +495,6 @@
   (define-key mpc-mode-map "p" 'mpc-playlist)
   (define-key mpc-mode-map "u" 'mpc-update)
   (define-key mpc-mode-map "a" 'mpc-playlist-add)
-  (define-key mpc-mode-map "A" 'mpc-play)
   (define-key mpc-mode-map "c" 'mpc-toggle-consume)
   (define-key mpc-mode-map "r" 'mpc-toggle-repeat)
   (define-key mpc-mode-map "." 'mpc-toggle-single)
@@ -615,18 +562,12 @@
 
 ;;; CUSTOM
 
-(defvar cus-edit-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "a" #'customize-apropos)
-    (define-key map "f" #'customize-face)
-    (define-key map "g" #'customize-group)
-    (define-key map "m" #'customize-mode)
-    (define-key map "r" #'customize-rogue)
-    (define-key map "s" #'customize-saved)
-    (define-key map "t" #'customize-themes)
-    (define-key map "u" #'customize-unsaved)
-    (define-key map "v" #'customize-option)
-    map))
+(defvar cus-edit-map (make-sparse-keymap))
+(define-key cus-edit-map "v" 'customize-option)
+(define-key cus-edit-map "g" 'customize-group)
+(define-key cus-edit-map "f" 'customize-face)
+(define-key cus-edit-map "s" 'customize-saved)
+(define-key cus-edit-map "u" 'customize-unsaved)
 (define-key ctl-x-map "C" cus-edit-map)
 
-(load custom-file t)
+(load "/home/val/.config/nixpkgs/emacs/custom.el" t)
