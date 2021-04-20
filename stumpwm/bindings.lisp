@@ -58,7 +58,7 @@
        ("C-v"   . "Next")
        ("M-v"   . "Prior")
        ("M-w"   . "C-c")
-       ("C-w"   . "C-x")
+       ("C-w"   . ("C-S-Left" "C-x"))
        ("C-y"   . "C-v")
        ("M-<"   . "Home")
        ("M->"   . "End")
