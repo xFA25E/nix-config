@@ -532,7 +532,6 @@
 ;;;; NEWSTICKER
 
 (defvar newsticker-treeview-mode-map)
-(defvar newsticker--treeview-list-sort-order 'sort-by-time-reverse)
 (define-key mode-specific-map "on" 'newsticker-show-news)
 (with-eval-after-load 'newst-treeview
   (load "/home/val/.config/emacs/newsticker-extra.el")
