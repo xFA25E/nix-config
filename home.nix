@@ -134,8 +134,8 @@ in {
     packages = with pkgs; [
       # nixpkgs
 
-      acpi alsaUtils brightnessctl dmenu fd ffmpeg file firefox gimp hunspell
-      hunspellDicts.en_US-large hunspellDicts.it_IT hunspellDicts.ru_RU
+      acpi alsaUtils brightnessctl calibre dmenu fd ffmpeg file firefox gimp
+      hunspell hunspellDicts.en_US-large hunspellDicts.it_IT hunspellDicts.ru_RU
       imagemagick ledger leiningen libnotify libreoffice mediainfo mkpasswd
       mpc_cli nload p7zip pass-otp perlPackages.JSONPP pinentry pueue pulsemixer
       pwgen qrencode qtox ripgrep rsync scrot sdcv simplescreenrecorder
