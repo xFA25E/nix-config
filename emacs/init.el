@@ -15,7 +15,6 @@
 
 ;;;;; HL-LINE
 
-(add-hook 'dired-mode-hook 'hl-line-mode)
 (add-hook 'csv-mode-hook 'hl-line-mode)
 (add-hook 'grep-mode-hook 'hl-line-mode)
 (add-hook 'tar-mode-hook 'hl-line-mode)
@@ -128,7 +127,6 @@
 ;;; DIRED
 
 (defvar dired-mode-map)
-(add-hook 'dired-mode-hook 'dired-hide-details-mode)
 (with-eval-after-load 'dired
   (define-key dired-mode-map "r" 'dired-rsync)
   (dired-async-mode))
@@ -142,9 +140,7 @@
 
 ;;;; DIRED-X
 
-(autoload 'dired-omit-mode "dired-x" nil t)
 (autoload 'dired-jump "dired-x" nil t)
-(add-hook 'dired-mode-hook 'dired-omit-mode)
 (define-key ctl-x-map "\C-j" 'dired-jump)
 
 ;;;; FIND-DIRED
@@ -209,7 +205,6 @@
 
 (add-hook 'minibuffer-inactive-mode-hook 'smartparens-mode)
 (add-hook 'nix-mode-hook 'smartparens-mode)
-(add-hook 'org-mode-hook 'smartparens-mode)
 (add-hook 'rust-mode-hook 'smartparens-mode)
 (add-hook 'js-mode-hook 'smartparens-mode)
 (add-hook 'smartparens-mode-hook 'show-smartparens-mode)
@@ -403,11 +398,7 @@
 
 (define-key mode-specific-map "xs" 'shell-pwd-shell)
 
-;;; TEMPLATES
-
-(add-hook 'find-file-hook 'auto-insert)
-
-;;;; SKEMPO
+;;; SKEMPO
 
 (add-hook 'nix-mode-hook 'skempo-mode)
 (with-eval-after-load 'skempo
@@ -425,13 +416,6 @@
     (load "/home/val/.config/emacs/skempo-php.el")))
 
 ;;; APPLICATIONS
-
-;;;; SUDO-EDIT
-
-(with-eval-after-load 'sudo-edit
-  (add-hook 'dired-mode-hook 'sudo-edit-set-header)
-  (add-hook 'shell-mode-hook 'sudo-edit-set-header)
-  (sudo-edit-indicator-mode t))
 
 ;;;; NET-UTILS
 

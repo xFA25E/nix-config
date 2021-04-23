@@ -72,8 +72,9 @@
      ("\\.rar\\'" "temp=\"$(echo `?` | rev | cut -d. -f 2- | rev)\"; mkdir -p \"${temp}\"; unrar x ? \"${temp}\"")
      ("\\.torrent\\'" "transmission-show ?")
      ("\\.epub\\'" "ebook-convert ? .mobi &")))
- '(dired-listing-switches "-alDF --si --group-directories-first")
+ '(dired-listing-switches "-lF --si --group-directories-first")
  '(dired-ls-F-marks-symlinks t)
+ '(dired-mode-hook '(dired-hide-details-mode hl-line-mode))
  '(display-time-24hr-format t)
  '(ede-project-placeholder-cache-file "/home/val/.cache/emacs/ede/projects.el")
  '(ediff-before-setup-hook
@@ -276,6 +277,7 @@
  '(org-id-locations-file "/home/val/.cache/emacs/org/id-locations")
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
+ '(org-mode-hook '(smartparens-mode))
  '(org-refile-allow-creating-parent-nodes 'confirm)
  '(org-refile-targets '((org-agenda-files :level . 1)))
  '(org-refile-use-outline-path 'file)
