@@ -1,12 +1,10 @@
 ;;; -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
-;; project fixes
 (push (cl-find "project" load-path :test 'string-match) load-path)
 (autoload 'project--process-file-region "/home/val/.config/emacs/project-fixes.el")
 
 ;;; SETTINGS
 
-(defvar gamegrid-user-score-file-directory "/home/val/.cache/emacs/games/")
 (setq disabled-command-function nil)
 (setenv "PAGER" "cat")
 
@@ -114,14 +112,6 @@
 ;;;; FINDER
 
 (define-key help-map "\M-c" 'finder-commentary)
-(with-eval-after-load 'finder
-  (defun finder-exit-with-package ()
-    (interactive)
-    (if (string-match-p (rx "*Finder" (? "-package") "*") (buffer-name))
-        (quit-window t)
-      (when (get-buffer "*Finder-package*") (kill-buffer "*Finder-package*"))
-      (when (get-buffer "*Finder*") (kill-buffer "*Finder*"))))
-  (advice-add 'finder-exit :override 'finder-exit-with-package))
 
 ;;; DIRED
 
@@ -141,6 +131,7 @@
 
 (autoload 'dired-jump "dired-x" nil t)
 (define-key ctl-x-map "\C-j" 'dired-jump)
+(with-eval-after-load 'dired (require 'dired-x))
 
 ;;;; FIND-DIRED
 
