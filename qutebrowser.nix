@@ -426,7 +426,7 @@ pkgs: colors: {
                 "*://rutracker.net/*", "*://translate.google.com/*",
                 "*://doc.rust-lang.org/*", "*://crates.io/*",
                 "*://mail.protonmail.com/*", "*://github.com/*", "*://bitchute.com/*",
-                "*://www.bitchute.com/*"
+                "*://www.bitchute.com/*", "*://www.metal-archives.com/*"
         ]:
             config.set('content.javascript.enabled', True, site)
 
