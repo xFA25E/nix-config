@@ -9,7 +9,6 @@
 (defvar gamegrid-user-score-file-directory "/home/val/.cache/emacs/games/")
 (setq disabled-command-function nil)
 (setenv "PAGER" "cat")
-(server-start)
 
 ;;;; FACES
 
