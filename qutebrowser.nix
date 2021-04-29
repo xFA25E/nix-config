@@ -31,6 +31,7 @@ pkgs: colors: {
     btd = "https://www.btdig.com/search?q={}";
     sc = "https://soundcloud.com/search?q={}";
     gth = "https://github.com/search?utf8=%E2%9C%93&q={}&type=";
+    wb = "https://wiby.org/?q={}";
   };
   settings = {
     auto_save = {
