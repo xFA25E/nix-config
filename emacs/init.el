@@ -492,10 +492,10 @@
 
 ;;;; SMARTPARENS BINDINGS
 
-(define-key global-map (eval-when-compile (kbd "C-(")) 'sp-backward-slurp-sexp)
-(define-key global-map (eval-when-compile (kbd "C-)")) 'sp-forward-slurp-sexp)
-(define-key global-map (eval-when-compile (kbd "C-M-(")) 'sp-backward-barf-sexp)
-(define-key global-map (eval-when-compile (kbd "C-M-)")) 'sp-forward-barf-sexp)
+(define-key global-map [?\C-\(] 'sp-backward-slurp-sexp)
+(define-key global-map [?\C-\)] 'sp-forward-slurp-sexp)
+(define-key global-map [?\C-\M-\(] 'sp-backward-barf-sexp)
+(define-key global-map [?\C-\M-\)] 'sp-forward-barf-sexp)
 (define-key global-map "\C-\M-w" 'sp-copy-sexp)
 (define-key global-map "\M-[" 'sp-unwrap-sexp)
 (define-key global-map "\M-]" 'sp-rewrap-sexp)
