@@ -2,25 +2,13 @@
 
 (push (cl-find "project" load-path :test 'string-match) load-path)
 (autoload 'project--process-file-region "/home/val/.config/emacs/project-fixes.el")
+(add-hook 'after-init-hook (lambda () (load "/home/val/.config/nixpkgs/emacs/custom.el")))
 
-;;; SETTINGS
+;;; ACE LINK
 
-(setq disabled-command-function nil)
-(setenv "PAGER" "cat")
+(define-key goto-map "l" 'ace-link)
 
-;;;; FACES
-
-;;;;; HL-LINE
-
-(add-hook 'csv-mode-hook 'hl-line-mode)
-(add-hook 'grep-mode-hook 'hl-line-mode)
-(add-hook 'tar-mode-hook 'hl-line-mode)
-(add-hook 'transmission-files-mode-hook 'hl-line-mode)
-(add-hook 'transmission-mode-hook 'hl-line-mode)
-(add-hook 'transmission-peers-mode-hook 'hl-line-mode)
-(add-hook 'mpc-mode-hook 'hl-line-mode)
-
-;;;;; ANSI-COLOR
+;;; ANSI COLOR
 
 (with-eval-after-load 'compile
   (defun colorize-compilation ()
@@ -28,26 +16,12 @@
       (ansi-color-apply-on-region compilation-filter-start (point))))
   (add-hook 'compilation-filter-hook 'colorize-compilation))
 
-;;;;; THEMES
+;;; AVY
 
-(define-key help-map "\M-f" 'list-faces-display)
+(define-key global-map "\M-z" 'avy-goto-word-0)
+(define-key goto-map "\M-g" 'avy-goto-line)
 
-(set-face-attribute 'default nil :height 150)
-(set-face-attribute 'mode-line nil :height 105 :background "white smoke" :box nil)
-(set-face-attribute 'mode-line-inactive nil :height 105 :background "dark gray")
-(set-face-attribute 'header-line nil :height 150)
-
-;;;;; OUTLINE
-
-(with-eval-after-load 'outline
-  (defun outline-show-after-jump ()
-    (when outline-minor-mode (outline-show-entry))))
-
-;;;;; OUTLINE-MINOR-FACES
-
-(add-hook 'outline-minor-mode-hook 'outline-minor-faces-add-font-lock-keywords)
-
-;;;;; BICYCLE
+;;; BICYCLE
 
 (with-eval-after-load 'outline
   (define-key outline-minor-mode-map [C-tab] 'bicycle-cycle)
@@ -57,244 +31,32 @@
   (define-key hs-minor-mode-map [C-tab] 'bicycle-cycle)
   (define-key hs-minor-mode-map [backtab] 'bicycle-cycle-global))
 
-;;;; BROWSE-URL
+;;; BROWSE URL
 
 (autoload 'browse-url-multi "/home/val/.config/emacs/browse-url-multi.el" nil t)
 (autoload 'browse-url-youtube-search "/home/val/.config/emacs/browse-url-multi.el" nil t)
 (define-key ctl-x-map "B" 'browse-url)
 (define-key mode-specific-map "oy" 'browse-url-youtube-search)
 
-;;;; SAVEHIST
-
-(with-eval-after-load 'savehist
-  (defun savehist-filter-file-name-history ()
-    (let (result)
-      (dolist (file-name file-name-history)
-        (let ((f (string-trim-right (expand-file-name file-name) "/+")))
-          (unless (string-empty-p f)
-            (when (or (file-remote-p f)
-                      (string-match-p "\\`http" f)
-                      (file-exists-p f))
-              (cl-pushnew f result :test #'string-equal)))))
-      (setq file-name-history result))))
-
-;;;; FILES
-
-(define-key ctl-x-map "R" 'revert-buffer)
-
-;;;; WINDOW
-
-(define-key global-map "\M-V" 'scroll-down-line)
-(define-key global-map [?\C-\S-v] 'scroll-up-line)
-(define-key global-map [?\C-\M-\S-b] 'previous-buffer)
-(define-key global-map [?\C-\M-\S-f] 'next-buffer)
-(define-key global-map "\M-Q" 'quit-window)
-(define-key global-map "\M-O" 'other-window)
-
-;;;; TAB BAR
-
-(define-key global-map "\C-xtt" 'toggle-tab-bar-mode-from-frame)
-
-;;;; MULE
-
-(prefer-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-
-;;;; BYTECOMP-ASYNC
+;;; BYTECOMP ASYNC
 
 (with-eval-after-load 'bytecomp
   (async-bytecomp-package-mode))
 
-;;; MAN
+;;; CARGO
 
-(define-key help-map "\M-m" 'man)
+(add-hook 'rust-mode-hook 'cargo-minor-mode)
 
-;;;; FINDER
+;;; COMINT
 
-(define-key help-map "\M-c" 'finder-commentary)
+(add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
+(add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
 
-;;; DIRED
+;;; COMPILE
 
-(defvar dired-mode-map)
-(with-eval-after-load 'dired
-  (define-key dired-mode-map "r" 'dired-rsync)
-  (dired-async-mode))
+(define-key ctl-x-map "c" 'compile)
 
-;;;; DIRED-AUX
-
-(defvar dired-compress-file-suffixes)
-(with-eval-after-load 'dired-aux
-  (add-to-list 'dired-compress-file-suffixes
-               (list (rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -")))
-
-;;;; DIRED-X
-
-(autoload 'dired-jump "dired-x" nil t)
-(define-key ctl-x-map "\C-j" 'dired-jump)
-(with-eval-after-load 'dired (require 'dired-x))
-
-;;;; FIND-DIRED
-
-(define-key search-map "ff" 'find-dired)
-
-;;;; FD-DIRED
-
-(define-key search-map "fd" 'fd-dired)
-
-;;;; LOCATE
-
-(define-key search-map "fl" 'locate)
-
-;;; EDITING
-
-;;;; SIMPLE
-
-(defun kill-region-dwim (&optional count)
-  (interactive "p")
-  (if (use-region-p)
-      (kill-region (region-beginning) (region-end))
-    (backward-kill-word count)))
-
-(define-key global-map "\C-h" 'backward-delete-char-untabify)
-(define-key global-map "\M-K" 'kill-whole-line)
-(define-key global-map "\M-c" 'capitalize-dwim)
-(define-key global-map "\M-l" 'downcase-dwim)
-(define-key global-map "\M-u" 'upcase-dwim)
-(define-key global-map "\C-w" 'kill-region-dwim)
-(define-key ctl-x-map "K" 'kill-current-buffer)
-(define-key ctl-x-map "\M-t" 'toggle-truncate-lines)
-(define-key mode-specific-map "oP" 'list-processes)
-
-;;;; REGISTER
-
-(define-key ctl-x-r-map "v" 'view-register)
-(define-key ctl-x-r-map "L" 'list-registers)
-(define-key ctl-x-r-map "p" 'prepend-to-register)
-(define-key ctl-x-r-map "a" 'append-to-register)
-
-;;;; SUBWORD
-
-(add-hook 'rust-mode-hook 'subword-mode)
-(add-hook 'nix-mode-hook 'subword-mode)
-
-;;;; EDIT-INDIRECT
-
-(define-key ctl-x-map "E" 'edit-indirect-region)
-
-;;;; PARAGRAPHS
-
-(define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
-
-;;;; INPUT METHOD
-
-(require 'cyrillic-dvorak-im)
-(require 'reverse-im)
-(reverse-im-activate "cyrillic-dvorak")
-
-;;;; SMARTPARENS
-
-(add-hook 'minibuffer-inactive-mode-hook 'smartparens-mode)
-(add-hook 'nix-mode-hook 'smartparens-mode)
-(add-hook 'rust-mode-hook 'smartparens-mode)
-(add-hook 'js-mode-hook 'smartparens-mode)
-(add-hook 'smartparens-mode-hook 'show-smartparens-mode)
-
-(defun sp-kill-region-dwim (&optional count)
-  (interactive "p")
-  (if (use-region-p)
-      (sp-kill-region (region-beginning) (region-end))
-    (sp-backward-kill-word count)))
-
-(autoload 'sp-backward-barf-sexp "smartparens" nil t)
-(autoload 'sp-backward-slurp-sexp "smartparens" nil t)
-(autoload 'sp-copy-sexp "smartparens" nil t)
-(autoload 'sp-forward-barf-sexp "smartparens" nil t)
-(autoload 'sp-forward-slurp-sexp "smartparens" nil t)
-(autoload 'sp-rewrap-sexp "smartparens" nil t)
-(autoload 'sp-unwrap-sexp "smartparens" nil t)
-
-(define-key global-map (eval-when-compile (kbd "C-(")) 'sp-backward-slurp-sexp)
-(define-key global-map (eval-when-compile (kbd "C-)")) 'sp-forward-slurp-sexp)
-(define-key global-map (eval-when-compile (kbd "C-M-(")) 'sp-backward-barf-sexp)
-(define-key global-map (eval-when-compile (kbd "C-M-)")) 'sp-forward-barf-sexp)
-(define-key global-map "\C-\M-w" 'sp-copy-sexp)
-(define-key global-map "\M-[" 'sp-unwrap-sexp)
-(define-key global-map "\M-]" 'sp-rewrap-sexp)
-
-(define-key smartparens-mode-map "\C-\M-u" 'sp-backward-up-sexp)
-(define-key smartparens-mode-map "\C-\M-d" 'sp-down-sexp)
-(define-key smartparens-mode-map "\C-\M-t" 'sp-transpose-sexp)
-(define-key smartparens-mode-map "\C-\M-k" 'sp-kill-sexp)
-(define-key smartparens-mode-map "\M-d" 'sp-kill-word)
-(define-key smartparens-mode-map "\C-w" 'sp-kill-region-dwim)
-
-(with-eval-after-load 'smartparens
-  (require 'smartparens-config))
-
-;;;; CONF
-
-;;;;; TEX-MODE
-
-(defvar ispell-parser)
-(add-hook 'tex-mode-hook (lambda nil (setq-local ispell-parser 'tex)))
-
-;;;;; CSS-MODE
-
-(defvar css-mode-map)
-(with-eval-after-load 'css-mode
-  (define-key css-mode-map "\C-cm" 'css-lookup-symbol))
-
-;;;;; XML-LIKE
-
-;;;;;; SGML-MODE
-
-(defvar sgml-mode-map)
-(with-eval-after-load 'sgml-mode
-  (define-key sgml-mode-map "\C-\M-n" 'sgml-skip-tag-forward)
-  (define-key sgml-mode-map "\C-\M-p" 'sgml-skip-tag-backward)
-  (define-key sgml-mode-map "\C-c\C-r" 'sgml-namify-char))
-
-;;;;;; EMMET-MODE
-
-(add-hook 'nxml-mode-hook 'emmet-mode)
-(add-hook 'mhtml-mode-hook 'emmet-mode)
-(add-hook 'web-mode-hook 'emmet-mode)
-
-;;;; PROG
-
-;;;;; WEB-MODE
-
-(add-to-list 'auto-mode-alist (cons (rx ".twig" eos) 'web-mode))
-
-;;;;; EMACS LISP
-
-;;;;;; IPRETTY
-
-(define-key global-map [remap eval-print-last-sexp] 'ipretty-last-sexp)
-
-;;;;;; PP
-
-(define-key emacs-lisp-mode-map "\C-cm" 'pp-macroexpand-last-sexp)
-(define-key emacs-lisp-mode-map "\C-cM" 'emacs-lisp-macroexpand)
-(define-key lisp-interaction-mode-map "\C-cm" 'pp-macroexpand-last-sexp)
-(define-key lisp-interaction-mode-map "\C-cM" 'emacs-lisp-macroexpand)
-
-;;; CORRECTNESS
-
-;;;; FLYMAKE
-
-(with-eval-after-load 'flymake
-  (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error)
-  (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error))
-
-;;; COMPLETION
-
-;;;; MINIBUFFER
-
-(define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
-(define-key minibuffer-local-must-match-map "\C-j" 'minibuffer-force-complete-and-exit)
-
-;;;;; CONSULT
+;;; CONSULT
 
 (define-key global-map "\M-y" 'consult-yank-replace)
 (define-key global-map "\M-H" 'consult-history)
@@ -305,134 +67,70 @@
 (define-key project-prefix-map "i" 'consult-project-imenu)
 (define-key kmacro-keymap "c" 'consult-kmacro)
 
-;;;;; ORDERLESS
+;;; CSS MODE
 
-(define-key minibuffer-local-completion-map " " nil)
+(defvar css-mode-map)
+(with-eval-after-load 'css-mode
+  (define-key css-mode-map "\C-cm" 'css-lookup-symbol))
 
-;;;;; INSERT-CHAR-PREVIEW
+;;; CUSTOM
 
-(define-key global-map [remap insert-char] 'insert-char-preview)
+(defvar cus-edit-map (make-sparse-keymap))
+(define-key cus-edit-map "v" 'customize-option)
+(define-key cus-edit-map "g" 'customize-group)
+(define-key cus-edit-map "f" 'customize-face)
+(define-key cus-edit-map "s" 'customize-saved)
+(define-key cus-edit-map "u" 'customize-unsaved)
+(define-key ctl-x-map "C" cus-edit-map)
 
-;;;; HIPPIE-EXP
+;;; CYRILLIC DVORAK IM
 
-(define-key global-map "\M-/" 'hippie-expand)
-(with-eval-after-load 'hippie-exp
-  (load "/home/val/.config/emacs/hippie-exp-fixes.el"))
+(require 'cyrillic-dvorak-im)
 
-;;; SEARCHING
+;;; DIRED
 
-;;;; ISEARCH
+(defvar dired-mode-map)
+(with-eval-after-load 'dired
+  (define-key dired-mode-map "r" 'dired-rsync)
+  (dired-async-mode))
 
-(define-key isearch-mode-map "\C-h" 'isearch-delete-char)
-(define-key isearch-mode-map "\C-?" isearch-help-map)
+;;; DIRED AUX
 
-;;;; GREP
+(defvar dired-compress-file-suffixes)
+(with-eval-after-load 'dired-aux
+  (add-to-list 'dired-compress-file-suffixes
+               (list (rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -")))
 
-(define-key search-map "g" 'rgrep)
-(with-eval-after-load 'grep
-  (defun grep-expand-template-add-cut (cmd)
-    (concat cmd " | cut -c-500"))
-  (advice-add 'grep-expand-template :filter-return 'grep-expand-template-add-cut))
+;;; DIRED X
 
-;;;; RG
+(autoload 'dired-jump "dired-x" nil t)
+(define-key ctl-x-map "\C-j" 'dired-jump)
+(with-eval-after-load 'dired (require 'dired-x))
 
-(define-key search-map "rr" 'rg)
-(define-key search-map "rt" 'rg-literal)
-(define-key search-map "rp" 'rg-project)
-
-;;; JUMPING
-
-;;;; ON BUFFER
-
-;;;;; AVY
-
-(define-key global-map "\M-z" 'avy-goto-word-0)
-(define-key goto-map "\M-g" 'avy-goto-line)
-
-;;;;; ACE-LINK
-
-(define-key goto-map "l" 'ace-link)
-
-;;;; TO DEFINITION
-
-;;;;; DUMB-JUMP
+;;; DUMB JUMP
 
 (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
 
-;;;;; FIND-FUNC
+;;; EDIT INDIRECT
 
-(define-key search-map "fb" 'find-library)
+(define-key ctl-x-map "E" 'edit-indirect-region)
 
-;;; COMPILATION
+;;; ELISP MODE
 
-;;;; COMPILE
+(define-key emacs-lisp-mode-map "\C-cM" 'emacs-lisp-macroexpand)
+(define-key lisp-interaction-mode-map "\C-cM" 'emacs-lisp-macroexpand)
 
-(define-key ctl-x-map "c" 'compile)
+;;; EMMET MODE
 
-;;;; CARGO
+(add-hook 'nxml-mode-hook 'emmet-mode)
+(add-hook 'mhtml-mode-hook 'emmet-mode)
+(add-hook 'web-mode-hook 'emmet-mode)
 
-(add-hook 'rust-mode-hook 'cargo-minor-mode)
+;;; ENV
 
-;;; COMINT
+(setenv "PAGER" "cat")
 
-(add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
-(add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
-
-;;;; SHELL
-
-(defvar shell-mode-map)
-(with-eval-after-load 'shell
-  (load "/home/val/.config/emacs/shell-extra.el")
-  (define-key shell-mode-map "\C-c\M-d" 'shell-extra-change-directory)
-  (define-key mode-specific-map "xS" 'shell-extra-list-buffers))
-
-(define-key mode-specific-map "xs" 'shell-pwd-shell)
-
-;;; SKEMPO
-
-(add-hook 'nix-mode-hook 'skempo-mode)
-(with-eval-after-load 'skempo
-  (define-key skempo-mode-map "\C-z" 'skempo-complete-tag-or-call-on-region)
-  (define-key skempo-mode-map "\M-g\M-e" 'skempo-forward-mark)
-  (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
-
-  (with-eval-after-load 'elisp-mode
-    (load "/home/val/.config/emacs/skempo-emacs-lisp.el"))
-  (with-eval-after-load 'sly
-    (load "/home/val/.config/emacs/skempo-lisp.el"))
-  (with-eval-after-load 'nix-mode
-    (load "/home/val/.config/emacs/skempo-nix.el"))
-  (with-eval-after-load 'php-mode
-    (load "/home/val/.config/emacs/skempo-php.el")))
-
-;;; APPLICATIONS
-
-;;;; NET-UTILS
-
-(define-key mode-specific-map "nh" 'nslookup-host)
-(define-key mode-specific-map "ni" 'ifconfig)
-(define-key mode-specific-map "nn" 'netstat)
-(define-key mode-specific-map "np" 'ping)
-(define-key mode-specific-map "nw" 'iwconfig)
-
-;;;; MAGIT
-
-(define-key project-prefix-map "m" 'magit-project-status)
-
-;;;; PROCESSES
-
-(define-key mode-specific-map "op" 'proced)
-(define-key mode-specific-map "ou" 'pueue)
-
-;;;; SDCV
-
-(define-key mode-specific-map "ot" 'sdcv-search-input)
-(with-eval-after-load 'sdcv
-  (defun sdcv-args-force-utf (args)
-    (cl-list* "--utf8-output" "--utf8-input" args))
-  (advice-add 'sdcv-search-with-dictionary-args :filter-return 'sdcv-args-force-utf))
-
-;;;; EWW
+;;; EWW
 
 (declare-function eww-links-at-point "eww")
 (defvar eww-mode-map)
@@ -444,24 +142,100 @@
         (browse-url url-at-point))))
   (define-key eww-mode-map "V" 'eww-browse-url-custom))
 
-;;;; TRANSMISSION
+;;; FACES
 
-(defvar transmission-mode-map)
-(define-key mode-specific-map "or" 'transmission)
-(with-eval-after-load 'transmission
-  (define-key transmission-mode-map "M" 'transmission-move))
+(define-key help-map "\M-f" 'list-faces-display)
 
-;;;; NEWSTICKER
+(set-face-attribute 'default nil :height 150)
+(set-face-attribute 'mode-line nil :height 105 :background "white smoke" :box nil)
+(set-face-attribute 'mode-line-inactive nil :height 105 :background "dark gray")
+(set-face-attribute 'header-line nil :height 150)
 
-(defvar newsticker-treeview-mode-map)
-(define-key mode-specific-map "on" 'newsticker-show-news)
-(with-eval-after-load 'newst-treeview
-  (load "/home/val/.config/emacs/newsticker-extra.el")
-  (define-key newsticker-treeview-mode-map "w" 'newsticker-extra-treeview-copy-link))
+;;; FD DIRED
 
-;;;; MPC
+(define-key search-map "fd" 'fd-dired)
+
+;;; FILES
+
+(define-key ctl-x-map "R" 'revert-buffer)
+
+;;; FIND DIRED
+
+(define-key search-map "ff" 'find-dired)
+
+;;; FIND FUNC
+
+(define-key search-map "fb" 'find-library)
+
+;;; FINDER
+
+(define-key help-map "\M-c" 'finder-commentary)
+
+;;; FLYMAKE
+
+(with-eval-after-load 'flymake
+  (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error)
+  (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error))
+
+;;; GREP
+
+(define-key search-map "g" 'rgrep)
+(with-eval-after-load 'grep
+  (defun grep-expand-template-add-cut (cmd)
+    (concat cmd " | cut -c-500"))
+  (advice-add 'grep-expand-template :filter-return 'grep-expand-template-add-cut))
+
+;;; HIPPIE EXP
+
+(define-key global-map "\M-/" 'hippie-expand)
+(with-eval-after-load 'hippie-exp
+  (load "/home/val/.config/emacs/hippie-exp-fixes.el"))
+
+;;; HL LINE
+
+(add-hook 'csv-mode-hook 'hl-line-mode)
+(add-hook 'grep-mode-hook 'hl-line-mode)
+(add-hook 'tar-mode-hook 'hl-line-mode)
+(add-hook 'transmission-files-mode-hook 'hl-line-mode)
+(add-hook 'transmission-mode-hook 'hl-line-mode)
+(add-hook 'transmission-peers-mode-hook 'hl-line-mode)
+(add-hook 'mpc-mode-hook 'hl-line-mode)
+
+;;; INSERT CHAR PREVIEW
+
+(define-key global-map [remap insert-char] 'insert-char-preview)
+
+;;; IPRETTY
+
+(define-key global-map [remap eval-print-last-sexp] 'ipretty-last-sexp)
+
+;;; ISEARCH
+
+(define-key isearch-mode-map "\C-h" 'isearch-delete-char)
+(define-key isearch-mode-map "\C-?" isearch-help-map)
+
+;;; LOCATE
+
+(define-key search-map "fl" 'locate)
+
+;;; MAGIT
+
+(define-key project-prefix-map "m" 'magit-project-status)
+
+;;; MAN
+
+(define-key help-map "\M-m" 'man)
+
+;;; MINIBUFFER
+
+(define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
+(define-key minibuffer-local-must-match-map "\C-j" 'minibuffer-force-complete-and-exit)
+
+;;; MPC
 
 (define-key mode-specific-map "os" 'mpc)
+
+;;;; MPC BINDINGS
 
 (defvar mpc-mode-map)
 (defvar mpc-songs-mode-map)
@@ -485,22 +259,21 @@
   (define-key mpc-mode-map "\C-m" 'mpc-songs-jump-to)
   (define-key mpc-songs-mode-map [remap mpc-select] nil))
 
-;;;; E-READER
+;;; MULE
 
-;;;;; PDF-TOOLS
+(set-terminal-coding-system 'utf-8)
 
-(pdf-loader-install t t)
+;;; MULE CMDS
 
-;;;;; NOV
-
-(add-to-list 'auto-mode-alist (cons (rx ".epub" eos) 'nov-mode))
+(prefer-coding-system 'utf-8)
 
 ;;; MU4E
 
-(defvar mu4e-contexts)
-(declare-function make-mu4e-context "mu4e-context")
 (autoload 'mu4e "mu4e" nil t)
 (define-key mode-specific-map "om" 'mu4e)
+
+(defvar mu4e-contexts)
+(declare-function make-mu4e-context "mu4e-context")
 (with-eval-after-load 'mu4e
   (load-library "org-mu4e")
   (setq mu4e-contexts
@@ -517,16 +290,47 @@
             (message-sendmail-extra-arguments "-a" "polimi")
             (mu4e-compose-signature . "Cordiali saluti,\nLitkovskyy Valeriy"))))))
 
-;;; ORG
+;;; NET UTILS
+
+(define-key mode-specific-map "nh" 'nslookup-host)
+(define-key mode-specific-map "ni" 'ifconfig)
+(define-key mode-specific-map "nn" 'netstat)
+(define-key mode-specific-map "np" 'ping)
+(define-key mode-specific-map "nw" 'iwconfig)
+
+;;; NEWSTICKER
+
+(defvar newsticker-treeview-mode-map)
+(define-key mode-specific-map "on" 'newsticker-show-news)
+(with-eval-after-load 'newst-treeview
+  (load "/home/val/.config/emacs/newsticker-extra.el")
+  (define-key newsticker-treeview-mode-map "w" 'newsticker-extra-treeview-copy-link))
+
+;;; NOV
+
+(add-to-list 'auto-mode-alist (cons (rx ".epub" eos) 'nov-mode))
+
+;;; NOVICE
+
+(setq disabled-command-function nil)
+
+;;; ORDERLESS
+
+(define-key minibuffer-local-completion-map " " nil)
+
+;;; ORG AGENDA
 
 (define-key mode-specific-map "Ga" 'org-agenda)
+
+;;; ORG CAPTURE
+
 (define-key mode-specific-map "Gc" 'org-capture)
 
-;;;; ORG-MIME
+;;; ORG MIME
 
+(defvar message-mode-map)
 (autoload 'org-mime-edit-mail-in-org-mode "org-mime" nil t)
 (autoload 'org-mime-revert-to-plain-text-mail "org-mime" nil t)
-(defvar message-mode-map)
 (with-eval-after-load 'message
   (define-key message-mode-map "\C-c\M-o" 'org-mime-htmlize)
   (define-key message-mode-map "\C-c\M-e" 'org-mime-edit-mail-in-org-mode)
@@ -534,14 +338,205 @@
 (with-eval-after-load 'org-mime
   (load "/home/val/.config/emacs/org-mime-fixes.el"))
 
-;;; CUSTOM
+;;; OUTLINE
 
-(defvar cus-edit-map (make-sparse-keymap))
-(define-key cus-edit-map "v" 'customize-option)
-(define-key cus-edit-map "g" 'customize-group)
-(define-key cus-edit-map "f" 'customize-face)
-(define-key cus-edit-map "s" 'customize-saved)
-(define-key cus-edit-map "u" 'customize-unsaved)
-(define-key ctl-x-map "C" cus-edit-map)
+(with-eval-after-load 'outline
+  (defun outline-show-after-jump ()
+    (when outline-minor-mode (outline-show-entry))))
 
-(load "/home/val/.config/nixpkgs/emacs/custom.el" t)
+;;; OUTLINE MINOR FACES
+
+(add-hook 'outline-minor-mode-hook 'outline-minor-faces-add-font-lock-keywords)
+
+;;; PARAGRAPHS
+
+(define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
+
+;;; PDF TOOLS
+
+(pdf-loader-install t t)
+
+;;; PP
+
+(define-key emacs-lisp-mode-map "\C-cm" 'pp-macroexpand-last-sexp)
+(define-key lisp-interaction-mode-map "\C-cm" 'pp-macroexpand-last-sexp)
+
+;;; PROCED
+
+(define-key mode-specific-map "op" 'proced)
+
+;;; PUEUE
+
+(define-key mode-specific-map "ou" 'pueue)
+
+;;; REGISTER
+
+(define-key ctl-x-r-map "v" 'view-register)
+(define-key ctl-x-r-map "L" 'list-registers)
+(define-key ctl-x-r-map "p" 'prepend-to-register)
+(define-key ctl-x-r-map "a" 'append-to-register)
+
+;;; REVERSE IM
+
+(require 'reverse-im)
+(reverse-im-activate "cyrillic-dvorak")
+
+;;; RG
+
+(define-key search-map "rr" 'rg)
+(define-key search-map "rt" 'rg-literal)
+(define-key search-map "rp" 'rg-project)
+
+;;; SAVEHIST
+
+(with-eval-after-load 'savehist
+  (defun savehist-filter-file-name-history ()
+    (let (result)
+      (dolist (file-name file-name-history)
+        (let ((f (string-trim-right (expand-file-name file-name) "/+")))
+          (unless (string-empty-p f)
+            (when (or (file-remote-p f)
+                      (string-match-p "\\`http" f)
+                      (file-exists-p f))
+              (cl-pushnew f result :test #'string-equal)))))
+      (setq file-name-history result))))
+
+;;; SDCV
+
+(define-key mode-specific-map "ot" 'sdcv-search-input)
+(with-eval-after-load 'sdcv
+  (defun sdcv-args-force-utf (args)
+    (cl-list* "--utf8-output" "--utf8-input" args))
+  (advice-add 'sdcv-search-with-dictionary-args :filter-return 'sdcv-args-force-utf))
+
+;;; SGML MODE
+
+(defvar sgml-mode-map)
+(with-eval-after-load 'sgml-mode
+  (define-key sgml-mode-map "\C-\M-n" 'sgml-skip-tag-forward)
+  (define-key sgml-mode-map "\C-\M-p" 'sgml-skip-tag-backward)
+  (define-key sgml-mode-map "\C-c\C-r" 'sgml-namify-char))
+
+;;; SHELL
+
+(defvar shell-mode-map)
+(with-eval-after-load 'shell
+  (load "/home/val/.config/emacs/shell-extra.el")
+  (define-key shell-mode-map "\C-c\M-d" 'shell-extra-change-directory)
+  (define-key mode-specific-map "xS" 'shell-extra-list-buffers))
+
+(define-key mode-specific-map "xs" 'shell-pwd-shell)
+
+;;; SIMPLE
+
+(defun kill-region-dwim (&optional count)
+  (interactive "p")
+  (if (use-region-p)
+      (kill-region (region-beginning) (region-end))
+    (backward-kill-word count)))
+
+(define-key global-map "\C-h" 'backward-delete-char-untabify)
+(define-key global-map "\M-K" 'kill-whole-line)
+(define-key global-map "\M-c" 'capitalize-dwim)
+(define-key global-map "\M-l" 'downcase-dwim)
+(define-key global-map "\M-u" 'upcase-dwim)
+(define-key global-map "\C-w" 'kill-region-dwim)
+(define-key ctl-x-map "K" 'kill-current-buffer)
+(define-key ctl-x-map "\M-t" 'toggle-truncate-lines)
+(define-key mode-specific-map "oP" 'list-processes)
+
+;;; SKEMPO
+
+(add-hook 'nix-mode-hook 'skempo-mode)
+(with-eval-after-load 'skempo
+  (define-key skempo-mode-map "\C-z" 'skempo-complete-tag-or-call-on-region)
+  (define-key skempo-mode-map "\M-g\M-e" 'skempo-forward-mark)
+  (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
+  (with-eval-after-load 'elisp-mode
+    (load "/home/val/.config/emacs/skempo-emacs-lisp.el"))
+  (with-eval-after-load 'sly
+    (load "/home/val/.config/emacs/skempo-lisp.el"))
+  (with-eval-after-load 'nix-mode
+    (load "/home/val/.config/emacs/skempo-nix.el"))
+  (with-eval-after-load 'php-mode
+    (load "/home/val/.config/emacs/skempo-php.el")))
+
+;;; SMARTPARENS
+
+(with-eval-after-load 'smartparens
+  (require 'smartparens-config))
+
+;;;; SMARTPARENS HOOKS
+
+(add-hook 'minibuffer-inactive-mode-hook 'smartparens-mode)
+(add-hook 'nix-mode-hook 'smartparens-mode)
+(add-hook 'rust-mode-hook 'smartparens-mode)
+(add-hook 'js-mode-hook 'smartparens-mode)
+(add-hook 'smartparens-mode-hook 'show-smartparens-mode)
+
+;;;; SMARTPARENS DEFS
+
+(defun sp-kill-region-dwim (&optional count)
+  (interactive "p")
+  (if (use-region-p)
+      (sp-kill-region (region-beginning) (region-end))
+    (sp-backward-kill-word count)))
+
+(autoload 'sp-backward-barf-sexp "smartparens" nil t)
+(autoload 'sp-backward-slurp-sexp "smartparens" nil t)
+(autoload 'sp-copy-sexp "smartparens" nil t)
+(autoload 'sp-forward-barf-sexp "smartparens" nil t)
+(autoload 'sp-forward-slurp-sexp "smartparens" nil t)
+(autoload 'sp-rewrap-sexp "smartparens" nil t)
+(autoload 'sp-unwrap-sexp "smartparens" nil t)
+
+;;;; SMARTPARENS BINDINGS
+
+(define-key global-map (eval-when-compile (kbd "C-(")) 'sp-backward-slurp-sexp)
+(define-key global-map (eval-when-compile (kbd "C-)")) 'sp-forward-slurp-sexp)
+(define-key global-map (eval-when-compile (kbd "C-M-(")) 'sp-backward-barf-sexp)
+(define-key global-map (eval-when-compile (kbd "C-M-)")) 'sp-forward-barf-sexp)
+(define-key global-map "\C-\M-w" 'sp-copy-sexp)
+(define-key global-map "\M-[" 'sp-unwrap-sexp)
+(define-key global-map "\M-]" 'sp-rewrap-sexp)
+
+(define-key smartparens-mode-map "\C-\M-u" 'sp-backward-up-sexp)
+(define-key smartparens-mode-map "\C-\M-d" 'sp-down-sexp)
+(define-key smartparens-mode-map "\C-\M-t" 'sp-transpose-sexp)
+(define-key smartparens-mode-map "\C-\M-k" 'sp-kill-sexp)
+(define-key smartparens-mode-map "\M-d" 'sp-kill-word)
+(define-key smartparens-mode-map "\C-w" 'sp-kill-region-dwim)
+
+;;; SUBWORD
+
+(add-hook 'rust-mode-hook 'subword-mode)
+(add-hook 'nix-mode-hook 'subword-mode)
+
+;;; TAB BAR
+
+(define-key global-map "\C-xtt" 'toggle-tab-bar-mode-from-frame)
+
+;;; TEX MODE
+
+(defvar ispell-parser)
+(add-hook 'tex-mode-hook (lambda nil (setq-local ispell-parser 'tex)))
+
+;;; TRANSMISSION
+
+(defvar transmission-mode-map)
+(define-key mode-specific-map "or" 'transmission)
+(with-eval-after-load 'transmission
+  (define-key transmission-mode-map "M" 'transmission-move))
+
+;;; WEB MODE
+
+(add-to-list 'auto-mode-alist (cons (rx ".twig" eos) 'web-mode))
+
+;;; WINDOW
+
+(define-key global-map "\M-V" 'scroll-down-line)
+(define-key global-map [?\C-\S-v] 'scroll-up-line)
+(define-key global-map [?\C-\M-\S-b] 'previous-buffer)
+(define-key global-map [?\C-\M-\S-f] 'next-buffer)
+(define-key global-map "\M-Q" 'quit-window)
+(define-key global-map "\M-O" 'other-window)
