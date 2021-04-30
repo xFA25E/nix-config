@@ -156,7 +156,7 @@ in {
       TERMINAL = "${pkgs.xterm}/bin/uxterm";
       LESSHISFILE = "/dev/null";
       MU_HOME = "${dir.cache}/mu";
-      MAILDIR = "/home/${user}/.mail";
+      MAILDIR = "${dir.mail}";
       RIMER_CALLBACK = "${pkgs.scripts}/bin/rimer_callback";
       MPD_HOST = "localhost";
       MPD_PORT = "6600";
