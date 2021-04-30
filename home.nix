@@ -536,19 +536,6 @@ in {
         };
       };
 
-      "applications/emacsdired.desktop".text = pkgs.lib.generators.toINI {} {
-        "Desktop Entry" = {
-          Encoding = "UTF-8";
-          Version = "1.0";
-          Type = "Application";
-          NoDisplay = "true";
-          MimeType = "application/x-directory;inode/directory;";
-          Exec = ''${pkgs.emacsEditor}/bin/emacseditor --eval \"(dired \\\"%f\\\")\"'';
-          Name = "Dired";
-          Comment = "Emacs Dired";
-        };
-      };
-
       "applications/emacseditor.desktop".text = pkgs.lib.generators.toINI {} {
         "Desktop Entry" = {
           Name = "Emacs";
@@ -562,20 +549,6 @@ in {
           Categories = "Development;TextEditor;";
           StartupWMClass = "Emacs";
           Keywords = "Text;Editor;";
-        };
-      };
-
-      "applications/emacsmail.desktop".text = pkgs.lib.generators.toINI {} {
-        "Desktop Entry" = {
-          Encoding = "UTF-8";
-          Version = "1.0";
-          Type = "Application";
-          MimeType = "x-scheme-handler/mailto;message/rfc822;";
-          NoDisplay = "true";
-          Exec = ''${pkgs.emacsEditor}/bin/emacseditor --eval \"(browse-url-mail \\\"%U\\\")\"'';
-          Name = "EmacsMail";
-          Terminal = "false";
-          Comment = "Emacs Compose Mail";
         };
       };
 
@@ -596,10 +569,6 @@ in {
       defaultApplications = {
         "application/pdf" = [ "emacseditor.desktop" ];
         "application/epub" = [ "emacseditor.desktop" ];
-        "application/x-directory" = [ "emacsdired.desktop" ];
-        "inode/directory" = [ "emacsdired.desktop" ];
-        "x-scheme-handler/mailto" = [ "emacsmail.desktop" ];
-        "message/rfc822" = [ "emacsmail.desktop" ];
         "text/html" = [ "browser.desktop" ];
         "x-scheme-handler/https" = [ "browser.desktop" ];
         "x-scheme-handler/http" = [ "browser.desktop" ];
