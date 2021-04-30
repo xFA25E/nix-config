@@ -98,26 +98,15 @@
     (progn (message "No jsown or dexador!") nil)))
 
 (defcommand show-hardware () ()
-  (update-battery-status-variables)
-  (let ((output (uiop:run-program '("df" "--si" "--output=avail,target") :output :string))
-        (max-length 0)
-        (partitions nil))
-
-    (ppcre:do-register-groups (avail target)
-        (" *([^ ]+) +(/|/run/media/val/backup)\\n"
-         output nil :sharedp t)
-      (push (cons avail target) partitions)
-      (setf max-length (max max-length (length avail))))
-
-    (message "~{~A~%~}~%B~A ~A ~A"
-             (mapcar (lambda (partition)
-                       (destructuring-bind (avail . target) partition
-                         (format nil "~A~A ~A"
-                                 (make-string (- max-length (length avail)) :initial-element #\Space)
-                                 avail
-                                 target)))
-                     partitions)
-             *battery-percentage* *battery-state* *battery-time*)))
+  (multiple-value-bind (percentage state time) (read-battery-status)
+    (message "~{~A~%~}B~A ~A ~A"
+             (delete-if-not
+              (alexandria:curry #'ppcre:scan "(/|/run/media/val/backup)$")
+              (rest
+               (uiop:split-string
+                (uiop:run-program '("df" "--si" "--output=avail,target") :output '(:string :stripped t))
+                :separator '(#\Newline))))
+             percentage state time)))
 
 
 

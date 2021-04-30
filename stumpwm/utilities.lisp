@@ -3,7 +3,7 @@
 (defun read-battery-status ()
   (let ((output (uiop:run-program '("acpi" "--battery") :output '(:string :stripped t))))
     (ppcre:register-groups-bind (state percentage time)
-        ("[^:]+: ([^,]+), ([^%]+)%(?:, (.*?))?" output :sharedp t)
+        ("[^:]+: ([^,]+), ([^%]+)%(?:, (.*))?" output :sharedp t)
       (values percentage state time))))
 
 (defun read-brightness-status ()
@@ -27,27 +27,9 @@
 
 
 
-(defun update-battery-status-variables ()
-  (multiple-value-bind (percentage state time) (read-battery-status)
-    (setf *battery-percentage* (parse-integer percentage)
-          *battery-state* state
-          *battery-time* time)))
-
-
-
 (defun notify-battery-status ()
-  (update-battery-status-variables)
-  (let* ((percentage-difference (- *battery-previous-percentage* *battery-percentage*))
-         (criticalp (<= *battery-percentage* 15))
-         (chargingp (<= percentage-difference 0))
-         (notifyp (<= 10 percentage-difference)))
-    (when (or criticalp chargingp notifyp)
-      (setf *battery-previous-percentage* *battery-percentage*)
-      (unless chargingp
-        (message "BATTERY: ~D ~A ~A" *battery-percentage* *battery-state* *battery-time*))
-      (when criticalp
+  (multiple-value-bind (percentage state time) (read-battery-status)
+    (when (string= "Discharging" state)
+      (message "Battery: ~A ~A ~A" percentage state time)
+      (when (<= (parse-integer percentage) 10)
         (uiop:launch-program '("notify_sound"))))))
-
-(defun notify-date-time ()
-  (when (zerop (rem (nth-value 1 (get-decoded-time)) 30))
-    (echo-date)))
