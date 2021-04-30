@@ -145,13 +145,13 @@ in {
 
       # mypkgs
 
-      browser emacsEditor rimer scripts stumpwm ungoogledChromiumIncognito ytdl
+      browser rimer scripts stumpwm ungoogledChromiumIncognito ytdl
 
     ];
 
     sessionPath = [ "${dir.config}/composer/vendor/bin" "${dir.data}/npm/bin" "/usr/local/bin" ];
     sessionVariables = rec {
-      EDITOR = "${pkgs.emacsEditor}/bin/emacseditor";
+      EDITOR = "${pkgs.myEmacs}/bin/emacs";
       VISUAL = EDITOR;
       TERMINAL = "${pkgs.xterm}/bin/uxterm";
       LESSHISFILE = "/dev/null";
@@ -536,22 +536,6 @@ in {
         };
       };
 
-      "applications/emacseditor.desktop".text = pkgs.lib.generators.toINI {} {
-        "Desktop Entry" = {
-          Name = "Emacs";
-          GenericName = "Text Editor";
-          Comment = "Edit text";
-          MimeType = "text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;";
-          Exec = "${pkgs.emacsEditor}/bin/emacseditor %F";
-          Icon = "emacs";
-          Type = "Application";
-          Terminal = "false";
-          Categories = "Development;TextEditor;";
-          StartupWMClass = "Emacs";
-          Keywords = "Text;Editor;";
-        };
-      };
-
       "stardict/dic".source = "${pkgs.stardictDictionaries}/share/stardict/dic";
     };
 
@@ -561,14 +545,14 @@ in {
       enable = true;
       associations = {
         added = {
-          "application/pdf" = [ "emacseditor.desktop" ];
-          "application/epub" = [ "emacseditor.desktop" ];
+          "application/pdf" = [ "emacs.desktop" ];
+          "application/epub" = [ "emacs.desktop" ];
         };
         removed = {};
       };
       defaultApplications = {
-        "application/pdf" = [ "emacseditor.desktop" ];
-        "application/epub" = [ "emacseditor.desktop" ];
+        "application/pdf" = [ "emacs.desktop" ];
+        "application/epub" = [ "emacs.desktop" ];
         "text/html" = [ "browser.desktop" ];
         "x-scheme-handler/https" = [ "browser.desktop" ];
         "x-scheme-handler/http" = [ "browser.desktop" ];
