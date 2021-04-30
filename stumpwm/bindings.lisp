@@ -22,7 +22,6 @@
 (define-key *root-map* (kbd "C-c") "exec uxterm")
 (define-key *root-map* (kbd "C-q") "send-raw-key")
 (define-key *root-map* (kbd "C-o") '*open-map*)
-(defprogram-shortcut emacs :map *root-map* :key (kbd "C-e") :command "emacsclient -cna ''" :props '(:class "Emacs"))
 
 ;;; OPEN
 
