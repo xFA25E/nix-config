@@ -390,7 +390,7 @@ in {
         };
         Timer = {
           Unit = "updatedb.service";
-          OnCalendar = "02:15";
+          OnCalendar = "13:00";
         };
         Install = {
           WantedBy = [ "timers.target" ];
