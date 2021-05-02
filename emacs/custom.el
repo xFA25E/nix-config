@@ -128,6 +128,7 @@
  '(hscroll-step 1)
  '(html-mode-hook '(emmet-mode))
  '(ibuffer-default-sorting-mode 'major-mode)
+ '(ibuffer-show-empty-filter-groups nil)
  '(image-dired-db-file "/home/val/.cache/emacs/image-dired/db")
  '(image-dired-dir "/home/val/.cache/emacs/image-dired/thumbnails/")
  '(image-dired-external-viewer "sxiv")
