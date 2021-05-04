@@ -83,7 +83,7 @@ Set `comint-input-ring-file-name' and load input ring."
       (ibuffer other-window-p buffer-name `((mode . shell-mode)) nil nil
                '(("Shells" (name . "\\`\\*sh "))
                  ("Async shell commands" (name . "\\`\\*Async Shell Command\\*")))
-               '((mark " " (name 30 40 :left :elide) " " filename-and-process)))
+               '((mark " " (name 40 50 :left :elide) " " filename-and-process)))
       (with-current-buffer buffer-name
         (let ((map (make-sparse-keymap)))
           (set-keymap-parent map (current-local-map))
@@ -93,7 +93,8 @@ Set `comint-input-ring-file-name' and load input ring."
 
         (setq-local ibuffer-use-header-line nil)
         (ibuffer-auto-mode)
-        (ibuffer-update nil t)))))
+        (ibuffer-update nil t)
+        (hl-line-mode t)))))
 
 (provide 'shell-extra)
 ;;; shell-extra.el ends here

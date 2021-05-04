@@ -1,4 +1,4 @@
-;;; -*- lexical-binding: t; eval: (progn (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t)); -*-
+;;; -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
 (let ((old-threshold gc-cons-threshold))
   (add-hook 'emacs-startup-hook

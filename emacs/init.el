@@ -472,6 +472,7 @@
 (add-hook 'nix-mode-hook 'smartparens-mode)
 (add-hook 'rust-mode-hook 'smartparens-mode)
 (add-hook 'js-mode-hook 'smartparens-mode)
+(add-hook 'restclient-mode-hook 'smartparens-mode)
 (add-hook 'smartparens-mode-hook 'show-smartparens-mode)
 
 ;;;; SMARTPARENS DEFS
@@ -511,6 +512,7 @@
 
 (add-hook 'rust-mode-hook 'subword-mode)
 (add-hook 'nix-mode-hook 'subword-mode)
+(add-hook 'js-mode-hook 'subword-mode)
 
 ;;; TAB BAR
 
