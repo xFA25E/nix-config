@@ -241,6 +241,7 @@ in {
 
     git = {
       enable = true;
+      extraConfig.credential.helper = "cache --timeout=86400";
       ignores = [ "*.elc" ".direnv" ".eldev" ];
       # signing = {
       #   key = "vlr.ltkvsk@protonmail.com";
