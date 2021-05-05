@@ -96,10 +96,10 @@
  '(eww-search-prefix "https://ddg.co/lite/?q=")
  '(executable-chmod 64)
  '(fd-dired-ls-option
-   '("| sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
+   '("| xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
  '(fill-column 80)
  '(find-ls-option
-   '("-print0 | sort -z | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
+   '("-print0 | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
  '(flymake-no-changes-timeout nil)
  '(flyspell-default-dictionary "russian")
  '(flyspell-dictionaries-that-consider-dash-as-word-delimiter '("francais" "deutsch8" "norsk" "russian"))
@@ -282,7 +282,7 @@
  '(org-id-locations-file "/home/val/.cache/emacs/org/id-locations")
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode) t)
+ '(org-mode-hook '(smartparens-mode))
  '(org-refile-allow-creating-parent-nodes 'confirm)
  '(org-refile-targets '((org-agenda-files :level . 1)))
  '(org-refile-use-outline-path 'file)
