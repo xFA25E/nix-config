@@ -165,12 +165,6 @@ in {
       "_JAVA_AWT_WM_NONREPARENTING" = "1";
       CUDA_CACHE_PATH = "${dir.cache}/nv";
       NPM_CONFIG_USERCONFIG = "${dir.config}/npm/npmrc";
-      SDCV_HISTSIZE = "0";
-      HISTFILESIZE = "0";
-      HISTSIZE = "0";
-      HISTFILE = "";
-      SQLITE_HISTORY = "/dev/null";
-      MYSQL_HISTFILE = "/dev/null";
       GEM_HOME = "${dir.cache}/gem";
       GEM_SPEC_CACHE = "${dir.cache}/gem";
       ANDROID_SDK_HOME = "${dir.cache}/android";
@@ -200,7 +194,6 @@ in {
     bash = {
       enable = true;
       historyControl = [ "erasedups" "ignoredups" "ignorespace" ];
-      historyFile = "${dir.data}/history/bash";
       historyIgnore = map (cmd: "${cmd}*") [
         "awk" "bash" "cat" "cd" "chmod" "chown" "command" "cp" "cut" "dash" "dd"
         "df" "dh" "du" "ebook-convert" "echo" "emacs" "env" "exit" "export" "fd"

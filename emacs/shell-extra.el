@@ -20,24 +20,13 @@
 
 ;;; Commentary:
 
-;; Command to change directory interactively.  Enable history and history
-;; filters.
+;; Command to change directory interactively and list shells.
 
 ;;; Code:
 
 (require 'shell)
 (require 'ibuffer)
 (require 'cl-macs)
-
-(defgroup shell-extra nil
-  "Extra shell features."
-  :group 'shell)
-
-(defcustom shell-extra-history-filename
-  "/home/val/.local/share/bash_history"
-  "Shell history file."
-  :type 'file
-  :group 'shell-extra)
 
 (defun shell-extra-change-directory ()
   "Change directory in a shell, interactively."
@@ -48,11 +37,6 @@
          (dir (or (file-remote-p read-dir 'localname) read-dir)))
     (insert (concat "cd " (shell-quote-argument (expand-file-name dir)))))
   (comint-send-input))
-
-(defun shell-extra-enable-history ()
-  "Enable shell history.
-Set `comint-input-ring-file-name' and load input ring."
-  (setq-local comint-input-ring-file-name shell-extra-history-filename))
 
 (defun shell-extra-count-shell-buffers ()
   "Count shell buffers."
