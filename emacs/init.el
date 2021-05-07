@@ -290,6 +290,11 @@
             (message-sendmail-extra-arguments "-a" "polimi")
             (mu4e-compose-signature . "Cordiali saluti,\nLitkovskyy Valeriy"))))))
 
+;;; NATIVE COMPLETE
+
+(with-eval-after-load 'comint (add-hook 'comint-dynamic-complete-functions 'native-complete-at-point))
+(with-eval-after-load 'shell (native-complete-setup-bash))
+
 ;;; NET UTILS
 
 (define-key mode-specific-map "nh" 'nslookup-host)

@@ -329,8 +329,8 @@
  '(sgml-basic-offset 4)
  '(sh-mode-hook '(sh-electric-here-document-mode smartparens-mode))
  '(shell-dynamic-complete-functions
-   '(bash-completion-dynamic-complete comint-c-a-p-replace-by-expanded-history shell-environment-variable-completion shell-command-completion shell-c-a-p-replace-by-expanded-directory pcomplete-completions-at-point shell-filename-completion comint-filename-completion))
- '(shell-mode-hook '(ansi-color-for-comint-mode-on bash-completion-setup))
+   '(native-complete-at-point comint-c-a-p-replace-by-expanded-history shell-environment-variable-completion shell-command-completion shell-c-a-p-replace-by-expanded-directory bash-completion-dynamic-complete pcomplete-completions-at-point shell-filename-completion comint-filename-completion))
+ '(shell-mode-hook '(ansi-color-for-comint-mode-on))
  '(shift-select-mode nil)
  '(shr-max-image-proportion 0.7)
  '(shr-use-fonts nil)
@@ -343,6 +343,7 @@
  '(skempo-skeleton-marks-support t)
  '(skempo-update-identical-tags t)
  '(small-temporary-file-directory "/dev/shm/")
+ '(sql-input-ring-file-name "/home/val/.cache/emacs/sql_history")
  '(sql-interactive-mode-hook '(sql-indent-enable))
  '(sql-mode-hook '(sqlup-mode sql-indent-enable smartparens-mode))
  '(sql-sqlite-options '("-column" "-header" "-cmd" "PRAGMA foreign_keys = ON;"))
