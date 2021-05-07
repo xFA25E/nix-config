@@ -46,7 +46,7 @@ self: super: let
       owner = "xFA25E";
       name = "shell-pwd";
       version = "0.1.0";
-      checksum = "08f9spkv54lmkg06p2mhhk164rcwvp6fvqh275iwsclwjaylbljh";
+      checksum = "1463a8x9xg02szwrn8iq2v6bg7k7dm4fhg34k59li6kfl9n9fbiw";
     };
 
     pueue = make-melpa {

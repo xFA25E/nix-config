@@ -159,11 +159,6 @@
 
 (define-key ctl-x-map "R" 'revert-buffer)
 
-;;; FILES X
-
-(connection-local-set-profile-variables 'notifile '((shell-file-name . "/bin/bash")))
-(connection-local-set-profiles '(:application tramp :machine "notifile") 'notifile)
-
 ;;; FIND DIRED
 
 (define-key search-map "ff" 'find-dired)
