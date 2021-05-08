@@ -422,15 +422,13 @@
   (define-key sgml-mode-map "\C-\M-p" 'sgml-skip-tag-backward)
   (define-key sgml-mode-map "\C-c\C-r" 'sgml-namify-char))
 
-;;; SHELL
-
-(defvar shell-mode-map)
-(with-eval-after-load 'shell
-  (load "/home/val/.config/emacs/shell-extra.el")
-  (define-key shell-mode-map "\C-c\M-d" 'shell-extra-change-directory)
-  (define-key mode-specific-map "xS" 'shell-extra-list-buffers))
+;;; SHELL PWD
 
 (define-key mode-specific-map "xs" 'shell-pwd-shell)
+(define-key mode-specific-map "xS" 'shell-pwd-list-buffers)
+(defvar shell-mode-map)
+(with-eval-after-load 'shell
+  (define-key shell-mode-map "\C-c\M-d" 'shell-pwd-change-directory))
 
 ;;; SIMPLE
 

@@ -282,7 +282,7 @@
  '(org-id-locations-file "/home/val/.cache/emacs/org/id-locations")
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode) t)
+ '(org-mode-hook '(smartparens-mode))
  '(org-refile-allow-creating-parent-nodes 'confirm)
  '(org-refile-targets '((org-agenda-files :level . 1)))
  '(org-refile-use-outline-path 'file)
@@ -329,7 +329,7 @@
  '(sgml-basic-offset 4)
  '(sh-mode-hook '(sh-electric-here-document-mode smartparens-mode))
  '(shell-dynamic-complete-functions
-   '(native-complete-at-point comint-c-a-p-replace-by-expanded-history shell-environment-variable-completion shell-command-completion shell-c-a-p-replace-by-expanded-directory bash-completion-dynamic-complete pcomplete-completions-at-point shell-filename-completion comint-filename-completion))
+   '(native-complete-at-point bash-completion-dynamic-complete comint-c-a-p-replace-by-expanded-history shell-environment-variable-completion shell-command-completion shell-c-a-p-replace-by-expanded-directory shell-filename-completion comint-filename-completion pcomplete-completions-at-point))
  '(shell-mode-hook '(ansi-color-for-comint-mode-on))
  '(shift-select-mode nil)
  '(shr-max-image-proportion 0.7)
