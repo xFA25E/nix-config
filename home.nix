@@ -136,7 +136,7 @@ in {
 
       acpi alsaUtils ascii brightnessctl calibre dmenu fd ffmpeg file firefox
       gimp hunspell hunspellDicts.en_US-large hunspellDicts.it_IT
-      hunspellDicts.ru_RU imagemagick ledger leiningen libnotify libreoffice
+      hunspellDicts.ru_RU imagemagick iw ledger leiningen libnotify libreoffice
       mediainfo mkpasswd mpc_cli nload p7zip pass-otp perlPackages.JSONPP
       pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync scrot sdcv
       simplescreenrecorder sloccount speedtest-cli stalonetray sxiv syncthing
