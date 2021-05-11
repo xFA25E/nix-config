@@ -520,6 +520,7 @@
 ;;; TAB BAR
 
 (define-key tab-prefix-map "t" 'toggle-tab-bar-mode-from-frame)
+(define-key tab-prefix-map "s" 'tab-switcher)
 
 ;;; TEX MODE
 
