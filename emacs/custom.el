@@ -30,6 +30,7 @@
  '(browse-url-multi-invidious-instances
    '("invidious.tube" "invidious.zapashcanon.fr" "tube.connect.cafe" "vid.puffyan.us" "invidious.048596.xyz" "invidious.himiko.cloud" "invidious.zee.li" "invidious.namazso.eu" "yewtu.be" "ytprivate.com" "vid.mint.lgbt" "inv.skyn3t.in" "invidious.kavin.rocks" "au.ytprivate.com"))
  '(browse-url-secondary-browser-function 'browse-url-multi)
+ '(byte-count-to-string-function '(lambda (s) (file-size-human-readable s 'si)))
  '(c-default-style '((java-mode . "java") (other . "awk")))
  '(calendar-week-start-day 1)
  '(cargo-process--command-build "build --color never")
@@ -283,7 +284,7 @@
  '(org-id-locations-file "/home/val/.cache/emacs/org/id-locations")
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode))
+ '(org-mode-hook '(smartparens-mode) t)
  '(org-refile-allow-creating-parent-nodes 'confirm)
  '(org-refile-targets '((org-agenda-files :level . 1)))
  '(org-refile-use-outline-path 'file)
