@@ -534,6 +534,15 @@
 (with-eval-after-load 'transmission
   (define-key transmission-mode-map "M" 'transmission-move))
 
+;;; VCOMPLETE
+
+(with-eval-after-load 'vcomplete
+  (define-key vcomplete-command-map "\M-v" 'switch-to-completions)
+  (define-key vcomplete-command-map [?\C-.] 'vcomplete-next-completion)
+  (define-key vcomplete-command-map [?\C-,] 'vcomplete-prev-completion)
+  (define-key vcomplete-command-map [?\C-n] nil)
+  (define-key vcomplete-command-map [?\C-p] nil))
+
 ;;; WEB MODE
 
 (add-to-list 'auto-mode-alist (cons (rx ".twig" eos) 'web-mode))
