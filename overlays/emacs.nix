@@ -76,11 +76,11 @@ in {
     # melpa
 
     ace-link async avy bash-completion bicycle cargo consult dired-rsync direnv
-    dumb-jump edit-indirect eglot emmet-mode fd-dired form-feed format-all
-    htmlize insert-char-preview ipretty ledger-mode magit marginalia
-    native-complete nix-mode nov orderless org-mime outline-minor-faces
-    pdf-tools php-mode restclient reverse-im rg rust-mode sdcv sly sly-asdf
-    sly-quicklisp smartparens sqlup-mode transmission vlf web-mode wgrep
+    dumb-jump edit-indirect eglot emmet-mode fd-dired format-all htmlize
+    insert-char-preview ipretty ledger-mode magit marginalia native-complete
+    nix-mode nov orderless org-mime outline-minor-faces pdf-tools php-mode
+    restclient reverse-im rg rust-mode sdcv sly sly-asdf sly-quicklisp
+    smartparens sqlup-mode transmission vlf web-mode wgrep
 
     # elpa
     csv-mode rainbow-mode sql-indent

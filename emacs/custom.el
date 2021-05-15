@@ -88,7 +88,7 @@
  '(eglot-sync-connect nil)
  '(eldoc-minor-mode-string "")
  '(emacs-lisp-mode-hook
-   '(skempo-mode hs-minor-mode outline-minor-mode form-feed-mode flymake-mode smartparens-mode))
+   '(skempo-mode hs-minor-mode outline-minor-mode flymake-mode smartparens-mode))
  '(enable-recursive-minibuffers t)
  '(eval-expression-print-length t)
  '(eval-expression-print-level t)
@@ -104,7 +104,6 @@
  '(flymake-no-changes-timeout nil)
  '(flyspell-default-dictionary "russian")
  '(flyspell-dictionaries-that-consider-dash-as-word-delimiter '("francais" "deutsch8" "norsk" "russian"))
- '(form-feed-lighter "")
  '(gdb-many-windows t)
  '(gdb-show-main t)
  '(global-so-long-mode t)
@@ -163,8 +162,7 @@
  '(kill-read-only-ok t)
  '(leaf-expand-minimally t)
  '(ledger-default-date-format "%Y-%m-%d")
- '(lisp-mode-hook
-   '(skempo-mode smartparens-mode form-feed-mode sly-editing-mode))
+ '(lisp-mode-hook '(skempo-mode smartparens-mode sly-editing-mode))
  '(magit-credential-cache-daemon-socket "/home/val/.cache/git/credential/socket")
  '(mail-user-agent 'mu4e-user-agent)
  '(marginalia-annotators '(marginalia-annotators-light marginalia-annotators-heavy) t)
@@ -321,7 +319,7 @@
  '(savehist-mode t)
  '(savehist-save-hook '(savehist-filter-file-name-history))
  '(scheme-mode-hook
-   '(smartparens-mode form-feed-mode geiser-mode--maybe-activate))
+   '(smartparens-mode geiser-mode--maybe-activate))
  '(scheme-program-name "guile")
  '(scroll-conservatively 10000)
  '(scroll-step 1)
