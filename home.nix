@@ -134,14 +134,14 @@ in {
     packages = with pkgs; [
       # nixpkgs
 
-      acpi alsaUtils ascii bind brightnessctl calibre dmenu fd ffmpeg file
-      firefox gimp hunspell hunspellDicts.en_US-large hunspellDicts.it_IT
-      hunspellDicts.ru_RU imagemagick iw ledger leiningen libnotify libreoffice
-      mediainfo mkpasswd mpc_cli nload p7zip pass-otp perlPackages.JSONPP
-      pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync scrot sdcv
-      simplescreenrecorder sloccount speedtest-cli stalonetray sxiv syncthing
-      tor-browser-bundle-bin transmission ungoogled-chromium wget woof xclip
-      xdg-user-dirs xterm xz youtube-dl zip zoom-us unzip
+      acpi alsaUtils ascii bind brightnessctl calibre dmenu fd ffmpeg file gimp
+      hunspell hunspellDicts.en_US-large hunspellDicts.it_IT hunspellDicts.ru_RU
+      imagemagick iw ledger leiningen libnotify libreoffice mediainfo mkpasswd
+      mpc_cli nload p7zip pass-otp perlPackages.JSONPP pinentry pueue pulsemixer
+      pwgen qrencode qtox ripgrep rsync scrot sdcv simplescreenrecorder
+      sloccount speedtest-cli stalonetray sxiv syncthing tor-browser-bundle-bin
+      transmission ungoogled-chromium wget woof xclip xdg-user-dirs xterm xz
+      youtube-dl zip zoom-us unzip
 
       # mypkgs
 

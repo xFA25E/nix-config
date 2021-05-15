@@ -21,7 +21,7 @@
 ;;; Commentary:
 
 ;; Browse url function that adds additional actions for special urls.  It lets
-;; the user to select one of: qutebrowser, chromium, firefox.  Additionally, if
+;; the user to select one of: qutebrowser, chromium.  Additionally, if
 ;; it detects that a url is a media url, it will offer to open in using mpv, or
 ;; ytdl, or a invidious instance in eww.
 
@@ -69,7 +69,6 @@
         (prompt (format "Browser %s " url))
         (choices '(("chromium" ?c "" browse-url-chromium)
                    ("qutebrowser" ?q "" browse-url-generic)
-                   ("firefox" ?f "" browse-url-firefox)
                    ("eww" ?e "" eww-browse-url))))
     (apply (nth 3 (assoc (read-answer prompt choices) choices)) url args)))
 
