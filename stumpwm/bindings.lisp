@@ -44,7 +44,6 @@
 (define-key *open-map* (kbd "C-m") "show-menu")
 
 (defprogram-shortcut chromium-incognito :map *open-map* :key (kbd "C-b") :props '(:class "Chromium-browser"))
-(defprogram-shortcut qutebrowser :map *open-map* :key (kbd "C-q") :props '(:class "qutebrowser"))
 
 ;;; Remapped keys
 
@@ -58,6 +57,7 @@
        ("M-v"   . "Prior")
        ("M-w"   . "C-c")
        ("C-w"   . ("C-S-Left" "C-x"))
+       ("M-d"   . ("C-S-Right" "C-x"))
        ("C-y"   . "C-v")
        ("M-<"   . "Home")
        ("M->"   . "End")

@@ -284,8 +284,6 @@ in {
     msmtp.enable = true;
     mu.enable = true;
 
-    qutebrowser = import ./qutebrowser.nix pkgs colors;
-
     readline = {
       enable = true;
       variables = {
@@ -302,7 +300,7 @@ in {
         global = {
           geometry = "0x0-0+0";
           dmenu = "${pkgs.dmenu}/bin/dmenu";
-          browser = "${pkgs.qutebrowser}/bin/qutebrowser";
+          browser = "${pkgs.browser}/bin/browser";
           padding = 8;
           horizontal_padding = 8;
           frame_width = 3;
