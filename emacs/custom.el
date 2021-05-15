@@ -372,6 +372,7 @@
  '(url-handler-mode t)
  '(use-dialog-box nil)
  '(user-full-name "Valeriy Litkovskyy")
+ '(vcomplete-mode t)
  '(version-control t)
  '(web-mode-markup-indent-offset 2)
  '(wgrep-auto-save-buffer t)

@@ -35,6 +35,23 @@ self: super: let
 
     # my
 
+    vcomplete = esuper.melpaBuild {
+      pname = "vcomplete";
+      ename = "vcomplete";
+      version = "0.1";
+      recipe = super.writeText "recipe" ''
+        (vcomplete
+          :fetcher git
+          :url "https://git.sr.ht/~dsemy/vcomplete"
+          :commit "07da8d9c1b2b6a1bb0a9edc14555af818cbfb42e")
+      '';
+      src = super.fetchgit {
+        url = "https://git.sr.ht/~dsemy/vcomplete";
+        rev = "07da8d9c1b2b6a1bb0a9edc14555af818cbfb42e";
+        sha256 = "1rlgm89zwx8cqnwrx54n43kdagp94rz666mfikal7dmgmpsbf1x0";
+      };
+    };
+
     cyrillic-dvorak-im = make-melpa {
       name = "cyrillic-dvorak-im";
       version = "0.1.0";
@@ -71,7 +88,7 @@ in {
     emacs-default
 
     # my
-    cyrillic-dvorak-im pueue shell-pwd skempo
+    cyrillic-dvorak-im pueue shell-pwd skempo vcomplete
 
     # melpa
 
