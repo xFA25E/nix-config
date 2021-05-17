@@ -260,6 +260,7 @@
      ("КоверАраб" "https://www.youtube.com/feeds/videos.xml?channel_id=UCjulQNQQJmpYzI-BD1-s03w" nil nil nil)
      ("PewDiePie" "https://www.youtube.com/feeds/videos.xml?user=pewdiepie" nil nil nil)
      ("JFG Tonight" "https://www.bitchute.com/feeds/rss/channel/jfgtonight" nil nil nil)
+     ("JFG Tonight Youtube" "https://www.youtube.com/feeds/videos.xml?channel_id=UC4bVl8YKrVKAr6hZlvzkakQ" nil nil nil)
      ("Uebermarginal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ10M7ftQN7ylM6NaPiEB6w" nil nil nil)))
  '(newsticker-url-list-defaults nil)
  '(next-screen-context-lines 10)
@@ -318,8 +319,7 @@
  '(savehist-file "/home/val/.cache/emacs/savehist")
  '(savehist-mode t)
  '(savehist-save-hook '(savehist-filter-file-name-history))
- '(scheme-mode-hook
-   '(smartparens-mode geiser-mode--maybe-activate))
+ '(scheme-mode-hook '(smartparens-mode geiser-mode--maybe-activate))
  '(scheme-program-name "guile")
  '(scroll-conservatively 10000)
  '(scroll-step 1)
