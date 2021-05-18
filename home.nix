@@ -9,7 +9,7 @@
   colors = variables.colors;
   mailNotify = pkgs.writeShellScript "mailnotify" ''
     export PATH=${pkgs.dbus}/bin:$PATH
-    ${pkgs.mu}/bin/mu index || ${pkgs.myEmacs}/bin/emacsclient --eval "(mu4e-update-mail-and-index t)" || ${pkgs.coreutils}/bin/true
+    ${pkgs.mu}/bin/mu index || ${pkgs.myEmacs}/bin/emacsclient --eval "(mu4e-update-mail-and-index t)" || ${pkgs.libnotify}/bin/notify-send "eMail" "There was a fetch of mail, but index is locked.\nPlease index manually."
     ${pkgs.coreutils}/bin/sleep 2
     count="$(${pkgs.mu}/bin/mu find flag:unread AND NOT flag:trashed | ${pkgs.coreutils}/bin/wc -l)"
     if test 0 -ne $count; then
