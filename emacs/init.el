@@ -185,6 +185,10 @@
     (concat cmd " | cut -c-500"))
   (advice-add 'grep-expand-template :filter-return 'grep-expand-template-add-cut))
 
+;;; HELP
+
+(define-key ctl-x-map "\M-h" help-map)
+
 ;;; HIPPIE EXP
 
 (define-key global-map "\M-/" 'hippie-expand)
