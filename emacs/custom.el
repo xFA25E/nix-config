@@ -239,9 +239,9 @@
  '(newsticker-automatically-mark-items-as-old nil)
  '(newsticker-automatically-mark-visited-items-as-old nil)
  '(newsticker-dir "/home/val/.cache/emacs/newsticker")
- '(newsticker-new-item-functions
-   '(newsticker-extra-notify-new-item newsticker-extra-add-thumbnail))
+ '(newsticker-new-item-functions '(newsticker-extra-add-thumbnail))
  '(newsticker-obsolete-item-max-age 31536000)
+ '(newsticker-retrieval-interval 0)
  '(newsticker-retrieval-method 'extern)
  '(newsticker-treeview-automatically-mark-displayed-items-as-old nil)
  '(newsticker-treeview-listwindow-height 6)

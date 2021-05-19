@@ -51,12 +51,6 @@
     (setf (nth 1 item) (format "<img src=\"%s\"/><br/><pre>%s</pre>" thumbnail
                                (xml-escape-string description)))))
 
-(defun newsticker-extra-notify-new-item (feedname _item)
-  "Notify about new `_ITEM' in `FEEDNAME'."
-  (let ((message (format "Newsticker: %s has new items." feedname)))
-    (message "%s" message)
-    (call-process "notify-send" nil 0 nil message)))
-
 (defun newsticker-extra-treeview-copy-link ()
   "Copy current item link to `kill-ring'."
   (interactive)
