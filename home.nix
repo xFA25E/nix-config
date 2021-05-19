@@ -88,6 +88,8 @@ in {
 
         test -r "/home/${user}/.guix-profile/etc/profile" && . "/home/${user}/.guix-profile/etc/profile"
         test -r "${dir.config}/guix/current/etc/profile" && . "${dir.config}/guix/current/etc/profile"
+
+        eval `ssh-agent`
       '';
       ".sbclrc".source = ./common-lisp.lisp;
       ".shinit".text = ''
