@@ -48,7 +48,7 @@
 ;;; Remapped keys
 
 (define-remapped-keys
-    '(("Chromium-browser"
+    '(("(Tor Browser|Chromium-browser)"
        ("C-n"   . "Down")
        ("C-p"   . "Up")
        ("C-f"   . "Right")
