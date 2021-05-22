@@ -279,7 +279,7 @@
  '(org-id-locations-file "/home/val/.cache/emacs/org/id-locations")
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode))
+ '(org-mode-hook '(smartparens-mode) t)
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
@@ -353,7 +353,7 @@
  '(text-mode-hook '(abbrev-mode text-mode-hook-identify))
  '(tramp-completion-reread-directory-timeout nil)
  '(tramp-default-method "ssh")
- '(tramp-persistency-file-name "/home/val/.cache/emacs/tramp/connection-history")
+ '(tramp-persistency-file-name "/home/val/.cache/emacs/tramp")
  '(tramp-remote-path
    '("/run/current-system/sw/bin" "~/.local/bin" tramp-own-remote-path tramp-default-remote-path "/bin" "/usr/bin" "/sbin" "/usr/sbin" "/usr/local/bin" "/usr/local/sbin" "/local/bin" "/local/freeware/bin" "/local/gnu/bin" "/usr/freeware/bin" "/usr/pkg/bin" "/usr/contrib/bin" "/opt/bin" "/opt/sbin" "/opt/local/bin"))
  '(transient-enable-popup-navigation t)
