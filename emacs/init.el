@@ -120,6 +120,10 @@
 (define-key emacs-lisp-mode-map "\C-cM" 'emacs-lisp-macroexpand)
 (define-key lisp-interaction-mode-map "\C-cM" 'emacs-lisp-macroexpand)
 
+;;; EMACS
+
+(setq completion-ignore-case t)
+
 ;;; EMMET MODE
 
 (add-hook 'nxml-mode-hook 'emmet-mode)
@@ -184,10 +188,6 @@
   (defun grep-expand-template-add-cut (cmd)
     (concat cmd " | cut -c-500"))
   (advice-add 'grep-expand-template :filter-return 'grep-expand-template-add-cut))
-
-;;; HELP
-
-(define-key ctl-x-map "\M-h" help-map)
 
 ;;; HIPPIE EXP
 
