@@ -46,7 +46,7 @@
        (setf description (newsticker--desc item)
              thumbnail (alist-get 'url (car thumbnail))))
 
-      (_ (cl-return nil)))
+      (_ (cl-return-from newsticker-extra-add-thumbnail)))
 
     (setf (nth 1 item) (format "<img src=\"%s\"/><br/><pre>%s</pre>" thumbnail
                                (xml-escape-string description)))))
