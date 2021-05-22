@@ -234,6 +234,9 @@
 
 (define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
 (define-key minibuffer-local-must-match-map "\C-j" 'minibuffer-force-complete-and-exit)
+(autoload 'avy-completion "/home/val/.config/nixpkgs/emacs/avy-completion.el" nil t)
+(define-key minibuffer-local-completion-map "\M-z" 'avy-completion)
+(define-key completion-in-region-mode-map "\M-z" 'avy-completion)
 
 ;;; MPC
 
