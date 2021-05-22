@@ -1,33 +1,5 @@
 ;;; org-mime-fixes.el --- Fixes for org-mime package  -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
-;; Copyright (C) 2021  Valeriy Litkovskyy
-
-;; Author: Valeriy Litkovskyy
-;; Keywords:
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; This file is supposed to fix some incenveniences in org-mime package.  It
-;; adds <br> tags to newlines in html blockquotes if there is only one of them.
-;; Remove file:// from src blocks.  For some reason (I think it is the usage
-;; regexp without saving the match-data) it gets added twice.  It modifies the
-;; behaviour of org-mime-edit-src.  Doesn't add the signature to it.
-
-;;; Code:
-
 (require 'org-mime)
 
 (defun org-mime-beautify-quoted-add-newlines (html)
@@ -90,4 +62,3 @@ For some reason it is added twice to the src attribute."
 (advice-add 'org-mime-edit-mail-in-org-mode :override #'org-mime-edit-mail-in-org-mode-up-to-signature)
 
 (provide 'org-mime-fixes)
-;;; org-mime-fixes.el ends here

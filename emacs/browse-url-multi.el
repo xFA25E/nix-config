@@ -1,32 +1,5 @@
 ;;; browse-url-multi.el --- Browse url multi-browser function  -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
-;; Copyright (C) 2021  Valeriy Litkovskyy
-
-;; Author: Valeriy Litkovskyy
-;; Keywords:
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Browse url function that adds additional actions for special urls.  It lets
-;; the user to select one of: chromium, eww.  Additionally, if it detects that a
-;; url is a media url, it will offer to open in using mpv, or ytdl, or a
-;; invidious instance in eww.
-
-;;; Code:
-
 (require 'cl-macs)
 (require 'url-parse)
 (require 'browse-url)
@@ -55,13 +28,6 @@
   (ido-completing-read (concat "Invidious instance for " url ": ")
                        browse-url-multi-invidious-instances
                        nil t))
-
-(defun browse-url-multi-read-char (prompt choices url)
-  "Read char from `CHOICES' using `URL' in `PROMPT'."
-  (cl-loop with prompt = (concat prompt " " url)
-           for choice = (read-char prompt)
-           until (memq choice choices)
-           finally return choice))
 
 (defun browse-url-multi-browser (url &rest args)
   "Select browser for `URL' and `ARGS'."
@@ -135,4 +101,3 @@ Use new buffer if `ARG' is non-nil."
               arg))
 
 (provide 'browse-url-multi)
-;;; browse-url-multi.el ends here
