@@ -174,11 +174,8 @@
  '(lisp-mode-hook '(skempo-mode smartparens-mode sly-editing-mode))
  '(magit-credential-cache-daemon-socket "/home/val/.cache/git/credential/socket")
  '(mail-user-agent 'mu4e-user-agent)
- '(marginalia-annotators '(marginalia-annotators-light marginalia-annotators-heavy) t)
  '(marginalia-mode t)
  '(max-mini-window-height 1.0)
- '(mediainfo-mode-open-method
-   '("setsid" "-f" "mpv" "--force-window=yes" "--no-terminal" file-name))
  '(message-kill-buffer-on-exit t)
  '(message-send-mail-function 'message-send-mail-with-sendmail)
  '(message-subject-re-regexp
