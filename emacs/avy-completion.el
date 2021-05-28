@@ -19,7 +19,7 @@
           (let ((avy-action #'avy-action-choose))
             (avy-process
              (save-excursion
-               (cl-loop initially (goto-char wnd-start)
+               (cl-loop initially (progn (goto-char wnd-start) (previous-completion 1))
                         do (next-completion 1) while (< (point) wnd-end)
                         collect (cons (point) wnd)))))))
     (user-error "No *Completions* windows")))

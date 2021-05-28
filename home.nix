@@ -7,15 +7,6 @@
   user = variables.user;
   dir = variables.dir;
   colors = variables.colors;
-  mailNotify = pkgs.writeShellScript "mailnotify" ''
-    export PATH=${pkgs.dbus}/bin:$PATH
-    ${pkgs.mu}/bin/mu index || ${pkgs.myEmacs}/bin/emacsclient --eval "(mu4e-update-mail-and-index t)" || ${pkgs.libnotify}/bin/notify-send "eMail" "There was a fetch of mail, but index is locked.\nPlease index manually."
-    ${pkgs.coreutils}/bin/sleep 2
-    count="$(${pkgs.mu}/bin/mu find flag:unread AND NOT flag:trashed | ${pkgs.coreutils}/bin/wc -l)"
-    if test 0 -ne $count; then
-        ${pkgs.libnotify}/bin/notify-send "eMail" "You have $count new emails." || ${pkgs.coreutils}/bin/true
-    fi
-  '';
 in {
   accounts.email = {
     accounts = {
@@ -89,7 +80,7 @@ in {
         test -r "/home/${user}/.guix-profile/etc/profile" && . "/home/${user}/.guix-profile/etc/profile"
         test -r "${dir.config}/guix/current/etc/profile" && . "${dir.config}/guix/current/etc/profile"
 
-        eval `ssh-agent`
+        eval `${pkgs.openssh}/bin/ssh-agent`
       '';
       ".sbclrc".source = ./common-lisp.lisp;
       ".shinit".text = ''
@@ -138,32 +129,27 @@ in {
     };
 
     packages = with pkgs; [
-      # nixpkgs
 
-      acpi alsaUtils ascii bind brightnessctl calibre cpulimit dmenu fd ffmpeg
-      file gimp hunspell hunspellDicts.en_US-large hunspellDicts.it_IT
+      acpi alsaUtils ascii bind brightnessctl browser calibre cpulimit dmenu fd
+      ffmpeg file gimp hunspell hunspellDicts.en_US-large hunspellDicts.it_IT
       hunspellDicts.ru_RU imagemagick iw ledger leiningen libnotify libreoffice
-      mediainfo mkpasswd mpc_cli nload p7zip pass-otp perlPackages.JSONPP
-      pinentry pueue pulsemixer pwgen qrencode qtox ripgrep rsync scrot sdcv
-      simplescreenrecorder sloccount speedtest-cli stalonetray sxiv syncthing
-      tor-browser-bundle-bin transmission ungoogled-chromium wget woof xclip
-      xdg-user-dirs xterm xz youtube-dl zip zoom-us unzip
-
-      # mypkgs
-
-      browser rimer scripts stumpwm ungoogledChromiumIncognito ytdl
+      mediainfo mkpasswd mpc_cli myEmacs nload p7zip pass-otp pdftk
+      perlPackages.JSONPP pinentry pueue pulsemixer pwgen qrencode rimer ripgrep
+      rsync scripts scrot sdcv simplescreenrecorder sloccount speedtest-cli
+      stalonetray stumpwm sxiv syncthing tor-browser-bundle-bin transmission
+      ungoogled-chromium ungoogledChromiumIncognito unzip wget woof xclip
+      xdg-user-dirs xterm xz youtube-dl ytdl zip zoom-us
 
     ];
 
     sessionPath = [ "${dir.config}/composer/vendor/bin" "${dir.data}/npm/bin" "/usr/local/bin" ];
-    sessionVariables = rec {
-      EDITOR = "${pkgs.myEmacs}/bin/emacs";
-      VISUAL = EDITOR;
-      TERMINAL = "${pkgs.xterm}/bin/uxterm";
+    sessionVariables = {
+      EDITOR = "emacs";
+      VISUAL = "emacs";
+      TERMINAL = "uxterm";
       LESSHISFILE = "/dev/null";
       MU_HOME = "${dir.cache}/mu";
       MAILDIR = "${dir.mail}";
-      RIMER_CALLBACK = "${pkgs.scripts}/bin/rimer_callback";
       MPD_HOST = "localhost";
       MPD_PORT = "6600";
       SUDO_ASKPASS = "${pkgs.scripts}/bin/sudo_askpass";
@@ -177,7 +163,7 @@ in {
       ADB_VENDOR_KEY = "${dir.cache}/android";
       BOOT_HOME = "${dir.cache}/boot";
       YTDL_DIR="${dir.videos}/youtube";
-      BROWSER = "${pkgs.browser}/bin/browser";
+      BROWSER = "browser";
       GTK2_RC_FILES = "${dir.cache}/gtk-2.0/gtkrc";
       GTK_IM_MODULE = "ibus";
       QT_IM_MODULE = "ibus";
@@ -229,11 +215,6 @@ in {
       enable = true;
       enableBashIntegration = true;
       enableNixDirenvIntegration = true;
-    };
-
-    emacs = {
-      enable = true;
-      package = pkgs.myEmacs;
     };
 
     feh.enable = true;
@@ -348,7 +329,15 @@ in {
 
     mbsync = {
       enable = true;
-      postExec = "${mailNotify}";
+      postExec = let mailSync = pkgs.writeShellScript "mailnotify" ''
+        export PATH=${pkgs.dbus}/bin:$PATH
+        ${pkgs.mu}/bin/mu index || ${pkgs.libnotify}/bin/notify-send "eMail" "There was a fetch of mail, but index is locked.\nPlease index manually."
+        ${pkgs.coreutils}/bin/sleep 2
+        count="$(${pkgs.mu}/bin/mu find flag:unread AND NOT flag:trashed | ${pkgs.coreutils}/bin/wc -l)"
+        if test 0 -ne $count; then
+            ${pkgs.libnotify}/bin/notify-send "eMail" "You have $count new emails." || ${pkgs.coreutils}/bin/true
+        fi
+      ''; in "${mailSync}";
       preExec = "${pkgs.coreutils}/bin/mkdir -p ${dir.mail}";
       verbose = true;
     };

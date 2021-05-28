@@ -1,8 +1,6 @@
 ;;; -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
-(push (cl-find "project" load-path :test 'string-match) load-path)
-(autoload 'project--process-file-region "/home/val/.config/emacs/project-fixes.el")
-(add-hook 'after-init-hook (lambda () (load "/home/val/.config/nixpkgs/emacs/custom.el")))
+(add-hook 'after-init-hook (lambda () (load "/home/val/.config/emacs/custom.el")))
 
 ;;; ACE LINK
 
@@ -21,15 +19,12 @@
 (define-key global-map "\M-z" 'avy-goto-word-0)
 (define-key goto-map "\M-g" 'avy-goto-line)
 
-;;; BICYCLE
+;;; AVY COMPLETION
 
-(with-eval-after-load 'outline
-  (define-key outline-minor-mode-map [C-tab] 'bicycle-cycle)
-  (define-key outline-minor-mode-map [backtab] 'bicycle-cycle-global))
-(with-eval-after-load 'hideshow
-  (define-key hs-minor-mode-map [C-M-tab] 'hs-toggle-hiding)
-  (define-key hs-minor-mode-map [C-tab] 'bicycle-cycle)
-  (define-key hs-minor-mode-map [backtab] 'bicycle-cycle-global))
+(autoload 'avy-completion "/home/val/.config/emacs/avy-completion.el" nil t)
+(define-key minibuffer-local-completion-map "\M-z" 'avy-completion)
+(define-key completion-in-region-mode-map "\M-z" 'avy-completion)
+(with-eval-after-load 'vcomplete (define-key vcomplete-command-map "\M-z" 'avy-completion))
 
 ;;; BROWSE URL
 
@@ -40,8 +35,7 @@
 
 ;;; BYTECOMP ASYNC
 
-(with-eval-after-load 'bytecomp
-  (async-bytecomp-package-mode))
+(with-eval-after-load 'bytecomp (async-bytecomp-package-mode))
 
 ;;; CARGO
 
@@ -52,13 +46,8 @@
 (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
 (add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
 
-;;; COMPILE
-
-(define-key ctl-x-map "c" 'compile)
-
 ;;; CONSULT
 
-(define-key global-map "\M-y" 'consult-yank-replace)
 (define-key global-map "\M-H" 'consult-history)
 (define-key goto-map "o" 'consult-outline)
 (define-key goto-map "i" 'consult-imenu)
@@ -70,8 +59,7 @@
 ;;; CSS MODE
 
 (defvar css-mode-map)
-(with-eval-after-load 'css-mode
-  (define-key css-mode-map "\C-cm" 'css-lookup-symbol))
+(with-eval-after-load 'css-mode (define-key css-mode-map "\C-cm" 'css-lookup-symbol))
 
 ;;; CUSTOM
 
@@ -81,7 +69,7 @@
 (define-key cus-edit-map "f" 'customize-face)
 (define-key cus-edit-map "s" 'customize-saved)
 (define-key cus-edit-map "u" 'customize-unsaved)
-(define-key ctl-x-map "C" cus-edit-map)
+(define-key ctl-x-map "c" cus-edit-map)
 
 ;;; CYRILLIC DVORAK IM
 
@@ -103,8 +91,6 @@
 
 ;;; DIRED X
 
-(autoload 'dired-jump "dired-x" nil t)
-(define-key ctl-x-map "\C-j" 'dired-jump)
 (with-eval-after-load 'dired (require 'dired-x))
 
 ;;; DUMB JUMP
@@ -122,7 +108,8 @@
 
 ;;; EMACS
 
-(setq completion-ignore-case t)
+(setq completion-ignore-case t
+      mode-line-compact 'long)
 
 ;;; EMMET MODE
 
@@ -159,10 +146,6 @@
 
 (define-key search-map "fd" 'fd-dired)
 
-;;; FILES
-
-(define-key ctl-x-map "R" 'revert-buffer)
-
 ;;; FIND DIRED
 
 (define-key search-map "ff" 'find-dired)
@@ -189,11 +172,14 @@
     (concat cmd " | cut -c-500"))
   (advice-add 'grep-expand-template :filter-return 'grep-expand-template-add-cut))
 
+;;; HELP FNS
+
+(define-key help-map "\M-k" 'describe-keymap)
+
 ;;; HIPPIE EXP
 
 (define-key global-map "\M-/" 'hippie-expand)
-(with-eval-after-load 'hippie-exp
-  (load "/home/val/.config/emacs/hippie-exp-fixes.el"))
+(with-eval-after-load 'hippie-exp (load "/home/val/.config/emacs/hippie-exp-fixes.el"))
 
 ;;; HL LINE
 
@@ -204,10 +190,6 @@
 (add-hook 'transmission-mode-hook 'hl-line-mode)
 (add-hook 'transmission-peers-mode-hook 'hl-line-mode)
 (add-hook 'mpc-mode-hook 'hl-line-mode)
-
-;;; INSERT CHAR PREVIEW
-
-(define-key global-map [remap insert-char] 'insert-char-preview)
 
 ;;; IPRETTY
 
@@ -234,9 +216,6 @@
 
 (define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
 (define-key minibuffer-local-must-match-map "\C-j" 'minibuffer-force-complete-and-exit)
-(autoload 'avy-completion "/home/val/.config/nixpkgs/emacs/avy-completion.el" nil t)
-(define-key minibuffer-local-completion-map "\M-z" 'avy-completion)
-(define-key completion-in-region-mode-map "\M-z" 'avy-completion)
 
 ;;; MPC
 
@@ -264,7 +243,8 @@
   (define-key mpc-mode-map "M" 'mpc-select-extend)
   (define-key mpc-mode-map "\M-m" 'mpc-select)
   (define-key mpc-mode-map "\C-m" 'mpc-songs-jump-to)
-  (define-key mpc-songs-mode-map [remap mpc-select] nil))
+  (define-key mpc-songs-mode-map [remap mpc-select] nil)
+  (load "/home/val/.config/emacs/mpc-fixes.el"))
 
 ;;; MULE
 
@@ -347,8 +327,7 @@
   (define-key message-mode-map "\C-c\M-o" 'org-mime-htmlize)
   (define-key message-mode-map "\C-c\M-e" 'org-mime-edit-mail-in-org-mode)
   (define-key message-mode-map "\C-c\M-t" 'org-mime-revert-to-plain-text-mail))
-(with-eval-after-load 'org-mime
-  (load "/home/val/.config/emacs/org-mime-fixes.el"))
+(with-eval-after-load 'org-mime (load "/home/val/.config/emacs/org-mime-fixes.el"))
 
 ;;; OUTLINE
 
@@ -452,7 +431,6 @@
 (define-key global-map "\M-u" 'upcase-dwim)
 (define-key global-map "\C-w" 'kill-region-dwim)
 (define-key ctl-x-map "K" 'kill-current-buffer)
-(define-key ctl-x-map "\M-t" 'toggle-truncate-lines)
 (define-key mode-specific-map "oP" 'list-processes)
 
 ;;; SKEMPO
@@ -462,23 +440,18 @@
   (define-key skempo-mode-map "\C-z" 'skempo-complete-tag-or-call-on-region)
   (define-key skempo-mode-map "\M-g\M-e" 'skempo-forward-mark)
   (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
-  (with-eval-after-load 'elisp-mode
-    (load "/home/val/.config/emacs/skempo-emacs-lisp.el"))
-  (with-eval-after-load 'sly
-    (load "/home/val/.config/emacs/skempo-lisp.el"))
-  (with-eval-after-load 'nix-mode
-    (load "/home/val/.config/emacs/skempo-nix.el"))
-  (with-eval-after-load 'php-mode
-    (load "/home/val/.config/emacs/skempo-php.el")))
+  (with-eval-after-load 'elisp-mode (load "/home/val/.config/emacs/skempo-emacs-lisp.el"))
+  (with-eval-after-load 'sly (load "/home/val/.config/emacs/skempo-lisp.el"))
+  (with-eval-after-load 'nix-mode (load "/home/val/.config/emacs/skempo-nix.el"))
+  (with-eval-after-load 'php-mode (load "/home/val/.config/emacs/skempo-php.el")))
 
 ;;; SMARTPARENS
 
-(with-eval-after-load 'smartparens
-  (require 'smartparens-config))
+(with-eval-after-load 'smartparens (require 'smartparens-config))
 
 ;;;; SMARTPARENS HOOKS
 
-(add-hook 'minibuffer-inactive-mode-hook 'smartparens-mode)
+(add-hook 'minibuffer-setup-hook 'smartparens-mode)
 (add-hook 'nix-mode-hook 'smartparens-mode)
 (add-hook 'rust-mode-hook 'smartparens-mode)
 (add-hook 'js-mode-hook 'smartparens-mode)
@@ -524,11 +497,6 @@
 (add-hook 'nix-mode-hook 'subword-mode)
 (add-hook 'js-mode-hook 'subword-mode)
 
-;;; TAB BAR
-
-(define-key tab-prefix-map "t" 'toggle-tab-bar-mode-from-frame)
-(define-key tab-prefix-map "s" 'tab-switcher)
-
 ;;; TEX MODE
 
 (defvar ispell-parser)
@@ -538,8 +506,15 @@
 
 (defvar transmission-mode-map)
 (define-key mode-specific-map "or" 'transmission)
-(with-eval-after-load 'transmission
-  (define-key transmission-mode-map "M" 'transmission-move))
+(with-eval-after-load 'transmission (define-key transmission-mode-map "M" 'transmission-move))
+
+;;; VCOMPLETE
+
+(with-eval-after-load 'vcomplete
+  (define-key vcomplete-command-map [?\C-n] nil)
+  (define-key vcomplete-command-map [?\C-p] nil)
+  (define-key vcomplete-command-map [?\C-\M-m] nil)
+  (define-key vcomplete-command-map "\M-v" 'switch-to-completions))
 
 ;;; WEB MODE
 
@@ -552,4 +527,4 @@
 (define-key global-map [?\C-\M-\S-b] 'previous-buffer)
 (define-key global-map [?\C-\M-\S-f] 'next-buffer)
 (define-key global-map "\M-Q" 'quit-window)
-(define-key global-map "\M-O" 'other-window)
+(define-key global-map "\M-o" 'other-window)
