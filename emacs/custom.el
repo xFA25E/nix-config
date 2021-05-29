@@ -173,6 +173,7 @@
  '(ledger-default-date-format "%Y-%m-%d")
  '(lisp-mode-hook '(skempo-mode smartparens-mode sly-editing-mode))
  '(magit-credential-cache-daemon-socket "/home/val/.cache/git/credential/socket")
+ '(magit-define-global-key-bindings nil)
  '(mail-user-agent 'mu4e-user-agent)
  '(marginalia-mode t)
  '(max-mini-window-height 1.0)
@@ -288,7 +289,7 @@
  '(org-id-locations-file "/home/val/.cache/emacs/org/id-locations")
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode))
+ '(org-mode-hook '(smartparens-mode) t)
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)

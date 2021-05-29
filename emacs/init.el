@@ -1,6 +1,6 @@
 ;;; -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
-(add-hook 'after-init-hook (lambda () (load "/home/val/.config/emacs/custom.el")))
+(add-hook 'after-init-hook (lambda () (load "/home/val/.config/nixpkgs/emacs/custom.el")))
 
 ;;; ACE LINK
 
