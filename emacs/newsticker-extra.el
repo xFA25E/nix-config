@@ -36,6 +36,7 @@
 
 (defun newsticker-handle-url ()
   "Newsticker button action on."
+  (interactive)
   (pcase (get-text-property (point) 'nt-link)
     ((and (rx "videos.lukesmith.xyz" (*? any) ".torrent" eos) nt-link)
      (let ((dir (expand-file-name "Luke Smith" (getenv "YTDL_DIR"))))

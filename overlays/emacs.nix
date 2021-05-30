@@ -85,7 +85,7 @@ self: super: let
       owner = "xFA25E";
       name = "skempo";
       version = "0.1.0";
-      checksum = "0a8ga9svfx06z8d8pd1wkz2vvglfckfv4aqbviy809a9x38mw2ng";
+      checksum = "079cp16n65js51ivrdx7rqzq8r8mi7rpwjhz8mrh7xcg8blw061r";
       deps = [ eself.parent-mode ];
     };
   };
