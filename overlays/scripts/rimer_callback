@@ -15,6 +15,24 @@ case "${state}" in
         notify-send "Timer" "\"${name}\" finished"
 
         case "${name}" in
+            computer)
+                if test "${elapsed}" -eq "${duration}"; then
+                    notify_sound
+                    notify-send "Computer" "Stand-up and do something else for 5 minutes"
+                    rimer add -n computerpause -d "$((60 * 5))" -s "$((60 * 5))"
+                else
+                    notify-send "Computer" "Remember to turn me on next time"
+                fi
+                ;;
+            computerpause)
+                if test "${elapsed}" -eq "${duration}"; then
+                    notify_sound
+                    notify-send "Computer" "You can continue working"
+                    rimer add -n computer -d "$((60 * 60))" -s "$((60 * 60))"
+                else
+                    notify-send "Computer" "Remember to turn me on next time"
+                fi
+                ;;
             eyes)
                 notify_sound "${HOME}/Music/solemn_notification.ogg"
                 ;;

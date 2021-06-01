@@ -12,4 +12,5 @@
 (defvar *rimer-timers*
   '(("study" . "25")
     ("pause" . "5")
-    ("eyes" . "30")))
+    ("eyes" . "30")
+    ("computer" . "1:00")))
