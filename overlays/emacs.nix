@@ -50,12 +50,12 @@ self: super: let
         (vcomplete
           :fetcher git
           :url "https://git.sr.ht/~dsemy/vcomplete"
-          :commit "5e055dc55665565e29f13a8e45986f194a41b2f2")
+          :commit "d086a33a1ad88621c24ac081727c7d58df6271ea")
       '';
       src = super.fetchgit {
         url = "https://git.sr.ht/~dsemy/vcomplete";
-        rev = "5e055dc55665565e29f13a8e45986f194a41b2f2";
-        sha256 = "0vrvvwfvjaayajd6l48ygsyk1w59y5vs69k4gby2sjbpii0l0a3x";
+        rev = "d086a33a1ad88621c24ac081727c7d58df6271ea";
+        sha256 = "0ymkyfm0cf7x46mghcg27yr42j23lrgkf12nw5vzsvq4qg38kbh9";
       };
     };
 

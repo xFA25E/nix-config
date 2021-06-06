@@ -130,16 +130,15 @@ in {
 
     packages = with pkgs; [
 
-      acpi alsaUtils ascii bind brightnessctl browser calibre cpulimit dmenu fd
-      firefox ffmpeg file gimp hunspell hunspellDicts.en_US-large
-      hunspellDicts.it_IT hunspellDicts.ru_RU imagemagick iw ledger leiningen
-      libnotify libreoffice mediainfo mkpasswd mpc_cli myEmacs nload p7zip
-      pass-otp pdftk perlPackages.JSONPP pinentry pueue pulsemixer pwgen
-      qrencode rimer ripgrep rsync scripts scrot sdcv simplescreenrecorder
-      sloccount speedtest-cli stalonetray stumpwm sxiv syncthing
-      tor-browser-bundle-bin transmission ungoogled-chromium
-      ungoogledChromiumIncognito unzip wget woof xclip xdg-user-dirs xterm xz
-      youtube-dl ytdl zip zoom-us
+      acpi alsaUtils ascii bind brightnessctl brave braveIncognito browser
+      calibre cpulimit dmenu fd firefox ffmpeg file gimp hunspell
+      hunspellDicts.en_US-large hunspellDicts.it_IT hunspellDicts.ru_RU
+      imagemagick iw ledger leiningen libnotify libreoffice mediainfo mkpasswd
+      mpc_cli myEmacs nload p7zip pass-otp pdftk perlPackages.JSONPP pinentry
+      pueue pulsemixer pwgen qrencode rimer ripgrep rsync scripts scrot sdcv
+      simplescreenrecorder sloccount speedtest-cli stalonetray stumpwm sxiv
+      syncthing tor-browser-bundle-bin transmission unzip wget woof xclip
+      xdg-user-dirs xterm xz youtube-dl ytdl zip zoom-us
 
     ];
 

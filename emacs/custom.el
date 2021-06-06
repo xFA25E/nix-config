@@ -28,7 +28,7 @@
  '(bookmark-menu-confirm-deletion t)
  '(bookmark-save-flag 1)
  '(browse-url-browser-function 'browse-url-multi)
- '(browse-url-chromium-program "chromium-incognito")
+ '(browse-url-generic-program "brave-incognito")
  '(browse-url-multi-invidious-instances
    '("invidious.tube" "invidious.zapashcanon.fr" "tube.connect.cafe" "vid.puffyan.us" "invidious.048596.xyz" "invidious.himiko.cloud" "invidious.zee.li" "invidious.namazso.eu" "yewtu.be" "ytprivate.com" "vid.mint.lgbt" "inv.skyn3t.in" "invidious.kavin.rocks" "au.ytprivate.com"))
  '(browse-url-secondary-browser-function 'browse-url-multi)
@@ -263,6 +263,10 @@
      ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg" nil nil nil)
      ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml" nil nil nil)
      ("Luke Smith PeerTube" "https://lukesmith.xyz/peertube" nil nil nil)
+     ("Паучительные Истории" "https://www.youtube.com/feeds/videos.xml?channel_id=UC4rpWi42yPqTA0wnfx7MqOA" nil nil nil)
+     ("КоверАраб" "https://www.youtube.com/feeds/videos.xml?channel_id=UCjulQNQQJmpYzI-BD1-s03w" nil nil nil)
+     ("Uebermarginal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ10M7ftQN7ylM6NaPiEB6w" nil nil nil)
+     ("Копрохайлайты Копроинтернета" "https://www.youtube.com/feeds/videos.xml?channel_id=UCQQXAwBHpcSxN126a3okrqg" nil nil nil)
      ("VComplete Dev" "https://git.sr.ht/~dsemy/vcomplete/log/master/rss.xml" nil nil nil)))
  '(newsticker-url-list-defaults nil)
  '(next-screen-context-lines 10)
@@ -279,9 +283,7 @@
  '(org-capture-templates
    '(("r" "Remember" entry
       (file+headline "~/org/life.org" "Remember")
-      "* TODO %?
-  SCHEDULED: %t
-")))
+      "* TODO %?")))
  '(org-html-htmlize-output-type 'css)
  '(org-id-locations-file "/home/val/.cache/emacs/org/id-locations")
  '(org-log-into-drawer t)

@@ -33,7 +33,7 @@
   "Select browser for `URL' and `ARGS'."
   (let ((read-answer-short t)
         (prompt (format "Browser %s " url))
-        (choices '(("chromium" ?c "" browse-url-chromium)
+        (choices '(("brave" ?b "" browse-url-generic)
                    ("eww" ?e "" eww-browse-url))))
     (apply (nth 3 (assoc (read-answer prompt choices) choices)) url args)))
 

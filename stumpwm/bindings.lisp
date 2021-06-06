@@ -43,12 +43,12 @@
 
 (define-key *open-map* (kbd "C-m") "show-menu")
 
-(defprogram-shortcut chromium-incognito :map *open-map* :key (kbd "C-b") :props '(:class "Chromium-browser"))
+(defprogram-shortcut brave-incognito :map *open-map* :key (kbd "C-b") :props '(:class "Brave-browser"))
 
 ;;; Remapped keys
 
 (define-remapped-keys
-    '(("(Tor Browser|Chromium-browser)"
+    '(("(Tor Browser|Brave-browser)"
        ("C-n"   . "Down")
        ("C-p"   . "Up")
        ("C-f"   . "Right")
