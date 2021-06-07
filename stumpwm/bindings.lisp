@@ -44,6 +44,7 @@
 (define-key *open-map* (kbd "C-m") "show-menu")
 
 (defprogram-shortcut brave-incognito :map *open-map* :key (kbd "C-b") :props '(:class "Brave-browser"))
+(defprogram-shortcut firefox :map *open-map* :key (kbd "C-f"))
 
 ;;; Remapped keys
 
