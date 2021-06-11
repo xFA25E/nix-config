@@ -267,6 +267,8 @@
      ("КоверАраб" "https://www.youtube.com/feeds/videos.xml?channel_id=UCjulQNQQJmpYzI-BD1-s03w" nil nil nil)
      ("Uebermarginal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ10M7ftQN7ylM6NaPiEB6w" nil nil nil)
      ("Копрохайлайты Копроинтернета" "https://www.youtube.com/feeds/videos.xml?channel_id=UCQQXAwBHpcSxN126a3okrqg" nil nil nil)
+     ("Хайлайты Паука-Карлика" "https://www.youtube.com/feeds/videos.xml?channel_id=UClKfjybgX2WLPdHKxHO5E2w" nil nil nil)
+     ("JFG Tonight" "https://www.bitchute.com/feeds/rss/channel/jfgtonight" nil nil nil)
      ("VComplete Dev" "https://git.sr.ht/~dsemy/vcomplete/log/master/rss.xml" nil nil nil)))
  '(newsticker-url-list-defaults nil)
  '(next-screen-context-lines 10)
@@ -288,7 +290,7 @@
  '(org-id-locations-file "/home/val/.cache/emacs/org/id-locations")
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode))
+ '(org-mode-hook '(smartparens-mode) t)
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
