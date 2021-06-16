@@ -137,8 +137,8 @@ in {
       mpc_cli myEmacs nload p7zip pass-otp pdftk perlPackages.JSONPP pinentry
       pueue pulsemixer pwgen qrencode ripgrep rsync scripts scrot sdcv
       simplescreenrecorder sloccount speedtest-cli stalonetray stumpwm sxiv
-      syncthing tor-browser-bundle-bin transmission unzip wget woof xclip
-      xdg-user-dirs xterm xz youtube-dl ytdl zip zoom-us
+      syncthing tdesktop tor-browser-bundle-bin transmission unzip wget woof
+      xclip xdg-user-dirs xterm xz youtube-dl ytdl zip zoom-us
 
     ];
 
@@ -520,6 +520,7 @@ in {
         added = {
           "application/pdf" = [ "emacs.desktop" ];
           "application/epub" = [ "emacs.desktop" ];
+          "x-scheme-handler/tg" = [ "userapp-Telegram Desktop-1GLA50.desktop" ];
         };
         removed = {};
       };
@@ -529,6 +530,7 @@ in {
         "text/html" = [ "browser.desktop" ];
         "x-scheme-handler/https" = [ "browser.desktop" ];
         "x-scheme-handler/http" = [ "browser.desktop" ];
+        "x-scheme-handler/tg" = [ "userapp-Telegram Desktop-1GLA50.desktop" ];
       };
     };
 
