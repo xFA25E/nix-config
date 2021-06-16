@@ -51,7 +51,7 @@
  '(comint-password-prompt-regexp
    "\\(^ *\\|\\( SMB\\|'s\\|Bad\\|CVS\\|Enter\\(?: \\(?:Auth\\|\\(?:sam\\|th\\)e\\)\\)?\\|Kerberos\\|LDAP\\|New\\|Old\\|PEM\\|Re\\(?:peat\\|type\\)\\|SUDO\\|UNIX\\|\\[sudo]\\|enter\\(?: \\(?:auth\\|\\(?:sam\\|th\\)e\\)\\)?\\|login\\|new\\|old\\) +.*\\)\\(?:\\(?:adgangskode\\|contrase\\(?:\\(?:ny\\|ñ\\)a\\)\\|geslo\\|h\\(?:\\(?:asł\\|esl\\)o\\)\\|iphasiwedi\\|jelszó\\|l\\(?:ozinka\\|ösenord\\)\\|m\\(?:ot de passe\\|ật khẩu\\)\\|p\\(?:a\\(?:rola\\|s\\(?:ahitza\\|s\\(?: phrase\\|code\\|ord\\|phrase\\|wor[dt]\\)\\|vorto\\)\\)\\|in\\)\\|s\\(?:alasana\\|enha\\|laptažodis\\)\\|wachtwoord\\|лозинка\\|пароль\\|ססמה\\|كلمة السر\\|गुप्तशब्द\\|शब्दकूट\\|গুপ্তশব্দ\\|পাসওয়ার্ড\\|ਪਾਸਵਰਡ\\|પાસવર્ડ\\|ପ୍ରବେଶ ସଙ୍କେତ\\|கடவுச்சொல்\\|సంకేతపదము\\|ಗುಪ್ತಪದ\\|അടയാളവാക്ക്\\|රහස්පදය\\|ពាក្យសម្ងាត់\\|パスワード\\|密[码碼]\\|암호\\)\\|Response\\)\\(?:\\(?:, try\\)? *again\\| (empty for no passphrase)\\| (again)\\)?\\(?: [[:alpha:]]+ .+\\)?[[:blank:]]*[:：៖][[:blank:]]*\\'\\|[Pp]assword \\'")
  '(compilation-always-kill t)
- '(compilation-scroll-output 'first-error)
+ '(compilation-scroll-output t)
  '(completion-category-overrides '((bookmark (styles basic))))
  '(completion-pcm-complete-word-inserts-delimiters t)
  '(completion-show-help nil)
@@ -62,6 +62,7 @@
  '(create-lockfiles nil)
  '(current-language-environment "UTF-8")
  '(cursor-in-non-selected-windows nil)
+ '(cursor-type 'bar)
  '(custom-file "/home/val/.config/nixpkgs/emacs/custom.el")
  '(default-frame-alist '((menu-bar-lines 0) (tool-bar-lines 0)))
  '(delete-old-versions t)
@@ -181,6 +182,7 @@
  '(message-send-mail-function 'message-send-mail-with-sendmail)
  '(message-subject-re-regexp
    "^[[:blank:]]*\\(?:\\(?:R\\(?:is\\|[Ee]\\)?\\)\\(?:\\[[[:digit:]]*]\\)* ?:[[:blank:]]*\\)*")
+ '(minibuffer-beginning-of-buffer-movement t)
  '(minibuffer-depth-indicate-mode t)
  '(minibuffer-eldef-shorten-default t)
  '(minibuffer-electric-default-mode t)
@@ -283,7 +285,7 @@
  '(org-id-locations-file "/home/val/.cache/emacs/org/id-locations")
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode) t)
+ '(org-mode-hook '(smartparens-mode))
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
