@@ -13,7 +13,7 @@
 
 (setf *mouse-focus-policy* :click)
 
-(setf *battery-timer* (run-with-timer 60 60 #'notify-battery-status))
-(setf *date-time-timer* (run-with-timer 30 1800 #'echo-date))
+(defvar *battery-timer* (run-with-timer 60 60 #'notify-battery-status))
+(defvar *date-time-timer* (run-with-timer 30 1800 #'echo-date))
 
 (uiop:launch-program '("systemctl" "--user" "start" "random-background.service"))

@@ -1,5 +1,61 @@
 (in-package :stumpwm)
 
+(defvar *menu*
+  '(("screenshot" :command "screenshot")
+    ("mount" :shell ("rmount"))
+    ("unmount" :shell ("rumount"))
+    ("suspend" :shell ("systemctl" "suspend"))))
+
+(defcommand show-menu () ()
+  (when-let ((selection (select-from-menu (current-screen) *menu* nil)))
+    (destructuring-bind (name type cmd) selection
+      (declare (ignore name))
+      (ecase type
+        (:shell (uiop:launch-program cmd))
+        (:command (eval-command cmd t))))))
+
+(defcommand screenshot (name selectp)
+    ((:string "File name (w/o ext): ") (:y-or-n "Select? "))
+  (let* ((pic-dir (uiop:run-program '("xdg-user-dir" "PICTURES") :output '(:string :stripped t)))
+         (directory (uiop:subpathname* pic-dir "screenshots/"))
+         (file-name (make-pathname :directory (pathname-directory directory) :name name :type "png")))
+    (ensure-directories-exist file-name)
+    (uiop:launch-program (list* "scrot" "--overwrite" "--delay" "2"
+                                "--exec" "notify-send Scrot 'Done Screenshot'; image_clipboard $f"
+                                (namestring file-name)
+                                (when selectp '("--select"))))))
+
+(defcommand show-corona () ()
+  (if-let ((jsown-package (find-package "JSOWN"))
+           (dexador-package (find-package "DEXADOR")))
+    (let* ((parse (symbol-function (find-symbol "PARSE" jsown-package)))
+           (val (symbol-function (find-symbol "VAL" jsown-package)))
+           (get (symbol-function (find-symbol "GET" dexador-package)))
+           (link "https://corona-stats.online/Italy?format=json")
+           (data (first (funcall val (funcall parse (funcall get link)) "data"))))
+      (message "COVID-19 Italy~%Confirmed: ~:D~%Recovered: ~:D~%Deaths: ~:D~%Active: ~:D"
+               (funcall val data "cases")
+               (funcall val data "recovered")
+               (funcall val data "deaths")
+               (funcall val data "active")))
+    (progn (message "No jsown or dexador!") nil)))
+
+(defcommand show-hardware () ()
+  (multiple-value-bind (percentage state time) (read-battery-status)
+    (message "~{~A~%~}B~A ~A ~A"
+             (delete-if-not
+              (alexandria:curry #'ppcre:scan "(/|/run/media/val/backup)$")
+              (rest
+               (uiop:split-string
+                (uiop:run-program '("df" "--si" "--output=avail,target") :output '(:string :stripped t))
+                :separator '(#\Newline))))
+             percentage state time)))
+
+(defcommand type-clipboard (&optional (primary t))
+    ((:y-or-n "Primary or clipboard? "))
+  (let ((*default-selections* (if primary '(:primary) '(:clipboard))))
+    (window-send-string (get-x-selection))))
+
 (defcommand mpd-controller (&optional args) ((:rest))
   (when args
     (uiop:run-program (list* "mpc" "-q" (uiop:split-string args))))
@@ -68,57 +124,3 @@
     ((kbd "n") "alsa-controller sset Master 10%-")
     ((kbd "P") "alsa-controller sset Master 1%+")
     ((kbd "p") "alsa-controller sset Master 10%+")))
-
-(defcommand screenshot (name selectp)
-    ((:string "File name (w/o ext): ") (:y-or-n "Select? "))
-  (let* ((pic-dir (uiop:run-program '("xdg-user-dir" "PICTURES") :output '(:string :stripped t)))
-         (directory (uiop:subpathname* pic-dir "screenshots/"))
-         (file-name (make-pathname :directory (pathname-directory directory) :name name :type "png")))
-    (ensure-directories-exist file-name)
-    (uiop:launch-program (list* "scrot" "--overwrite" "--delay" "2"
-                                "--exec" "notify-send Scrot 'Done Screenshot'; image_clipboard $f"
-                                (namestring file-name)
-                                (when selectp '("--select"))))))
-
-
-
-(defcommand show-corona () ()
-  (if-let ((jsown-package (find-package "JSOWN"))
-           (dexador-package (find-package "DEXADOR")))
-    (let* ((parse (symbol-function (find-symbol "PARSE" jsown-package)))
-           (val (symbol-function (find-symbol "VAL" jsown-package)))
-           (get (symbol-function (find-symbol "GET" dexador-package)))
-           (link "https://corona-stats.online/Italy?format=json")
-           (data (first (funcall val (funcall parse (funcall get link)) "data"))))
-      (message "COVID-19 Italy~%Confirmed: ~:D~%Recovered: ~:D~%Deaths: ~:D~%Active: ~:D"
-               (funcall val data "cases")
-               (funcall val data "recovered")
-               (funcall val data "deaths")
-               (funcall val data "active")))
-    (progn (message "No jsown or dexador!") nil)))
-
-(defcommand show-hardware () ()
-  (multiple-value-bind (percentage state time) (read-battery-status)
-    (message "~{~A~%~}B~A ~A ~A"
-             (delete-if-not
-              (alexandria:curry #'ppcre:scan "(/|/run/media/val/backup)$")
-              (rest
-               (uiop:split-string
-                (uiop:run-program '("df" "--si" "--output=avail,target") :output '(:string :stripped t))
-                :separator '(#\Newline))))
-             percentage state time)))
-
-
-
-(defcommand show-menu () ()
-  (when-let ((selection (select-from-menu (current-screen) *menu* nil)))
-    (destructuring-bind (name type cmd) selection
-      (declare (ignore name))
-      (ecase type
-        (:shell (uiop:launch-program cmd))
-        (:command (eval-command cmd t))))))
-
-(defcommand type-clipboard (&optional (primary t))
-    ((:y-or-n "Primary or clipboard? "))
-  (let ((*default-selections* (if primary '(:primary) '(:clipboard))))
-    (window-send-string (get-x-selection))))
