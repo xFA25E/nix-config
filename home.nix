@@ -135,7 +135,7 @@ in {
       hunspellDicts.en_US-large hunspellDicts.it_IT hunspellDicts.ru_RU
       imagemagick iw ledger leiningen libnotify libreoffice mediainfo mkpasswd
       mpc_cli myEmacs nload p7zip pass-otp pdftk perlPackages.JSONPP pinentry
-      pueue pulsemixer pwgen qrencode rimer ripgrep rsync scripts scrot sdcv
+      pueue pulsemixer pwgen qrencode ripgrep rsync scripts scrot sdcv
       simplescreenrecorder sloccount speedtest-cli stalonetray stumpwm sxiv
       syncthing tor-browser-bundle-bin transmission unzip wget woof xclip
       xdg-user-dirs xterm xz youtube-dl ytdl zip zoom-us
@@ -187,15 +187,17 @@ in {
       enable = true;
       historyControl = [ "erasedups" "ignoredups" "ignorespace" ];
       historyIgnore = map (cmd: "${cmd}*") [
+
         "awk" "bash" "cat" "cd" "chmod" "chown" "command" "cp" "cut" "dash" "dd"
         "df" "dh" "du" "ebook-convert" "echo" "emacs" "env" "exit" "export" "fd"
         "feh" "file" "find" "gawk" "gparted" "grep" "gzip" "hash" "host" "htop"
         "id" "ln" "locate" "ls" "man" "mbsync" "millisleep" "mkdir" "mpv" "mv"
         "notify-send" "ping" "pkill" "printf" "pwd" "pwgen" "python" "quit"
-        "read" "rg" "rimer" "rm" "rmdir" "rofi" "setsid" "sh" "sleep" "stow"
-        "strings" "strip" "studies_" "sxiv" "tail" "time" "timer" "top" "touch"
-        "tr" "uname" "uptime" "watch" "wc" "which" "woof" "xclip" "xz" "yay"
+        "read" "rg" "rm" "rmdir" "rofi" "setsid" "sh" "sleep" "stow" "strings"
+        "strip" "studies_" "sxiv" "tail" "time" "timer" "top" "touch" "tr"
+        "uname" "uptime" "watch" "wc" "which" "woof" "xclip" "xz" "yay"
         "youtube-dl" "ytdl"
+
       ];
       initExtra = ''
         [ -n "$ENV" ] && . "$ENV"
@@ -409,22 +411,6 @@ in {
           ExecStart = "${pkgs.pueue}/bin/pueued";
           ExecReload = "${pkgs.pueue}/bin/pueued";
           Environment = "ASYNC_STD_THREAD_COUNT=4";
-        };
-        Install = {
-          WantedBy = [ "graphical-session.target" ];
-        };
-      };
-
-      rimer = {
-        Unit = {
-          Description = "Rimer Daemon - Concurrent timer";
-          After = [ "graphical-session-pre.target" ];
-          PartOf = [ "graphical-session.target" ];
-        };
-        Service = {
-          Restart = "no";
-          ExecStart = "${pkgs.rimer}/bin/rimer start ${pkgs.scripts}/bin/rimer_callback";
-          ExecStop = "${pkgs.rimer}/bin/rimer quit";
         };
         Install = {
           WantedBy = [ "graphical-session.target" ];

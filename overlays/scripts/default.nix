@@ -33,7 +33,6 @@ in {
         "mpvi" = [ mpv libnotify jq gnused ytdl unixtools.column dmenu ];
         "notify_sound" = [ mpv ];
         "qrshow" = [ libnotify coreutils qrencode sxiv ];
-        "rimer_callback" = [ libnotify coreutils gawk dmenu rimer "$out" dbus ];
         "search_ebook" = [ coreutils findutils ];
         "strip_video" = [ ffmpeg ];
         "studies_plot" = [ gnuplot ];
