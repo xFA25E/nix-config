@@ -32,10 +32,7 @@
           (format-duration (time-left timer))))
 
 (defun format-timers (&optional (timers (sb-ext:list-all-timers)))
-  (let ((timers (sb-ext:list-all-timers)))
-    (let* ((timer-names (mapcar #'sb-ext:timer-name timers))
-           (max-length (reduce #'max (mapcar #'length timer-names))))
-      (format nil "~{~A~%~}" (mapcar #'format-timer timers)))))
+  (format nil "~{~A~%~}" (mapcar #'format-timer timers)))
 
 (defun timer-callback (name duration)
   (let ((msg (format nil "~A ~A" name (format-duration duration))))
