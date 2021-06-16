@@ -11,7 +11,7 @@ self: super: let
     (import ./deps.nix)) + " \"${slynk}/slynk/\"";
 
   my-deps = super.lib.strings.concatMapStringsSep " " (dep: "\"${dep}\"") [
-    "dexador" "jsown" "slynk"
+    "dexador" "jsown" "trivia" "slynk"
   ];
 
   defineDeps = super.writeText "define-deps.lisp" ''
@@ -32,7 +32,7 @@ self: super: let
       (asdf:load-system dep))
 
     (defun stumpwm-user::slynk-start () ()
-      (let ((quicklisp-init (uiop:xdg-data-home "quicklisp" "setup.lisp")))
+      (let ((quicklisp-init (uiop:xdg-cache-home "quicklisp" "setup.lisp")))
         (if (probe-file quicklisp-init)
             (progn (load quicklisp-init)
                    (slynk:create-server :port 4096))

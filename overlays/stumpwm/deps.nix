@@ -112,6 +112,34 @@
     sha256 = "0gadvmf1d9bq35s61z76psrsnzwwk12svi66jigf491hv48wigw7";
   }
   {
+    url = "http://beta.quicklisp.org/archive/introspect-environment/2020-07-15/introspect-environment-20200715-git.tgz";
+    sha256 = "0gxmz6z7wb53xbwaqvnwax126y163jkb8sjn25cpnjfsazp0qwdg";
+  }
+  {
+    url = "http://beta.quicklisp.org/archive/type-i/2019-12-27/type-i-20191227-git.tgz";
+    sha256 = "12wsga0pwjkkr176lnjwkmmlm3ccp0n310sjj9h20lk53iyd0z69";
+  }
+  {
+    url = "http://beta.quicklisp.org/archive/trivial-cltl2/2020-03-25/trivial-cltl2-20200325-git.tgz";
+    sha256 = "08cnzb9rnczn4pn2zpf0587ny4wjy1mjndy885fz9pw7xrlx37ip";
+  }
+  {
+    url = "http://beta.quicklisp.org/archive/lisp-namespace/2017-11-30/lisp-namespace-20171130-git.tgz";
+    sha256 = "1jw2wykp06z2afb9nm1lgfzll5cjlj36pnknjx614057zkkxq4iy";
+  }
+  {
+    url = "http://beta.quicklisp.org/archive/closer-mop/2021-02-28/closer-mop-20210228-git.tgz";
+    sha256 = "1ix0ggiljmxqa0zvnvhgl4aif17lhjxwh6b41fyr96j790d5bv3x";
+  }
+  {
+    url = "http://beta.quicklisp.org/archive/iterate/2021-02-28/iterate-20210228-git.tgz";
+    sha256 = "0gbyq5gm7sv7c6wsj0kax5f05s8n15rvada0q8jxyblkg4svxr8b";
+  }
+  {
+    url = "http://beta.quicklisp.org/archive/trivia/2021-02-28/trivia-20210228-git.tgz";
+    sha256 = "0ln0sj3jry7kzbmxhnin66kpbqan1wp8wwgdbw4k29afbdblkcca";
+  }
+  {
     url = "http://beta.quicklisp.org/archive/clx/2020-07-15/clx-20200715-git.tgz";
     sha256 = "050z32b5v9c74fgggpns8qlfkk26bb73v7mlrxpbw55xkv0dhamk";
   }

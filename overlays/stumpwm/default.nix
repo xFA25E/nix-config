@@ -3,7 +3,7 @@ self: super: let
     (url: "\"${super.fetchzip url}/\"") (import ./deps.nix);
 
   my-deps = super.lib.strings.concatMapStringsSep " " (dep: "\"${dep}\"") [
-    "dexador" "jsown"
+    "dexador" "jsown" "trivia"
   ];
 
   defineDeps = super.writeText "define-deps.lisp" ''
