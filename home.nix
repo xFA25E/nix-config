@@ -549,6 +549,6 @@ in {
       xset +fp ${pkgs.terminus_font}/share/fonts/terminus
     '';
     scriptPath = ".xinitrc";
-    windowManager.command = "${pkgs.stumpwm}/bin/stumpwm";
+    windowManager.command = "${pkgs.dbus}/bin/dbus-run-session ${pkgs.stumpwm}/bin/stumpwm";
   };
 }
