@@ -4,8 +4,6 @@
   (or (uiop:getenv-absolute-directory "PASSWORD_STORE_DIR")
       (merge-pathnames #p".password-store/" (user-homedir-pathname))))
 
-
-
 (defun list-pass-entries ()
   (let ((prefix-length (length (namestring *password-store-directory*))))
     (mapcar
@@ -30,29 +28,24 @@
       (push (list key value) fields))
     (sort (delete-if #'null fields) #'string< :key #'car)))
 
-
-
 (define-stumpwm-type :pass-entry (input prompt)
-  (if-let ((pass-entry (or (argument-pop input)
-                           (first (select-pass-entry prompt)))))
-    pass-entry
-    (throw 'error "Pass entry required.")))
-
-
+  (or (argument-pop input)
+      (first (select-pass-entry prompt))
+      (throw 'error "Pass entry required.")))
 
 (defcommand edit-pass-entry (pass-entry) ((:pass-entry "Edit pass: "))
-  (uiop:launch-program `("pass" "edit" ,pass-entry)))
+  (uiop:launch-program (list "pass" "edit" pass-entry)))
 
 (defcommand type-pass-entry (pass-entry) ((:pass-entry "Type pass: "))
   (let* ((text (uiop:run-program `("pass" "show" ,pass-entry) :output :string))
          (menu (cons (list "autotype" :autotype) (parse-pass-entry-text text)))
-         (value (cadr (select-from-menu (current-screen) menu "Type field: "))))
+         (value (second (select-from-menu (current-screen) menu "Type field: "))))
 
     (cond ((eq :autotype value)
-           (when-let ((value (cadr (assoc "login" menu :test #'string=))))
+           (when-let ((value (second (assoc "login" menu :test #'string=))))
              (window-send-string value)
              (window-send-string (string #\tab)))
-           (when-let ((value (cadr (assoc "password" menu :test #'string=))))
+           (when-let ((value (second (assoc "password" menu :test #'string=))))
              (window-send-string value)))
 
           ((stringp value)
@@ -69,8 +62,8 @@
 
 (defcommand menu-pass () ()
   (let ((menu '(("type" :type) ("edit" :edit) ("insert" :insert) ("otp" :otp))))
-    (case (cadr (select-from-menu (current-screen) menu "Pass: "))
+    (case (second (select-from-menu (current-screen) menu "Pass: "))
       (:type (eval-command "type-pass-entry" t))
       (:edit (eval-command "edit-pass-entry" t))
-      (:insert (insert-pass-entry))
+      (:insert (eval-command "insert-pass-entry" t))
       (:otp (eval-command "otp-pass-entry" t)))))
