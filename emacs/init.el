@@ -306,10 +306,6 @@
 
 (setq disabled-command-function nil)
 
-;;; ORDERLESS
-
-(define-key minibuffer-local-completion-map " " nil)
-
 ;;; ORG AGENDA
 
 (define-key mode-specific-map "Ga" 'org-agenda)
