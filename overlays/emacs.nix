@@ -3,8 +3,8 @@ self: super: let
   emacs-overlay-src = super.fetchFromGitHub {
     owner = "nix-community";
     repo = "emacs-overlay";
-    rev = "cbc63fe7656be94bf0ebd366740dbc0112cf7069";
-    sha256 = "1gvflm1l5cfj2a2k25f0wgfbymwwvki48nw97g05jd9i9l891yh2";
+    rev = "6b6945c6066590764f09a5429af92c2ab1b35f67";
+    sha256 = "1sqavxvqp0fyriyv6s3d2j3wa7zg34ipvqpcrcz7l3xya08r7b8p";
   };
 
   emacs-overlay = import emacs-overlay-src self super;
@@ -85,7 +85,7 @@ self: super: let
       owner = "xFA25E";
       name = "skempo";
       version = "0.1.0";
-      checksum = "060lq7mni7rg5pq0da60f56kf4njan1wd8sf4hj54wvhh83nbld9";
+      checksum = "0na465f27p6n64sf0pj0aqdi384m1wy3hxcc2d6a67hs39rkyvi9";
       deps = [ eself.parent-mode ];
     };
   };
