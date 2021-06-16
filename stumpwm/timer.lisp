@@ -1,13 +1,12 @@
 (in-package :stumpwm)
 
-(defvar *%last-timer-name* nil)
+(defvar *last-timer-name* nil)
 
 (defvar *frequent-timers*
   '(("pomodoro" . "25")
     ("pause"    . "5")))
 
 (defun time-left (timer)
-  "Return time left of timer in seconds."
   ;; Attention!  Internal sbcl function is used, maybe it is not a great idea.
   (round (/ (- (sb-impl::%timer-expire-time timer)
                (get-internal-real-time))
@@ -20,8 +19,6 @@
     ((list h m s) (+ (* h 60 60) (* m 60) s))))
 
 (defun format-duration (tot-s)
-  "Format seconds in the form of HH:MM:SS.
-If number is negative, return ELAPSED"
   (if (minusp tot-s)
       " ELAPSED"
       (let* ((s (rem tot-s 60))
@@ -57,7 +54,7 @@ If number is negative, return ELAPSED"
 (defun read-timer-name (prompt)
   (let ((frequent-names (mapcar #'car *frequent-timers*)))
     (when-let ((name (completing-read (current-screen) prompt frequent-names)))
-      (setf *%last-timer-name* name))))
+      (setf *last-timer-name* name))))
 
 (define-stumpwm-type :timer-name (input prompt)
   (or (argument-pop input)
@@ -65,23 +62,21 @@ If number is negative, return ELAPSED"
       (throw 'error "No name")))
 
 (defun read-timer-duration (prompt)
-  (let* ((timer (assoc *%last-timer-name* *frequent-timers* :test #'string=))
+  (let* ((timer (assoc *last-timer-name* *frequent-timers* :test #'string=))
          (duration (if timer (cdr timer) "")))
     (read-one-line (current-screen) prompt :initial-input duration)))
 
 (define-stumpwm-type :timer-duration (input prompt)
   (if-let ((duration (or (argument-pop input) (read-timer-duration prompt))))
-    (if-let ((seconds (parse-duration duration)))
-      seconds
-      (throw 'error "Invalid duration."))
+    (or (parse-duration duration)
+        (throw 'error "Invalid duration."))
     (throw 'error "Duration required.")))
 
 (defun read-timer (prompt)
   (flet ((make-entry (timer) (list (format-timer timer) timer)))
     (if-let ((menu (mapcar #'make-entry (sb-ext:list-all-timers))))
-      (if-let ((timer (select-from-menu (current-screen) menu prompt)))
-        (second timer)
-        (throw 'error "No timer!"))
+      (or (second (select-from-menu (current-screen) menu prompt))
+          (throw 'error "No timer!"))
       (throw 'error "No timers!"))))
 
 (define-stumpwm-type :timer (input prompt)
@@ -107,7 +102,7 @@ If number is negative, return ELAPSED"
 
 (defcommand timer-menu () ()
   (let ((menu '(("add" :add) ("kill" :kill) ("list" :list))))
-    (case (cadr (select-from-menu (current-screen) menu "Timer: "))
+    (case (second (select-from-menu (current-screen) menu "Timer: "))
       ((:add) (eval-command "timer-add" t))
       ((:kill) (eval-command "timer-kill" t))
       ((:list) (eval-command "timer-list" t)))))
