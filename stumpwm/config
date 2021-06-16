@@ -5,10 +5,9 @@
 (defun config-file (&rest path)
   (apply #'uiop:xdg-config-home "stumpwm" path))
 
-(load (config-file "variables.lisp"))
 (load (config-file "utilities.lisp"))
 (load (config-file "commands.lisp"))
 (load (config-file "pass.lisp"))
-(load (config-file "rimer.lisp"))
+(load (config-file "timer.lisp"))
 (load (config-file "bindings.lisp"))
 (load (config-file "init.lisp"))

@@ -25,7 +25,8 @@
 
 ;;; OPEN
 
-(define-key *open-map* (kbd "C-c") "menu-rimer")
+(define-key *open-map* (kbd "C-c") "timer-add")
+(define-key *open-map* (kbd "c") "timer-menu")
 
 (define-key *open-map* (kbd "C-w") "type-pass-entry")
 (define-key *open-map* (kbd "w") "menu-pass")
@@ -49,7 +50,7 @@
 ;;; Remapped keys
 
 (define-remapped-keys
-    '(("(Tor Browser|Brave-browser|Firefox)"
+    '(("(Tor Browser|Brave-browser|Firefox|TelegramDesktop)"
        ("C-n"   . "Down")
        ("C-p"   . "Up")
        ("C-f"   . "Right")
