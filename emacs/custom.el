@@ -30,7 +30,7 @@
  '(browse-url-browser-function 'browse-url-multi)
  '(browse-url-generic-program "brave-incognito")
  '(browse-url-multi-invidious-instances
-   '("invidious.tube" "invidious.zapashcanon.fr" "tube.connect.cafe" "vid.puffyan.us" "invidious.048596.xyz" "invidious.himiko.cloud" "invidious.zee.li" "invidious.namazso.eu" "yewtu.be" "ytprivate.com" "vid.mint.lgbt" "inv.skyn3t.in" "invidious.kavin.rocks" "au.ytprivate.com"))
+   '("vid.puffyan.us" "invidious.048596.xyz" "invidious.himiko.cloud" "invidious.zee.li" "invidious.namazso.eu" "yewtu.be" "ytprivate.com" "vid.mint.lgbt" "inv.skyn3t.in" "invidious.kavin.rocks" "au.ytprivate.com" "invidious.tube" "invidious.zapashcanon.fr" "tube.connect.cafe"))
  '(browse-url-secondary-browser-function 'browse-url-multi)
  '(byte-count-to-string-function '(lambda (s) (file-size-human-readable s 'si)))
  '(c-default-style '((java-mode . "java") (other . "awk")))
