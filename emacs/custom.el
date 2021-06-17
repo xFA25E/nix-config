@@ -388,4 +388,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 150 :width normal :foundry "PfEd" :family "DejaVu Sans Mono"))))
+ '(header-line ((t (:height 150 :box nil :foreground "grey20" :background "grey90" :inherit mode-line))))
+ '(mode-line ((t (:background "white smoke" :foreground "black" :box nil :height 105))))
+ '(mode-line-inactive ((t (:height 105 :weight light :box (:line-width (1 . -1) :color "grey75") :foreground "grey20" :background "dark gray" :inherit mode-line)))))

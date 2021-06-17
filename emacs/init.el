@@ -137,11 +137,6 @@
 
 (define-key help-map "\M-f" 'list-faces-display)
 
-(set-face-attribute 'default nil :height 150)
-(set-face-attribute 'mode-line nil :height 105 :background "white smoke" :box nil)
-(set-face-attribute 'mode-line-inactive nil :height 105 :background "dark gray")
-(set-face-attribute 'header-line nil :height 150)
-
 ;;; FD DIRED
 
 (define-key search-map "fd" 'fd-dired)
