@@ -173,7 +173,7 @@
 
 ;;; HIPPIE EXP
 
-(define-key global-map "\M-/" 'hippie-expand)
+(define-key global-map "\C-_" 'hippie-expand)
 (with-eval-after-load 'hippie-exp (load "/home/val/.config/emacs/hippie-exp-fixes.el"))
 
 ;;; HL LINE
