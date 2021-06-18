@@ -98,8 +98,8 @@
   (message "NAME          REMAINING~%~A" (format-timers)))
 
 (defcommand timer-menu () ()
-  (let ((menu '(("add" :add) ("kill" :kill) ("list" :list))))
+  (let ((menu '(("add" :add) ("list" :list) ("kill" :kill))))
     (case (second (select-from-menu (current-screen) menu "Timer: "))
       ((:add) (eval-command "timer-add" t))
-      ((:kill) (eval-command "timer-kill" t))
-      ((:list) (eval-command "timer-list" t)))))
+      ((:list) (eval-command "timer-list" t))
+      ((:kill) (eval-command "timer-kill" t)))))
