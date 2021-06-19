@@ -89,10 +89,11 @@ self: super: let
       deps = [ eself.parent-mode ];
     };
   };
-  # emacsWithPackages = ((emacs-overlay.emacsPackagesFor super.emacs).overrideScope' overrides).emacsWithPackages;
-  emacsWithPackages = ((emacs-overlay.emacsPackagesFor emacs-overlay.emacsGit).overrideScope' overrides).emacsWithPackages;
+  emacsWithPackages = ((emacs-overlay.emacsPackagesFor super.emacs).overrideScope' overrides).emacsWithPackages;
+  emacsWithPackagesGit = ((emacs-overlay.emacsPackagesFor emacs-overlay.emacsGit).overrideScope' overrides).emacsWithPackages;
+  emacsWithPackagesGcc = ((emacs-overlay.emacsPackagesFor emacs-overlay.emacsGcc).overrideScope' overrides).emacsWithPackages;
 in {
-  myEmacs = emacsWithPackages (epkgs: with epkgs; [
+  myEmacs = emacsWithPackagesGit (epkgs: with epkgs; [
 
     ace-link async avy bash-completion cargo consult csv-mode cyrillic-dvorak-im
     dired-rsync direnv dumb-jump edit-indirect eglot emacs-default emmet-mode

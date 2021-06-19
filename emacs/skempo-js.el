@@ -7,8 +7,10 @@
   "switch (" str ") {" > \n
   ("Pattern: "
    "case " str ":" > \n
+   @ \n
    "break;" > \n \n)
   "default:" > \n
+  @ \n
   "}" >)
 
 (provide 'skempo-js)

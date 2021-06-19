@@ -3,11 +3,6 @@
 (require 'avy)
 (require 'subr-x)
 
-(defun avy-action-choose (pt)
-  "Choose completion at `PT'."
-  (goto-char pt)
-  (choose-completion))
-
 (defun avy-completion ()
   "Jump to a completion candidate."
   (interactive)
@@ -23,7 +18,7 @@
                           while (< (point) wnd-end)
                           collect (cons (point) wnd))))))
       (avy-with avy-completion
-        (let ((avy-action #'avy-action-choose))
+        (let ((avy-action (lambda (pt) (goto-char pt) (choose-completion))))
           (avy-process candidates)))
     (user-error "No *Completions* windows")))
 
