@@ -284,10 +284,10 @@
       (file+headline "~/org/life.org" "Remember")
       "* TODO %?")))
  '(org-html-htmlize-output-type 'css)
- '(org-id-locations-file "/home/val/.cache/emacs/org/id-locations")
+ '(org-id-locations-file "/home/val/.local/share/emacs/org-id-locations")
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode))
+ '(org-mode-hook '(smartparens-mode) t)
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
