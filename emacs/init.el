@@ -1,7 +1,5 @@
 ;;; -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
-(add-hook 'after-init-hook (lambda () (load "/home/val/.config/nixpkgs/emacs/custom.el")))
-
 ;;; ACE LINK
 
 (define-key goto-map "l" 'ace-link)
@@ -521,3 +519,7 @@
 (define-key global-map [?\C-\M-\S-f] 'next-buffer)
 (define-key global-map "\M-Q" 'quit-window)
 (define-key global-map "\M-o" 'other-window)
+
+;;; LOAD CUSTOM
+
+(load "/home/val/.config/nixpkgs/emacs/custom.el" nil nil t)
