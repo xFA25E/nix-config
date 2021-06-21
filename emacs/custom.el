@@ -283,11 +283,14 @@
    '(("r" "Remember" entry
       (file+headline "~/org/life.org" "Remember")
       "* TODO %?")))
+ '(org-habit-following-days 1)
+ '(org-habit-graph-column 52)
+ '(org-habit-preceding-days 30)
  '(org-html-htmlize-output-type 'css)
  '(org-id-locations-file "/home/val/.local/share/emacs/org-id-locations")
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode) t)
+ '(org-mode-hook '(smartparens-mode))
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
