@@ -78,6 +78,7 @@
 (defvar dired-mode-map)
 (with-eval-after-load 'dired
   (define-key dired-mode-map "r" 'dired-rsync)
+  (define-key dired-mode-map "\M-+"'dired-create-empty-file)
   (dired-async-mode))
 
 ;;; DIRED AUX
@@ -135,17 +136,14 @@
 
 (define-key help-map "\M-f" 'list-faces-display)
 
-;;; FD DIRED
-
-(define-key search-map "fd" 'fd-dired)
-
 ;;; FIND DIRED
 
-(define-key search-map "ff" 'find-dired)
+(define-key mode-specific-map "f" 'find-name-dired)
+(define-key mode-specific-map "F" 'find-dired)
 
 ;;; FIND FUNC
 
-(define-key search-map "fb" 'find-library)
+(define-key mode-specific-map "b" 'find-library)
 
 ;;; FINDER
 
@@ -195,7 +193,7 @@
 
 ;;; LOCATE
 
-(define-key search-map "fl" 'locate)
+(define-key mode-specific-map "l" 'locate)
 
 ;;; MAGIT
 
@@ -373,9 +371,7 @@
 
 ;;; RG
 
-(define-key search-map "rr" 'rg)
-(define-key search-map "rt" 'rg-literal)
-(define-key search-map "rp" 'rg-project)
+(define-key search-map "r" 'rg-menu)
 
 ;;; SAVEHIST
 

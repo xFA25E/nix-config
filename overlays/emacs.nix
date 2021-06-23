@@ -97,11 +97,11 @@ in {
 
     ace-link async avy bash-completion cargo consult csv-mode cyrillic-dvorak-im
     dired-rsync direnv dumb-jump edit-indirect eglot emacs-default emmet-mode
-    fd-dired format-all htmlize ipretty ledger-mode magit marginalia
-    native-complete nix-mode nov org-mime org-plus-contrib outline-minor-faces
-    pcmpl-args pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg
-    rust-mode sdcv shell-pwd skempo sly sly-asdf sly-quicklisp smartparens
-    sql-indent sqlup-mode transmission vcomplete vlf web-mode wgrep
+    format-all htmlize ipretty ledger-mode magit marginalia native-complete
+    nix-mode nov org-mime org-plus-contrib outline-minor-faces pcmpl-args
+    pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg rust-mode
+    sdcv shell-pwd skempo sly sly-asdf sly-quicklisp smartparens sql-indent
+    sqlup-mode transmission vcomplete vlf web-mode wgrep
 
   ]);
 }
