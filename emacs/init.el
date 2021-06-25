@@ -230,8 +230,7 @@
   (define-key mpc-mode-map "M" 'mpc-select-extend)
   (define-key mpc-mode-map "\M-m" 'mpc-select)
   (define-key mpc-mode-map "\C-m" 'mpc-songs-jump-to)
-  (define-key mpc-songs-mode-map [remap mpc-select] nil)
-  (load "/home/val/.config/emacs/mpc-fixes.el"))
+  (define-key mpc-songs-mode-map [remap mpc-select] nil))
 
 ;;; MULE
 
