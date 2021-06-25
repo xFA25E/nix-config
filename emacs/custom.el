@@ -201,6 +201,7 @@
  '(mu4e-attachment-dir "/home/val/Downloads")
  '(mu4e-change-filenames-when-moving t)
  '(mu4e-compose-context-policy 'always-ask)
+ '(mu4e-confirm-quit nil)
  '(mu4e-context-policy 'pick-first)
  '(mu4e-headers-date-format "%d %b %a %R")
  '(mu4e-headers-fields '((:human-date . 16) (:flags . 6) (:from . 22) (:subject)))
@@ -296,7 +297,7 @@
  '(org-id-locations-file "/home/val/.local/share/emacs/org-id-locations")
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode))
+ '(org-mode-hook '(smartparens-mode) t)
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
