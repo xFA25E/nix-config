@@ -88,6 +88,22 @@ self: super: let
       checksum = "0na465f27p6n64sf0pj0aqdi384m1wy3hxcc2d6a67hs39rkyvi9";
       deps = [ eself.parent-mode ];
     };
+
+    avy-completion = make-melpa {
+      owner = "xFA25E";
+      name = "avy-completion";
+      version = "0.1.0";
+      checksum = "1qrsndi3c6vk9zbihl7993nfyk656vjz2hv617qg4axgjyyq7bxk";
+      deps = [ eself.avy ];
+    };
+
+    browse-url-multi = make-melpa {
+      owner = "xFA25E";
+      name = "browse-url-multi";
+      version = "0.1.0";
+      checksum = "1kb3y094mddf39fckjz98mq1321byd1bbwa4wy784cgq9rkc4ng5";
+    };
+
   };
   emacsWithPackages = ((emacs-overlay.emacsPackagesFor super.emacs).overrideScope' overrides).emacsWithPackages;
   emacsWithPackagesGit = ((emacs-overlay.emacsPackagesFor emacs-overlay.emacsGit).overrideScope' overrides).emacsWithPackages;
@@ -95,13 +111,14 @@ self: super: let
 in {
   myEmacs = emacsWithPackagesGit (epkgs: with epkgs; [
 
-    ace-link async avy bash-completion cargo consult csv-mode cyrillic-dvorak-im
-    dired-rsync direnv dumb-jump edit-indirect eglot emacs-default emmet-mode
-    format-all htmlize ipretty ledger-mode magit marginalia native-complete
-    nix-mode nov org-mime org-plus-contrib outline-minor-faces pcmpl-args
-    pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg rust-mode
-    sdcv shell-pwd skempo sly sly-asdf sly-quicklisp smartparens sql-indent
-    sqlup-mode transmission vcomplete vlf web-mode wgrep
+    ace-link async avy avy-completion bash-completion browse-url-multi cargo
+    consult csv-mode cyrillic-dvorak-im dired-rsync direnv dumb-jump
+    edit-indirect eglot emacs-default emmet-mode format-all htmlize ipretty
+    ledger-mode magit marginalia native-complete nix-mode nov org-mime
+    org-plus-contrib outline-minor-faces pcmpl-args pdf-tools php-mode pueue
+    rainbow-mode restclient reverse-im rg rust-mode sdcv shell-pwd skempo sly
+    sly-asdf sly-quicklisp smartparens sql-indent sqlup-mode transmission
+    vcomplete vlf web-mode wgrep
 
   ]);
 }

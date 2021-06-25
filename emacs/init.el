@@ -19,17 +19,14 @@
 
 ;;; AVY COMPLETION
 
-(autoload 'avy-completion "/home/val/.config/emacs/avy-completion.el" nil t)
 (define-key minibuffer-local-completion-map "\M-z" 'avy-completion)
 (define-key completion-in-region-mode-map "\M-z" 'avy-completion)
 (with-eval-after-load 'vcomplete (define-key vcomplete-command-map "\M-z" 'avy-completion))
 
 ;;; BROWSE URL
 
-(autoload 'browse-url-multi "/home/val/.config/emacs/browse-url-multi.el" nil t)
-(autoload 'browse-url-youtube-search "/home/val/.config/emacs/browse-url-multi.el" nil t)
 (define-key ctl-x-map "B" 'browse-url)
-(define-key mode-specific-map "oy" 'browse-url-youtube-search)
+(define-key mode-specific-map "oy" 'browse-url-multi-youtube-search)
 
 ;;; BYTECOMP ASYNC
 
