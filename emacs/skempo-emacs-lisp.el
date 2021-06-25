@@ -35,7 +35,7 @@
   "(defcustom " (skempo-elisp-namespace) "-" p n>
   r> n>
   "\"" p "\"" n>
-  ":type nil" n>
+  ":type " p "nil" n>
   ":group '" (skempo-elisp-group) ")" n>)
 
 (skempo-define-tempo (defface :mode emacs-lisp-mode)
