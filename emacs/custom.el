@@ -29,6 +29,13 @@
  '(bookmark-save-flag 1)
  '(browse-url-browser-function 'browse-url-multi)
  '(browse-url-generic-program "brave-incognito")
+ '(browse-url-multi-answers
+   '(("brave" 98 "Open in brave" browse-url-generic)
+     ("eww" 101 "Open in eww" eww-browse-url)
+     ("ytdli" 121 "Download with ytdli" browse-url-multi-ytdli)
+     ("mpvi" 109 "Open in mpvi" browse-url-multi-mpvi)
+     ("invidious" 105 "Open as invidious url in eww" browse-url-multi-invidious)
+     ("firefox" 102 "Open in firefox" browse-url-firefox)))
  '(browse-url-multi-invidious-instances
    '("vid.puffyan.us" "invidious.048596.xyz" "invidious.himiko.cloud" "invidious.zee.li" "invidious.namazso.eu" "yewtu.be" "ytprivate.com" "vid.mint.lgbt" "inv.skyn3t.in" "invidious.kavin.rocks" "au.ytprivate.com" "invidious.tube" "invidious.zapashcanon.fr" "tube.connect.cafe"))
  '(browse-url-secondary-browser-function 'browse-url-multi)
