@@ -37,7 +37,7 @@
 (define-key goto-map "o" 'consult-outline)
 (define-key goto-map "i" 'consult-imenu)
 (define-key goto-map "E" 'consult-compile-error)
-(define-key goto-map "f" 'consult-flymake)
+(define-key goto-map "F" 'consult-flymake)
 (define-key project-prefix-map "i" 'consult-project-imenu)
 (define-key kmacro-keymap "c" 'consult-kmacro)
 
@@ -137,8 +137,8 @@
 
 ;;; FIND DIRED
 
-(define-key mode-specific-map "f" 'find-name-dired)
-(define-key mode-specific-map "F" 'find-dired)
+(define-key search-map "f" 'find-name-dired)
+(define-key search-map "F" 'find-dired)
 
 ;;; FIND FUNC
 
@@ -184,7 +184,7 @@
 
 ;;; IPRETTY
 
-(define-key global-map [remap eval-print-last-sexp] 'ipretty-last-sexp)
+(define-key lisp-interaction-mode-map "\C-j" 'ipretty-last-sexp)
 
 ;;; ISEARCH
 
@@ -198,7 +198,7 @@
 
 ;;; LOCATE
 
-(define-key mode-specific-map "l" 'locate)
+(define-key search-map "l" 'locate)
 
 ;;; MAGIT
 
@@ -411,7 +411,6 @@
 (define-key global-map "\M-l" 'downcase-dwim)
 (define-key global-map "\M-u" 'upcase-dwim)
 (define-key global-map "\C-w" 'kill-region-dwim)
-(define-key ctl-x-map "K" 'kill-current-buffer)
 (define-key mode-specific-map "oP" 'list-processes)
 
 ;;; SKEMPO
