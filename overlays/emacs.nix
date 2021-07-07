@@ -3,8 +3,8 @@ self: super: let
   emacs-overlay-src = super.fetchFromGitHub {
     owner = "nix-community";
     repo = "emacs-overlay";
-    rev = "67fe74d6e73e3c8a983b09a76d809acc730ad911";
-    sha256 = "0ndb1pp0pqnsvaxifsaqib57agkjpq7s0sg86b093bcyk73dbgd2";
+    rev = "c98b3a644b09550bf5e38cc796c4fdec190f0582";
+    sha256 = "03ihk4qysv3k4b8a0wiiq2dzx9aij4h01isxnpzp44fvq7d4hwlf";
   };
 
   emacs-overlay = import emacs-overlay-src self super;
@@ -41,6 +41,14 @@ self: super: let
     };
 
   in {
+
+    nix-mode = make-melpa {
+      name = "nix-mode";
+      url = "https://github.com/NixOS/nix-mode";
+      rev = "3cca5b6527a69c4701394f424726282a1462ede3;";
+      sha256 = "1cf88v8hbcn2kcyh4bv74yhpp7jf4r80zf3pzfw6cqvrgx19px2k";
+      version = "1.4.5";
+    };
 
     link-hint = make-melpa {
       name = "link-hint";
@@ -102,14 +110,13 @@ self: super: let
 in {
   myEmacs = emacsWithPackagesGit (epkgs: with epkgs; [
 
-    async avy bash-completion browse-url-multi cargo consult csv-mode
-    cyrillic-dvorak-im dired-rsync direnv dumb-jump ebdb edit-indirect eglot
-    emacs-default emmet-mode format-all htmlize ipretty ledger-mode link-hint
-    magit marginalia native-complete nix-mode nov org-mime org-plus-contrib
-    outline-minor-faces pcmpl-args pdf-tools php-mode pueue rainbow-mode
-    restclient reverse-im rg rust-mode sdcv shell-pwd skempo sly sly-asdf
-    sly-quicklisp smartparens sql-indent sqlup-mode transmission vcomplete vlf
-    web-mode wgrep
+    async avy browse-url-multi cargo consult csv-mode cyrillic-dvorak-im
+    dired-rsync direnv dumb-jump ebdb edit-indirect eglot emacs-default
+    emmet-mode format-all htmlize ipretty ledger-mode link-hint magit marginalia
+    nix-mode nov org-mime org-plus-contrib outline-minor-faces pcmpl-args
+    pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg rust-mode
+    sdcv shell-pwd skempo sly sly-asdf sly-quicklisp smartparens sql-indent
+    sqlup-mode transmission vcomplete vlf web-mode wgrep
 
   ]);
 
