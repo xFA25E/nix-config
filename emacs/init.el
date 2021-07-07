@@ -43,7 +43,6 @@
 
 ;;; CSS MODE
 
-(defvar css-mode-map)
 (with-eval-after-load 'css-mode (define-key css-mode-map "\C-cm" 'css-lookup-symbol))
 
 ;;; CUSTOM
@@ -62,7 +61,6 @@
 
 ;;; DIRED
 
-(defvar dired-mode-map)
 (with-eval-after-load 'dired
   (define-key dired-mode-map "r" 'dired-rsync)
   (define-key dired-mode-map "\M-+"'dired-create-empty-file)
@@ -70,7 +68,6 @@
 
 ;;; DIRED AUX
 
-(defvar dired-compress-file-suffixes)
 (with-eval-after-load 'dired-aux
   (add-to-list 'dired-compress-file-suffixes
                (list (rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -")))
@@ -126,8 +123,6 @@
 
 ;;; EWW
 
-(declare-function eww-links-at-point "eww")
-(defvar eww-mode-map)
 (with-eval-after-load 'eww
   (defun eww-browse-url-custom ()
     (interactive)
@@ -166,9 +161,8 @@
 
 (define-key search-map "g" 'rgrep)
 (with-eval-after-load 'grep
-  (defun grep-expand-template-add-cut (cmd)
-    (concat cmd " | cut -c-500"))
-  (advice-add 'grep-expand-template :filter-return 'grep-expand-template-add-cut))
+  (define-advice grep-expand-template (:filter-return (cmd) add-cut)
+    (concat cmd " | cut -c-500")))
 
 ;;; HELP FNS
 
@@ -225,8 +219,6 @@
 
 ;;;; MPC BINDINGS
 
-(defvar mpc-mode-map)
-(defvar mpc-songs-mode-map)
 (with-eval-after-load 'mpc
   (define-key mpc-mode-map "p" 'mpc-playlist)
   (define-key mpc-mode-map "u" 'mpc-update)
@@ -258,12 +250,11 @@
 ;;; MU4E
 
 (autoload 'mu4e "mu4e" nil t)
+(autoload 'mu4e~compose-mail "mu4e-compose")
+(define-mail-user-agent 'mu4e-user-agent 'mu4e~compose-mail 'message-send-and-exit 'message-kill-buffer 'message-send-hook)
 (define-key mode-specific-map "om" 'mu4e)
 
-(defvar mu4e-contexts)
-(declare-function make-mu4e-context "mu4e-context")
-(with-eval-after-load 'mu4e
-  (load-library "org-mu4e")
+(with-eval-after-load 'mu4e-context
   (setq mu4e-contexts
         (list
          (make-mu4e-context
@@ -293,7 +284,6 @@
 
 ;;; NEWSTICKER
 
-(defvar newsticker-treeview-mode-map)
 (define-key mode-specific-map "on" 'newsticker-show-news)
 (with-eval-after-load 'newst-treeview
   (load "/home/val/.config/emacs/newsticker-extra.el")
@@ -317,7 +307,6 @@
 
 ;;; ORG MIME
 
-(defvar message-mode-map)
 (autoload 'org-mime-edit-mail-in-org-mode "org-mime" nil t)
 (autoload 'org-mime-revert-to-plain-text-mail "org-mime" nil t)
 (with-eval-after-load 'message
@@ -400,13 +389,11 @@
 
 (define-key mode-specific-map "ot" 'sdcv-search-input)
 (with-eval-after-load 'sdcv
-  (defun sdcv-args-force-utf (args)
-    (cl-list* "--utf8-output" "--utf8-input" args))
-  (advice-add 'sdcv-search-with-dictionary-args :filter-return 'sdcv-args-force-utf))
+  (define-advice sdcv-search-with-dictionary-args (:filter-return (args) utf)
+    (cl-list* "--utf8-output" "--utf8-input" args)))
 
 ;;; SGML MODE
 
-(defvar sgml-mode-map)
 (with-eval-after-load 'sgml-mode
   (define-key sgml-mode-map "\C-\M-n" 'sgml-skip-tag-forward)
   (define-key sgml-mode-map "\C-\M-p" 'sgml-skip-tag-backward)
@@ -416,7 +403,6 @@
 
 (define-key mode-specific-map "xs" 'shell-pwd-shell)
 (define-key mode-specific-map "xS" 'shell-pwd-list-buffers)
-(defvar shell-mode-map)
 (with-eval-after-load 'shell
   (define-key shell-mode-map "\C-c\M-d" 'shell-pwd-change-directory))
 
@@ -505,12 +491,10 @@
 
 ;;; TEX MODE
 
-(defvar ispell-parser)
 (add-hook 'tex-mode-hook (lambda nil (setq-local ispell-parser 'tex)))
 
 ;;; TRANSMISSION
 
-(defvar transmission-mode-map)
 (define-key mode-specific-map "or" 'transmission)
 (with-eval-after-load 'transmission (define-key transmission-mode-map "M" 'transmission-move))
 
