@@ -137,8 +137,8 @@
 
 ;;; FIND DIRED
 
-(define-key search-map "f" 'find-name-dired)
-(define-key search-map "F" 'find-dired)
+(define-key search-map "n" 'find-name-dired)
+(define-key search-map "N" 'find-dired)
 
 ;;; FIND FUNC
 
