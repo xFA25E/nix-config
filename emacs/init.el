@@ -324,7 +324,6 @@
   (define-key message-mode-map "\C-c\M-o" 'org-mime-htmlize)
   (define-key message-mode-map "\C-c\M-e" 'org-mime-edit-mail-in-org-mode)
   (define-key message-mode-map "\C-c\M-t" 'org-mime-revert-to-plain-text-mail))
-(with-eval-after-load 'org-mime (load "/home/val/.config/emacs/org-mime-fixes.el"))
 
 ;;; OUTLINE
 
