@@ -354,8 +354,9 @@
 
 ;;; REVERSE IM
 
-(require 'reverse-im)
-(reverse-im-activate "cyrillic-dvorak")
+(with-eval-after-load 'cyrillic-dvorak-im
+  (require 'reverse-im)
+  (reverse-im-activate "cyrillic-dvorak"))
 
 ;;; RG
 
