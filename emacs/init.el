@@ -239,14 +239,6 @@
   (define-key mpc-mode-map "\C-m" 'mpc-songs-jump-to)
   (define-key mpc-songs-mode-map [remap mpc-select] nil))
 
-;;; MULE
-
-(set-terminal-coding-system 'utf-8)
-
-;;; MULE CMDS
-
-(prefer-coding-system 'utf-8)
-
 ;;; MU4E
 
 (autoload 'mu4e "mu4e" nil t)
