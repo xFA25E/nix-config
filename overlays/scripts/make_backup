@@ -17,7 +17,7 @@ directory="${1:-$(get_directory)}"
 [ ! -d "${directory:?provide directory}" ] && exit_error "${directory} is not a directory"
 
 rsync --delete --delete-excluded --archive --verbose --partial --progress --relative \
-      --backup --backup-dir="${directory%/}/backup" --suffix="$(date '+.~%Y%m%d')" \
+      --backup --backup-dir="${directory%/}/backup" --suffix="$(date '+.~%Y%m%d~')" \
       --exclude='lost+found' --exclude="${directory}" \
       ~/Documents ~/Downloads ~/Music ~/Pictures ~/Videos ~/archives ~/org \
       ~/.authinfo.gpg ~/.gnupg ~/.mail ~/.password-store ~/.ssh \
