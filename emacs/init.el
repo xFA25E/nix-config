@@ -147,7 +147,10 @@
 
 ;;; FIND FUNC
 
-(define-key mode-specific-map "b" 'find-library)
+(define-key ctl-x-map "L" 'find-library)
+(define-key ctl-x-map "F" 'find-function)
+(define-key ctl-x-map "K" 'find-function-on-key)
+(define-key ctl-x-map "V" 'find-variable)
 
 ;;; FINDER
 
