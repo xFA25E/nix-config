@@ -328,16 +328,6 @@
 
 (define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
 
-;;; PCMPL-ARGS
-
-(defvar pcmpl-args-man-function)
-(declare-function pcmpl-args-default-man-function "pcmpl-args")
-(with-eval-after-load 'pcmpl-args
-  (setq pcmpl-args-man-function
-        (lambda (name)
-          (pcmpl-args-default-man-function name)
-          (call-process-region (point-min) (point-max) "col" t t nil "-b"))))
-
 ;;; PDF TOOLS
 
 (pdf-loader-install t t)
