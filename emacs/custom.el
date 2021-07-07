@@ -110,7 +110,7 @@
  '(eldoc-echo-area-use-multiline-p t)
  '(eldoc-minor-mode-string "")
  '(emacs-lisp-mode-hook
-   '(skempo-mode outline-minor-mode flymake-mode smartparens-mode))
+   '(skempo-mode outline-minor-mode flymake-mode smartparens-mode abbrev-mode))
  '(enable-recursive-minibuffers t)
  '(eval-expression-print-length t)
  '(eval-expression-print-level t)
@@ -187,7 +187,8 @@
  '(ledger-default-date-format "%Y-%m-%d")
  '(link-hint-types
    '(link-hint-shr-url link-hint-org-link link-hint-markdown-link link-hint-mu4e-url link-hint-mu4e-attachment link-hint-gnus-w3m-url link-hint-gnus-w3m-image-url link-hint-deadgrep link-hint-help-link link-hint-info-link link-hint-package-link link-hint-package-keyword-link link-hint-package-install-link link-hint-epkg-button link-hint-compilation-link link-hint-w3m-link link-hint-w3m-message-link link-hint-woman-button link-hint-treemacs link-hint-nov-link link-hint-customize-widget link-hint-notmuch-hello link-hint-button link-hint-text-url link-hint-completion-list-candidate link-hint-file-link link-hint-org-agenda-item link-hint-xref-item link-hint-man-button link-hint-dired-filename))
- '(lisp-mode-hook '(skempo-mode smartparens-mode sly-editing-mode))
+ '(lisp-mode-hook
+   '(skempo-mode smartparens-mode sly-editing-mode abbrev-mode))
  '(magit-credential-cache-daemon-socket "/home/val/.cache/git/credential/socket")
  '(magit-define-global-key-bindings nil)
  '(mail-user-agent 'mu4e-user-agent)
