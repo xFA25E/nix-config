@@ -1,9 +1,5 @@
 ;;; -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
-;;; ACE LINK
-
-(define-key goto-map "l" 'ace-link)
-
 ;;; ANSI COLOR
 
 (with-eval-after-load 'compile
@@ -16,12 +12,6 @@
 
 (define-key global-map "\M-z" 'avy-goto-word-0)
 (define-key goto-map "\M-g" 'avy-goto-line)
-
-;;; AVY COMPLETION
-
-(define-key minibuffer-local-completion-map "\M-z" 'avy-completion)
-(define-key completion-in-region-mode-map "\M-z" 'avy-completion)
-(with-eval-after-load 'vcomplete (define-key vcomplete-command-map "\M-z" 'avy-completion))
 
 ;;; BROWSE URL
 
@@ -203,6 +193,11 @@
 
 (define-key isearch-mode-map "\C-h" 'isearch-delete-char)
 (define-key isearch-mode-map "\C-?" isearch-help-map)
+
+;;; LINK HINT
+
+(define-key goto-map "\M-l" 'link-hint-open-link)
+(define-key goto-map "\M-L" 'link-hint-copy-link)
 
 ;;; LOCATE
 

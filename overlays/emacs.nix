@@ -45,6 +45,14 @@ self: super: let
     vcomplete = esuper.melpaBuild {
       pname = "vcomplete";
       ename = "vcomplete";
+    link-hint = make-melpa {
+      name = "link-hint";
+      url = "https://github.com/xFA25E/link-hint.el";
+      rev = "5010bb10052395045a3afcb99177ce3b290d1b0d";
+      sha256 = "0iy50w7rwrppzhblv0fbfm7anzya776iiyylfmc09sm02j373274";
+      version = "0.1";
+    };
+
       version = "0.1";
       recipe = super.writeText "recipe" ''
         (vcomplete
@@ -87,14 +95,6 @@ self: super: let
       version = "0.1.0";
       checksum = "0na465f27p6n64sf0pj0aqdi384m1wy3hxcc2d6a67hs39rkyvi9";
       deps = [ eself.parent-mode ];
-    };
-
-    avy-completion = make-melpa {
-      owner = "xFA25E";
-      name = "avy-completion";
-      version = "0.1.0";
-      checksum = "1qrsndi3c6vk9zbihl7993nfyk656vjz2hv617qg4axgjyyq7bxk";
-      deps = [ eself.avy ];
     };
 
     browse-url-multi = make-melpa {
