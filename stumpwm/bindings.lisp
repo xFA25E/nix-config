@@ -44,8 +44,11 @@
 
 (define-key *open-map* (kbd "C-m") "show-menu")
 
+(defprogram-shortcut telegram-desktop :map *open-map* :key (kbd "C-t") :props '(:class "TelegramDesktop"))
 (defprogram-shortcut brave-incognito :map *open-map* :key (kbd "C-b") :props '(:class "Brave-browser"))
+(defprogram-shortcut mpv :command "true" :map *open-map* :key (kbd "C-e") :props '(:class "mpv"))
 (defprogram-shortcut firefox :map *open-map* :key (kbd "C-f"))
+
 
 ;;; Remapped keys
 
