@@ -3,8 +3,8 @@ self: super: let
   emacs-overlay-src = super.fetchFromGitHub {
     owner = "nix-community";
     repo = "emacs-overlay";
-    rev = "6b6945c6066590764f09a5429af92c2ab1b35f67";
-    sha256 = "1sqavxvqp0fyriyv6s3d2j3wa7zg34ipvqpcrcz7l3xya08r7b8p";
+    rev = "67fe74d6e73e3c8a983b09a76d809acc730ad911";
+    sha256 = "0ndb1pp0pqnsvaxifsaqib57agkjpq7s0sg86b093bcyk73dbgd2";
   };
 
   emacs-overlay = import emacs-overlay-src self super;
@@ -22,29 +22,26 @@ self: super: let
   '';
 
   overrides = eself: esuper: let
-    make-melpa = { name, version, owner, checksum, deps ? [] }: esuper.melpaBuild {
+    make-melpa = { name, url, rev, sha256, deps ? [], version ? rev }: esuper.melpaBuild {
       pname = name;
       ename = name;
       version = version;
       recipe = super.writeText "recipe" ''
         (${name}
-          :fetcher github
-          :repo "${owner}/${name}"
-          :commit "${version}")
+          :fetcher git
+          :url "${url}"
+          :commit "${rev}")
       '';
-      src = super.fetchFromGitHub {
-        owner = owner;
-        repo = name;
-        rev = version;
-        sha256 = checksum;
+      src = super.fetchgit {
+        url = url;
+        rev = rev;
+        sha256 = sha256;
       };
       packageRequires = deps;
     };
+
   in {
 
-    vcomplete = esuper.melpaBuild {
-      pname = "vcomplete";
-      ename = "vcomplete";
     link-hint = make-melpa {
       name = "link-hint";
       url = "https://github.com/xFA25E/link-hint.el";
@@ -53,55 +50,49 @@ self: super: let
       version = "0.1";
     };
 
+    vcomplete = make-melpa {
+      name = "vcomplete";
+      url = "https://git.sr.ht/~dsemy/vcomplete";
+      rev = "d086a33a1ad88621c24ac081727c7d58df6271ea";
+      sha256 = "0ymkyfm0cf7x46mghcg27yr42j23lrgkf12nw5vzsvq4qg38kbh9";
       version = "0.1";
-      recipe = super.writeText "recipe" ''
-        (vcomplete
-          :fetcher git
-          :url "https://git.sr.ht/~dsemy/vcomplete"
-          :commit "d086a33a1ad88621c24ac081727c7d58df6271ea")
-      '';
-      src = super.fetchgit {
-        url = "https://git.sr.ht/~dsemy/vcomplete";
-        rev = "d086a33a1ad88621c24ac081727c7d58df6271ea";
-        sha256 = "0ymkyfm0cf7x46mghcg27yr42j23lrgkf12nw5vzsvq4qg38kbh9";
-      };
     };
 
     cyrillic-dvorak-im = make-melpa {
       name = "cyrillic-dvorak-im";
-      version = "0.1.0";
-      owner = "xFA25E";
-      checksum = "12adszd4p9i9glx2chasgq68i6cnxcrwbf5c268jjb5dw4q7ci0n";
+      url = "https://github.com/xFA25E/cyrillic-dvorak-im";
+      rev = "0.1.0";
+      sha256 = "12adszd4p9i9glx2chasgq68i6cnxcrwbf5c268jjb5dw4q7ci0n";
     };
 
     shell-pwd = make-melpa {
-      owner = "xFA25E";
       name = "shell-pwd";
-      version = "0.1.1";
-      checksum = "1wapfjmdxvjk28dmxbqavhc4wgs2hfxxqp7040npjjk0wrz7i83f";
+      url = "https://github.com/xFA25E/shell-pwd";
+      rev = "0.1.1";
+      sha256 = "1wapfjmdxvjk28dmxbqavhc4wgs2hfxxqp7040npjjk0wrz7i83f";
     };
 
     pueue = make-melpa {
-      owner = "xFA25E";
       name = "pueue";
-      version = "0.1.0";
-      checksum = "0vxk0npry0wi1h7wpzq4bcpkzvv4px5k14rxkjbnznjbhy82kciz";
+      url = "https://github.com/xFA25E/pueue";
+      rev = "0.1.0";
+      sha256 = "0vxk0npry0wi1h7wpzq4bcpkzvv4px5k14rxkjbnznjbhy82kciz";
       deps = [ eself.bui ];
     };
 
     skempo = make-melpa {
-      owner = "xFA25E";
       name = "skempo";
-      version = "0.1.0";
-      checksum = "0na465f27p6n64sf0pj0aqdi384m1wy3hxcc2d6a67hs39rkyvi9";
+      url = "https://github.com/xFA25E/skempo";
+      rev = "0.1.0";
+      sha256 = "0na465f27p6n64sf0pj0aqdi384m1wy3hxcc2d6a67hs39rkyvi9";
       deps = [ eself.parent-mode ];
     };
 
     browse-url-multi = make-melpa {
-      owner = "xFA25E";
       name = "browse-url-multi";
-      version = "0.1.0";
-      checksum = "1kb3y094mddf39fckjz98mq1321byd1bbwa4wy784cgq9rkc4ng5";
+      url = "https://github.com/xFA25E/browse-url-multi";
+      rev = "0.1.0";
+      sha256 = "0n1g8511qsf5i5kadab1f3agwflsig8nlqdfymj1bvaqkgp0i7x5";
     };
 
   };
@@ -111,14 +102,15 @@ self: super: let
 in {
   myEmacs = emacsWithPackagesGit (epkgs: with epkgs; [
 
-    ace-link async avy avy-completion bash-completion browse-url-multi cargo
-    consult csv-mode cyrillic-dvorak-im dired-rsync direnv dumb-jump
-    edit-indirect eglot emacs-default emmet-mode format-all htmlize ipretty
-    ledger-mode magit marginalia native-complete nix-mode nov org-mime
-    org-plus-contrib outline-minor-faces pcmpl-args pdf-tools php-mode pueue
-    rainbow-mode restclient reverse-im rg rust-mode sdcv shell-pwd skempo sly
-    sly-asdf sly-quicklisp smartparens sql-indent sqlup-mode transmission
-    vcomplete vlf web-mode wgrep
+    async avy bash-completion browse-url-multi cargo consult csv-mode
+    cyrillic-dvorak-im dired-rsync direnv dumb-jump ebdb edit-indirect eglot
+    emacs-default emmet-mode format-all htmlize ipretty ledger-mode link-hint
+    magit marginalia native-complete nix-mode nov org-mime org-plus-contrib
+    outline-minor-faces pcmpl-args pdf-tools php-mode pueue rainbow-mode
+    restclient reverse-im rg rust-mode sdcv shell-pwd skempo sly sly-asdf
+    sly-quicklisp smartparens sql-indent sqlup-mode transmission vcomplete vlf
+    web-mode wgrep
 
   ]);
+
 }
