@@ -408,11 +408,7 @@
   (define-key skempo-mode-map "\C-z" 'skempo-complete-tag-or-call-on-region)
   (define-key skempo-mode-map "\M-g\M-e" 'skempo-forward-mark)
   (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
-  (with-eval-after-load 'elisp-mode (load "/home/val/.config/emacs/skempo-emacs-lisp.el"))
-  (with-eval-after-load 'sly (load "/home/val/.config/emacs/skempo-lisp.el"))
-  (with-eval-after-load 'nix-mode (load "/home/val/.config/emacs/skempo-nix.el"))
-  (with-eval-after-load 'php-mode (load "/home/val/.config/emacs/skempo-php.el"))
-  (with-eval-after-load 'js (load "/home/val/.config/emacs/skempo-js.el")))
+  (load "/home/val/.config/emacs/skempo-templates.el"))
 
 ;;; SMARTPARENS
 
