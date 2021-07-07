@@ -355,8 +355,6 @@
  '(sendmail-program "msmtp")
  '(sgml-basic-offset 4)
  '(sh-mode-hook '(sh-electric-here-document-mode smartparens-mode))
- '(shell-dynamic-complete-functions
-   '(comint-c-a-p-replace-by-expanded-history shell-environment-variable-completion shell-command-completion shell-c-a-p-replace-by-expanded-directory pcomplete-completions-at-point shell-filename-completion comint-filename-completion native-complete-at-point bash-completion-dynamic-complete))
  '(shell-mode-hook '(ansi-color-for-comint-mode-on))
  '(shift-select-mode nil)
  '(shr-max-image-proportion 0.7)
