@@ -514,6 +514,12 @@
 (define-key mode-specific-map "or" 'transmission)
 (with-eval-after-load 'transmission (define-key transmission-mode-map "M" 'transmission-move))
 
+;;; URL PARSE
+
+(with-eval-after-load 'url-parse
+  (define-advice url-generic-parse-url (:around (fn &rest args) save-match-data)
+    (save-match-data (apply fn args))))
+
 ;;; VCOMPLETE
 
 (with-eval-after-load 'vcomplete
