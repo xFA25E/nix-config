@@ -73,6 +73,7 @@
  '(custom-file "/home/val/.config/nixpkgs/emacs/custom.el")
  '(delete-old-versions t)
  '(describe-bindings-outline t)
+ '(diary-file "~/org/diary")
  '(dired-async-mode-lighter "")
  '(dired-create-destination-dirs 'ask)
  '(dired-dwim-target t)
@@ -91,6 +92,11 @@
  '(dired-ls-F-marks-symlinks t)
  '(dired-mode-hook '(dired-hide-details-mode hl-line-mode))
  '(display-time-24hr-format t)
+ '(ebdb-complete-mail-allow-cycling nil)
+ '(ebdb-completion-display-record nil)
+ '(ebdb-record-self "5ecfc8f5-f490-4745-8cf1-86b1964e4ab7")
+ '(ebdb-sources "~/.local/share/emacs/ebdb")
+ '(ebdb-user-mail-address-re 'self)
  '(ede-project-placeholder-cache-file "/home/val/.cache/emacs/ede/projects.el")
  '(ediff-before-setup-hook
    '((lambda
