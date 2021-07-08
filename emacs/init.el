@@ -195,6 +195,8 @@
 
 (define-key goto-map "\M-l" 'link-hint-open-link)
 (define-key goto-map "\M-L" 'link-hint-copy-link)
+(with-eval-after-load 'link-hint
+  (cl-pushnew 'rg-mode (get 'link-hint-compilation-link :vars)))
 
 ;;; LOCATE
 
