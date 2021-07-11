@@ -31,10 +31,6 @@ in {
               slavePattern = slave;
             }; in {
               "inbox" = makeChannel "INBOX" "inbox";
-              "archive" = makeChannel "Archive" "archive";
-              "trash" = makeChannel "Deleted Items" "trash";
-              "drafts" = makeChannel "Drafts" "drafts";
-              "spam" = makeChannel "Junk Email" "spam";
               "sent" = makeChannel "Sent Items" "sent";
             };
           };
