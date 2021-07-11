@@ -92,6 +92,50 @@
  '(dired-ls-F-marks-symlinks t)
  '(dired-mode-hook '(dired-hide-details-mode hl-line-mode))
  '(display-time-24hr-format t)
+ '(display-time-day-and-date t)
+ '(display-time-default-load-average nil)
+ '(display-time-mail-function
+   '(lambda nil
+      (/= 0
+          (string-to-number
+           (shell-command-to-string "notmuch count tag:unread")))))
+ '(display-time-mode t)
+ '(display-time-string-forms
+   '((if mail
+         (propertize display-time-mail-string 'display
+                     `(when
+                          (and display-time-use-mail-icon
+                               (display-graphic-p))
+                        ,@display-time-mail-icon ,@(if
+                                                       (and display-time-mail-face
+                                                            (memq
+                                                             (plist-get
+                                                              (cdr display-time-mail-icon)
+                                                              :type)
+                                                             '(pbm xbm)))
+                                                       (let
+                                                           ((bg
+                                                             (face-attribute display-time-mail-face :background)))
+                                                         (if
+                                                             (stringp bg)
+                                                             (list :background bg)))))
+                     'face display-time-mail-face 'help-echo "You have new mail; mouse-1: Read mail" 'mouse-face 'mode-line-highlight 'local-map
+                     (make-mode-line-mouse-map 'mouse-1 read-mail-command))
+       "")
+     (propertize
+      (format-time-string
+       (or display-time-format
+           (if display-time-24hr-format " %H:%M" "%-I:%M%p"))
+       now)
+      'help-echo
+      (format-time-string "%a %b %e, %Y" now))
+     (if
+         (and
+          (not display-time-format)
+          display-time-day-and-date)
+         (format-time-string " %a %b %e" now)
+       "")))
+ '(display-time-use-mail-icon t)
  '(ebdb-complete-mail nil)
  '(ebdb-complete-mail-allow-cycling nil)
  '(ebdb-completion-display-record nil)
@@ -351,7 +395,7 @@
  '(org-id-locations-file "/home/val/.local/share/emacs/org-id-locations")
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode))
+ '(org-mode-hook '(smartparens-mode) t)
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
@@ -374,6 +418,7 @@
      (project-eshell "Eshell" nil)))
  '(read-buffer-completion-ignore-case t)
  '(read-file-name-completion-ignore-case t)
+ '(read-mail-command '(lambda nil (interactive) (notmuch-search "tag:unread")))
  '(register-separator 43)
  '(rust-format-on-save t)
  '(safe-local-variable-values
