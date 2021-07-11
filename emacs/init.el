@@ -246,7 +246,7 @@
 (autoload 'mu4e "mu4e" nil t)
 (autoload 'mu4e~compose-mail "mu4e-compose")
 (define-mail-user-agent 'mu4e-user-agent 'mu4e~compose-mail 'message-send-and-exit 'message-kill-buffer 'message-send-hook)
-(define-key mode-specific-map "om" 'mu4e)
+(define-key mode-specific-map "oM" 'mu4e)
 
 (with-eval-after-load 'mu4e-context
   (setq mu4e-contexts
@@ -277,6 +277,12 @@
 (with-eval-after-load 'newst-treeview
   (load "/home/val/.config/emacs/newsticker-extra.el")
   (define-key newsticker-treeview-mode-map "w" 'newsticker-extra-treeview-copy-link))
+
+;;; NOTMUCH
+
+(define-key mode-specific-map "om" 'notmuch)
+(autoload 'notmuch-mua-mail "notmuch-mua")
+(define-mail-user-agent 'notmuch-user-agent 'notmuch-mua-mail 'notmuch-mua-send-and-exit 'notmuch-mua-kill-buffer 'notmuch-mua-send-hook)
 
 ;;; NOV
 

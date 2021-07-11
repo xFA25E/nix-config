@@ -1,6 +1,6 @@
 # Search Engines:
 # https://searx.be/?preferences=eJxtVcuO2zoM_ZrrjTFFH4uuvChaXNwBCkzRpN0KtEQrrCXRleRk3K8vnUSOMncWMSKaOjw8fFhDRsuRMHUWA0ZwjYNgZ7DYYXj4sWsca3DroYE5s2Y_OczYWWbrsCEvnmqK_Lx0-zhj4zEf2HTfnnb7JsGACSHqQ_e2yQf02HHSEJuIaXY5KQ4q4Ell6Lt_wSVsDJOSl-yOGDsGOb7haJvzrYeUFyHi2JJmg8fGUILeoVEYLAXJ4N2HDx-flTqSQU7_vP88kh4hJaX8nEiL4ciQlUqsCVzr0RCIcYFgUK5d8xeLJSvAkHJt1Fo_5GOFbik76JWiLIeIxpD4n_VY3yZEMyFGpQZyZ4ujPkJc2hUyUaqxBydM46u3t3A95X7WI-ZrxEsB2snB0no-SgUrZ7949CzBcoSQnBTZ1PES_gng7y1rmVZd2_VxjREWgJt6oG3iuYqSeVw4czrwCOHm57hPGd_EVFAmf_2XMsQ8rR1ThV7gwFwbeMIQceJ0007KTRDW25VIJxrJQIb67oXxxnCIiG3iIZ8gYmsoos4iy2sSruRvOWDkE91pNpjIq6VQOoCUc31cwYo6G70-G7L2dmGI4GFtgqLu75OkVIcoEIVEQdhI5cVzcNLrd8QihZFAV6FfFKYwmEOSXNOh8rzoVRy2gdkENMa2BgcKlInDXdPW6sE0pVdgttQhriWWWT9jzgbDXd7T2HqKkYuWL_jf2JDOf_g-fc-_EMfa0lOw9bnM5jX8u-f_5b8dKdTdg5nZpdcqVBIr0FXwa802kNsolzKWSy_20DqAdMT2fjVYSS6TxzJMVynLssZwvwKNrIj1ZyufbU9Obhav1P0k_-BoRHXgPOKysnySmVOftEYp25enR1nCp0gZ5c1jOFcfVdKRnSu-lxWupBnHbY_3MjRJMpV9njZmJejuvGFWV3355iwqoZN5FMQdukFJII4ezn0mtv_2-2-7isc-gmy_qH58_ypW2XgYG-kTFOi_m0eMQg==&q=%s
-# https://duckduckgo.com/?q=%s&kk=-1&kah=it-it&kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&kak=-1&kax=-1&km=l
+# https://duckduckgo.com/?kk=-1&kah=it-it&kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&kak=-1&kax=-1&km=l&q=%s
 
 { config, pkgs, ... }: let
   variables = import ./variables.nix;
@@ -40,6 +40,7 @@ in {
           extraConfig.logfile = "${dir.cache}/msmtp-polimi.log";
         };
         mu.enable = true;
+        notmuch.enable = true;
         passwordCommand = "${pkgs.pass}/bin/pass show mail/polimi | ${pkgs.coreutils}/bin/head -n1";
         primary = true;
         realName = "Valeriy Litkovskyy";
@@ -133,8 +134,10 @@ in {
       mpc_cli myEmacs nload p7zip pass-otp pdftk perlPackages.JSONPP pinentry
       pueue pulsemixer pwgen qrencode ripgrep rsync scripts scrot sdcv
       simplescreenrecorder sloccount speedtest-cli stalonetray stumpwm sxiv
-      syncthing tdesktop tor-browser-bundle-bin transmission unzip wget woof
-      xclip xdg-user-dirs xterm xz youtube-dl ytdl zip zoom-us
+      syncthing tdesktop transmission unzip wget woof xclip xdg-user-dirs xterm
+      xz youtube-dl ytdl zip zoom-us
+
+      # torbrowser
 
     ];
 
@@ -269,6 +272,55 @@ in {
     msmtp.enable = true;
     mu.enable = true;
 
+    notmuch = {
+      enable = true;
+      new.tags = [ "new" ];
+      search.excludeTags = [ "trash" "spam" "deleted" ];
+      hooks = {
+        preNew = ''
+          export PATH="${pkgs.findutils}/bin''${PATH:+:}$PATH"
+
+          notmuch search --format=text0 --output=files tag:deleted | xargs -r0 rm -v
+
+          # polimi rules
+
+          mkdir -p '${dir.mail}/polimi/inbox/cur' '${dir.mail}/polimi/sent/cur' '${dir.mail}/polimi/all/cur'
+
+          ## all tags inbox/todo/flagged should be in polimi/inbox
+          notmuch search --output=files --format=text0 tag:polimi AND '(tag:inbox OR tag:todo OR tag:flagged)' AND NOT path:/polimi\/inbox\/cur/ \
+            | xargs -r0 -I '{}' mv -v '{}' '${dir.mail}/polimi/inbox/cur'
+
+          ## all tags sent should be in polimi/sent
+          notmuch search --output=files --format=text0 tag:polimi AND tag:sent AND NOT path:/polimi\/sent\/cur/ \
+            | xargs -r0 -I '{}' mv -v '{}' '${dir.mail}/polimi/sent/cur'
+
+          ## all tags archive/trash/spam should be in polimi/all
+          notmuch search --output=files --format=text0 tag:polimi AND '(tag:archive OR tag:trash OR tag:spam)' AND NOT path:/polimi\/all\/cur/ \
+            | xargs -r0 -I '{}' mv -v '{}' '${dir.mail}/polimi/all/cur'
+
+        '';
+        postNew = ''
+          # polimi rules
+
+          notmuch tag +polimi -- path:/polimi\/.*/
+          notmuch tag +inbox -- path:/.*\/inbox/
+          notmuch tag +sent  -- path:/.*\/sent/
+          notmuch tag +todo -inbox -sent -- tag:inbox and tag:sent
+
+          ## spam rules
+
+          notmuch tag +spam -inbox -- tag:new AND tag:polimi AND subject:politamtam
+          notmuch tag +spam -inbox -- tag:new AND tag:polimi AND subject:"[eventi/events]"
+          notmuch tag +spam -inbox -- tag:new AND tag:polimi AND subject:"open day"
+
+          # after processing remove tag new
+
+          notmuch tag -new -- tag:new
+
+        '';
+      };
+    };
+
     readline = {
       enable = true;
       variables = {
@@ -327,15 +379,18 @@ in {
 
     mbsync = {
       enable = true;
-      postExec = let mailSync = pkgs.writeShellScript "mailnotify" ''
-        export PATH=${pkgs.dbus}/bin:$PATH
-        ${pkgs.mu}/bin/mu index || ${pkgs.libnotify}/bin/notify-send "eMail" "There was a fetch of mail, but index is locked.\nPlease index manually."
-        ${pkgs.coreutils}/bin/sleep 2
-        count="$(${pkgs.mu}/bin/mu find flag:unread AND NOT flag:trashed | ${pkgs.coreutils}/bin/wc -l)"
-        if test 0 -ne $count; then
-            ${pkgs.libnotify}/bin/notify-send "eMail" "You have $count new emails." || ${pkgs.coreutils}/bin/true
-        fi
-      ''; in "${mailSync}";
+
+      postExec = let
+        mailSync = pkgs.writeShellScript "mailnotify" ''
+          export PATH="${with pkgs; lib.strings.makeBinPath [libnotify notmuch coreutils dbus]}''${PATH:+:}$PATH"
+          export NOTMUCH_CONFIG="${config.home.sessionVariables.NOTMUCH_CONFIG}"
+          notmuch new
+          count="$(notmuch search --output=files tag:unread | wc -l)"
+          if test 0 -ne "$count"; then
+              notify-send "eMail" "You have $count new emails."
+          fi
+        '';
+      in "${mailSync}";
       preExec = "${pkgs.coreutils}/bin/mkdir -p ${dir.mail}";
       verbose = true;
     };

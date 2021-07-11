@@ -105,10 +105,10 @@ in {
     async avy browse-url-multi cargo consult csv-mode cyrillic-dvorak-im
     dired-rsync direnv dumb-jump ebdb edit-indirect eglot emacs-default
     emmet-mode format-all htmlize ipretty ledger-mode link-hint magit marginalia
-    nix-mode nov org-mime org-plus-contrib outline-minor-faces pcmpl-args
-    pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg rust-mode
-    sdcv shell-pwd skempo sly sly-asdf sly-quicklisp smartparens sql-indent
-    sqlup-mode transmission vcomplete vlf web-mode wgrep
+    nix-mode notmuch nov org-mime org-plus-contrib outline-minor-faces
+    pcmpl-args pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg
+    rust-mode sdcv shell-pwd skempo sly sly-asdf sly-quicklisp smartparens
+    sql-indent sqlup-mode transmission vcomplete vlf web-mode wgrep
 
   ]);
 
