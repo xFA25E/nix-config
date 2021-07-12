@@ -284,27 +284,31 @@ in {
 
           # polimi rules
 
-          mkdir -p '${dir.mail}/polimi/inbox/cur' '${dir.mail}/polimi/sent/cur' '${dir.mail}/polimi/all/cur'
+          mkdir -p '${dir.mail}'/polimi/{inbox,sent,all}/cur
 
           ## all tags inbox/todo/flagged should be in polimi/inbox
-          notmuch search --output=files --format=text0 tag:polimi AND '(tag:inbox OR tag:todo OR tag:flagged)' AND NOT path:/polimi\/inbox\/cur/ \
+          notmuch search --output=files --format=text0 tag:polimi AND '(tag:inbox OR tag:todo OR tag:flagged)' AND NOT 'path:polimi/inbox/cur/**' \
             | xargs -r0 -I '{}' mv -v '{}' '${dir.mail}/polimi/inbox/cur'
 
           ## all tags sent should be in polimi/sent
-          notmuch search --output=files --format=text0 tag:polimi AND tag:sent AND NOT path:/polimi\/sent\/cur/ \
+          notmuch search --output=files --format=text0 tag:polimi AND tag:sent AND NOT 'path:polimi/sent/cur/**' \
             | xargs -r0 -I '{}' mv -v '{}' '${dir.mail}/polimi/sent/cur'
 
           ## all tags archive/trash/spam should be in polimi/all
-          notmuch search --output=files --format=text0 tag:polimi AND '(tag:archive OR tag:trash OR tag:spam)' AND NOT path:/polimi\/all\/cur/ \
+          notmuch search --output=files --format=text0 tag:polimi AND '(tag:archive OR tag:trash OR tag:spam)' AND NOT 'path:polimi/all/cur/**' \
             | xargs -r0 -I '{}' mv -v '{}' '${dir.mail}/polimi/all/cur'
 
         '';
         postNew = ''
+          # general
+
+          notmuch tag +draft -- 'path:drafts/**'
+
           # polimi rules
 
-          notmuch tag +polimi -- path:/polimi\/.*/
-          notmuch tag +inbox -- path:/.*\/inbox/
-          notmuch tag +sent  -- path:/.*\/sent/
+          notmuch tag +polimi -- 'path:polimi/**'
+          notmuch tag +inbox -- 'path:polimi/inbox/**'
+          notmuch tag +sent  -- 'path:polimi/sent/**'
           notmuch tag +todo -inbox -sent -- tag:inbox and tag:sent
 
           ## spam rules
