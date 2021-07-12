@@ -131,10 +131,6 @@
         (browse-url url-at-point))))
   (define-key eww-mode-map "V" 'eww-browse-url-custom))
 
-;;; FACES
-
-(define-key help-map "\M-f" 'list-faces-display)
-
 ;;; FIND DIRED
 
 (define-key search-map "n" 'find-name-dired)
@@ -163,10 +159,6 @@
 (with-eval-after-load 'grep
   (define-advice grep-expand-template (:filter-return (cmd) add-cut)
     (concat cmd " | cut -c-500")))
-
-;;; HELP FNS
-
-(define-key help-map "\M-k" 'describe-keymap)
 
 ;;; HIPPIE EXP
 
@@ -254,10 +246,10 @@
          (make-mu4e-context
           :name "polimi"
           :vars
-          '((mu4e-trash-folder . "/polimi/trash")
-            (mu4e-refile-folder . "/polimi/archive")
+          '((mu4e-trash-folder . "/polimi/all")
+            (mu4e-refile-folder . "/polimi/all")
             (mu4e-sent-folder . "/polimi/sent")
-            (mu4e-drafts-folder . "/polimi/drafts")
+            (mu4e-drafts-folder . "/drafts")
             (mu4e-sent-messages-behavior . delete)
             (user-mail-address . "valeriy.litkovskyy@mail.polimi.it")
             (message-sendmail-extra-arguments "-a" "polimi")
