@@ -90,9 +90,6 @@
   (unless (bound-and-true-p ebdb-db-list)
     (ebdb-load)))
 
-(with-eval-after-load 'mu4e-view
-  (require 'ebdb-mu4e))
-
 (with-eval-after-load 'message
   (require 'ebdb-message)
   (define-key message-mode-map "\C-ce" 'ebdb-complete))
@@ -232,28 +229,6 @@
   (define-key mpc-mode-map "\M-m" 'mpc-select)
   (define-key mpc-mode-map "\C-m" 'mpc-songs-jump-to)
   (define-key mpc-songs-mode-map [remap mpc-select] nil))
-
-;;; MU4E
-
-(autoload 'mu4e "mu4e" nil t)
-(autoload 'mu4e~compose-mail "mu4e-compose")
-(define-mail-user-agent 'mu4e-user-agent 'mu4e~compose-mail 'message-send-and-exit 'message-kill-buffer 'message-send-hook)
-(define-key mode-specific-map "oM" 'mu4e)
-
-(with-eval-after-load 'mu4e-context
-  (setq mu4e-contexts
-        (list
-         (make-mu4e-context
-          :name "polimi"
-          :vars
-          '((mu4e-trash-folder . "/polimi/all")
-            (mu4e-refile-folder . "/polimi/all")
-            (mu4e-sent-folder . "/polimi/sent")
-            (mu4e-drafts-folder . "/drafts")
-            (mu4e-sent-messages-behavior . delete)
-            (user-mail-address . "valeriy.litkovskyy@mail.polimi.it")
-            (message-sendmail-extra-arguments "-a" "polimi")
-            (mu4e-compose-signature . "Cordiali saluti,\nLitkovskyy Valeriy"))))))
 
 ;;; NET UTILS
 

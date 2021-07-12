@@ -39,7 +39,6 @@ in {
           enable = true;
           extraConfig.logfile = "${dir.cache}/msmtp-polimi.log";
         };
-        mu.enable = true;
         notmuch.enable = true;
         passwordCommand = "${pkgs.pass}/bin/pass show mail/polimi | ${pkgs.coreutils}/bin/head -n1";
         primary = true;
@@ -147,7 +146,6 @@ in {
       VISUAL = "emacs";
       TERMINAL = "uxterm";
       LESSHISFILE = "/dev/null";
-      MU_HOME = "${dir.cache}/mu";
       MAILDIR = "${dir.mail}";
       MPD_HOST = "localhost";
       MPD_PORT = "6600";
@@ -270,7 +268,6 @@ in {
     };
 
     msmtp.enable = true;
-    mu.enable = true;
 
     notmuch = {
       enable = true;
