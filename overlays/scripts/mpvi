@@ -52,11 +52,9 @@ esac
 
 pause="$(printf '%s\n\n' --pause | dmenu -p "Start paused?")"
 
-exec mpv "${link}" \
-     --ytdl-format="${chosen_format:?}" \
-     --force-window=yes \
+exec mpv "${link}" ${pause} \
+     --profile=gui \
      --load-unsafe-playlists \
-     ${pause} \
      --ytdl-raw-options=yes-playlist= \
-     --loop-playlist=inf \
-     --no-terminal
+     --ytdl-format="${chosen_format:?}" \
+     --loop-playlist=inf

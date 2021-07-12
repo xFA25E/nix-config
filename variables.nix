@@ -7,6 +7,7 @@ rec {
     cache = "/home/${user}/.cache";
     music = "/home/${user}/Music";
     videos = "/home/${user}/Videos";
+    pictures = "/home/${user}/Pictures";
     mail = "/home/${user}/.mail";
   };
   colors = let

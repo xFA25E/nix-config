@@ -13,6 +13,7 @@
  '(auth-sources '("~/.authinfo.gpg" "~/.netrc" "~/.authinfo"))
  '(auto-insert-mode t)
  '(auto-revert-avoid-polling t)
+ '(auto-revert-mode-text " AR")
  '(auto-revert-remote-files t)
  '(auto-save-file-name-transforms '((".*" "/home/val/.cache/emacs/auto-saves/" t)))
  '(auto-save-list-file-prefix "/home/val/.cache/emacs/auto-saves-list/.saves-")
@@ -83,8 +84,8 @@
      ("\\.\\(?:ai\\|eps\\)\\'" "setsid -f inkscape * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
      ("\\.\\(?:djvu\\|fb2\\)\\'" "ebook-convert ? .epub &")
      ("\\.pdf\\'" "setsid -f libreoffice * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
-     ("\\.\\(?:3gp\\|aiff\\|avi\\|flac\\|flv\\|m4a\\|mkv\\|mov\\|mp3\\|mp4\\|mpg\\|ogg\\|ogv\\|opus\\|vob\\|wav\\|webm\\|wmv\\)\\'" "setsid -f mpv --force-window=yes --no-terminal * >/dev/null 2>&1" "video_duration * | format_duration" "video_duration * | awk '{s+=$1}END{print s}' | format_duration" "compress_video * &" "strip_video * &" "mediainfo" "mpv -vo=drm")
-     ("\\.cue\\'" "setsid -f mpv --force-window=yes --no-terminal * >/dev/null 2>&1")
+     ("\\.\\(?:3gp\\|aiff\\|avi\\|flac\\|flv\\|m4a\\|mkv\\|mov\\|mp3\\|mp4\\|mpg\\|ogg\\|ogv\\|opus\\|vob\\|wav\\|webm\\|wmv\\)\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1" "video_duration * | format_duration" "video_duration * | awk '{s+=$1}END{print s}' | format_duration" "compress_video * &" "strip_video * &" "mediainfo" "mpv -vo=drm")
+     ("\\.cue\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1")
      ("\\.rar\\'" "temp=\"$(echo `?` | rev | cut -d. -f 2- | rev)\"; mkdir -p \"${temp}\"; unrar x ? \"${temp}\"")
      ("\\.torrent\\'" "transmission-show")
      ("\\.epub\\'" "ebook-convert ? .mobi &")))
@@ -169,6 +170,8 @@
  '(fill-column 80)
  '(find-ls-option
    '("-print0 | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
+ '(flymake-mode-line-format
+   '(" " flymake-mode-line-exception flymake-mode-line-counters))
  '(flymake-no-changes-timeout nil)
  '(flyspell-default-dictionary "russian")
  '(flyspell-dictionaries-that-consider-dash-as-word-delimiter '("francais" "deutsch8" "norsk" "russian"))
@@ -340,7 +343,7 @@
  '(org-id-locations-file "/home/val/.local/share/emacs/org-id-locations")
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode))
+ '(org-mode-hook '(smartparens-mode) t)
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)

@@ -173,6 +173,7 @@ in {
       QUICKLISP = "${dir.cache}/quicklisp";
       ELDEV_DIR = "${dir.cache}/eldev";
       INFOPATH = "$INFOPATH\${INFOPATH:+:}/usr/local/share/info";
+      WGETRC = "${dir.config}/wgetrc";
     };
 
     stateVersion = "21.03";
@@ -264,6 +265,14 @@ in {
       config = {
         save-position-on-quit = true;
         watch-later-directory = "${dir.cache}/mpv/watch_later";
+        screenshot-directory = "${dir.pictures}/mpv";
+      };
+      profiles = {
+        gui = {
+          terminal = false;
+          force-window = true;
+          idle = "once";
+        };
       };
     };
 
@@ -532,6 +541,8 @@ in {
         recursive = true;
       };
 
+      "wgetrc".text = "hsts-file=${dir.cache}/wget-hsts";
+
       "youtube-dl/config".text = pkgs.lib.generators.toKeyValue {
         mkKeyValue = pkgs.lib.generators.mkKeyValueDefault {} " ";
       } {
@@ -590,6 +601,7 @@ in {
       enable = true;
       music = dir.music;
       videos = dir.videos;
+      pictures = dir.pictures;
     };
   };
 
