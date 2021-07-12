@@ -102,25 +102,26 @@
  '(display-time-mode t)
  '(display-time-string-forms
    '((if mail
-         (propertize display-time-mail-string 'display
-                     `(when
-                          (and display-time-use-mail-icon
-                               (display-graphic-p))
-                        ,@display-time-mail-icon ,@(if
-                                                       (and display-time-mail-face
-                                                            (memq
-                                                             (plist-get
-                                                              (cdr display-time-mail-icon)
-                                                              :type)
-                                                             '(pbm xbm)))
-                                                       (let
-                                                           ((bg
-                                                             (face-attribute display-time-mail-face :background)))
-                                                         (if
-                                                             (stringp bg)
-                                                             (list :background bg)))))
-                     'face display-time-mail-face 'help-echo "You have new mail; mouse-1: Read mail" 'mouse-face 'mode-line-highlight 'local-map
-                     (make-mode-line-mouse-map 'mouse-1 read-mail-command))
+         (concat " "
+                 (propertize display-time-mail-string 'display
+                             `(when
+                                  (and display-time-use-mail-icon
+                                       (display-graphic-p))
+                                ,@display-time-mail-icon ,@(if
+                                                               (and display-time-mail-face
+                                                                    (memq
+                                                                     (plist-get
+                                                                      (cdr display-time-mail-icon)
+                                                                      :type)
+                                                                     '(pbm xbm)))
+                                                               (let
+                                                                   ((bg
+                                                                     (face-attribute display-time-mail-face :background)))
+                                                                 (if
+                                                                     (stringp bg)
+                                                                     (list :background bg)))))
+                             'face display-time-mail-face 'help-echo "You have new mail; mouse-1: Read mail" 'mouse-face 'mode-line-highlight 'local-map
+                             (make-mode-line-mouse-map 'mouse-1 read-mail-command)))
        "")
      (propertize
       (format-time-string
@@ -231,7 +232,7 @@
  '(leaf-expand-minimally t)
  '(ledger-default-date-format "%Y-%m-%d")
  '(link-hint-types
-   '(link-hint-shr-url link-hint-org-link link-hint-markdown-link link-hint-mu4e-url link-hint-mu4e-attachment link-hint-gnus-w3m-url link-hint-gnus-w3m-image-url link-hint-deadgrep link-hint-help-link link-hint-info-link link-hint-package-link link-hint-package-keyword-link link-hint-package-install-link link-hint-epkg-button link-hint-compilation-link link-hint-w3m-link link-hint-w3m-message-link link-hint-woman-button link-hint-treemacs link-hint-nov-link link-hint-customize-widget link-hint-notmuch-hello link-hint-button link-hint-text-url link-hint-completion-list-candidate link-hint-file-link link-hint-org-agenda-item link-hint-xref-item link-hint-man-button link-hint-dired-filename))
+   '(link-hint-shr-url link-hint-org-link link-hint-markdown-link link-hint-help-link link-hint-info-link link-hint-package-link link-hint-package-keyword-link link-hint-package-install-link link-hint-epkg-button link-hint-compilation-link link-hint-nov-link link-hint-customize-widget link-hint-notmuch-hello link-hint-button link-hint-text-url link-hint-completion-list-candidate link-hint-file-link link-hint-org-agenda-item link-hint-xref-item link-hint-man-button link-hint-dired-filename))
  '(lisp-mode-hook
    '(skempo-mode smartparens-mode sly-editing-mode abbrev-mode))
  '(magit-credential-cache-daemon-socket "/home/val/.cache/git/credential/socket")
@@ -338,12 +339,12 @@
  '(notmuch-always-prompt-for-sender t)
  '(notmuch-archive-tags '("+archive" "-inbox" "-spam" "-trash" "-deleted"))
  '(notmuch-fcc-dirs '(("polimi" . "polimi/sent +sent +polimi")))
- '(notmuch-hello-recent-searches-max 20)
  '(notmuch-mua-cite-function 'message-cite-original-without-signature)
  '(notmuch-mua-user-agent-function 'notmuch-mua-user-agent-full)
  '(notmuch-saved-searches
    '((:name "todo" :query "tag:todo" :key "t")
      (:name "unread" :query "tag:unread" :key "u")
+     (:name "spam" :query "tag:unread and tag:spam" :key "s")
      (:name "polimi inbox" :query "tag:polimi and tag:inbox" :key "pp")
      (:name "polimi sent" :query "tag:polimi and tag:sent" :key "ps")
      (:name "polimi archive" :query "tag:polimi and tag:archive" :key "pa")
