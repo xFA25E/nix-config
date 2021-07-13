@@ -77,18 +77,15 @@
  '(completion-category-overrides '((bookmark (styles basic))))
  '(completion-pcm-complete-word-inserts-delimiters t)
  '(completion-show-help nil)
- '(completion-styles '(substring partial-completion flex))
+ '(completion-styles '(partial-completion flex))
  '(completions-detailed t)
  '(completions-format 'one-column)
  '(completions-group t)
  '(create-lockfiles nil)
- '(cursor-in-non-selected-windows nil)
- '(cursor-type 'bar)
  '(custom-file
    (expand-file-name "nixpkgs/emacs/custom.el"
                      (xdg-config-home)))
  '(delete-old-versions t)
- '(describe-bindings-outline t)
  '(diary-file "~/org/diary")
  '(dired-async-mode-lighter "")
  '(dired-create-destination-dirs 'ask)
@@ -111,10 +108,11 @@
  '(display-time-day-and-date t)
  '(display-time-default-load-average nil)
  '(display-time-mail-function
-   '(lambda nil
-      (/= 0
-          (string-to-number
-           (shell-command-to-string "notmuch count tag:unread")))))
+   (lambda nil
+     (not
+      (string= "0"
+               (car
+                (process-lines "notmuch" "count" "tag:unread"))))))
  '(display-time-mode t)
  '(display-time-string-forms
    '((if mail
@@ -377,6 +375,7 @@
  '(org-refile-targets '((org-agenda-files :level . 1)))
  '(org-refile-use-outline-path 'file)
  '(org-startup-folded t)
+ '(org-tags-column -80)
  '(outline-minor-mode-cycle t)
  '(package-archives nil)
  '(php-mode-coding-style 'php)
