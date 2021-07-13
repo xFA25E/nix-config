@@ -1,0 +1,17 @@
+#!/bin/sh
+
+case "${1:?provide file}" in
+    *.[bB][mM][pP]|*.[gG][iI][fF]|*.[jJ][fF][iI][fF]|*.[jJ][pP][eE][gG]|\
+        *.[jJ][pP][gG]|*.[nN][eE][fF]|*.[pP][nN][gG]|*.[tT][hH][mM]|\
+        *.[tT][iI][fF]|*.[wW][eE][bB][pP]|*.[xX][pP][mM])
+        exec sxiv "${1}"
+        ;;
+    *.3[gG][pP]|*.[aA][iI][fF][fF]|*.[aA][vV][iI]|*.[fF][lL][aA][cC]|\
+        *.[fF][lL][vV]|*.[mM]4[aA]|*.[mM][kK][vV]|*.[mM][oO][vV]|*.[mM][pP]3|\
+        *.[mM][pP]4|*.[mM][pP][gG]|*.[oO][gG][gG]|*.[oO][gG][vV]|\
+        *.[oO][pP][uU][sS]|*.[vV][oO][bB]|*.[wW][aA][vV]|*.[wW][eE][bB][mM]|*.[wW][mM][vV])
+        exec mpv --profile=gui "${1}"
+        ;;
+    *)
+        exit 1
+esac

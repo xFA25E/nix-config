@@ -136,6 +136,7 @@ in {
       syncthing tdesktop transmission unzip wget woof xclip xdg-user-dirs xterm
       xz youtube-dl ytdl zip zoom-us
 
+      go-mtpfs parted exiftool libjpeg
       # torbrowser
 
     ];
