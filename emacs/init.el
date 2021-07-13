@@ -472,6 +472,10 @@
 (define-key global-map "\M-Q" 'quit-window)
 (define-key global-map "\M-o" 'other-window)
 
+;;; XDG
+
+(require 'xdg)
+
 ;;; LOAD CUSTOM
 
-(load "/home/val/.config/nixpkgs/emacs/custom.el" nil nil t)
+(load (expand-file-name "nixpkgs/emacs/custom.el" (xdg-config-home)) nil nil t)

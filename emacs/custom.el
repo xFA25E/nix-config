@@ -4,7 +4,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(Man-notify-method 'pushy)
- '(abbrev-file-name "/home/val/.config/nixpkgs/emacs/abbrev_defs")
+ '(abbrev-file-name
+   (expand-file-name "nixpkgs/emacs/abbrev_defs"
+                     (xdg-config-home)))
  '(abbrev-suggest t)
  '(after-save-hook '(executable-make-buffer-file-executable-if-script-p))
  '(ange-ftp-netrc-filename "~/.authinfo.gpg")
@@ -15,17 +17,28 @@
  '(auto-revert-avoid-polling t)
  '(auto-revert-mode-text " AR")
  '(auto-revert-remote-files t)
- '(auto-save-file-name-transforms '((".*" "/home/val/.cache/emacs/auto-saves/" t)))
- '(auto-save-list-file-prefix "/home/val/.cache/emacs/auto-saves-list/.saves-")
+ '(auto-save-file-name-transforms
+   (list
+    (list ".*"
+          (expand-file-name "emacs/auto-saves/"
+                            (xdg-cache-home))
+          t)))
+ '(auto-save-list-file-prefix
+   (expand-file-name "emacs/auto-saves-list/.saves-"
+                     (xdg-cache-home)))
  '(avy-background t)
  '(avy-goto-word-0-regexp "\\_<\\(?:\\sw\\|\\s_\\)")
  '(avy-keys '(97 111 101 117 104 116 110 115))
  '(avy-style 'words)
  '(backup-by-copying t)
- '(backup-directory-alist '((".*" . "/home/val/.local/share/emacs/backups")))
+ '(backup-directory-alist
+   (list
+    (cons ".*"
+          (expand-file-name "emacs/backups"
+                            (xdg-data-home)))))
  '(before-save-hook '(whitespace-cleanup delete-trailing-whitespace))
  '(blink-cursor-mode nil)
- '(bookmark-default-file "/home/val/.local/share/emacs/bookmarks")
+ '(bookmark-default-file (expand-file-name "emacs/bookmarks" (xdg-data-home)))
  '(bookmark-fontify nil)
  '(bookmark-menu-confirm-deletion t)
  '(bookmark-save-flag 1)
@@ -71,7 +84,9 @@
  '(create-lockfiles nil)
  '(cursor-in-non-selected-windows nil)
  '(cursor-type 'bar)
- '(custom-file "/home/val/.config/nixpkgs/emacs/custom.el")
+ '(custom-file
+   (expand-file-name "nixpkgs/emacs/custom.el"
+                     (xdg-config-home)))
  '(delete-old-versions t)
  '(describe-bindings-outline t)
  '(diary-file "~/org/diary")
@@ -142,9 +157,9 @@
  '(ebdb-complete-mail-allow-cycling nil)
  '(ebdb-completion-display-record nil)
  '(ebdb-record-self "5ecfc8f5-f490-4745-8cf1-86b1964e4ab7")
- '(ebdb-sources "~/.local/share/emacs/ebdb")
+ '(ebdb-sources (expand-file-name "emacs/ebdb" (xdg-data-home)))
  '(ebdb-user-mail-address-re 'self)
- '(ede-project-placeholder-cache-file "/home/val/.cache/emacs/ede/projects.el")
+ '(ede-project-placeholder-cache-file (expand-file-name "emacs/ede/projects.el" (xdg-cache-home)))
  '(ediff-before-setup-hook
    '((lambda
        (&rest _)
@@ -161,7 +176,7 @@
  '(enable-recursive-minibuffers t)
  '(eval-expression-print-length t)
  '(eval-expression-print-level t)
- '(eww-bookmarks-directory "/home/val/.local/share/emacs/")
+ '(eww-bookmarks-directory (expand-file-name "emacs/" (xdg-data-home)))
  '(eww-browse-url-new-window-is-tab nil)
  '(eww-search-prefix "https://ddg.co/lite/?q=")
  '(executable-chmod 64)
@@ -201,12 +216,22 @@
  '(html-mode-hook '(emmet-mode))
  '(ibuffer-default-sorting-mode 'major-mode)
  '(ibuffer-show-empty-filter-groups nil)
- '(image-dired-db-file "/home/val/.cache/emacs/image-dired/db")
- '(image-dired-dir "/home/val/.cache/emacs/image-dired/thumbnails/")
- '(image-dired-external-viewer "sxiv")
- '(image-dired-gallery-dir "/home/val/.cache/emacs/image-dired/gallery/")
- '(image-dired-temp-image-file "/home/val/.cache/emacs/image-dired/temp")
- '(image-dired-temp-rotate-image-file "/home/val/.cache/emacs/image-dired/rotate_temp")
+ '(image-dired-db-file (expand-file-name "emacs/image-dired/db" (xdg-cache-home)))
+ '(image-dired-dir
+   (expand-file-name "emacs/image-dired/thumbnails/"
+                     (xdg-cache-home)))
+ '(image-dired-external-viewer "image-dired-external-viewer")
+ '(image-dired-gallery-dir
+   (expand-file-name "emacs/image-dired/gallery/"
+                     (xdg-cache-home)))
+ '(image-dired-temp-image-file
+   (expand-file-name "emacs/image-dired/temp"
+                     (xdg-cache-home)))
+ '(image-dired-temp-rotate-image-file
+   (expand-file-name "emacs/image-dired/rotate_temp"
+                     (xdg-cache-home)))
+ '(image-file-name-extensions
+   '("mp4" "mkv" "png" "jpeg" "jpg" "gif" "tiff" "tif" "xbm" "xpm" "pbm" "pgm" "ppm" "pnm" "svg"))
  '(imenu-after-jump-hook '(outline-show-after-jump))
  '(imenu-auto-rescan t)
  '(imenu-level-separator "/")
@@ -238,7 +263,7 @@
    '(link-hint-shr-url link-hint-org-link link-hint-markdown-link link-hint-help-link link-hint-info-link link-hint-package-link link-hint-package-keyword-link link-hint-package-install-link link-hint-epkg-button link-hint-compilation-link link-hint-nov-link link-hint-customize-widget link-hint-notmuch-hello link-hint-button link-hint-text-url link-hint-completion-list-candidate link-hint-file-link link-hint-org-agenda-item link-hint-xref-item link-hint-man-button link-hint-dired-filename))
  '(lisp-mode-hook
    '(skempo-mode smartparens-mode sly-editing-mode abbrev-mode))
- '(magit-credential-cache-daemon-socket "/home/val/.cache/git/credential/socket")
+ '(magit-credential-cache-daemon-socket (expand-file-name "git/credential/socket" (xdg-cache-home)))
  '(magit-define-global-key-bindings nil)
  '(mail-user-agent 'notmuch-user-agent)
  '(marginalia-mode t)
@@ -254,12 +279,12 @@
  '(minibuffer-eldef-shorten-default t)
  '(minibuffer-electric-default-mode t)
  '(mpc-browser-tags '(file))
- '(mpc-data-directory "~/.cache/emacs/mpc")
- '(mpc-mpd-music-directory "/home/val/Music")
+ '(mpc-data-directory (expand-file-name "emacs/mpc" (xdg-cache-home)))
+ '(mpc-mpd-music-directory "~/Music")
  '(mpc-songs-format "%-6{Time} %{file}")
  '(newsticker-automatically-mark-items-as-old nil)
  '(newsticker-automatically-mark-visited-items-as-old nil)
- '(newsticker-dir "/home/val/.cache/emacs/newsticker")
+ '(newsticker-dir (expand-file-name "emacs/newsticker" (xdg-cache-home)))
  '(newsticker-new-item-functions '(newsticker-extra-add-thumbnail))
  '(newsticker-obsolete-item-max-age 31536000)
  '(newsticker-retrieval-interval 0)
@@ -323,9 +348,11 @@
      ("i"
       ("+inbox" "-trash" "-spam" "-archive" "-deleted")
       "Inbox")))
- '(nov-save-place-file "/home/val/.cache/emacs/nov-places")
+ '(nov-save-place-file (expand-file-name "emacs/nov-places" (xdg-cache-home)))
  '(nov-text-width 80)
- '(nsm-settings-file "/home/val/.cache/emacs/network-security.data")
+ '(nsm-settings-file
+   (expand-file-name "emacs/network-security.data"
+                     (xdg-cache-home)))
  '(nxml-child-indent 4)
  '(org-agenda-files '("~/org/life.org"))
  '(org-agenda-include-diary t)
@@ -340,10 +367,10 @@
  '(org-habit-graph-column 52)
  '(org-habit-preceding-days 30)
  '(org-html-htmlize-output-type 'css)
- '(org-id-locations-file "/home/val/.local/share/emacs/org-id-locations")
+ '(org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home)))
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode) t)
+ '(org-mode-hook '(smartparens-mode))
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
@@ -356,7 +383,7 @@
  '(php-mode-hook '(skempo-mode smartparens-mode subword-mode))
  '(proced-tree-flag t)
  '(project-compilation-buffer-name-function 'project-prefixed-buffer-name)
- '(project-list-file "/home/val/.cache/emacs/project.list")
+ '(project-list-file (expand-file-name "emacs/project.list" (xdg-cache-home)))
  '(project-switch-commands
    '((magit-project-status "Magit" nil)
      (project-find-file "Find file" nil)
@@ -376,12 +403,12 @@
              (byte-recompile-file
               (buffer-file-name)))
            nil t)))
- '(save-place-file "/home/val/.cache/emacs/saveplace")
+ '(save-place-file (expand-file-name "emacs/saveplace" (xdg-cache-home)))
  '(save-place-limit 1000)
  '(save-place-mode t)
  '(save-place-skip-check-regexp
    "\\`/\\(?:cdrom\\|floppy\\|mnt\\|\\(?:[^@/:]*@\\)?[^@/:]*[^@/:.]:\\)\\|\\`http")
- '(savehist-file "/home/val/.cache/emacs/savehist")
+ '(savehist-file (expand-file-name "emacs/savehist" (xdg-cache-home)))
  '(savehist-mode t)
  '(savehist-save-hook '(savehist-filter-file-name-history))
  '(scheme-mode-hook '(smartparens-mode geiser-mode--maybe-activate))
@@ -406,7 +433,7 @@
  '(skempo-mode-lighter "")
  '(skempo-skeleton-marks-support t)
  '(small-temporary-file-directory "/dev/shm/")
- '(sql-input-ring-file-name "/home/val/.cache/emacs/sql_history")
+ '(sql-input-ring-file-name (expand-file-name "emacs/sql_history" (xdg-cache-home)))
  '(sql-interactive-mode-hook '(sql-indent-enable))
  '(sql-mode-hook '(sqlup-mode sql-indent-enable smartparens-mode))
  '(sql-sqlite-options '("-column" "-header" "-cmd" "PRAGMA foreign_keys = ON;"))
@@ -422,18 +449,24 @@
  '(tramp-completion-reread-directory-timeout nil)
  '(tramp-debug-to-file t)
  '(tramp-default-method "ssh")
- '(tramp-persistency-file-name "/home/val/.cache/emacs/tramp")
+ '(tramp-persistency-file-name (expand-file-name "emacs/tramp" (xdg-cache-home)))
  '(tramp-remote-path
    '("/run/current-system/sw/bin" "~/.local/bin" tramp-own-remote-path tramp-default-remote-path "/bin" "/usr/bin" "/sbin" "/usr/sbin" "/usr/local/bin" "/usr/local/sbin" "/local/bin" "/local/freeware/bin" "/local/gnu/bin" "/usr/freeware/bin" "/usr/pkg/bin" "/usr/contrib/bin" "/opt/bin" "/opt/sbin" "/opt/local/bin"))
  '(transient-enable-popup-navigation t)
- '(transient-history-file "/home/val/.cache/emacs/transient/history.el")
- '(transient-levels-file "/home/val/.cache/emacs/transient/levels.el")
- '(transient-values-file "/home/val/.cache/emacs/transient/values.el")
+ '(transient-history-file
+   (expand-file-name "emacs/transient/history.el"
+                     (xdg-cache-home)))
+ '(transient-levels-file
+   (expand-file-name "emacs/transient/levels.el"
+                     (xdg-cache-home)))
+ '(transient-values-file
+   (expand-file-name "emacs/transient/values.el"
+                     (xdg-cache-home)))
  '(truncate-lines t)
  '(undo-limit 200000)
  '(undo-strong-limit 300000)
  '(uniquify-ignore-buffers-re "^\\*")
- '(url-configuration-directory "/home/val/.cache/emacs/url/")
+ '(url-configuration-directory (expand-file-name "emacs/url/" (xdg-cache-home)))
  '(url-handler-mode t)
  '(use-dialog-box nil)
  '(user-full-name "Valeriy Litkovskyy")
