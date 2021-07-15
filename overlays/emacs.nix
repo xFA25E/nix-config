@@ -44,10 +44,10 @@ self: super: let
 
     link-hint = make-melpa {
       name = "link-hint";
-      url = "https://github.com/xFA25E/link-hint.el";
+      url = "https://github.com/noctuid/link-hint.el";
       version = "0.1";
-      sha256 = "0iy50w7rwrppzhblv0fbfm7anzya776iiyylfmc09sm02j373274";
-      rev = "5010bb10052395045a3afcb99177ce3b290d1b0d";
+      sha256 = "0v2g9gzf2v88ag59q1pf5vhd4qjnz3g4i6gzl27k6fi7pvlxdn39";
+      rev = "9fbf196d155016d9b8471a99318ed67a086cf257";
     };
 
     vcomplete = make-melpa {
@@ -69,7 +69,7 @@ self: super: let
       name = "shell-pwd";
       url = "https://github.com/xFA25E/shell-pwd";
       version = "0.1.1";
-      sha256 = "1wapfjmdxvjk28dmxbqavhc4wgs2hfxxqp7040npjjk0wrz7i83f";
+      sha256 = "0lp4443nrmxr3ass33lha5nlk03yb8lqb6gf88n343gdwdhgzaxv";
     };
 
     pueue = make-melpa {
@@ -92,7 +92,7 @@ self: super: let
       name = "browse-url-multi";
       url = "https://github.com/xFA25E/browse-url-multi";
       version = "0.1.0";
-      sha256 = "0n1g8511qsf5i5kadab1f3agwflsig8nlqdfymj1bvaqkgp0i7x5";
+      sha256 = "05qf3vcdqz05py20gl2bpchkdbr0jj8i3g9wjnlg6zlp8sy68l9w";
     };
 
   };
@@ -109,6 +109,8 @@ in {
     pcmpl-args pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg
     rust-mode sdcv shell-pwd skempo sly sly-asdf sly-quicklisp smartparens
     sql-indent sqlup-mode transmission vcomplete vlf web-mode wgrep
+
+    flymake-shellcheck
 
   ]);
 
