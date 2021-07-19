@@ -1,5 +1,7 @@
 ;;; -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
 
+(require 'xdg)
+
 ;;; ANSI COLOR
 
 (with-eval-after-load 'compile
@@ -242,7 +244,7 @@
 
 (define-key mode-specific-map "on" 'newsticker-show-news)
 (with-eval-after-load 'newst-treeview
-  (load "/home/val/.config/emacs/newsticker-extra.el")
+  (load (expand-file-name "emacs/newsticker-extra.el" (xdg-config-home)))
   (define-key newsticker-treeview-mode-map "w" 'newsticker-extra-treeview-copy-link))
 
 ;;; NOTMUCH
@@ -289,6 +291,13 @@
 ;;; PARAGRAPHS
 
 (define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
+
+;;; PCMPL ARGS
+
+(autoload 'pcomplete/pass "pcmpl-args")
+(autoload 'pcomplete/parted "pcmpl-args")
+(with-eval-after-load 'pcmpl-args
+  (load (expand-file-name "emacs/pcmpl-args-extra.el" (xdg-config-home))))
 
 ;;; PDF TOOLS
 
@@ -382,7 +391,7 @@
   (define-key skempo-mode-map "\C-z" 'skempo-complete-tag-or-call-on-region)
   (define-key skempo-mode-map "\M-g\M-e" 'skempo-forward-mark)
   (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
-  (load "/home/val/.config/emacs/skempo-templates.el"))
+  (load (expand-file-name "emacs/skempo-templates.el" (xdg-config-home))))
 
 ;;; SMARTPARENS
 
@@ -471,10 +480,6 @@
 (define-key global-map [?\C-\M-\S-f] 'next-buffer)
 (define-key global-map "\M-Q" 'quit-window)
 (define-key global-map "\M-o" 'other-window)
-
-;;; XDG
-
-(require 'xdg)
 
 ;;; LOAD CUSTOM
 
