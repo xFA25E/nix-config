@@ -77,7 +77,7 @@
  '(completion-category-overrides '((bookmark (styles basic))))
  '(completion-cycle-threshold 2)
  '(completion-show-help nil)
- '(completion-styles '(flex partial-completion))
+ '(completion-styles '(partial-completion flex))
  '(completions-detailed t)
  '(completions-format 'one-column)
  '(completions-group t)
