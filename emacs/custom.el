@@ -283,7 +283,6 @@
  '(newsticker-automatically-mark-items-as-old nil)
  '(newsticker-automatically-mark-visited-items-as-old nil)
  '(newsticker-dir (expand-file-name "emacs/newsticker" (xdg-cache-home)))
- '(newsticker-new-item-functions '(newsticker-extra-add-thumbnail))
  '(newsticker-obsolete-item-max-age 31536000)
  '(newsticker-retrieval-interval 0)
  '(newsticker-retrieval-method 'extern)
