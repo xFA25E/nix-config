@@ -1,22 +1,55 @@
-#+TITLE: Average Emacs Enjoyer's config
+#+title: Average GNU/Emacs Enjoyer's config
 
 #+options: toc:nil
 #+property: header-args:emacs-lisp :results silent
+
+For a long time, I refused to write a literate emacs config.  The main reason
+was that, I thought that it was needed only for novices, who do not know any
+/e-lisp/.  An /e-lisp/ expert does not need any code explanations and I don't
+really care about *GNU/Emacs* novices.
+
+Why I changed my mind?  Because, /org-mode/, besides code comments, provides a
+good *structure* for your config.  Structure is important.  I could have it by
+splitting the file into multiple ones, but I like the idea of having everything
+in one place for *GNU/Emacs* config.  In fact, previously, I was using
+~outline-minor-mode~.  Also, I wanted to write something.
+
+So, here we go, my *GNU/Emacs* config.
 
 * Early Init
 :properties:
 :header-args:emacs-lisp: :tangle early-init.el
 :end:
 
+First thing first.  *GNU/Emacs* now has an /early-init.el/ file.  It is a
+special file that is loaded before the package system and GUI is initialized.
+It is a good place to fine-tune the startup performance.
+
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t; -*-
+#+end_src
 
+** Garbage Collector
+The big idea here is to make the garbage collector threshol high as possible
+during the loading of /init.el/ and restore it after.  By doing this,
+*GNU/Emacs* would have minimal number of garbage collections and, as a result,
+startup will be faster.  I'm not claiming to be a low-level *GNU/Emacs* expert,
+feel free to correct me.
+
+#+begin_src emacs-lisp
 (let ((old-threshold gc-cons-threshold))
   (add-hook 'emacs-startup-hook
             (lambda ()
               (setq gc-cons-threshold old-threshold)))
   (setq gc-cons-threshold most-positive-fixnum))
+#+end_src
 
+** Startup time
+This is a nice little snippet of code, that helps you stay in a good shape.  If
+your startup time is bigger than the usual, you fucked something up.  Also, it
+enhances your ability to *FLEX* on /e-lisp/ peasants.
+
+#+begin_src emacs-lisp
 (add-hook 'emacs-startup-hook
           (lambda ()
             (message "Emacs ready in %s with %d garbage collections." (emacs-init-time) gcs-done)))
@@ -27,7 +60,6 @@
 :header-args:emacs-lisp: :tangle init.el
 :end:
 
-** Header
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t; -*-
 #+end_src
