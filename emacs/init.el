@@ -12,6 +12,7 @@
 (define-key goto-map "\M-g" 'avy-goto-line)
 
 (define-key ctl-x-map "B" 'browse-url)
+
 (define-key mode-specific-map "oy" 'browse-url-multi-youtube-search)
 
 (with-eval-after-load 'bytecomp (async-bytecomp-package-mode))
@@ -41,16 +42,16 @@
 
 (require 'cyrillic-dvorak-im)
 
-(with-eval-after-load 'dired
-  (define-key dired-mode-map "r" 'dired-rsync)
-  (define-key dired-mode-map "\M-+"'dired-create-empty-file)
-  (dired-async-mode))
-
 (with-eval-after-load 'dired-aux
+  (define-key dired-mode-map "\M-+" 'dired-create-empty-file)
   (add-to-list 'dired-compress-file-suffixes
                (list (rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -")))
 
 (with-eval-after-load 'dired (require 'dired-x))
+
+(with-eval-after-load 'dired (define-key dired-mode-map "r" 'dired-rsync))
+
+(with-eval-after-load 'dired (dired-async-mode))
 
 (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
 

@@ -30,7 +30,7 @@ It is a good place to fine-tune the startup performance.
 #+end_src
 
 ** Garbage Collector
-The big idea here is to make the garbage collector threshol high as possible
+The big idea here is to make the garbage collector threshold high as possible
 during the loading of /init.el/ and restore it after.  By doing this,
 *GNU/Emacs* would have minimal number of garbage collections and, as a result,
 startup will be faster.  I'm not claiming to be a low-level *GNU/Emacs* expert,
@@ -60,18 +60,74 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 :header-args:emacs-lisp: :tangle init.el
 :end:
 
+Here is the juicy part of my *GNU/Emacs* config.  We start by writing a header
+and an import of /xdg/ library.  If you are still not using [[https://wiki.archlinux.org/title/XDG_Base_Directory][XDG]], you might
+consider +killing yourself+ start using it.  It provides a good *STRUCTURE™* to
+your +hamster+ /home/.
+
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t; -*-
-#+end_src
 
-** Imports
-#+begin_src emacs-lisp
 (require 'xdg)
 #+end_src
 
 ** Packages
+/Based on a true story/
+
+"Bruh, what is this, you are not using /use-package/, it's 2k20, bruh" some
+*GNU/Emacs* peasant said.
+
+"Bruh, you are using /custom/, it is a tool from the 90s" ejaculated another
+one.
+
+They hated Jesus, because he told them the truth.
+
+--
+
+For real, though.  I've used four different ways of organizing packages in my
+config.  First, it was plain /e-lisp/ code, without much *STRUCTURE™*.  I loved
+the freedom aspect of it.
+
+Then, came the /use-package/ era.  It provided a lot of *STRUCTURE™*, at the
+cost of freedom.  Also, it hided away many things and provided a lot of
+questionable features by defaults.  For example: it removed ~-hook~ from hooks
+or autoloaded everything.  Autoloading is a good thing, but, you, almost, never
+have to do it manually.  Most packages have good autoload cookies by default.
+The only situation in which you might need autoloads, is when you write your own
+files in *GNU/Emacs* config directory (which are not processed by /package.el/).
+Even there you can generate autoload cookies.  Also, /use-package/ has an
+enormous and complicated code base.
+
+So, I switched to /leaf/.  It fixed many problems that I had with /use-package/.
+Smaller code base, better defaults etc.  But, I still felt that something was
+wrong with this approach.  At the time, I also started using [[../overlays/emacs.nix][Nix]] to manage my
+*GNU/Emacs* packages, so the feeling of /use-package/ (or /leaf/) being
+redundant grew even bigger.
+
+Suddenly, one Fried Zucchini told me: "Psst, hey kid... you want some
+/custom.el/?".  It was a bizarre experience, but armed with my +sword+
+*GNU/Emacs* /info/ manual, I started researching this topic.  After a lot of
+research (and [[https://www.youtube.com/watch?v=UHk3FbieW0w][Protesilaos Stavrou's enlightening video]] about
+~outline-minor-mode~) I, finally, decided to ditch /leaf/ and switched to
+/custom/ config with ~outline~ as a structure.  Why ~outline~?  Well, I learned
+a good lesson from /use-package/.  Organizing config around packages is a good
+idea.  So, I needed something to delimit portions of code and assign them to
+different packages.
+
+What a good feeling of freedom it was.  I liked /custom/ because it removed all
+the rare-changing variables from /init.el/ and facilitated search and
+modification of them.  *GNU/Emacs* GUI is well integrated with keyboard
+shortcuts.  It does not require you to use mouse.
+
+Now, it is time to grow up and use /org-mode/.
+
+Every header corresponds to some package name (~package-name~ -> /Package
+Name/).  All headers are sorted alphabetically.
 
 *** Ansi Color
+We still don't have nice things in 2k20.  /Compilation/ mode is still unable to
+interprent special sequences by default.  Lets help him.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'compile
   (defun colorize-compilation ()
@@ -80,35 +136,60 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
   (add-hook 'compilation-filter-hook 'colorize-compilation))
 #+end_src
 
-*** Avy
+*** [[https://github.com/abo-abo/avy][Avy]]
+Gotta move fast.  A must-have package to quickly jump to places in a buffer.
+Instead of prefixes, I just highlight every /symbol/.  It can be slower with a
+lot of short /symbols/ in a buffer, but it works fine most of the time.
+
 #+begin_src emacs-lisp
 (define-key global-map "\M-z" 'avy-goto-word-0)
 (define-key goto-map "\M-g" 'avy-goto-line)
 #+end_src
 
 *** Browse Url
+Sometimes, I need to browse a url (at point or by inserting it into the
+minibuffer).
+
 #+begin_src emacs-lisp
 (define-key ctl-x-map "B" 'browse-url)
+#+end_src
+
+*** [[https://github.com/xFA25E/browse-url-multi][Browse Url Multi]]
+My package that enhances default /browse-url/.  It provides a multi-choice
+prompt for a url, because, sometimes, I want to open a url through *youtube-dl*,
+*mpv* or *transmission*.
+
+#+Begin_src emacs-lisp
 (define-key mode-specific-map "oy" 'browse-url-multi-youtube-search)
 #+end_src
 
-*** Bytecomp Async
+*** [[https://github.com/jwiegley/emacs-async/blob/master/async-bytecomp.el][Bytecomp Async]]
+I don't like to wait for byte-compilation.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'bytecomp (async-bytecomp-package-mode))
 #+end_src
 
-*** Cargo
+*** [[https://github.com/kwrooijen/cargo.el][Cargo]]
+Nice cargo commands, for /state-of-the-art/ experience of *Rust* compilation.
+
 #+begin_src emacs-lisp
 (add-hook 'rust-mode-hook 'cargo-minor-mode)
 #+end_src
 
 *** Comint
+In /comint/ we trust.  I like how easy it is to create custom repls with this
+package.
+
 #+begin_src emacs-lisp
 (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
 (add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
 #+end_src
 
-*** Consult
+*** [[https://github.com/minad/consult][Consult]]
+This is a game changer.  A package that strives to be a
+completion-framework-agnostic replacement for [[https://github.com/abo-abo/swiper][counsel]].
+
 #+begin_src emacs-lisp
 (define-key global-map "\M-H" 'consult-history)
 (define-key goto-map "o" 'consult-outline)
@@ -120,11 +201,16 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 #+end_src
 
 *** Css Mode
+/Css-mode/ has a good command to lookup documentation.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'css-mode (define-key css-mode-map "\C-cm" 'css-lookup-symbol))
 #+end_src
 
 *** Custom
+By default, /custom/ does not have any keybindings.  This is a shame, since they
+are a must-have for it.
+
 #+begin_src emacs-lisp
 (defvar cus-edit-map (make-sparse-keymap))
 (define-key cus-edit-map "v" 'customize-option)
@@ -135,37 +221,62 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 (define-key ctl-x-map "c" cus-edit-map)
 #+end_src
 
-*** Cyrillic Dvorak Im
+*** [[https://github.com/xFA25E/cyrillic-dvorak-im][Cyrillic Dvorak Im]]
+A package, copied from EmacsWiki (bless them), that provides an input-method for
+russian keybord using dvorak.
+
 #+begin_src emacs-lisp
 (require 'cyrillic-dvorak-im)
 #+end_src
 
 *** Dired
-#+begin_src emacs-lisp
-(with-eval-after-load 'dired
-  (define-key dired-mode-map "r" 'dired-rsync)
-  (define-key dired-mode-map "\M-+"'dired-create-empty-file)
-  (dired-async-mode))
-#+end_src
+Another favorite package of mine.  I can't imagine browsing my file-system
+without it anymore.
 
-*** Dired Aux
+**** Dired Aux
+A package with many useful functions.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'dired-aux
+  (define-key dired-mode-map "\M-+" 'dired-create-empty-file)
   (add-to-list 'dired-compress-file-suffixes
                (list (rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -")))
 #+end_src
 
-*** Dired X
+**** Dired X
+Same as the above, but has one of my favorite /dired/ features:
+~dired-guess-shell-alist-user~.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'dired (require 'dired-x))
 #+end_src
 
-*** Dumb Jump
+**** [[https://github.com/stsquad/dired-rsync][Dired Rsync]]
+Neat little package that facilitates the usage of rsync.  Very helpful when
+using tramp on remote hosts.
+
+#+begin_src emacs-lisp
+(with-eval-after-load 'dired (define-key dired-mode-map "r" 'dired-rsync))
+#+end_src
+
+**** [[https://github.com/jwiegley/emacs-async/blob/master/dired-async.el][Dired Async]]
+Makes a lot of dired commands asyncronous.  Not =delete= though.
+
+#+begin_src emacs-lisp
+(with-eval-after-load 'dired (dired-async-mode))
+#+end_src
+
+*** [[https://github.com/jacktasia/dumb-jump][Dumb Jump]]
+Poor man's goto-definition facility.  It uses regexps and *grep/rg/whatever*.
+
 #+begin_src emacs-lisp
 (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
 #+end_src
 
-*** Ebdb
+*** [[https://github.com/girzel/ebdb][Ebdb]]
+An EIEIO port of BBDB (Big Brother DataBase).  Allows you to save contacts.
+Also, integrates with MUAs.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'ebdb-com
   (define-key ebdb-mode-map "\C-cm" 'ebdb-complete-push-mail-and-quit-window)
@@ -180,24 +291,34 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
   (define-key message-mode-map "\C-ce" 'ebdb-complete))
 #+end_src
 
-*** Edit Indirect
+*** [[https://github.com/Fanael/edit-indirect][Edit Indirect]]
+Allows you to edit any region in different /major-mode/.  Very helpful when you
+have a file which is a mix of different languages.
+
 #+begin_src emacs-lisp
 (define-key ctl-x-map "E" 'edit-indirect-region)
 #+end_src
 
 *** Elisp Mode
+Some macro-expansion commands.
+
 #+begin_src emacs-lisp
 (define-key emacs-lisp-mode-map "\C-cM" 'emacs-lisp-macroexpand)
 (define-key lisp-interaction-mode-map "\C-cM" 'emacs-lisp-macroexpand)
 #+end_src
 
 *** Emacs
+Here are some options, that can't be changed through /custom/.  Mostly, because
+the developers forgot abouth them.  Shame on developers!
+
 #+begin_src emacs-lisp
 (setq completion-ignore-case t
       mode-line-compact 'long)
 #+end_src
 
-*** Emmet Mode
+*** [[https://github.com/smihica/emmet-mode][Emmet Mode]]
+A must-have when you need to write XML by hand.
+
 #+begin_src emacs-lisp
 (add-hook 'nxml-mode-hook 'emmet-mode)
 (add-hook 'mhtml-mode-hook 'emmet-mode)
@@ -205,11 +326,17 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 #+end_src
 
 *** Env
+Force programs to disable ansi escape sequences.
+
 #+begin_src emacs-lisp
 (setenv "PAGER" "cat")
 #+end_src
 
 *** Eww
+This is a textual web-browser.  It is very useful for browsing "Common Lisp
+HyperSpec", "Source Hut" or Youtube (through [[https://invidio.us][Invidious]] instances).  This snippet
+lets me use /browse-url-multi/ inside /eww/.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'eww
   (defun eww-browse-url-custom ()
@@ -221,12 +348,17 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 #+end_src
 
 *** Find Dired
+Another great *GNU/Emacs* feature.  Results of arbitrary *find* commands can be
+displayed inside /dired/.
+
 #+begin_src emacs-lisp
 (define-key search-map "n" 'find-name-dired)
 (define-key search-map "N" 'find-dired)
 #+end_src
 
 *** Find Func
+Usefull commands to jump to /e-lisp/ definitions.
+
 #+begin_src emacs-lisp
 (define-key ctl-x-map "L" 'find-library)
 (define-key ctl-x-map "F" 'find-function)
@@ -235,11 +367,15 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 #+end_src
 
 *** Finder
+Show the *Commentary* section of a package.
+
 #+begin_src emacs-lisp
 (define-key help-map "\M-c" 'finder-commentary)
 #+end_src
 
 *** Flymake
+On-the-fly linter.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'flymake
   (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error)
@@ -247,6 +383,11 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 #+end_src
 
 *** Grep
+Another great *GNU/Emacs* package.  You can run arbitatry *grep* commands.
+*GNU/Emacs* has an unfortunate bug.  It slows down a lot when displaying too
+long lines.  To fix this in /grep/, I define this advice that trims the result
+to 500 chars.
+
 #+begin_src emacs-lisp
 (define-key search-map "g" 'rgrep)
 (with-eval-after-load 'grep
@@ -255,11 +396,16 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 #+end_src
 
 *** Hippie Exp
+Handy in-buffer completion.  It can use a lot of sources.  Mostly useful to
+complete file-name paths.
+
 #+begin_src emacs-lisp
 (define-key global-map "\C-_" 'hippie-expand)
 #+end_src
 
 *** Hl Line
+Highlight current line in these modes.
+
 #+begin_src emacs-lisp
 (add-hook 'csv-mode-hook 'hl-line-mode)
 (add-hook 'grep-mode-hook 'hl-line-mode)
@@ -271,17 +417,26 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 #+end_src
 
 *** Ipretty
+Pretty-print /e-lisp/ result of last S-EXpression.
+
 #+begin_src emacs-lisp
 (define-key lisp-interaction-mode-map "\C-j" 'ipretty-last-sexp)
 #+end_src
 
 *** Isearch
+A great in-buffer search facility.  It is well integrated with ~query-replace~
+and ~occur~.
+
 #+begin_src emacs-lisp
 (define-key isearch-mode-map "\C-h" 'isearch-delete-char)
 (define-key isearch-mode-map "\C-?" isearch-help-map)
 #+end_src
 
-*** Link Hint
+*** [[https://github.com/noctuid/link-hint.el][Link Hint]]
+Another favorite package of mine.  It lets you do actions to various points of
+interest in buffers using Avy.  It can do anything: buttons, links, completion
+candidates.  You name it!
+
 #+begin_src emacs-lisp
 (define-key goto-map "\M-l" 'link-hint-open-link)
 (define-key goto-map "\M-L" 'link-hint-copy-link)
@@ -290,32 +445,45 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 #+end_src
 
 *** Locate
+Locate integration.  Unfortunately it is using a simplified (and half-assed)
+version of /dired/ to display the results.  It bothers me sometimes.
+
 #+begin_src emacs-lisp
 (define-key search-map "l" 'locate)
 #+end_src
 
-*** Magit
+*** [[https://github.com/magit/magit][Magit]]
+A killer feature.  Best *git* front-end.
+
 #+begin_src emacs-lisp
 (define-key project-prefix-map "m" 'magit-project-status)
 #+end_src
 
 *** Man
+Do you like /smoking/ manuals?
+
 #+begin_src emacs-lisp
 (define-key help-map "\M-m" 'man)
 #+end_src
 
 *** Minibuffer
+Some enhancements for default completion-framework.
+
 #+begin_src emacs-lisp
 (define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
 (define-key minibuffer-local-must-match-map "\C-j" 'minibuffer-force-complete-and-exit)
 #+end_src
 
 *** Mpc
+Mpc front-end.  It might feel wanky, but that's because it was intended to be
+used with ~tool-bar-mode~ enabled.  By giving it some nice keybindings, it
+becomes a +butterfly+ nice and usable *mpc* front-end.
+
 #+begin_src emacs-lisp
 (define-key mode-specific-map "os" 'mpc)
 #+end_src
 
-**** Bindings
+**** Mpc Bindings
 #+begin_src emacs-lisp
 (with-eval-after-load 'mpc
   (define-key mpc-mode-map "p" 'mpc-playlist)
@@ -339,6 +507,9 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 #+end_src
 
 *** Net Utils
+Some good net utils, when you need to find out why your pages won't load in your
+default web-browser.
+
 #+begin_src emacs-lisp
 (define-key mode-specific-map "nh" 'nslookup-host)
 (define-key mode-specific-map "ni" 'ifconfig)
@@ -348,38 +519,58 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 #+end_src
 
 *** Newsticker
+An out-of-the-box rss/atom reader.  It has some bizarre defaults, but it is very
+usable.
+
 #+begin_src emacs-lisp
 (define-key mode-specific-map "on" 'newsticker-show-news)
 #+end_src
 
-*** Notmuch
+*** [[https://notmuchmail.org/notmuch-emacs/][Notmuch]]
+My main MUA.  The tag system is fantastic.  Switched to it after using /mu4e/
+for some years. [[https://www.youtube.com/watch?v=3xWEnAVl1Tw][Thanks!]]
+
 #+begin_src emacs-lisp
 (define-key mode-specific-map "om" 'notmuch)
 (autoload 'notmuch-mua-mail "notmuch-mua")
 (define-mail-user-agent 'notmuch-user-agent 'notmuch-mua-mail 'notmuch-mua-send-and-exit 'notmuch-mua-kill-buffer 'notmuch-mua-send-hook)
 #+end_src
 
-*** Nov
+*** [[https://depp.brause.cc/nov.el/][Nov]]
+You can read EPUB in *GNU/Emacs*.
+
 #+begin_src emacs-lisp
 (add-to-list 'auto-mode-alist (cons (rx ".epub" eos) 'nov-mode))
 #+end_src
 
 *** Novice
+Some commands in *GNU/Emacs* are disabled by default, because they are thought
+to be confusing for novices.  [[https://github.com/xFA25E/images/raw/main/do-nice-things-to-normies.mp4][As one famous philosopher said]].
+
 #+begin_src emacs-lisp
 (setq disabled-command-function nil)
 #+end_src
 
-*** Org Agenda
+*** Org
+Who doesn't know /org-mode/?  This is another killer feature of *GNU/Emacs*.
+
+**** Org Agenda
+My tasks, habits etc.
+
 #+begin_src emacs-lisp
 (define-key mode-specific-map "Ga" 'org-agenda)
 #+end_src
 
-*** Org Capture
+**** Org Capture
+This is like enhanced /remember-mode/.
+
 #+begin_src emacs-lisp
 (define-key mode-specific-map "Gc" 'org-capture)
 #+end_src
 
-*** Org Mime
+**** [[https://github.com/org-mime/org-mime][Org Mime]]
+Write your e-mail in /org-mode/.
+
 #+begin_src emacs-lisp
 (autoload 'org-mime-edit-mail-in-org-mode "org-mime" nil t)
 (autoload 'org-mime-revert-to-plain-text-mail "org-mime" nil t)
@@ -390,23 +581,32 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 #+end_src
 
 *** Outline
+/org-mode/'s bigger brother.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'outline
   (defun outline-show-after-jump ()
     (when outline-minor-mode (outline-show-entry))))
 #+end_src
 
-*** Outline Minor Faces
+*** [[https://github.com/tarsius/outline-minor-faces][Outline Minor Faces]]
+Highlight /outline/ headers.
+
 #+begin_src emacs-lisp
 (add-hook 'outline-minor-mode-hook 'outline-minor-faces-add-font-lock-keywords)
 #+end_src
 
 *** Paragraphs
+Sometimes I need to transpose paragraphs.
+
 #+begin_src emacs-lisp
 (define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
 #+end_src
 
-*** Pcmpl Args
+*** [[https://github.com/JonWaltman/pcmpl-args.el][Pcmpl Args]]
+e/shell completion facility.  Very great package.  It provides a lot of
+completions and a great library for completion definition.
+
 #+begin_src emacs-lisp
 (autoload 'pcomplete/pass "pcmpl-args")
 (autoload 'pcomplete/parted "pcmpl-args")
@@ -414,28 +614,39 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
   (load (expand-file-name "emacs/pcmpl-args-extra.el" (xdg-config-home))))
 #+end_src
 
-*** Pdf Tools
+*** [[https://github.com/politza/pdf-tools][Pdf Tools]]
+Do you like viewing PDFs?
+
 #+begin_src emacs-lisp
 (pdf-loader-install t t)
 #+end_src
 
 *** Pp
+Small PP!  Another pretty-printer for /e-lisp/ S-EXpressions.
+
 #+begin_src emacs-lisp
 (define-key emacs-lisp-mode-map "\C-cm" 'pp-macroexpand-last-sexp)
 (define-key lisp-interaction-mode-map "\C-cm" 'pp-macroexpand-last-sexp)
 #+end_src
 
 *** Proced
+Poor man's *htop*.
+
 #+begin_src emacs-lisp
 (define-key mode-specific-map "op" 'proced)
 #+end_src
 
-*** Pueue
+*** [[https://github.com/xFA25E/pueue][Pueue]]
+A queue of tasks.  Used mostly for downloading youtube videos through
+*youtube-dl*.
+
 #+begin_src emacs-lisp
 (define-key mode-specific-map "ou" 'pueue)
 #+end_src
 
 *** Register
+Are you familiar with registers?  You can store things!
+
 #+begin_src emacs-lisp
 (define-key ctl-x-r-map "v" 'view-register)
 (define-key ctl-x-r-map "L" 'list-registers)
@@ -443,18 +654,28 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 (define-key ctl-x-r-map "a" 'append-to-register)
 #+end_src
 
-*** Reverse Im
+*** [[https://github.com/a13/reverse-im.el][Reverse Im]]
+It is very difficult to explain what this package does.  Imagine yourself being
+a speaker of a language with a cyrillic alphabet.  You would like to write
+something in this, bizarre, language and use *GNU/Emacs* bindings at the same
+time.  That's what this package does.
+
 #+begin_src emacs-lisp
 (require 'reverse-im)
 (reverse-im-activate "cyrillic-dvorak")
 #+end_src
 
-*** Rg
+*** [[https://github.com/dajva/rg.el][Rg]]
+Super fast *grep*-killer.  In *Rust* we trust.
+
 #+begin_src emacs-lisp
 (define-key search-map "r" 'rg-menu)
 #+end_src
 
 *** Savehist
+Persistent history in the minibuffer.  This particular setting is used to filter
+out: remote files, http links or non-existent files.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'savehist
   (defun savehist-filter-file-name-history ()
@@ -469,7 +690,10 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
       (setq file-name-history result))))
 #+end_src
 
-*** Sdcv
+*** [[https://github.com/manateelazycat/sdcv][Sdcv]]
+Do you like browsing dictionaries offline inside *GNU/Emacs*?  This particular
+setting forces /sdcv/ to output *UTF-8*.
+
 #+begin_src emacs-lisp
 (define-key mode-specific-map "ot" 'sdcv-search-input)
 (with-eval-after-load 'sdcv
@@ -478,6 +702,8 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 #+end_src
 
 *** Sgml Mode
+Mode for editing all XML-like languages.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'sgml-mode
   (define-key sgml-mode-map "\C-\M-n" 'sgml-skip-tag-forward)
@@ -485,7 +711,9 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
   (define-key sgml-mode-map "\C-c\C-r" 'sgml-namify-char))
 #+end_src
 
-*** Shell Pwd
+*** [[https://github.com/xFA25E/shell-pwd][Shell Pwd]]
+Show /shell/ current directory inside buffer name.
+
 #+begin_src emacs-lisp
 (define-key mode-specific-map "xs" 'shell-pwd-shell)
 (define-key mode-specific-map "xS" 'shell-pwd-list-buffers)
@@ -494,6 +722,8 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 #+end_src
 
 *** Simple
+Some useful *GNU/Emacs* commands not bound by default (for some unknown reason).
+
 #+begin_src emacs-lisp
 (defun kill-region-dwim (&optional count)
   (interactive "p")
@@ -510,7 +740,10 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 (define-key mode-specific-map "oP" 'list-processes)
 #+end_src
 
-*** Skempo
+*** [[https://github.com/xFA25E/skempo][Skempo]]
+Enhance default *GNU/Emacs* templates.  I don't like Yasnippet, so I wrote a
+package that fixes problems of /tempo/ and /skeleton/.
+
 #+begin_src emacs-lisp
 (add-hook 'nix-mode-hook 'skempo-mode)
 (add-hook 'js-mode-hook 'skempo-mode)
@@ -521,12 +754,14 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
   (load (expand-file-name "emacs/skempo-templates.el" (xdg-config-home))))
 #+end_src
 
-*** Smartparens
+*** [[https://github.com/Fuco1/smartparens][Smartparens]]
+Handle pairs smartly.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'smartparens (require 'smartparens-config))
 #+end_src
 
-**** Hooks
+**** Smartparens Hooks
 #+begin_src emacs-lisp
 (add-hook 'minibuffer-setup-hook 'smartparens-mode)
 (add-hook 'nix-mode-hook 'smartparens-mode)
@@ -536,7 +771,9 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 (add-hook 'smartparens-mode-hook 'show-smartparens-mode)
 #+end_src
 
-**** Defs
+**** Smartparens Defs
+Some /smartparens/ commands are not autoloaded.
+
 #+begin_src emacs-lisp
 (defun sp-kill-region-dwim (&optional count)
   (interactive "p")
@@ -553,7 +790,9 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 (autoload 'sp-unwrap-sexp "smartparens" nil t)
 #+end_src
 
-**** Bindings
+**** Smartparens Bindings
+I like to bind /smartparens/ commands only to ~smartparens-mode~.
+
 #+begin_src emacs-lisp
 (define-key global-map [?\C-\(] 'sp-backward-slurp-sexp)
 (define-key global-map [?\C-\)] 'sp-forward-slurp-sexp)
@@ -572,6 +811,8 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 #+end_src
 
 *** Subword
+Consider ~SubWord~ as two separate words.  Useful for camel-case languages.
+
 #+begin_src emacs-lisp
 (add-hook 'rust-mode-hook 'subword-mode)
 (add-hook 'nix-mode-hook 'subword-mode)
@@ -583,20 +824,28 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 (add-hook 'tex-mode-hook (lambda nil (setq-local ispell-parser 'tex)))
 #+end_src
 
-*** Transmission
+*** [[https://github.com/holomorph/transmission][Transmission]]
+Do you like downloading torrents?
+
 #+begin_src emacs-lisp
 (define-key mode-specific-map "or" 'transmission)
 (with-eval-after-load 'transmission (define-key transmission-mode-map "M" 'transmission-move))
 #+end_src
 
 *** Url Parse
+This is a *GREAT POSOS*, as I like to call it.  Because /url-parse/ doesn't
+protect ~match-data~, it fucks up ~url-handler-mode~ and, as a result, fucks up
+/org-mime/ too.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'url-parse
   (define-advice url-generic-parse-url (:around (fn &rest args) save-match-data)
     (save-match-data (apply fn args))))
 #+end_src
 
-*** Vcomplete
+*** [[https://sr.ht/~dsemy/vcomplete/][Vcomplete]]
+Live update of *Completions* buffer while typing.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'vcomplete
   (define-key vcomplete-command-map [?\C-n] nil)
@@ -605,12 +854,16 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
   (define-key vcomplete-command-map "\M-v" 'switch-to-completions))
 #+end_src
 
-*** Web Mode
+*** [[https://github.com/fxbois/web-mode][Web Mode]]
+You can edit files with a lot of different web languages in it.
+
 #+begin_src emacs-lisp
 (add-to-list 'auto-mode-alist (cons (rx ".twig" eos) 'web-mode))
 #+end_src
 
 *** Window
+Do you like windows?  Me neither.
+
 #+begin_src emacs-lisp
 (define-key global-map "\M-V" 'scroll-down-line)
 (define-key global-map [?\C-\S-v] 'scroll-up-line)
@@ -620,7 +873,11 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 (define-key global-map "\M-o" 'other-window)
 #+end_src
 
-*** Load Custom
+** Load Custom
+Finally, I load [[custom.el]] settings.
+
 #+begin_src emacs-lisp
 (load (expand-file-name "nixpkgs/emacs/custom.el" (xdg-config-home)) nil nil t)
 #+end_src
+
+* Skempo Templates
