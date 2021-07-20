@@ -20,8 +20,6 @@
 
 ;;; Commentary:
 
-;; should work on remote too
-
 ;;; Code:
 
 (require 'subr-x)
@@ -36,16 +34,38 @@
       (pcmpl-args-process-file "git" "help" "-a")
       (goto-char (point-min))
       (let ((cmds (copy-sequence pcmpl-args-git-commands)))
-        (while (re-search-forward (rx bol (+ " ") (group (+ (not space)))
-                                      (+ space) (group (*? any)) eol)
-                                  nil t)
+        (while (re-search-forward
+                "^[\t\s]+\\([^\t\s]+\\)[\t\s]+\\(.*\\)$"
+                nil t)
           (let ((cmd (match-string 1))
                 (help (match-string 2)))
+            (when (member help '(nil ""))
+              (setq help "..."))
             (unless (assoc cmd cmds)
               (push (list cmd help) cmds))))
-        (setq cmds (cl-sort cmds #'string< :key #'car))
+        (setq cmds
+              (sort cmds (lambda (a b) (string-lessp (car a) (car b)))))
         (pcmpl-args-completion-table-with-annotations
          cmds `(metadata (category . git-command)))))))
+
+(defun pcmpl-args-git-extract-argspecs-from-help (cmd)
+  (pcmpl-args-cached (cons 'git-commands cmd) t
+    (ignore-errors (kill-buffer " *pcmpl-args-output*"))
+    (with-current-buffer (get-buffer-create " *pcmpl-args-output*")
+      (erase-buffer)
+      (let ((process-environment process-environment))
+        (push "MANWIDTH=10000" process-environment)
+        (pcmpl-args-process-file "git" "help" "--man" "--" cmd)
+        (goto-char (point-min))
+        (mapcar
+         (lambda (option)
+           (with-temp-buffer
+             (insert (or (plist-get option :help) ""))
+             (call-process-region (point-min) (point-max) "col" t t nil "-b")
+             (setf (plist-get option :help)
+                   (buffer-substring-no-properties (point-min) (point-max)))
+             option))
+         (pcmpl-args-extract-argspecs-from-buffer))))))
 
 ;;;; PASS
 
@@ -71,28 +91,48 @@
                        (expand-file-name "~/.password-store"))))
     (concat directory "/")))
 
-(defun pcmpl-args-pass-entry-from-path (prefix path)
-  (thread-last path
-    (string-remove-prefix prefix)
-    (string-remove-suffix ".gpg")))
-
 (defun pcmpl-args-pass-find (&rest find-args)
   (let* ((prefix (pcmpl-args-pass-prefix))
          (args `("find" "-L" ,prefix
                  "(" "-name" ".git*" "-o" "-name" ".gpg-id" ")" "-prune"
                  "-o" ,@find-args "-print"))
-         (paths (cdr (apply #'process-lines args)))
-         (entry-from-path (apply-partially 'pcmpl-args-pass-entry-from-path prefix)))
-    (sort (mapcar entry-from-path paths) #'string<)))
+         (rx (rx bol (literal prefix) (group (+? any)) (? ".gpg") eol)))
+    (with-temp-buffer
+      (apply #'pcmpl-args-process-file args)
+      (goto-char (point-min))
+      (save-match-data
+        (while (search-forward-regexp rx nil t)
+          (replace-match "\\1")))
+      (sort-lines t (point-min) (point-max))
+      (let (lines)
+        (while (not (eobp))
+          (push (string-trim-right (thing-at-point 'line t)) lines)
+          (forward-line 1))
+        (cdr lines)))))
 
 (defun pcmpl-args-pass-keys (args)
-  (thread-first
-      (thread-last (process-lines "gpg2" "--list-secret-keys" "--with-colons")
-        (mapcar (lambda (key) (elt (split-string key ":") 9)))
-        (delete ""))
-    (cl-delete-duplicates :test 'string=)
-    (sort 'string<)
-    (cl-set-difference (cadr (assq '* args)) :test #'string=)))
+  (let ((rx (rx bol (= 9 (* (not ":")) ":") (group (* (not ":"))) (*? any) eol))
+        (inserted-keys
+         (when-let ((keys (cadr (assq '* args))))
+           (thread-last keys
+             (mapcar #'substring-no-properties)
+             (delete "")
+             regexp-opt))))
+    (with-temp-buffer
+      (pcmpl-args-process-file "gpg2" "--list-secret-keys" "--with-colons")
+      (goto-char (point-min))
+      (save-match-data
+        (while (search-forward-regexp rx nil t)
+          (replace-match "\\1")))
+      (flush-lines "^$" (point-min) (point-max))
+      (when inserted-keys
+        (flush-lines inserted-keys (point-min) (point-max)))
+      (sort-lines t (point-min) (point-max))
+      (let (lines)
+        (while (not (eobp))
+          (push (string-trim-right (thing-at-point 'line t)) lines)
+          (forward-line 1))
+        lines))))
 
 (defun pcmpl-args-pass-command-specs (cmd)
   (pcase cmd
@@ -177,6 +217,22 @@
 
 ;;;; PARTED
 
+(defgroup pcmpl-args-extra nil
+  ""
+  :group 'pcmpl-args)
+
+(defcustom pcmpl-args-extra-root-command-function
+  'pcmpl-args-extra-root-command-function
+  "Function that executes commands as root.
+It takes a program and arguments, execs them as root and inserts
+results into current buffer."
+  :type '(choice (const :tag "sudo -A" pcmpl-args-extra-root-command-function)
+                 (function :tag "Other"))
+  :group 'pcmpl-args-extra)
+
+(defun pcmpl-args-extra-root-command-function (program &rest args)
+  (apply #'pcmpl-args-process-file "sudo" "-A" program args))
+
 (defalias 'pcmpl-args-parted-alignment-type
   (pcmpl-args-completion-table-with-annotations
    '(("none" "Use the minimum alignment allowed by the disk type")
@@ -205,7 +261,7 @@
 (defun pcmpl-args-parted-block-devices ()
   (pcmpl-args-cached 'parted-block-devices 60
     (with-temp-buffer
-      (call-process "sudo" nil t nil "-A" "parted" "--list" "--machine")
+      (funcall #'pcmpl-args-extra-root-command-function "parted" "--list" "--machine")
       (goto-char (point-min))
       (save-match-data
         (cl-loop do (forward-line)
@@ -217,7 +273,7 @@
 (defun pcmpl-args-parted-partitions (device)
   (pcmpl-args-cached 'parted-partitions 60
     (with-temp-buffer
-      (call-process "sudo" nil t nil "-A" "parted" "--machine" device "print")
+      (funcall #'pcmpl-args-extra-root-command-function "parted" "--machine" device "print")
       (goto-char (point-min))
       (forward-line 2)
       (save-match-data
@@ -235,7 +291,7 @@
 (defun pcmpl-args-parted-partition-table (device)
   (pcmpl-args-cached 'parted-partition-table 60
     (with-temp-buffer
-      (call-process "sudo" nil t nil "-A" "parted" "--machine" device "print")
+      (funcall #'pcmpl-args-extra-root-command-function "parted" "--machine" device "print")
       (goto-char (point-min))
       (forward-line)
       (let ((beg (search-forward ":" nil nil 5))
@@ -245,7 +301,7 @@
 (defun pcmpl-args-parted-disk-flags (device)
   (pcmpl-args-cached 'parted-disk-flags 60
     (with-temp-buffer
-      (call-process "sudo" nil t nil "-A" "parted" "--machine" device "print")
+      (funcall #'pcmpl-args-extra-root-command-function "parted" "--machine" device "print")
       (goto-char (point-min))
       (forward-line)
       (let ((beg (search-forward ":" nil nil 7))
