@@ -91,8 +91,8 @@ self: super: let
     browse-url-multi = make-melpa {
       name = "browse-url-multi";
       url = "https://github.com/xFA25E/browse-url-multi";
-      version = "0.1.0";
-      sha256 = "05qf3vcdqz05py20gl2bpchkdbr0jj8i3g9wjnlg6zlp8sy68l9w";
+      version = "0.1.1";
+      sha256 = "0p11jlpdd29k5ljzd1j3829s3lzmw767xa3v0vn3dr1qmq8p9vj6";
     };
 
   };

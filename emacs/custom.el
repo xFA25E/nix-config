@@ -50,7 +50,8 @@
      ("ytdli" 121 "Download with ytdli" browse-url-multi-ytdli)
      ("mpvi" 109 "Open in mpvi" browse-url-multi-mpvi)
      ("invidious" 105 "Open as invidious url in eww" browse-url-multi-invidious)
-     ("firefox" 102 "Open in firefox" browse-url-firefox)))
+     ("firefox" 102 "Open in firefox" browse-url-firefox)
+     ("transmission" 116 "Add to transmission" browse-url-multi-transmission)))
  '(browse-url-multi-invidious-instances
    '("vid.puffyan.us" "invidious.048596.xyz" "yewtu.be" "ytprivate.com" "invidious.kavin.rocks" "tube.connect.cafe"))
  '(browse-url-secondary-browser-function 'browse-url-multi)
