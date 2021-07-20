@@ -1,8 +1,5 @@
-;;; skempo-templates.el --- My skempo templates      -*- lexical-binding: t; eval: (add-hook (quote after-save-hook) (lambda () (byte-recompile-file (buffer-file-name))) nil t); -*-
-
+;; -*- lexical-binding: t; -*-
 (require 'skempo)
-
-;;; USER ELEMENTS
 
 (defun skempo-user-element (arg)
   ""
@@ -16,8 +13,6 @@
 
 (add-to-list 'tempo-user-elements 'skempo-user-element)
 
-;;; LISP
-
 (skempo-define-tempo (lambda :mode (emacs-lisp-mode lisp-mode))
   (lisp-with-parens
    "lambda (" p ") " n>
@@ -27,8 +22,6 @@
   (lisp-with-parens
    "let ((" p "))" n>
    r>))
-
-;;;; COMMON LISP
 
 (skempo-define-tempo (defvar :mode lisp-mode)
   (lisp-with-parens
@@ -41,8 +34,6 @@
    "defun " p " (" p ")" n>
    "\"" p "\"" n>
    r>))
-
-;;;; EMACS LISP
 
 (skempo-define-tempo (defvar :mode emacs-lisp-mode)
   (lisp-with-parens
@@ -77,8 +68,6 @@
    "\"" p "\"" n>
    ":group '" elisp-group))
 
-;;; JS
-
 (skempo-define-skeleton (switch :mode js-mode)
   "Expression: "
   "switch (" str ") {" > \n
@@ -89,8 +78,6 @@
   "default:" > \n
   @ \n
   "}" >)
-
-;;; NIX
 
 (skempo-define-tempo (github :mode nix-mode)
   "fetchFromGitHub {" n>
@@ -119,12 +106,5 @@
   "sha256 = \"" p nix-hash "\";" n>
   "}" p >)
 
-;;; PHP
-
 (skempo-define-tempo (vd :mode php-mode)
   "echo '<pre>'; var_dump(" r "); echo '</pre>';")
-
-;;; PROVIDE
-
-(provide 'skempo-templates)
-;;; skempo-templates.el ends here
