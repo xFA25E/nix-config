@@ -2,14 +2,15 @@
 (require 'skempo)
 
 (defun skempo-user-element (arg)
-  ""
   (pcase arg
     ('nix-hash (make-string 52 ?1))
     ('elisp-namespace (string-trim-right (buffer-name) (rx ".el" eos)))
     ('elisp-group (string-trim-right (buffer-name) (rx (? "-mode") ".el" eos)))
     (`(lisp-with-parens . ,body)
-     (let ((surround (or (use-region-p) (not (eql (char-before) ?\()))))
-       `(l ,(when surround "(") ,@body ,(when surround ")"))))))
+     (let* ((region-p (use-region-p))
+            (before-p (or region-p (not (eql (char-before) ?\())))
+            (after-p (or region-p (not (eql (char-after) ?\))))))
+       `(l ,(when before-p "(") ,@body ,(when after-p ")"))))))
 
 (add-to-list 'tempo-user-elements 'skempo-user-element)
 
