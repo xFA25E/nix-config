@@ -35,7 +35,7 @@
       (goto-char (point-min))
       (let ((cmds (copy-sequence pcmpl-args-git-commands)))
         (while (re-search-forward
-                "^[\t\s]+\\([^\t\s]+\\)[\t\s]+\\(.*\\)$"
+                "^[\t\s]+\\([^[:space:]]+\\)[\t\s]*\\([^[:space:]]*\\)$"
                 nil t)
           (let ((cmd (match-string 1))
                 (help (match-string 2)))
@@ -103,36 +103,27 @@
       (save-match-data
         (while (search-forward-regexp rx nil t)
           (replace-match "\\1")))
-      (sort-lines t (point-min) (point-max))
+      (beginning-of-line)
       (let (lines)
-        (while (not (eobp))
-          (push (string-trim-right (thing-at-point 'line t)) lines)
-          (forward-line 1))
-        (cdr lines)))))
+        (while (progn (push (string-trim-right (thing-at-point 'line t)) lines)
+                      (forward-line -1)
+                      (not (bobp))))
+        lines))))
 
 (defun pcmpl-args-pass-keys (args)
-  (let ((rx (rx bol (= 9 (* (not ":")) ":") (group (* (not ":"))) (*? any) eol))
-        (inserted-keys
-         (when-let ((keys (cadr (assq '* args))))
-           (thread-last keys
-             (mapcar #'substring-no-properties)
-             (delete "")
-             regexp-opt))))
+  (let ((rx (rx bol (= 9 (* (not ":")) ":") (group (* (not ":"))) (*? any) eol)))
     (with-temp-buffer
       (pcmpl-args-process-file "gpg2" "--list-secret-keys" "--with-colons")
       (goto-char (point-min))
       (save-match-data
         (while (search-forward-regexp rx nil t)
           (replace-match "\\1")))
-      (flush-lines "^$" (point-min) (point-max))
-      (when inserted-keys
-        (flush-lines inserted-keys (point-min) (point-max)))
-      (sort-lines t (point-min) (point-max))
+      (forward-line 1)
       (let (lines)
-        (while (not (eobp))
-          (push (string-trim-right (thing-at-point 'line t)) lines)
-          (forward-line 1))
-        lines))))
+        (while (progn (forward-line -1)
+                      (push (string-trim-right (thing-at-point 'line t)) lines)
+                      (not (bobp))))
+        (cl-set-difference lines (cadr (assq '* args)) :test #'string=)))))
 
 (defun pcmpl-args-pass-command-specs (cmd)
   (pcase cmd
