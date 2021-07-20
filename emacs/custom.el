@@ -172,6 +172,7 @@
  '(emacs-lisp-mode-hook
    '(skempo-mode outline-minor-mode flymake-mode smartparens-mode abbrev-mode))
  '(enable-recursive-minibuffers t)
+ '(eshell-directory-name (expand-file-name "emacs/eshell/" (xdg-cache-home)))
  '(eval-expression-print-length t)
  '(eval-expression-print-level t)
  '(eww-bookmarks-directory (expand-file-name "emacs/" (xdg-data-home)))
@@ -351,6 +352,7 @@
    (expand-file-name "emacs/network-security.data"
                      (xdg-cache-home)))
  '(nxml-child-indent 4)
+ '(org-adapt-indentation nil)
  '(org-agenda-files '("~/org/life.org"))
  '(org-agenda-include-diary t)
  '(org-agenda-skip-deadline-if-done t)
@@ -360,6 +362,7 @@
    '(("r" "Remember" entry
       (file+headline "~/org/life.org" "Remember")
       "* TODO %?")))
+ '(org-edit-src-content-indentation 0)
  '(org-habit-following-days 4)
  '(org-habit-graph-column 52)
  '(org-habit-preceding-days 30)
@@ -374,7 +377,7 @@
  '(org-refile-targets '((org-agenda-files :level . 1)))
  '(org-refile-use-outline-path 'file)
  '(org-startup-folded t)
- '(org-tags-column -80)
+ '(org-tags-column 0)
  '(outline-minor-mode-cycle t)
  '(package-archives nil)
  '(php-mode-coding-style 'php)
