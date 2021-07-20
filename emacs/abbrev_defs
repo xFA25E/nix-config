@@ -323,7 +323,6 @@
     ("eforts" "efforts" nil :count 0)
     ("ehr" "her" nil :count 0)
     ("eligable" "eligible" nil :count 0)
-    ("emacs" "Emacs" nil :count 1)
     ("embarass" "embarrass" nil :count 0)
     ("emigre" "emigre" nil :count 0)
     ("enahancements" "enhancements" nil :count 0)
@@ -402,6 +401,7 @@
     ("gruop" "group" nil :count 0)
     ("gruops" "groups" nil :count 0)
     ("grwo" "grow" nil :count 0)
+    ("gui" "GUI" nil :count 2)
     ("guidlines" "guidelines" nil :count 0)
     ("hadbeen" "had been" nil :count 0)
     ("hadnt" "hadn't" nil :count 0)
@@ -446,7 +446,7 @@
     ("hvae" "have" nil :count 0)
     ("hvaing" "having" nil :count 0)
     ("hwich" "which" nil :count 0)
-    ("i" "I" nil :count 0)
+    ("i" "I" nil :count 11)
     ("idae" "idea" nil :count 0)
     ("idaes" "ideas" nil :count 0)
     ("identifiy" "identify" nil :count 0)
@@ -926,5 +926,10 @@
     ("ytou" "you" nil :count 0)
     ("yuo" "you" nil :count 0)
     ("yuor" "your" nil :count 0)
+   ))
+
+(define-abbrev-table 'org-mode-abbrev-table
+  '(
+    ("emacs" "GNU/Emacs" nil :count 5)
    ))
 
