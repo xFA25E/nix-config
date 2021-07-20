@@ -1,26 +1,83 @@
+#+TITLE: Average Emacs Enjoyer's config
+
+#+options: toc:nil
+#+property: header-args:emacs-lisp :results silent
+
+* Early Init
+:properties:
+:header-args:emacs-lisp: :tangle early-init.el
+:end:
+
+#+begin_src emacs-lisp
 ;; -*- lexical-binding: t; -*-
 
-(require 'xdg)
+(let ((old-threshold gc-cons-threshold))
+  (add-hook 'emacs-startup-hook
+            (lambda ()
+              (setq gc-cons-threshold old-threshold)))
+  (setq gc-cons-threshold most-positive-fixnum))
 
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "Emacs ready in %s with %d garbage collections." (emacs-init-time) gcs-done)))
+#+end_src
+
+* Init
+:properties:
+:header-args:emacs-lisp: :tangle init.el
+:end:
+
+** Header
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t; -*-
+#+end_src
+
+** Imports
+#+begin_src emacs-lisp
+(require 'xdg)
+#+end_src
+
+** Packages
+
+*** Ansi Color
+#+begin_src emacs-lisp
 (with-eval-after-load 'compile
   (defun colorize-compilation ()
     (let ((inhibit-read-only t))
       (ansi-color-apply-on-region compilation-filter-start (point))))
   (add-hook 'compilation-filter-hook 'colorize-compilation))
+#+end_src
 
+*** Avy
+#+begin_src emacs-lisp
 (define-key global-map "\M-z" 'avy-goto-word-0)
 (define-key goto-map "\M-g" 'avy-goto-line)
+#+end_src
 
+*** Browse Url
+#+begin_src emacs-lisp
 (define-key ctl-x-map "B" 'browse-url)
 (define-key mode-specific-map "oy" 'browse-url-multi-youtube-search)
+#+end_src
 
+*** Bytecomp Async
+#+begin_src emacs-lisp
 (with-eval-after-load 'bytecomp (async-bytecomp-package-mode))
+#+end_src
 
+*** Cargo
+#+begin_src emacs-lisp
 (add-hook 'rust-mode-hook 'cargo-minor-mode)
+#+end_src
 
+*** Comint
+#+begin_src emacs-lisp
 (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
 (add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
+#+end_src
 
+*** Consult
+#+begin_src emacs-lisp
 (define-key global-map "\M-H" 'consult-history)
 (define-key goto-map "o" 'consult-outline)
 (define-key goto-map "i" 'consult-imenu)
@@ -28,9 +85,15 @@
 (define-key goto-map "F" 'consult-flymake)
 (define-key project-prefix-map "i" 'consult-project-imenu)
 (define-key kmacro-keymap "c" 'consult-kmacro)
+#+end_src
 
+*** Css Mode
+#+begin_src emacs-lisp
 (with-eval-after-load 'css-mode (define-key css-mode-map "\C-cm" 'css-lookup-symbol))
+#+end_src
 
+*** Custom
+#+begin_src emacs-lisp
 (defvar cus-edit-map (make-sparse-keymap))
 (define-key cus-edit-map "v" 'customize-option)
 (define-key cus-edit-map "g" 'customize-group)
@@ -38,22 +101,40 @@
 (define-key cus-edit-map "s" 'customize-saved)
 (define-key cus-edit-map "u" 'customize-unsaved)
 (define-key ctl-x-map "c" cus-edit-map)
+#+end_src
 
+*** Cyrillic Dvorak Im
+#+begin_src emacs-lisp
 (require 'cyrillic-dvorak-im)
+#+end_src
 
+*** Dired
+#+begin_src emacs-lisp
 (with-eval-after-load 'dired
   (define-key dired-mode-map "r" 'dired-rsync)
   (define-key dired-mode-map "\M-+"'dired-create-empty-file)
   (dired-async-mode))
+#+end_src
 
+*** Dired Aux
+#+begin_src emacs-lisp
 (with-eval-after-load 'dired-aux
   (add-to-list 'dired-compress-file-suffixes
                (list (rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -")))
+#+end_src
 
+*** Dired X
+#+begin_src emacs-lisp
 (with-eval-after-load 'dired (require 'dired-x))
+#+end_src
 
+*** Dumb Jump
+#+begin_src emacs-lisp
 (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
+#+end_src
 
+*** Ebdb
+#+begin_src emacs-lisp
 (with-eval-after-load 'ebdb-com
   (define-key ebdb-mode-map "\C-cm" 'ebdb-complete-push-mail-and-quit-window)
   (define-key ebdb-mode-map "\C-cM" 'ebdb-complete-push-mail))
@@ -65,21 +146,39 @@
 (with-eval-after-load 'message
   (require 'ebdb-message)
   (define-key message-mode-map "\C-ce" 'ebdb-complete))
+#+end_src
 
+*** Edit Indirect
+#+begin_src emacs-lisp
 (define-key ctl-x-map "E" 'edit-indirect-region)
+#+end_src
 
+*** Elisp Mode
+#+begin_src emacs-lisp
 (define-key emacs-lisp-mode-map "\C-cM" 'emacs-lisp-macroexpand)
 (define-key lisp-interaction-mode-map "\C-cM" 'emacs-lisp-macroexpand)
+#+end_src
 
+*** Emacs
+#+begin_src emacs-lisp
 (setq completion-ignore-case t
       mode-line-compact 'long)
+#+end_src
 
+*** Emmet Mode
+#+begin_src emacs-lisp
 (add-hook 'nxml-mode-hook 'emmet-mode)
 (add-hook 'mhtml-mode-hook 'emmet-mode)
 (add-hook 'web-mode-hook 'emmet-mode)
+#+end_src
 
+*** Env
+#+begin_src emacs-lisp
 (setenv "PAGER" "cat")
+#+end_src
 
+*** Eww
+#+begin_src emacs-lisp
 (with-eval-after-load 'eww
   (defun eww-browse-url-custom ()
     (interactive)
@@ -87,28 +186,49 @@
       (when-let ((url-at-point (car (eww-links-at-point))))
         (browse-url url-at-point))))
   (define-key eww-mode-map "V" 'eww-browse-url-custom))
+#+end_src
 
+*** Find Dired
+#+begin_src emacs-lisp
 (define-key search-map "n" 'find-name-dired)
 (define-key search-map "N" 'find-dired)
+#+end_src
 
+*** Find Func
+#+begin_src emacs-lisp
 (define-key ctl-x-map "L" 'find-library)
 (define-key ctl-x-map "F" 'find-function)
 (define-key ctl-x-map "K" 'find-function-on-key)
 (define-key ctl-x-map "V" 'find-variable)
+#+end_src
 
+*** Finder
+#+begin_src emacs-lisp
 (define-key help-map "\M-c" 'finder-commentary)
+#+end_src
 
+*** Flymake
+#+begin_src emacs-lisp
 (with-eval-after-load 'flymake
   (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error)
   (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error))
+#+end_src
 
+*** Grep
+#+begin_src emacs-lisp
 (define-key search-map "g" 'rgrep)
 (with-eval-after-load 'grep
   (define-advice grep-expand-template (:filter-return (cmd) add-cut)
     (concat cmd " | cut -c-500")))
+#+end_src
 
+*** Hippie Exp
+#+begin_src emacs-lisp
 (define-key global-map "\C-_" 'hippie-expand)
+#+end_src
 
+*** Hl Line
+#+begin_src emacs-lisp
 (add-hook 'csv-mode-hook 'hl-line-mode)
 (add-hook 'grep-mode-hook 'hl-line-mode)
 (add-hook 'tar-mode-hook 'hl-line-mode)
@@ -116,28 +236,55 @@
 (add-hook 'transmission-mode-hook 'hl-line-mode)
 (add-hook 'transmission-peers-mode-hook 'hl-line-mode)
 (add-hook 'mpc-mode-hook 'hl-line-mode)
+#+end_src
 
+*** Ipretty
+#+begin_src emacs-lisp
 (define-key lisp-interaction-mode-map "\C-j" 'ipretty-last-sexp)
+#+end_src
 
+*** Isearch
+#+begin_src emacs-lisp
 (define-key isearch-mode-map "\C-h" 'isearch-delete-char)
 (define-key isearch-mode-map "\C-?" isearch-help-map)
+#+end_src
 
+*** Link Hint
+#+begin_src emacs-lisp
 (define-key goto-map "\M-l" 'link-hint-open-link)
 (define-key goto-map "\M-L" 'link-hint-copy-link)
 (with-eval-after-load 'link-hint
   (cl-pushnew 'rg-mode (get 'link-hint-compilation-link :vars)))
+#+end_src
 
+*** Locate
+#+begin_src emacs-lisp
 (define-key search-map "l" 'locate)
+#+end_src
 
+*** Magit
+#+begin_src emacs-lisp
 (define-key project-prefix-map "m" 'magit-project-status)
+#+end_src
 
+*** Man
+#+begin_src emacs-lisp
 (define-key help-map "\M-m" 'man)
+#+end_src
 
+*** Minibuffer
+#+begin_src emacs-lisp
 (define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
 (define-key minibuffer-local-must-match-map "\C-j" 'minibuffer-force-complete-and-exit)
+#+end_src
 
+*** Mpc
+#+begin_src emacs-lisp
 (define-key mode-specific-map "os" 'mpc)
+#+end_src
 
+**** Bindings
+#+begin_src emacs-lisp
 (with-eval-after-load 'mpc
   (define-key mpc-mode-map "p" 'mpc-playlist)
   (define-key mpc-mode-map "u" 'mpc-update)
@@ -157,66 +304,126 @@
   (define-key mpc-mode-map "\M-m" 'mpc-select)
   (define-key mpc-mode-map "\C-m" 'mpc-songs-jump-to)
   (define-key mpc-songs-mode-map [remap mpc-select] nil))
+#+end_src
 
+*** Net Utils
+#+begin_src emacs-lisp
 (define-key mode-specific-map "nh" 'nslookup-host)
 (define-key mode-specific-map "ni" 'ifconfig)
 (define-key mode-specific-map "nn" 'netstat)
 (define-key mode-specific-map "np" 'ping)
 (define-key mode-specific-map "nw" 'iwconfig)
+#+end_src
 
+*** Newsticker
+#+begin_src emacs-lisp
 (define-key mode-specific-map "on" 'newsticker-show-news)
+#+end_src
 
+*** Notmuch
+#+begin_src emacs-lisp
 (define-key mode-specific-map "om" 'notmuch)
 (autoload 'notmuch-mua-mail "notmuch-mua")
 (define-mail-user-agent 'notmuch-user-agent 'notmuch-mua-mail 'notmuch-mua-send-and-exit 'notmuch-mua-kill-buffer 'notmuch-mua-send-hook)
+#+end_src
 
+*** Nov
+#+begin_src emacs-lisp
 (add-to-list 'auto-mode-alist (cons (rx ".epub" eos) 'nov-mode))
+#+end_src
 
+*** Novice
+#+begin_src emacs-lisp
 (setq disabled-command-function nil)
+#+end_src
 
+*** Org Agenda
+#+begin_src emacs-lisp
 (define-key mode-specific-map "Ga" 'org-agenda)
+#+end_src
 
+*** Org Capture
+#+begin_src emacs-lisp
 (define-key mode-specific-map "Gc" 'org-capture)
+#+end_src
 
+*** Org Mime
+#+begin_src emacs-lisp
 (autoload 'org-mime-edit-mail-in-org-mode "org-mime" nil t)
 (autoload 'org-mime-revert-to-plain-text-mail "org-mime" nil t)
 (with-eval-after-load 'message
   (define-key message-mode-map "\C-c\M-o" 'org-mime-htmlize)
   (define-key message-mode-map "\C-c\M-e" 'org-mime-edit-mail-in-org-mode)
   (define-key message-mode-map "\C-c\M-t" 'org-mime-revert-to-plain-text-mail))
+#+end_src
 
+*** Outline
+#+begin_src emacs-lisp
 (with-eval-after-load 'outline
   (defun outline-show-after-jump ()
     (when outline-minor-mode (outline-show-entry))))
+#+end_src
 
+*** Outline Minor Faces
+#+begin_src emacs-lisp
 (add-hook 'outline-minor-mode-hook 'outline-minor-faces-add-font-lock-keywords)
+#+end_src
 
+*** Paragraphs
+#+begin_src emacs-lisp
 (define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
+#+end_src
 
+*** Pcmpl Args
+#+begin_src emacs-lisp
 (autoload 'pcomplete/pass "pcmpl-args")
 (autoload 'pcomplete/parted "pcmpl-args")
 (with-eval-after-load 'pcmpl-args
   (load (expand-file-name "emacs/pcmpl-args-extra.el" (xdg-config-home))))
+#+end_src
 
+*** Pdf Tools
+#+begin_src emacs-lisp
 (pdf-loader-install t t)
+#+end_src
 
+*** Pp
+#+begin_src emacs-lisp
 (define-key emacs-lisp-mode-map "\C-cm" 'pp-macroexpand-last-sexp)
 (define-key lisp-interaction-mode-map "\C-cm" 'pp-macroexpand-last-sexp)
+#+end_src
 
+*** Proced
+#+begin_src emacs-lisp
 (define-key mode-specific-map "op" 'proced)
+#+end_src
 
+*** Pueue
+#+begin_src emacs-lisp
 (define-key mode-specific-map "ou" 'pueue)
+#+end_src
 
+*** Register
+#+begin_src emacs-lisp
 (define-key ctl-x-r-map "v" 'view-register)
 (define-key ctl-x-r-map "L" 'list-registers)
 (define-key ctl-x-r-map "p" 'prepend-to-register)
 (define-key ctl-x-r-map "a" 'append-to-register)
+#+end_src
 
+*** Reverse Im
+#+begin_src emacs-lisp
 (require 'reverse-im)
 (reverse-im-activate "cyrillic-dvorak")
+#+end_src
 
+*** Rg
+#+begin_src emacs-lisp
 (define-key search-map "r" 'rg-menu)
+#+end_src
 
+*** Savehist
+#+begin_src emacs-lisp
 (with-eval-after-load 'savehist
   (defun savehist-filter-file-name-history ()
     (let (result)
@@ -228,22 +435,34 @@
                       (file-exists-p f))
               (cl-pushnew f result :test #'string-equal)))))
       (setq file-name-history result))))
+#+end_src
 
+*** Sdcv
+#+begin_src emacs-lisp
 (define-key mode-specific-map "ot" 'sdcv-search-input)
 (with-eval-after-load 'sdcv
   (define-advice sdcv-search-with-dictionary-args (:filter-return (args) utf)
     (cl-list* "--utf8-output" "--utf8-input" args)))
+#+end_src
 
+*** Sgml Mode
+#+begin_src emacs-lisp
 (with-eval-after-load 'sgml-mode
   (define-key sgml-mode-map "\C-\M-n" 'sgml-skip-tag-forward)
   (define-key sgml-mode-map "\C-\M-p" 'sgml-skip-tag-backward)
   (define-key sgml-mode-map "\C-c\C-r" 'sgml-namify-char))
+#+end_src
 
+*** Shell Pwd
+#+begin_src emacs-lisp
 (define-key mode-specific-map "xs" 'shell-pwd-shell)
 (define-key mode-specific-map "xS" 'shell-pwd-list-buffers)
 (with-eval-after-load 'shell
   (define-key shell-mode-map "\C-c\M-d" 'shell-pwd-change-directory))
+#+end_src
 
+*** Simple
+#+begin_src emacs-lisp
 (defun kill-region-dwim (&optional count)
   (interactive "p")
   (if (use-region-p)
@@ -257,7 +476,10 @@
 (define-key global-map "\M-u" 'upcase-dwim)
 (define-key global-map "\C-w" 'kill-region-dwim)
 (define-key mode-specific-map "oP" 'list-processes)
+#+end_src
 
+*** Skempo
+#+begin_src emacs-lisp
 (add-hook 'nix-mode-hook 'skempo-mode)
 (add-hook 'js-mode-hook 'skempo-mode)
 (with-eval-after-load 'skempo
@@ -265,16 +487,25 @@
   (define-key skempo-mode-map "\M-g\M-e" 'skempo-forward-mark)
   (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
   (load (expand-file-name "emacs/skempo-templates.el" (xdg-config-home))))
+#+end_src
 
+*** Smartparens
+#+begin_src emacs-lisp
 (with-eval-after-load 'smartparens (require 'smartparens-config))
+#+end_src
 
+**** Hooks
+#+begin_src emacs-lisp
 (add-hook 'minibuffer-setup-hook 'smartparens-mode)
 (add-hook 'nix-mode-hook 'smartparens-mode)
 (add-hook 'rust-mode-hook 'smartparens-mode)
 (add-hook 'js-mode-hook 'smartparens-mode)
 (add-hook 'restclient-mode-hook 'smartparens-mode)
 (add-hook 'smartparens-mode-hook 'show-smartparens-mode)
+#+end_src
 
+**** Defs
+#+begin_src emacs-lisp
 (defun sp-kill-region-dwim (&optional count)
   (interactive "p")
   (if (use-region-p)
@@ -288,7 +519,10 @@
 (autoload 'sp-forward-slurp-sexp "smartparens" nil t)
 (autoload 'sp-rewrap-sexp "smartparens" nil t)
 (autoload 'sp-unwrap-sexp "smartparens" nil t)
+#+end_src
 
+**** Bindings
+#+begin_src emacs-lisp
 (define-key global-map [?\C-\(] 'sp-backward-slurp-sexp)
 (define-key global-map [?\C-\)] 'sp-forward-slurp-sexp)
 (define-key global-map [?\C-\M-\(] 'sp-backward-barf-sexp)
@@ -303,33 +537,58 @@
 (define-key smartparens-mode-map "\C-\M-k" 'sp-kill-sexp)
 (define-key smartparens-mode-map "\M-d" 'sp-kill-word)
 (define-key smartparens-mode-map "\C-w" 'sp-kill-region-dwim)
+#+end_src
 
+*** Subword
+#+begin_src emacs-lisp
 (add-hook 'rust-mode-hook 'subword-mode)
 (add-hook 'nix-mode-hook 'subword-mode)
 (add-hook 'js-mode-hook 'subword-mode)
+#+end_src
 
+*** Tex Mode
+#+begin_src emacs-lisp
 (add-hook 'tex-mode-hook (lambda nil (setq-local ispell-parser 'tex)))
+#+end_src
 
+*** Transmission
+#+begin_src emacs-lisp
 (define-key mode-specific-map "or" 'transmission)
 (with-eval-after-load 'transmission (define-key transmission-mode-map "M" 'transmission-move))
+#+end_src
 
+*** Url Parse
+#+begin_src emacs-lisp
 (with-eval-after-load 'url-parse
   (define-advice url-generic-parse-url (:around (fn &rest args) save-match-data)
     (save-match-data (apply fn args))))
+#+end_src
 
+*** Vcomplete
+#+begin_src emacs-lisp
 (with-eval-after-load 'vcomplete
   (define-key vcomplete-command-map [?\C-n] nil)
   (define-key vcomplete-command-map [?\C-p] nil)
   (define-key vcomplete-command-map [?\C-\M-m] nil)
   (define-key vcomplete-command-map "\M-v" 'switch-to-completions))
+#+end_src
 
+*** Web Mode
+#+begin_src emacs-lisp
 (add-to-list 'auto-mode-alist (cons (rx ".twig" eos) 'web-mode))
+#+end_src
 
+*** Window
+#+begin_src emacs-lisp
 (define-key global-map "\M-V" 'scroll-down-line)
 (define-key global-map [?\C-\S-v] 'scroll-up-line)
 (define-key global-map [?\C-\M-\S-b] 'previous-buffer)
 (define-key global-map [?\C-\M-\S-f] 'next-buffer)
 (define-key global-map "\M-Q" 'quit-window)
 (define-key global-map "\M-o" 'other-window)
+#+end_src
 
+*** Load Custom
+#+begin_src emacs-lisp
 (load (expand-file-name "nixpkgs/emacs/custom.el" (xdg-config-home)) nil nil t)
+#+end_src
