@@ -42,6 +42,14 @@ self: super: let
 
   in {
 
+    pcmpl-args = make-melpa {
+      name = "pcmpl-args";
+      url = "https://github.com/xFA25E/pcmpl-args.el";
+      version = "0.1.1";
+      sha256 = "0pacx07xblv2awcypbcmgj84hiq6i9jnnbfrxkc12nvz9hgdd8gn";
+      rev = "72ad0019d8fc00758fe524a17c07567014db9139";
+    };
+    
     link-hint = make-melpa {
       name = "link-hint";
       url = "https://github.com/noctuid/link-hint.el";
