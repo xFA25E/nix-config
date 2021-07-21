@@ -66,7 +66,7 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
 Here is the juicy part of my *GNU/Emacs* config.  We start by writing a header
 and an import of /xdg/ library.  If you are still not using [[https://wiki.archlinux.org/title/XDG_Base_Directory][XDG]], you might
 consider +killing yourself+ start using it.  It provides a good *STRUCTURE™* to
-your +hamster+ /home/.
+your hamster (from rus: hamster -> хомяк -> homyak -> home).
 
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t; -*-
@@ -836,9 +836,9 @@ Do you like downloading torrents?
 #+end_src
 
 *** Url Parse
-This is a *GREAT POSOS*, as I like to call it.  Because /url-parse/ doesn't
-protect ~match-data~, it fucks up ~url-handler-mode~ and, as a result, fucks up
-/org-mime/ too.
+This is a *GREAT POSOS* (from rus: posos -> sosat -> сосать -> to suck), as I
+like to call it.  Because /url-parse/ doesn't protect ~match-data~, it fucks up
+~url-handler-mode~ and, as a result, fucks up /org-mime/ too.
 
 #+begin_src emacs-lisp
 (with-eval-after-load 'url-parse
@@ -900,10 +900,14 @@ Header with imports.
 define a function that processes unknown elements to /tempo/ and returns other
 /tempo/ elements.  Very easy.
 
-The most tricky part is in ~lisp-with-parens~.  It surrounds a /tempo/ templates
-with parens, only if it detects that there was no open paren at the beginning.
-It is used to for lisp abbrevs.  A template needs to expand correctly after
-~word SPC~ and after ~(word SPC~.
+The most tricky part is in ~lisp-with-parens~.  It surrounds a /tempo/ template
+with parens, when it detects that there were no open or close parens.  It is
+used mostly in lisp abbrevs, because a template has to expand correctly in all
+of three situations:
+
+- ~word SPC~
+- ~(word SPC~
+- ~word SPC)~
 
 #+begin_src emacs-lisp
 (defun skempo-user-element (arg)

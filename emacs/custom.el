@@ -102,56 +102,27 @@
      ("\\.rar\\'" "temp=\"$(echo `?` | rev | cut -d. -f 2- | rev)\"; mkdir -p \"${temp}\"; unrar x ? \"${temp}\"")
      ("\\.torrent\\'" "transmission-show")
      ("\\.epub\\'" "ebook-convert ? .mobi &")))
- '(dired-listing-switches "-lF --si --group-directories-first")
+ '(dired-listing-switches "-lFv --si --group-directories-first")
  '(dired-ls-F-marks-symlinks t)
  '(dired-mode-hook '(dired-hide-details-mode hl-line-mode))
- '(display-time-24hr-format t)
- '(display-time-day-and-date t)
  '(display-time-default-load-average nil)
  '(display-time-mail-function
-   (lambda nil
-     (not
-      (string= "0"
-               (car
-                (process-lines "notmuch" "count" "tag:unread"))))))
+   '(lambda nil
+      (let
+          ((count
+            (car
+             (process-lines "notmuch" "count" "tag:unread"))))
+        (unless
+            (string= "0" count)
+          count))))
  '(display-time-mode t)
  '(display-time-string-forms
-   '((if mail
-         (concat " "
-                 (propertize display-time-mail-string 'display
-                             `(when
-                                  (and display-time-use-mail-icon
-                                       (display-graphic-p))
-                                ,@display-time-mail-icon ,@(if
-                                                               (and display-time-mail-face
-                                                                    (memq
-                                                                     (plist-get
-                                                                      (cdr display-time-mail-icon)
-                                                                      :type)
-                                                                     '(pbm xbm)))
-                                                               (let
-                                                                   ((bg
-                                                                     (face-attribute display-time-mail-face :background)))
-                                                                 (if
-                                                                     (stringp bg)
-                                                                     (list :background bg)))))
-                             'face display-time-mail-face 'help-echo "You have new mail; mouse-1: Read mail" 'mouse-face 'mode-line-highlight 'local-map
-                             (make-mode-line-mouse-map 'mouse-1 read-mail-command)))
-       "")
-     (propertize
-      (format-time-string
-       (or display-time-format
-           (if display-time-24hr-format " %H:%M" "%-I:%M%p"))
-       now)
-      'help-echo
-      (format-time-string "%a %b %e, %Y" now))
-     (if
-         (and
-          (not display-time-format)
-          display-time-day-and-date)
-         (format-time-string " %a %b %e" now)
+   '((format-time-string "%a %b %e %H:%M" now)
+     (if mail
+         (propertize
+          (concat " @" mail)
+          'face 'diary)
        "")))
- '(display-time-use-mail-icon t)
  '(ebdb-complete-mail nil)
  '(ebdb-complete-mail-allow-cycling nil)
  '(ebdb-completion-display-record nil)
@@ -395,7 +366,6 @@
      (project-eshell "Eshell" nil)))
  '(read-buffer-completion-ignore-case t)
  '(read-file-name-completion-ignore-case t)
- '(read-mail-command '(lambda nil (interactive) (notmuch-search "tag:unread")))
  '(register-separator 43)
  '(rust-format-on-save t)
  '(safe-local-variable-values
