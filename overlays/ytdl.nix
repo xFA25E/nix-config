@@ -1,11 +1,11 @@
 self: super: let
-  ytdl-dir = "\${YTDL_DIR:-\${XDG_VIDEOS_DIR:-\${HOME}/Videos}}";
+  ytdl-dir = "\${YTDL_DIR:-\${XDG_VIDEOS_DIR:-\${HOME}/Videos}/youtube}";
   title-ext-fmt = "%(title)s.%(ext)s";
   video-title-fmt = "%(upload_date)s - ${title-ext-fmt}";
-  playlist-index-fmt = "%(playlist_uploader)s/%(playlist)s/%(playlist_index)s";
+  playlist-index-fmt = "%(playlist_uploader)s - %(playlist)s - %(playlist_index)s";
   playlist-video-fmt = "${playlist-index-fmt}${video-title-fmt}";
   playlist-audio-fmt = "${playlist-index-fmt} - ${title-ext-fmt}";
-  youtube-video-fmt = "${ytdl-dir}/%(uploader)s/${video-title-fmt}";
+  youtube-video-fmt = "${ytdl-dir}/%(uploader)s - ${video-title-fmt}";
 in {
   ytdla = super.writeShellScriptBin "ytdla" ''
     exec "${self.youtube-dl}/bin/youtube-dl" --format "bestaudio/best" --extract-audio "$@"

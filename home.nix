@@ -553,7 +553,7 @@ in {
         "--continue" = "";
         "--no-playlist" = "";
         "--embed-subs" = "";
-        "--output" = "'%(uploader)s/%(upload_date)s - %(title)s.%(ext)s'";
+        "--output" = "'%(uploader)s - %(upload_date)s - %(title)s.%(ext)s'";
         "--format" = "'(bestvideo+bestaudio/best)[height<=?768][width<=?1366]'";
       };
     };
