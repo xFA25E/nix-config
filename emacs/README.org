@@ -131,6 +131,24 @@ Now, it is time to grow up and use /org-mode/.
 Every header corresponds to some package name (~package-name~ -> /Package
 Name/).  All headers are sorted alphabetically.
 
+*** Abbrev
+Good old abbrevs.  One of the oldest packages out there.  This package lets you
+define abbreviations for words and can trigger their expansion after inserting a
+space.  You can use it just for anything:
+
+- abbreviations (gvt -> government)
+- shell aliases (ls -> ls --color=always)
+- poor man's spell checker (helol -> hello)
+- code templates (fn -> function() {})
+- whatever your imagination tells you
+
+You can see a list of my abbrevs [[abbrev_defs][here]].  Of course, I have not defined them all
+by myself.  There is a good list of abbrevs [[https://www.emacswiki.org/emacs/autocorrection_abbrev_defs][here]].
+
+#+begin_src emacs-lisp
+(add-hook 'js-mode-hook 'abbrev-mode)
+#+end_src
+
 *** Ansi Color
 We still don't have nice things in 2k20.  /Compilation/ mode is still unable to
 interprent special sequences by default.  Lets help him.

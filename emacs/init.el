@@ -1,5 +1,7 @@
 ;; -*- lexical-binding: t; -*-
 
+(add-hook 'js-mode-hook 'abbrev-mode)
+
 (with-eval-after-load 'compile
   (defun colorize-compilation ()
     (let ((inhibit-read-only t))
