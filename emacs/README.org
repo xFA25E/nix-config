@@ -58,20 +58,24 @@ enhances your ability to *FLEX* on /e-lisp/ peasants.
             (message "Emacs ready in %s with %d garbage collections." (emacs-init-time) gcs-done)))
 #+end_src
 
+** Rest
+An import of /xdg/ library.  If you are still not using [[https://wiki.archlinux.org/title/XDG_Base_Directory][XDG]], you might consider
++killing yourself+ start using it.  It provides a good *STRUCTURE™* to your
+hamster (from rus: hamster -> хомяк -> homyak -> home).
+
+#+begin_src emacs-lisp
+(require 'xdg)
+#+end_src
+
 * Init
 :properties:
 :header-args:emacs-lisp: :tangle init.el
 :end:
 
-Here is the juicy part of my *GNU/Emacs* config.  We start by writing a header
-and an import of /xdg/ library.  If you are still not using [[https://wiki.archlinux.org/title/XDG_Base_Directory][XDG]], you might
-consider +killing yourself+ start using it.  It provides a good *STRUCTURE™* to
-your hamster (from rus: hamster -> хомяк -> homyak -> home).
+Here is the juicy part of my *GNU/Emacs* config.  We start by writing a header.
 
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t; -*-
-
-(require 'xdg)
 #+end_src
 
 ** Packages

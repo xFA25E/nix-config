@@ -1,7 +1,5 @@
 ;; -*- lexical-binding: t; -*-
 
-(require 'xdg)
-
 (with-eval-after-load 'compile
   (defun colorize-compilation ()
     (let ((inhibit-read-only t))
