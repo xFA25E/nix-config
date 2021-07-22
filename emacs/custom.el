@@ -412,7 +412,6 @@
  '(sql-sqlite-options '("-column" "-header" "-cmd" "PRAGMA foreign_keys = ON;"))
  '(tab-bar-close-button-show nil)
  '(tab-bar-new-button-show nil)
- '(tab-bar-new-tab-to 'rightmost)
  '(tab-bar-select-tab-modifiers '(super))
  '(tab-bar-show 1)
  '(tab-bar-tab-hints t)
