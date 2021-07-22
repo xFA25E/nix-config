@@ -1030,6 +1030,11 @@ statements.
   "default:" > \n
   @ \n
   "}" >)
+
+(skempo-define-tempo (function :mode js-mode)
+  "function " p "(" p ") {" n>
+  p n>
+  "}" >)
 #+end_src
 
 ** Nix

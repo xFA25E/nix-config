@@ -80,6 +80,11 @@
   @ \n
   "}" >)
 
+(skempo-define-tempo (function :mode js-mode)
+  "function " p "(" p ") {" n>
+  p n>
+  "}" >)
+
 (skempo-define-tempo (github :mode nix-mode)
   "fetchFromGitHub {" n>
   "owner = \"" p "\";" n>
