@@ -44,16 +44,10 @@ self: super: let
 
     pcmpl-args = make-melpa {
       name = "pcmpl-args";
+      url = "https://github.com/JonWaltman/pcmpl-args.el";
       version = "0.1.1";
-
-      url = "https://github.com/xFA25E/pcmpl-args.el";
-      sha256 = "13vqrsp2m61id7k5phywyjpmis8zz6swlznhr9s4wgmzpc9kg90n";
-      rev = "6b29a87d1243e5d3b83ce07ad40548333d00af21";
-
-      # url = "https://github.com/sirikid/pcmpl-args.el";
-      # sha256 = "1dj6k75fnkynssy8pdawwppv6s30f8g8d6xbky79i7l2wmjkcdid";
-      # rev = "49fc9ef2e15b276bff799b6cc1fab96527a25403";
-
+      sha256 = "1isab23shk1gfk54z4ppbnnkrm527rzb9cvbqqa47s8gv9k7zbnm";
+      rev = "36139ba64f43a3d3f4090ef0118bcebfef7e20c9";
     };
 
     link-hint = make-melpa {
