@@ -175,7 +175,12 @@
 
 (setq disabled-command-function nil)
 
+(with-eval-after-load 'org
+  (define-key org-mode-map [?\C-c?\C-\S-t] 'org-todo-yesterday))
+
 (define-key mode-specific-map "Ga" 'org-agenda)
+(with-eval-after-load 'org-agenda
+  (define-key org-agenda-mode-map "T" 'org-agenda-todo-yesterday))
 
 (define-key mode-specific-map "Gc" 'org-capture)
 
