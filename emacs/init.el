@@ -245,8 +245,9 @@
   (define-key sgml-mode-map "\C-\M-p" 'sgml-skip-tag-backward)
   (define-key sgml-mode-map "\C-c\C-r" 'sgml-namify-char))
 
-(define-key mode-specific-map "xs" 'shell-pwd-shell)
-(define-key mode-specific-map "xS" 'shell-pwd-list-buffers)
+(define-key mode-specific-map "xs" 'shell)
+
+(define-key mode-specific-map "xl" 'shell-pwd-list-buffers)
 (with-eval-after-load 'shell
   (define-key shell-mode-map "\C-c\M-d" 'shell-pwd-change-directory))
 

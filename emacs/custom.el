@@ -285,8 +285,7 @@
  '(notmuch-mua-cite-function 'message-cite-original-without-signature)
  '(notmuch-mua-user-agent-function 'notmuch-mua-user-agent-full)
  '(notmuch-saved-searches
-   '((:name "todo" :query "tag:todo" :key "o")
-     (:name "unread all" :query "tag:unread" :key "ua")
+   '((:name "unread all" :query "tag:unread" :key "ua")
      (:name "unread polimi" :query "tag:unread and tag:polimi" :key "up")
      (:name "unread spam" :query "tag:unread and tag:spam" :key "us")
      (:name "inbox all" :query "tag:inbox" :key "ia")
@@ -295,8 +294,8 @@
      (:name "sent polimi" :query "tag:polimi and tag:sent" :key "sp")
      (:name "archive all" :query "tag:archive" :key "aa")
      (:name "archive polimi" :query "tag:polimi and tag:archive" :key "ap")
-     (:name "drafts" :query "tag:draft" :key "d")
-     (:name "flagged" :query "tag:flagged" :key "f")))
+     (:name "flagged" :query "tag:flagged" :key "f")
+     (:name "drafts" :query "tag:draft" :key "d")))
  '(notmuch-search-oldest-first nil)
  '(notmuch-show-all-multipart/alternative-parts t)
  '(notmuch-show-all-tags-list t)
@@ -305,14 +304,11 @@
    '(("a" notmuch-archive-tags "Archive")
      ("u" notmuch-show-mark-read-tags "Mark read")
      ("f"
-      ("+flagged")
+      ("+flagged" "-trash" "-spam" "-deleted")
       "Flag")
      ("s"
       ("+spam" "-inbox" "-archive" "-trash" "-deleted")
       "Mark as spam")
-     ("t"
-      ("+todo" "-trash" "-spam" "-deleted")
-      "Todo")
      ("d"
       ("+trash" "-inbox" "-spam" "-archive" "-deleted")
       "Trash")
@@ -398,7 +394,7 @@
  '(sgml-basic-offset 4)
  '(sh-mode-hook
    '(sh-electric-here-document-mode smartparens-mode flymake-shellcheck-load flymake-mode))
- '(shell-mode-hook '(ansi-color-for-comint-mode-on))
+ '(shell-mode-hook '(shell-pwd-enable ansi-color-for-comint-mode-on))
  '(shift-select-mode nil)
  '(shr-max-image-proportion 0.7)
  '(shr-use-fonts nil)

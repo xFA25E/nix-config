@@ -743,12 +743,16 @@ Mode for editing all XML-like languages.
   (define-key sgml-mode-map "\C-c\C-r" 'sgml-namify-char))
 #+end_src
 
+*** Shell
+#+begin_src emacs-lisp
+(define-key mode-specific-map "xs" 'shell)
+#+end_src
+
 *** [[https://github.com/xFA25E/shell-pwd][Shell Pwd]]
-Show /shell/ current directory inside buffer name.
+Show /shell/ current directory inside mode-line.
 
 #+begin_src emacs-lisp
-(define-key mode-specific-map "xs" 'shell-pwd-shell)
-(define-key mode-specific-map "xS" 'shell-pwd-list-buffers)
+(define-key mode-specific-map "xl" 'shell-pwd-list-buffers)
 (with-eval-after-load 'shell
   (define-key shell-mode-map "\C-c\M-d" 'shell-pwd-change-directory))
 #+end_src

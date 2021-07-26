@@ -76,8 +76,8 @@ self: super: let
     shell-pwd = make-melpa {
       name = "shell-pwd";
       url = "https://github.com/xFA25E/shell-pwd";
-      version = "0.1.1";
-      sha256 = "0lp4443nrmxr3ass33lha5nlk03yb8lqb6gf88n343gdwdhgzaxv";
+      version = "0.2";
+      sha256 = "185sxdjqapbd3m06gd1n8lqbh665dsr0chsd210v975y4fwx2xax";
     };
 
     pueue = make-melpa {
@@ -112,13 +112,12 @@ in {
 
     async avy browse-url-multi cargo consult csv-mode cyrillic-dvorak-im
     dired-rsync direnv dumb-jump ebdb edit-indirect eglot emacs-default
-    emmet-mode format-all htmlize ipretty ledger-mode link-hint magit marginalia
-    nix-mode notmuch nov org-mime org-plus-contrib outline-minor-faces
-    pcmpl-args pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg
-    rust-mode sdcv shell-pwd skempo sly sly-asdf sly-quicklisp smartparens
-    sql-indent sqlup-mode transmission vcomplete vlf web-mode wgrep
-
-    flymake-shellcheck
+    emmet-mode flymake-shellcheck format-all htmlize ipretty ledger-mode
+    link-hint magit marginalia nix-mode notmuch nov org-mime org-plus-contrib
+    outline-minor-faces pcmpl-args pdf-tools php-mode pueue rainbow-mode
+    restclient reverse-im rg rust-mode sdcv shell-pwd skempo sly sly-asdf
+    sly-quicklisp smartparens sql-indent sqlup-mode transmission vcomplete vlf
+    web-mode wgrep
 
   ]);
 
