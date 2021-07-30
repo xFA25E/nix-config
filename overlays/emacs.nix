@@ -111,17 +111,13 @@ in {
   myEmacs = emacsWithPackages (epkgs: with epkgs; [
 
     async avy browse-url-multi cargo consult csv-mode cyrillic-dvorak-im
-    dired-rsync direnv dumb-jump ebdb edit-indirect eglot emacs-default
-    emmet-mode flymake-shellcheck format-all htmlize ipretty ledger-mode
-    link-hint magit marginalia nix-mode notmuch nov org-mime org-plus-contrib
-    outline-minor-faces  pdf-tools php-mode pueue rainbow-mode
-    restclient reverse-im rg rust-mode  shell-pwd skempo sly sly-asdf
-    sly-quicklisp smartparens sql-indent sqlup-mode transmission vcomplete vlf
-    web-mode wgrep
-
-    pcmpl-args
-
-    sdcv
+    dired-rsync direnv dumb-jump ebdb edit-indirect eglot emmet-mode
+    flymake-shellcheck format-all htmlize ipretty ledger-mode link-hint magit
+    marginalia nix-mode notmuch nov org-mime org-plus-contrib
+    outline-minor-faces pcmpl-args pdf-tools php-mode pueue rainbow-mode
+    restclient reverse-im rg rust-mode sdcv shell-pwd skempo sly sly-asdf
+    sly-quicklisp smartparens sql-indent sqlup-mode transmission vlf web-mode
+    wgrep
 
   ]);
 

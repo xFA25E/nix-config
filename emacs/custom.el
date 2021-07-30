@@ -119,9 +119,7 @@
  '(display-time-string-forms
    '((format-time-string "%a %b %e %H:%M" now)
      (if mail
-         (propertize
-          (concat " @" mail)
-          'face 'diary)
+         (concat " @" mail)
        "")))
  '(ebdb-complete-mail nil)
  '(ebdb-complete-mail-allow-cycling nil)
@@ -272,7 +270,6 @@
      ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml" nil nil nil)
      ("Luke Smith PeerTube" "https://lukesmith.xyz/peertube" nil nil nil)
      ("Protesilaos Stavrou" "https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g" nil nil nil)
-     ("VComplete Dev" "https://git.sr.ht/~dsemy/vcomplete/log/master/rss.xml" nil nil nil)
      ("WhatifAltHist" "https://www.youtube.com/feeds/videos.xml?user=WhatifAltHist" nil nil nil)))
  '(newsticker-url-list-defaults nil)
  '(next-screen-context-lines 10)
@@ -444,7 +441,6 @@
  '(use-dialog-box nil)
  '(user-full-name "Valeriy Litkovskyy")
  '(vc-handled-backends '(Git))
- '(vcomplete-mode t)
  '(version-control t)
  '(web-mode-markup-indent-offset 2)
  '(wgrep-auto-save-buffer t)
