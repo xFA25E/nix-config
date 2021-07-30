@@ -44,10 +44,10 @@ self: super: let
 
     pcmpl-args = make-melpa {
       name = "pcmpl-args";
-      url = "https://github.com/JonWaltman/pcmpl-args.el";
-      version = "0.1.1";
-      sha256 = "1isab23shk1gfk54z4ppbnnkrm527rzb9cvbqqa47s8gv9k7zbnm";
-      rev = "36139ba64f43a3d3f4090ef0118bcebfef7e20c9";
+      url = "https://github.com/xFA25E/pcmpl-args.el";
+      version = "0.1.2";
+      sha256 = "0xky366m68fnlc6m7m86l36qg6fcnf84vk608r97kf13wiwy1svq";
+      rev = "fc697ba96ee356540994d286695f2dd9993e49ee";
     };
 
     link-hint = make-melpa {
@@ -108,16 +108,20 @@ self: super: let
   emacsWithPackagesGit = ((emacs-overlay.emacsPackagesFor emacs-overlay.emacsGit).overrideScope' overrides).emacsWithPackages;
   emacsWithPackagesGcc = ((emacs-overlay.emacsPackagesFor emacs-overlay.emacsGcc).overrideScope' overrides).emacsWithPackages;
 in {
-  myEmacs = emacsWithPackagesGit (epkgs: with epkgs; [
+  myEmacs = emacsWithPackages (epkgs: with epkgs; [
 
     async avy browse-url-multi cargo consult csv-mode cyrillic-dvorak-im
     dired-rsync direnv dumb-jump ebdb edit-indirect eglot emacs-default
     emmet-mode flymake-shellcheck format-all htmlize ipretty ledger-mode
     link-hint magit marginalia nix-mode notmuch nov org-mime org-plus-contrib
-    outline-minor-faces pcmpl-args pdf-tools php-mode pueue rainbow-mode
-    restclient reverse-im rg rust-mode sdcv shell-pwd skempo sly sly-asdf
+    outline-minor-faces  pdf-tools php-mode pueue rainbow-mode
+    restclient reverse-im rg rust-mode  shell-pwd skempo sly sly-asdf
     sly-quicklisp smartparens sql-indent sqlup-mode transmission vcomplete vlf
     web-mode wgrep
+
+    pcmpl-args
+
+    sdcv
 
   ]);
 

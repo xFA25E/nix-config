@@ -26,27 +26,6 @@
 (require 'cl-seq)
 (require 'pcmpl-args)
 
-;;;; GIT FIX
-
-(defun pcmpl-args-git-extract-argspecs-from-help (cmd)
-  (pcmpl-args-cached (cons 'git-commands cmd) t
-    (ignore-errors (kill-buffer " *pcmpl-args-output*"))
-    (with-current-buffer (get-buffer-create " *pcmpl-args-output*")
-      (erase-buffer)
-      (let ((process-environment process-environment))
-        (push "MANWIDTH=10000" process-environment)
-        (pcmpl-args-process-file "git" "help" "--man" "--" cmd)
-        (goto-char (point-min))
-        (mapcar
-         (lambda (option)
-           (with-temp-buffer
-             (insert (or (plist-get option :help) ""))
-             (call-process-region (point-min) (point-max) "col" t t nil "-b")
-             (setf (plist-get option :help)
-                   (buffer-substring-no-properties (point-min) (point-max)))
-             option))
-         (pcmpl-args-extract-argspecs-from-buffer))))))
-
 ;;;; PARTED
 
 (defgroup pcmpl-args-extra nil
