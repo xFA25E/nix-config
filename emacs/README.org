@@ -745,14 +745,14 @@ Mode for editing all XML-like languages.
 
 *** Shell
 #+begin_src emacs-lisp
-(define-key mode-specific-map "xs" 'shell)
+(define-key mode-specific-map "s" 'shell)
 #+end_src
 
 *** [[https://github.com/xFA25E/shell-pwd][Shell Pwd]]
 Show /shell/ current directory inside mode-line.
 
 #+begin_src emacs-lisp
-(define-key mode-specific-map "xl" 'shell-pwd-list-buffers)
+(define-key mode-specific-map "l" 'shell-pwd-list-buffers)
 (with-eval-after-load 'shell
   (define-key shell-mode-map "\C-c\M-d" 'shell-pwd-change-directory))
 #+end_src
