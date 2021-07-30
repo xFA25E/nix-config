@@ -231,7 +231,7 @@
  '(leaf-expand-minimally t)
  '(ledger-default-date-format "%Y-%m-%d")
  '(link-hint-types
-   '(link-hint-shr-url link-hint-org-link link-hint-markdown-link link-hint-help-link link-hint-info-link link-hint-package-link link-hint-package-keyword-link link-hint-package-install-link link-hint-epkg-button link-hint-compilation-link link-hint-nov-link link-hint-customize-widget link-hint-notmuch-hello link-hint-button link-hint-text-url link-hint-completion-list-candidate link-hint-file-link link-hint-org-agenda-item link-hint-xref-item link-hint-man-button link-hint-dired-filename))
+   '(link-hint-shr-url link-hint-org-link link-hint-markdown-link link-hint-help-link link-hint-info-link link-hint-package-link link-hint-package-keyword-link link-hint-package-install-link link-hint-epkg-button link-hint-compilation-link link-hint-nov-link link-hint-customize-widget link-hint-notmuch-hello link-hint-button link-hint-completion-list-candidate link-hint-text-url link-hint-file-link link-hint-org-agenda-item link-hint-xref-item link-hint-man-button link-hint-dired-filename))
  '(lisp-mode-hook
    '(skempo-mode smartparens-mode sly-editing-mode abbrev-mode))
  '(magit-credential-cache-daemon-socket (expand-file-name "git/credential/socket" (xdg-cache-home)))
@@ -268,8 +268,7 @@
      ("American Renaissance" "https://www.bitchute.com/feeds/rss/channel/amrenaissance" nil nil nil)
      ("Mouthy Buddha" "https://www.bitchute.com/feeds/rss/channel/mouthybuddha" nil nil nil)
      ("TealDeer" "https://www.bitchute.com/feeds/rss/channel/tealdeer" nil nil nil)
-     ("Простая Академия" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8mmPf2oKdfE2pdjqctTWUw" nil nil nil)
-     ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg" nil nil nil)
+     ("Простая Академия" "https://prosto.academy/feed/" nil nil nil)
      ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml" nil nil nil)
      ("Luke Smith PeerTube" "https://lukesmith.xyz/peertube" nil nil nil)
      ("Protesilaos Stavrou" "https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g" nil nil nil)
@@ -388,6 +387,8 @@
  '(scroll-bar-mode nil)
  '(scroll-conservatively 10000)
  '(scroll-step 1)
+ '(sdcv-dictionary-data-dir "/home/val/.local/share/stardict/dic/")
+ '(sdcv-env-lang "en_US.UTF-8")
  '(search-whitespace-regexp ".*?")
  '(send-mail-function 'message-send-mail-with-sendmail)
  '(sendmail-program "msmtp")
@@ -455,10 +456,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 150 :width normal :foundry "PfEd" :family "DejaVu Sans Mono"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 150 :width normal :foundry "PfEd" :family "DejaVu Sans Mono"))))
  '(header-line ((t (:height 150 :box nil :foreground "grey20" :background "grey90" :inherit mode-line))))
- '(mode-line ((t (:background "white smoke" :foreground "black" :box nil :height 105))))
- '(mode-line-inactive ((t (:height 105 :weight light :box (:line-width (1 . -1) :color "grey75") :foreground "grey20" :background "dark gray" :inherit mode-line))))
+ '(mode-line ((t (:background "white smoke" :foreground "black" :box (:line-width 1 :color "grey75") :height 105))))
+ '(mode-line-inactive ((t (:weight light :foreground "grey20" :background "dark gray" :inherit mode-line))))
+ '(region ((t (:extend t :background "LemonChiffon2" :distant-foreground "gtk_selection_fg_color"))))
  '(tab-bar ((t (:height 105 :foreground "black" :background "black" :inherit variable-pitch))))
- '(tab-bar-tab ((t (:box (:line-width (1 . 1) :color "white") :background "white" :inherit tab-bar))))
- '(tab-bar-tab-inactive ((t (:box (:line-width (1 . 1) :color "black") :foreground "black" :background "dark grey" :inherit tab-bar-tab)))))
+ '(tab-bar-tab ((t (:inherit tab-bar :background "white smoke" :box (:line-width 1 :color "white smoke")))))
+ '(tab-bar-tab-inactive ((t (:box (:line-width 1 :color "black") :foreground "black" :background "dark grey" :inherit tab-bar-tab)))))
