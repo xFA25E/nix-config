@@ -337,8 +337,7 @@ Here are some options, that can't be changed through /custom/.  Mostly, because
 the developers forgot abouth them.  Shame on developers!
 
 #+begin_src emacs-lisp
-(setq completion-ignore-case t
-      mode-line-compact 'long)
+(setq completion-ignore-case t)
 #+end_src
 
 *** [[https://github.com/smihica/emmet-mode][Emmet Mode]]

@@ -72,8 +72,7 @@
 (define-key emacs-lisp-mode-map "\C-cM" 'emacs-lisp-macroexpand)
 (define-key lisp-interaction-mode-map "\C-cM" 'emacs-lisp-macroexpand)
 
-(setq completion-ignore-case t
-      mode-line-compact 'long)
+(setq completion-ignore-case t)
 
 (add-hook 'nxml-mode-hook 'emmet-mode)
 (add-hook 'mhtml-mode-hook 'emmet-mode)
