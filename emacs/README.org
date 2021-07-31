@@ -612,22 +612,6 @@ Write your e-mail in /org-mode/.
   (define-key message-mode-map "\C-c\M-t" 'org-mime-revert-to-plain-text-mail))
 #+end_src
 
-*** Outline
-/org-mode/'s bigger brother.
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'outline
-  (defun outline-show-after-jump ()
-    (when outline-minor-mode (outline-show-entry))))
-#+end_src
-
-*** [[https://github.com/tarsius/outline-minor-faces][Outline Minor Faces]]
-Highlight /outline/ headers.
-
-#+begin_src emacs-lisp
-(add-hook 'outline-minor-mode-hook 'outline-minor-faces-add-font-lock-keywords)
-#+end_src
-
 *** Paragraphs
 Sometimes I need to transpose paragraphs.
 

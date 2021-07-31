@@ -191,12 +191,6 @@
   (define-key message-mode-map "\C-c\M-e" 'org-mime-edit-mail-in-org-mode)
   (define-key message-mode-map "\C-c\M-t" 'org-mime-revert-to-plain-text-mail))
 
-(with-eval-after-load 'outline
-  (defun outline-show-after-jump ()
-    (when outline-minor-mode (outline-show-entry))))
-
-(add-hook 'outline-minor-mode-hook 'outline-minor-faces-add-font-lock-keywords)
-
 (define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
 
 (autoload 'pcomplete/pass "pcmpl-args")

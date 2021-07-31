@@ -139,8 +139,7 @@
  '(eldoc-documentation-strategy 'eldoc-documentation-compose)
  '(eldoc-echo-area-use-multiline-p t)
  '(eldoc-minor-mode-string "")
- '(emacs-lisp-mode-hook
-   '(skempo-mode outline-minor-mode flymake-mode smartparens-mode abbrev-mode))
+ '(emacs-lisp-mode-hook '(skempo-mode flymake-mode smartparens-mode abbrev-mode))
  '(enable-recursive-minibuffers t)
  '(eshell-directory-name (expand-file-name "emacs/eshell/" (xdg-cache-home)))
  '(eval-expression-print-length t)
@@ -201,7 +200,6 @@
                      (xdg-cache-home)))
  '(image-file-name-extensions
    '("mp4" "mkv" "png" "jpeg" "jpg" "gif" "tiff" "tif" "xbm" "xpm" "pbm" "pgm" "ppm" "pnm" "svg"))
- '(imenu-after-jump-hook '(outline-show-after-jump))
  '(imenu-auto-rescan t)
  '(imenu-level-separator "/")
  '(imenu-space-replacement " ")
@@ -346,7 +344,6 @@
  '(org-refile-use-outline-path 'file)
  '(org-startup-folded t)
  '(org-tags-column 0)
- '(outline-minor-mode-cycle t)
  '(package-archives nil)
  '(php-mode-coding-style 'php)
  '(php-mode-hook '(skempo-mode smartparens-mode subword-mode))
@@ -446,7 +443,7 @@
  '(wgrep-auto-save-buffer t)
  '(x-gtk-use-system-tooltips nil)
  '(x-stretch-cursor t)
- '(xref-after-jump-hook '(outline-show-after-jump recenter xref-pulse-momentarily)))
+ '(xref-after-jump-hook '(recenter xref-pulse-momentarily)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
