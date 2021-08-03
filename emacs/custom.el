@@ -336,7 +336,7 @@
  '(org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home)))
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode))
+ '(org-mode-hook '(smartparens-mode) t)
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
@@ -381,8 +381,9 @@
  '(scroll-bar-mode nil)
  '(scroll-conservatively 10000)
  '(scroll-step 1)
- '(sdcv-dictionary-data-dir "/home/val/.local/share/stardict/dic/")
  '(sdcv-env-lang "en_US.UTF-8")
+ '(sdcv-translate-command
+   '(program "--non-interactive" dictionary-data-dir dictionary-list word))
  '(search-whitespace-regexp ".*?")
  '(send-mail-function 'message-send-mail-with-sendmail)
  '(sendmail-program "msmtp")

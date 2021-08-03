@@ -710,10 +710,8 @@ Do you like browsing dictionaries offline inside *GNU/Emacs*?  This particular
 setting forces /sdcv/ to output *UTF-8*.
 
 #+begin_src emacs-lisp
+(autoload 'sdcv-search-input "sdcv" nil t)
 (define-key mode-specific-map "ot" 'sdcv-search-input)
-(with-eval-after-load 'sdcv
-  (define-advice sdcv-search-with-dictionary-args (:filter-return (args) utf)
-    (cl-list* "--utf8-output" "--utf8-input" args)))
 #+end_src
 
 *** Sgml Mode

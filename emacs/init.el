@@ -228,10 +228,8 @@
               (cl-pushnew f result :test #'string-equal)))))
       (setq file-name-history result))))
 
+(autoload 'sdcv-search-input "sdcv" nil t)
 (define-key mode-specific-map "ot" 'sdcv-search-input)
-(with-eval-after-load 'sdcv
-  (define-advice sdcv-search-with-dictionary-args (:filter-return (args) utf)
-    (cl-list* "--utf8-output" "--utf8-input" args)))
 
 (with-eval-after-load 'sgml-mode
   (define-key sgml-mode-map "\C-\M-n" 'sgml-skip-tag-forward)

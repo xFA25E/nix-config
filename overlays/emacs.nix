@@ -42,6 +42,15 @@ self: super: let
 
   in {
 
+    sdcv = make-melpa {
+      name = "sdcv";
+      url = "https://github.com/xFA25E/sdcv";
+      version = "3.4";
+      sha256 = "160g6ia3z3h7y1rdmjpbf0jqkpw1qzby33hijws3qr9sx6nyj7qz";
+      rev = "5225b57b09bdd78e8d074899ebf505e9122e8ee5";
+      deps = [ eself.posframe ];
+    };
+
     pcmpl-args = make-melpa {
       name = "pcmpl-args";
       url = "https://github.com/xFA25E/pcmpl-args.el";
