@@ -3,8 +3,8 @@ self: super: let
   emacs-overlay-src = super.fetchFromGitHub {
     owner = "nix-community";
     repo = "emacs-overlay";
-    rev = "0c6788be21379274f2952810b03c5b64d70044e7";
-    sha256 = "1982wvkwbhxg51a9g5bchfzr8g1jlnh9n20c94mkwlpi7ca2m5gd";
+    rev = "3378b6cd8b52f636e4d3cb1b4479f537c434e782";
+    sha256 = "0llqicxac77dw2qzqip4gyf5gv4gvjz5fwr4zjzbx4hfbvdjv50w";
   };
 
   emacs-overlay = import emacs-overlay-src self super;
@@ -55,24 +55,8 @@ self: super: let
       name = "pcmpl-args";
       url = "https://github.com/xFA25E/pcmpl-args.el";
       version = "0.1.2";
-      sha256 = "0xky366m68fnlc6m7m86l36qg6fcnf84vk608r97kf13wiwy1svq";
-      rev = "fc697ba96ee356540994d286695f2dd9993e49ee";
-    };
-
-    link-hint = make-melpa {
-      name = "link-hint";
-      url = "https://github.com/noctuid/link-hint.el";
-      version = "0.1";
-      sha256 = "0v2g9gzf2v88ag59q1pf5vhd4qjnz3g4i6gzl27k6fi7pvlxdn39";
-      rev = "9fbf196d155016d9b8471a99318ed67a086cf257";
-    };
-
-    vcomplete = make-melpa {
-      name = "vcomplete";
-      url = "https://git.sr.ht/~dsemy/vcomplete";
-      version = "0.1";
-      sha256 = "0ymkyfm0cf7x46mghcg27yr42j23lrgkf12nw5vzsvq4qg38kbh9";
-      rev = "d086a33a1ad88621c24ac081727c7d58df6271ea";
+      sha256 = "1jzmqki0s87krbmw7jf9fmv3awbf2jw5bq099ha0m2harc2gald6";
+      rev = "fb3c73ac7cea7be1836c47ae01335d810939e4ee";
     };
 
     cyrillic-dvorak-im = make-melpa {
