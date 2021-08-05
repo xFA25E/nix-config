@@ -138,6 +138,7 @@ in {
 
       go-mtpfs parted exiftool libjpeg shellcheck
       discord
+      xkb-switch
       # torbrowser
 
     ];
