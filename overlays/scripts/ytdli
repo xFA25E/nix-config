@@ -25,7 +25,7 @@ case "$(printf "video\naudio\nmusic\nselect video" | dmenu -p "Download")" in
         pueue add "ytdlay '${url}'"
         ;;
     music)
-        pueue add "ytdlam '${url}'"
+        pueue add -i "ytdlam '${url}'"
         ;;
     "select video")
         selected_format="$(get_formats | select_format | awk '{print $1}')"
