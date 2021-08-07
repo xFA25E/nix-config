@@ -319,7 +319,7 @@
                      (xdg-cache-home)))
  '(nxml-child-indent 4)
  '(org-adapt-indentation nil)
- '(org-agenda-files '("~/org/life.org"))
+ '(org-agenda-files '("~/org/study.org" "~/org/life.org"))
  '(org-agenda-include-diary t)
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
@@ -328,6 +328,7 @@
    '(("r" "Remember" entry
       (file+headline "~/org/life.org" "Remember")
       "* TODO %?")))
+ '(org-clock-display-default-range 'untilnow)
  '(org-edit-src-content-indentation 0)
  '(org-habit-following-days 4)
  '(org-habit-graph-column 52)
@@ -336,7 +337,7 @@
  '(org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home)))
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode) t)
+ '(org-mode-hook '(smartparens-mode))
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
