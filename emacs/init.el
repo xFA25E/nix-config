@@ -177,6 +177,9 @@
 (with-eval-after-load 'org
   (define-key org-mode-map [?\C-c?\C-\S-t] 'org-todo-yesterday))
 
+(define-advice org-show-notification (:after (&rest _) sound)
+  (call-process "notify_sound" nil 0 nil))
+
 (define-key mode-specific-map "Ga" 'org-agenda)
 (with-eval-after-load 'org-agenda
   (define-key org-agenda-mode-map "T" 'org-agenda-todo-yesterday))

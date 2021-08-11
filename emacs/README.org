@@ -583,6 +583,14 @@ Who doesn't know /org-mode/?  This is another killer feature of *GNU/Emacs*.
   (define-key org-mode-map [?\C-c?\C-\S-t] 'org-todo-yesterday))
 #+end_src
 
+Play a sound after org notification.  I know that one could use
+~org-show-notification-handler~, but I'm lazy!
+
+#+begin_src emacs-lisp
+(define-advice org-show-notification (:after (&rest _) sound)
+  (call-process "notify_sound" nil 0 nil))
+#+end_src
+
 **** Org Agenda
 My tasks, habits etc.
 
