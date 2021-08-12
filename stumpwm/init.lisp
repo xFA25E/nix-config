@@ -13,9 +13,6 @@
 
 (setf *mouse-focus-policy* :click)
 
-(defvar *battery-timer* (run-with-timer 60 60 #'notify-battery-status))
-(defvar *date-time-timer* (run-with-timer 30 1800 #'echo-date))
-
 (defvar *default-layout* "dvorak")
 (defvar *previous-layout* nil)
 (defvar *nested-counter* 0)

@@ -24,12 +24,3 @@
 (defun read-mpd-volume-status ()
   (let ((output (uiop:run-program '("mpc" "-q" "volume") :output :string)))
     (parse-integer output :start 8 :junk-allowed t)))
-
-
-
-(defun notify-battery-status ()
-  (multiple-value-bind (percentage state time) (read-battery-status)
-    (when (string= "Discharging" state)
-      (message "Battery: ~A ~A ~A" percentage state time)
-      (when (<= (parse-integer percentage) 10)
-        (uiop:launch-program '("notify_sound"))))))

@@ -105,6 +105,7 @@
  '(dired-listing-switches "-lFAv --si --group-directories-first")
  '(dired-ls-F-marks-symlinks t)
  '(dired-mode-hook '(dired-hide-details-mode hl-line-mode))
+ '(display-battery-mode t)
  '(display-time-default-load-average nil)
  '(display-time-mail-function
    '(lambda nil
@@ -331,6 +332,7 @@
       (file+headline "~/org/life.org" "Remember")
       "* TODO %?")))
  '(org-clock-display-default-range 'untilnow)
+ '(org-duration-format 'h:mm)
  '(org-edit-src-content-indentation 0)
  '(org-habit-following-days 4)
  '(org-habit-graph-column 52)
