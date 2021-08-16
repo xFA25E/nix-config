@@ -185,7 +185,7 @@
  '(html-mode-hook '(emmet-mode))
  '(ibuffer-default-sorting-mode 'major-mode)
  '(ibuffer-show-empty-filter-groups nil)
- '(image-dired-db-file (expand-file-name "emacs/image-dired/db" (xdg-cache-home)))
+ '(image-dired-db-file (expand-file-name "emacs/image-dired-db" (xdg-data-home)))
  '(image-dired-dir
    (expand-file-name "emacs/image-dired/thumbnails/"
                      (xdg-cache-home)))
@@ -341,7 +341,7 @@
  '(org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home)))
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode) t)
+ '(org-mode-hook '(smartparens-mode))
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)

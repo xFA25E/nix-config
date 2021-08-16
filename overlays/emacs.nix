@@ -3,8 +3,8 @@ self: super: let
   emacs-overlay-src = super.fetchFromGitHub {
     owner = "nix-community";
     repo = "emacs-overlay";
-    rev = "3378b6cd8b52f636e4d3cb1b4479f537c434e782";
-    sha256 = "0llqicxac77dw2qzqip4gyf5gv4gvjz5fwr4zjzbx4hfbvdjv50w";
+    rev = "2b083adda6867e7c3812c84a10c04d1476c1ac81";
+    sha256 = "0dys0y3wlgypklwrk37a1c0819inxy7kpiqc7a6lmwri6ncnplxs";
   };
 
   emacs-overlay = import emacs-overlay-src self super;
