@@ -928,6 +928,11 @@
     ("yuor" "your" nil :count 0)
    ))
 
+(define-abbrev-table 'ledger-mode-abbrev-table
+  '(
+    ("eur" "EUR" nil :count 6)
+   ))
+
 (define-abbrev-table 'org-mode-abbrev-table
   '(
     ("emacs" "GNU/Emacs" nil :count 5)

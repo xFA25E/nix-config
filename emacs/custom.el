@@ -306,10 +306,10 @@
      ("s"
       ("+spam" "-inbox" "-archive" "-trash" "-deleted")
       "Mark as spam")
-     ("d"
+     ("t"
       ("+trash" "-inbox" "-spam" "-archive" "-deleted")
       "Trash")
-     ("D"
+     ("d"
       ("+deleted")
       "Delete")
      ("i"
