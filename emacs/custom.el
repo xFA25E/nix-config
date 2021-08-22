@@ -271,7 +271,8 @@
      ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml" nil nil nil)
      ("Luke Smith PeerTube" "https://lukesmith.xyz/peertube" nil nil nil)
      ("Protesilaos Stavrou" "https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g" nil nil nil)
-     ("WhatifAltHist" "https://www.youtube.com/feeds/videos.xml?user=WhatifAltHist" nil nil nil)))
+     ("WhatifAltHist" "https://www.youtube.com/feeds/videos.xml?user=WhatifAltHist" nil nil nil)
+     ("JFG Tonight" "https://www.bitchute.com/feeds/rss/channel/jfgtonight" nil nil nil)))
  '(newsticker-url-list-defaults nil)
  '(next-screen-context-lines 10)
  '(notmuch-address-internal-completion '(received nil))
@@ -341,7 +342,7 @@
  '(org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home)))
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode))
+ '(org-mode-hook '(smartparens-mode) t)
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
