@@ -342,7 +342,7 @@
  '(org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home)))
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode) t)
+ '(org-mode-hook '(smartparens-mode))
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
@@ -457,10 +457,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 135 :width normal :foundry "PfEd" :family "DejaVu Sans Mono"))))
- '(header-line ((t (:height 150 :box nil :foreground "grey20" :background "grey90" :inherit mode-line))))
- '(mode-line ((t (:background "white smoke" :foreground "black" :box (:line-width 1 :color "grey75") :height 105))))
+ '(header-line ((t (:inherit mode-line :background "grey90" :foreground "grey20" :box nil :height 135))))
+ '(mode-line ((t (:background "white smoke" :foreground "black" :box (:line-width 1 :color "grey75") :height 101))))
  '(mode-line-inactive ((t (:weight light :foreground "grey20" :background "dark gray" :inherit mode-line))))
  '(region ((t (:extend t :background "LemonChiffon2" :distant-foreground "gtk_selection_fg_color"))))
- '(tab-bar ((t (:height 105 :foreground "black" :background "black" :inherit variable-pitch))))
+ '(tab-bar ((t (:inherit variable-pitch :background "black" :foreground "black" :height 101))))
  '(tab-bar-tab ((t (:inherit tab-bar :background "white smoke" :box (:line-width 1 :color "white smoke")))))
  '(tab-bar-tab-inactive ((t (:box (:line-width 1 :color "black") :foreground "black" :background "dark grey" :inherit tab-bar-tab)))))
