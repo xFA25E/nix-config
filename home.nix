@@ -295,8 +295,8 @@ in {
 
           mkdir -p '${dir.mail}'/polimi/{inbox,sent,all}/cur
 
-          ## all tags inbox/todo/flagged should be in polimi/inbox
-          notmuch search --output=files --format=text0 tag:polimi AND '(tag:inbox OR tag:todo OR tag:flagged)' AND NOT 'path:polimi/inbox/cur/**' \
+          ## all tags inbox/flagged should be in polimi/inbox
+          notmuch search --output=files --format=text0 tag:polimi AND '(tag:inbox OR tag:flagged)' AND NOT 'path:polimi/inbox/cur/**' \
             | xargs -r0 -I '{}' mv -v '{}' '${dir.mail}/polimi/inbox/cur'
 
           ## all tags sent should be in polimi/sent
@@ -318,7 +318,6 @@ in {
           notmuch tag +polimi -- 'path:polimi/**'
           notmuch tag +inbox -- 'path:polimi/inbox/**'
           notmuch tag +sent  -- 'path:polimi/sent/**'
-          notmuch tag +todo -inbox -sent -- tag:inbox and tag:sent
 
           ## spam rules
 
