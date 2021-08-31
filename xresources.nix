@@ -1,6 +1,6 @@
 colors: {
   "xterm*cursorBlink" = "false";
-  "xterm*font" = "xft:Hack:size=15:antialias=true:hinting=true";
+  "xterm*font" = "xft:Hack:size=13:antialias=true:hinting=true";
   "xterm*internalBorder" = 0;
   "xterm*saveLines" = 10240;
   "xterm*scrollTtyOutput" = "false";
