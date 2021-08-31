@@ -384,7 +384,7 @@ The document was typeset with
      ("firefox" 102 "Open in firefox" browse-url-firefox)
      ("transmission" 116 "Add to transmission" browse-url-multi-transmission)))
  '(browse-url-multi-invidious-instances
-   '("vid.puffyan.us" "yewtu.be" "ytprivate.com" "invidious.kavin.rocks" "tube.connect.cafe"))
+   '("vid.puffyan.us" "yewtu.be" "ytprivate.com" "invidious.kavin.rocks"))
  '(browse-url-secondary-browser-function 'browse-url-multi)
  '(byte-count-to-string-function '(lambda (s) (file-size-human-readable s 'si)))
  '(c-default-style '((java-mode . "java") (other . "awk")))
