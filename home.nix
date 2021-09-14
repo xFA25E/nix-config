@@ -40,7 +40,7 @@ in {
           extraConfig.logfile = "${dir.cache}/msmtp-polimi.log";
         };
         notmuch.enable = true;
-        passwordCommand = "${pkgs.pass}/bin/pass show mail/polimi | ${pkgs.coreutils}/bin/head -n1";
+        passwordCommand = "${pkgs.pass}/bin/pass show mail/polimi | ${pkgs.coreutils}/bin/head -n1 | ${pkgs.coreutils}/bin/tr -d '\\n'";
         primary = true;
         realName = "Valeriy Litkovskyy";
         smtp = {
