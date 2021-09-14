@@ -868,17 +868,6 @@ like to call it.  Because /url-parse/ doesn't protect ~match-data~, it fucks up
     (save-match-data (apply fn args))))
 #+end_src
 
-*** [[https://sr.ht/~dsemy/vcomplete/][Vcomplete]]
-Live update of *Completions* buffer while typing.
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'vcomplete
-  (define-key vcomplete-command-map [?\C-n] nil)
-  (define-key vcomplete-command-map [?\C-p] nil)
-  (define-key vcomplete-command-map [?\C-\M-m] nil)
-  (define-key vcomplete-command-map "\M-v" 'switch-to-completions))
-#+end_src
-
 *** [[https://github.com/fxbois/web-mode][Web Mode]]
 You can edit files with a lot of different web languages in it.
 

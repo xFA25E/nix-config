@@ -318,12 +318,6 @@
   (define-advice url-generic-parse-url (:around (fn &rest args) save-match-data)
     (save-match-data (apply fn args))))
 
-(with-eval-after-load 'vcomplete
-  (define-key vcomplete-command-map [?\C-n] nil)
-  (define-key vcomplete-command-map [?\C-p] nil)
-  (define-key vcomplete-command-map [?\C-\M-m] nil)
-  (define-key vcomplete-command-map "\M-v" 'switch-to-completions))
-
 (add-to-list 'auto-mode-alist (cons (rx ".twig" eos) 'web-mode))
 
 (define-key global-map "\M-V" 'scroll-down-line)
