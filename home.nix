@@ -295,13 +295,13 @@ in {
 
           mkdir -p '${dir.mail}'/polimi/{inbox,sent,all}/cur
 
-          ## all tags archive/trash/spam should be in polimi/all
-          notmuch search --output=files --format=text0 tag:polimi AND '(tag:archive OR tag:trash OR tag:spam)' AND NOT 'path:polimi/all/cur/**' \
-            | xargs -r0 -I '{}' mv -v '{}' '${dir.mail}/polimi/all/cur'
-
           ## all tags sent should be in polimi/sent
           notmuch search --output=files --format=text0 tag:polimi AND tag:sent AND NOT 'path:polimi/sent/cur/**' \
             | xargs -r0 -I '{}' mv -v '{}' '${dir.mail}/polimi/sent/cur'
+
+          ## all tags archive/trash/spam should be in polimi/all
+          notmuch search --output=files --format=text0 tag:polimi AND '(tag:archive OR tag:trash OR tag:spam)' AND NOT 'path:polimi/all/cur/**' \
+            | xargs -r0 -I '{}' mv -v '{}' '${dir.mail}/polimi/all/cur'
 
           ## all tags inbox/flagged should be in polimi/inbox
           notmuch search --output=files --format=text0 tag:polimi AND '(tag:inbox OR tag:flagged)' AND NOT 'path:polimi/inbox/cur/**' \
