@@ -17,9 +17,21 @@ self: super: let
     sha256 = src.sha256;
   };
 
+  hyperspec = super.fetchzip {
+    name = "common-lisp-hyperspec";
+    url = "http://ftp.lispworks.com/pub/software_tools/reference/HyperSpec-7-0.tar.gz";
+    sha256 = "1zsi35245m5sfb862ibzy0pzlph48wvlggnqanymhgqkpa1v20ak";
+    stripRoot = false;
+  };
+
   emacs-default = super.writeTextDir "share/emacs/site-lisp/default.el" ''
-    (setq find-function-C-source-directory "${emacs-source}/src")
+    (setq common-lisp-hyperspec-root "file://${hyperspec}/HyperSpec/")
   '';
+
+  # emacs-default = super.writeTextDir "share/emacs/site-lisp/default.el" ''
+  #   (setq common-lisp-hyperspec-root "${self.hyperspec}/HyperSpec/")
+  #   (setq find-function-C-source-directory "${emacs-source}/src")
+  # '';
 
   overrides = eself: esuper: let
     make-melpa = { name, url, version, sha256, deps ? [], rev ? version }: esuper.melpaBuild {
@@ -102,6 +114,8 @@ self: super: let
   emacsWithPackagesGcc = ((emacs-overlay.emacsPackagesFor emacs-overlay.emacsGcc).overrideScope' overrides).emacsWithPackages;
 in {
   myEmacs = emacsWithPackages (epkgs: with epkgs; [
+
+    emacs-default
 
     async avy browse-url-multi cargo consult csv-mode cyrillic-dvorak-im
     dired-rsync direnv dumb-jump ebdb edit-indirect eglot emmet-mode
