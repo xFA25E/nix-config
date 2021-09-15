@@ -122,6 +122,16 @@
 (define-key isearch-mode-map "\C-h" 'isearch-delete-char)
 (define-key isearch-mode-map "\C-?" isearch-help-map)
 
+(with-eval-after-load 'ledger-regex
+  (setq ledger-amount-regex
+        (concat "\\(  \\|\t\\| \t\\)[ \t]*-?"
+                "\\(?:" ledger-commodity-regexp " *\\)?"
+                "\\([-=]?\\(?:[0-9]+\\|[0-9,.]+?\\)\\)"
+                "\\([,.][0-9)]+\\)?"
+                "\\(?: *" ledger-commodity-regexp "\\)?"
+                "\\([ \t]*[@={]@?[^\n;]+?\\)?"
+                "\\([ \t]+;.+?\\|[ \t]*\\)?$")))
+
 (define-key goto-map "\M-l" 'link-hint-open-link)
 (define-key goto-map "\M-L" 'link-hint-copy-link)
 (with-eval-after-load 'link-hint

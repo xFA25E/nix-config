@@ -456,6 +456,24 @@ and ~occur~.
 (define-key isearch-mode-map "\C-?" isearch-help-map)
 #+end_src
 
+*** [[https://github.com/ledger/ledger-mode][Ledger Mode]]
+Cli, text-based, accounting system.  This particular setting fixes the amount
+regex.  By default, it can't recognize amounts with equal sign (~=~) at the
+beginning and, as a consequence, can't indent, properly, lines with this kinds
+of amounts.
+
+#+begin_src emacs-lisp
+(with-eval-after-load 'ledger-regex
+  (setq ledger-amount-regex
+        (concat "\\(  \\|\t\\| \t\\)[ \t]*-?"
+                "\\(?:" ledger-commodity-regexp " *\\)?"
+                "\\([-=]?\\(?:[0-9]+\\|[0-9,.]+?\\)\\)"
+                "\\([,.][0-9)]+\\)?"
+                "\\(?: *" ledger-commodity-regexp "\\)?"
+                "\\([ \t]*[@={]@?[^\n;]+?\\)?"
+                "\\([ \t]+;.+?\\|[ \t]*\\)?$")))
+#+end_src
+
 *** [[https://github.com/noctuid/link-hint.el][Link Hint]]
 Another favorite package of mine.  It lets you do actions to various points of
 interest in buffers using Avy.  It can do anything: buttons, links, completion
