@@ -358,7 +358,7 @@ The document was typeset with
    (expand-file-name "emacs/auto-saves-list/.saves-"
                      (xdg-cache-home)))
  '(avy-background t)
- '(avy-goto-word-0-regexp "\\_<\\(?:\\sw\\|\\s_\\)")
+ '(avy-goto-word-0-regexp "\\_<\\(\\sw\\|\\s_\\)")
  '(avy-keys '(97 111 101 117 104 116 110 115))
  '(avy-style 'words)
  '(backup-by-copying t)
@@ -403,7 +403,15 @@ The document was typeset with
  '(comint-input-ring-size 10000)
  '(comint-mode-hook '(smartparens-mode))
  '(comint-password-prompt-regexp
-   "\\(^ *\\|\\( SMB\\|'s\\|Bad\\|CVS\\|Enter\\(?: \\(?:Auth\\|\\(?:sam\\|th\\)e\\)\\)?\\|Kerberos\\|LDAP\\|New\\|Old\\|PEM\\|Re\\(?:peat\\|type\\)\\|SUDO\\|UNIX\\|\\[sudo]\\|enter\\(?: \\(?:auth\\|\\(?:sam\\|th\\)e\\)\\)?\\|login\\|new\\|old\\) +.*\\)\\(?:\\(?:adgangskode\\|contrase\\(?:\\(?:ny\\|ñ\\)a\\)\\|geslo\\|h\\(?:\\(?:asł\\|esl\\)o\\)\\|iphasiwedi\\|jelszó\\|l\\(?:ozinka\\|ösenord\\)\\|m\\(?:ot de passe\\|ật khẩu\\)\\|p\\(?:a\\(?:rola\\|s\\(?:ahitza\\|s\\(?: phrase\\|code\\|ord\\|phrase\\|wor[dt]\\)\\|vorto\\)\\)\\|in\\)\\|s\\(?:alasana\\|enha\\|laptažodis\\)\\|wachtwoord\\|лозинка\\|пароль\\|ססמה\\|كلمة السر\\|गुप्तशब्द\\|शब्दकूट\\|গুপ্তশব্দ\\|পাসওয়ার্ড\\|ਪਾਸਵਰਡ\\|પાસવર્ડ\\|ପ୍ରବେଶ ସଙ୍କେତ\\|கடவுச்சொல்\\|సంకేతపదము\\|ಗುಪ್ತಪದ\\|അടയാളവാക്ക്\\|රහස්පදය\\|ពាក្យសម្ងាត់\\|パスワード\\|密[码碼]\\|암호\\)\\|Response\\)\\(?:\\(?:, try\\)? *again\\| (empty for no passphrase)\\| (again)\\)?\\(?: [[:alpha:]]+ .+\\)?[[:blank:]]*[:：៖][[:blank:]]*\\'\\|[Pp]assword \\'")
+   (rx
+    (or
+     (regexp
+      (eval
+       (car
+        (get 'comint-password-prompt-regexp 'standard-value))))
+     (and
+      (any "Pp")
+      "assword " eos))))
  '(compilation-always-kill t)
  '(compilation-scroll-output t)
  '(completion-category-overrides '((bookmark (styles basic))))
@@ -423,16 +431,47 @@ The document was typeset with
  '(dired-create-destination-dirs 'ask)
  '(dired-dwim-target t)
  '(dired-guess-shell-alist-user
-   '(("\\.\\(?:csv\\|doc\\|docx\\|odp\\|ods\\|odt\\|ppt\\|pptx\\|xls\\|xlsx\\)\\'" "setsid -f libreoffice * >/dev/null 2>&1" "libreoffice --invisible --headless --convert-to pdf * &")
-     ("\\.\\(?:bmp\\|gif\\|jfif\\|jpeg\\|jpg\\|nef\\|png\\|thm\\|tif\\|webp\\|xpm\\)\\'" "setsid -f sxiv * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
-     ("\\.\\(?:ai\\|eps\\)\\'" "setsid -f inkscape * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
-     ("\\.\\(?:djvu\\|fb2\\)\\'" "ebook-convert ? .epub &")
-     ("\\.pdf\\'" "setsid -f libreoffice * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
-     ("\\.\\(?:3gp\\|aiff\\|avi\\|flac\\|flv\\|m4a\\|mkv\\|mov\\|mp3\\|mp4\\|mpg\\|ogg\\|ogv\\|opus\\|vob\\|wav\\|webm\\|wmv\\)\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1" "video_duration * | format_duration" "video_duration * | awk '{s+=$1}END{print s}' | format_duration" "compress_video * &" "strip_video * &" "mediainfo" "mpv -vo=drm")
-     ("\\.cue\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1")
-     ("\\.rar\\'" "temp=\"$(echo `?` | rev | cut -d. -f 2- | rev)\"; mkdir -p \"${temp}\"; unrar x ? \"${temp}\"")
-     ("\\.torrent\\'" "transmission-show")
-     ("\\.epub\\'" "ebook-convert ? .mobi &")))
+   (list
+    (list
+     (rx "."
+         (or "csv" "doc" "docx" "odp" "ods" "odt" "ppt" "pptx" "xls" "xlsx")
+         eos)
+     "setsid -f libreoffice * >/dev/null 2>&1" "libreoffice --invisible --headless --convert-to pdf * &")
+    (list
+     (rx "."
+         (or "bmp" "gif" "jfif" "jpeg" "jpg" "nef" "png" "thm" "tif" "webp" "xpm")
+         eos)
+     "setsid -f sxiv * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
+    (list
+     (rx "."
+         (or "ai" "eps")
+         eos)
+     "setsid -f inkscape * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
+    (list
+     (rx "."
+         (or "djvu" "fb2")
+         eos)
+     "ebook-convert ? .epub &")
+    (list
+     (rx ".pdf" eos)
+     "setsid -f libreoffice * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
+    (list
+     (rx "."
+         (or "3gp" "aiff" "avi" "flac" "flv" "m4a" "mkv" "mov" "mp3" "mp4" "mpg" "ogg" "ogv" "opus" "vob" "wav" "webm" "wmv")
+         eos)
+     "setsid -f mpv --profile=gui * >/dev/null 2>&1" "video_duration * | format_duration" "video_duration * | awk '{s+=$1}END{print s}' | format_duration" "compress_video * &" "strip_video * &" "mediainfo" "mpv -vo=drm")
+    (list
+     (rx ".cue" eos)
+     "setsid -f mpv --profile=gui * >/dev/null 2>&1")
+    (list
+     (rx ".rar" eos)
+     "temp=\"$(echo `?` | rev | cut -d. -f 2- | rev)\"; mkdir -p \"${temp}\"; unrar x ? \"${temp}\"")
+    (list
+     (rx ".torrent" eos)
+     "transmission-show")
+    (list
+     (rx ".epub" eos)
+     "ebook-convert ? .mobi &")))
  '(dired-listing-switches "-lFAv --si --group-directories-first")
  '(dired-ls-F-marks-symlinks t)
  '(dired-mode-hook '(dired-hide-details-mode hl-line-mode))
@@ -592,7 +631,16 @@ The document was typeset with
  '(message-kill-buffer-on-exit t)
  '(message-send-mail-function 'message-send-mail-with-sendmail)
  '(message-subject-re-regexp
-   "^[[:blank:]]*\\(?:\\(?:R\\(?:is\\|[Ee]\\)?\\)\\(?:\\[[[:digit:]]*]\\)* ?:[[:blank:]]*\\)*")
+   (rx bol
+       (* blank)
+       (*
+        (or "R" "RE" "Re" "Ris")
+        (* "["
+           (* digit)
+           "]")
+        (32 " ")
+        ":"
+        (* blank))))
  '(minibuffer-beginning-of-buffer-movement t)
  '(minibuffer-depth-indicate-mode t)
  '(minibuffer-eldef-shorten-default t)
@@ -733,7 +781,13 @@ The document was typeset with
  '(save-place-limit 1000)
  '(save-place-mode t)
  '(save-place-skip-check-regexp
-   "\\`/\\(?:cdrom\\|floppy\\|mnt\\|\\(?:[^@/:]*@\\)?[^@/:]*[^@/:.]:\\)\\|\\`http")
+   (rx
+    (or
+     (regexp
+      (eval
+       (car
+        (get 'save-place-skip-check-regexp 'standard-value))))
+     (and bos "http"))))
  '(savehist-file (expand-file-name "emacs/savehist" (xdg-cache-home)))
  '(savehist-mode t)
  '(savehist-save-hook '(savehist-filter-file-name-history))
