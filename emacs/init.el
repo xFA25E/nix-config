@@ -96,6 +96,9 @@
 (define-key ctl-x-map "K" 'find-function-on-key)
 (define-key ctl-x-map "V" 'find-variable)
 
+(dolist (fn '(find-library find-function find-function-on-key find-variable))
+  (advice-add fn :before 'xref-push-marker-stack-ignore-args))
+
 (define-key help-map "\M-c" 'finder-commentary)
 
 (with-eval-after-load 'flymake
@@ -116,6 +119,9 @@
 (add-hook 'transmission-mode-hook 'hl-line-mode)
 (add-hook 'transmission-peers-mode-hook 'hl-line-mode)
 (add-hook 'mpc-mode-hook 'hl-line-mode)
+
+(with-eval-after-load 'image-dired
+  (load (expand-file-name "emacs/image-dired-db.el" (xdg-config-home))))
 
 (define-key lisp-interaction-mode-map "\C-j" 'ipretty-last-sexp)
 
@@ -336,5 +342,9 @@
 (define-key global-map [?\C-\M-\S-f] 'next-buffer)
 (define-key global-map "\M-Q" 'quit-window)
 (define-key global-map "\M-o" 'other-window)
+
+(autoload 'xref-push-marker-stack "xref")
+(defun xref-push-marker-stack-ignore-args (&rest _)
+  (xref-push-marker-stack))
 
 (load (expand-file-name "nixpkgs/emacs/custom.el" (xdg-config-home)) nil nil t)

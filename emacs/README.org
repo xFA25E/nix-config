@@ -390,6 +390,14 @@ Usefull commands to jump to /e-lisp/ definitions.
 (define-key ctl-x-map "V" 'find-variable)
 #+end_src
 
+Push xref marker before using some ~find-func~ commands.  By doing this, we can
+go back with =M-,=.
+
+#+begin_src emacs-lisp
+(dolist (fn '(find-library find-function find-function-on-key find-variable))
+  (advice-add fn :before 'xref-push-marker-stack-ignore-args))
+#+end_src
+
 *** Finder
 Show the *Commentary* section of a package.
 
@@ -909,6 +917,17 @@ Do you like windows?  Me neither.
 (define-key global-map [?\C-\M-\S-f] 'next-buffer)
 (define-key global-map "\M-Q" 'quit-window)
 (define-key global-map "\M-o" 'other-window)
+#+end_src
+
+*** Xref
+Built-in general facility for finding and referencing definitions.  Here, a
+function is defined that saves current place to xref stack, but it ignores it's
+arguments.  It is used mostly in advices and hooks.
+
+#+begin_src emacs-lisp
+(autoload 'xref-push-marker-stack "xref")
+(defun xref-push-marker-stack-ignore-args (&rest _)
+  (xref-push-marker-stack))
 #+end_src
 
 ** Load Custom
