@@ -440,6 +440,12 @@ Highlight current line in these modes.
 (add-hook 'mpc-mode-hook 'hl-line-mode)
 #+end_src
 
+*** Image Dired
+#+begin_src emacs-lisp
+(with-eval-after-load 'image-dired
+  (load (expand-file-name "emacs/image-dired-db.el" (xdg-config-home))))
+#+end_src
+
 *** Ipretty
 Pretty-print /e-lisp/ result of last S-EXpression.
 
