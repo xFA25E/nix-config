@@ -20,17 +20,6 @@
 
 ;;; Commentary:
 
-;; TODO:
-
-;; when image-dired-db-enabled is t:
-;; if the current db is not in hash-table form:
-;; convert it to hash-table form
-;; add advices
-
-;; when image-dired-db-enabled is nil:
-;; convert current db in old format
-;; remove advices
-
 ;;; Code:
 
 (require 'cl-lib)
