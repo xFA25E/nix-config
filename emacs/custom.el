@@ -676,7 +676,8 @@ The document was typeset with
      ("Sean Last" "https://www.youtube.com/feeds/videos.xml?channel_id=UCK1Uk2f36aglexxLkfOWnEQ" nil nil nil)
      ("Ideas And Data" "https://ideasanddata.wordpress.com/feed/" nil nil nil)
      ("Паучительные Истории" "https://www.youtube.com/feeds/videos.xml?channel_id=UC4rpWi42yPqTA0wnfx7MqOA" nil nil nil)
-     ("КоверАраб" "https://www.youtube.com/feeds/videos.xml?channel_id=UCjulQNQQJmpYzI-BD1-s03w" nil nil nil)))
+     ("КоверАраб" "https://www.youtube.com/feeds/videos.xml?channel_id=UCjulQNQQJmpYzI-BD1-s03w" nil nil nil)
+     ("White Mage" "https://www.youtube.com/feeds/videos.xml?channel_id=UC1k29QaI7FKn5wki72Lyy7w" nil nil nil)))
  '(newsticker-url-list-defaults nil)
  '(next-screen-context-lines 10)
  '(notmuch-address-internal-completion '(received nil))
@@ -746,7 +747,7 @@ The document was typeset with
  '(org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home)))
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode) t)
+ '(org-mode-hook '(smartparens-mode))
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
