@@ -100,6 +100,11 @@
   p n>
   "}" >)
 
+(skempo-define-tempo (if :mode js-mode)
+  "if (" p ") {" n>
+  p n>
+  "}" >)
+
 (skempo-define-tempo (github :mode nix-mode)
   "fetchFromGitHub {" n>
   "owner = \"" p "\";" n>
