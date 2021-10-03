@@ -30,7 +30,6 @@ in {
         "image_clipboard" = [ file xclip ];
         "image-dired-external-viewer" = [ mpv sxiv ];
         "make_backup" = [ utillinux coreutils rsync gawk dmenu ];
-        "make_video_queue" = [ findutils coreutils gawk "$out" gnused unixtools.column ];
         "mpvi" = [ mpv libnotify jq gnused ytdl unixtools.column dmenu ];
         "notify_sound" = [ mpv ];
         "qrshow" = [ libnotify coreutils qrencode sxiv ];
