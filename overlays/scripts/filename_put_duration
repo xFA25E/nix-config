@@ -1,0 +1,4 @@
+#!/bin/bash
+dur=$(video_duration "$1" | format_duration | cut -d" " -f1)
+printf -v newfile "%s - %s.%s" "''${1:0:-''${#ext}}" "$dur" "''${1##*.}"
+mv -v "$1" "$newfile"

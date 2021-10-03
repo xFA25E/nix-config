@@ -26,6 +26,7 @@ in {
       wrapScripts = with self; {
         "compress_video" = [ ffmpeg ];
         "extract_eml" = [ coreutils mu ];
+        "filename_put_duration" = [ coreutils "$out" ];
         "format_duration" = [ gawk ];
         "image_clipboard" = [ file xclip ];
         "image-dired-external-viewer" = [ mpv sxiv ];
