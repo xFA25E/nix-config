@@ -134,7 +134,7 @@ in {
       pueue pulsemixer pwgen qrencode ripgrep rsync scripts scrot sdcv
       simplescreenrecorder sloccount speedtest-cli stalonetray stumpwm sxiv
       syncthing tdesktop transmission unzip wget woof xclip xdg-user-dirs xterm
-      xz youtube-dl ytdl zip zoom-us
+      xz youtube-dl zip zoom-us
 
       go-mtpfs parted exiftool libjpeg shellcheck
       discord
