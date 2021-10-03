@@ -732,7 +732,12 @@ The document was typeset with
  '(org-agenda-include-diary t)
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
- '(org-babel-load-languages '((calc . t) (emacs-lisp . t) (sql . t) (shell . t)))
+ '(org-babel-load-languages
+   '((calc . t)
+     (emacs-lisp . t)
+     (sql . t)
+     (shell . t)
+     (http . t)))
  '(org-capture-templates
    '(("r" "Remember" entry
       (file+headline "~/org/life.org" "Remember")
@@ -773,7 +778,8 @@ The document was typeset with
  '(register-separator 43)
  '(rust-format-on-save t)
  '(safe-local-variable-values
-   '((eval hl-line-mode t)
+   '((org-confirm-babel-evaluate)
+     (eval hl-line-mode t)
      (eval add-hook 'after-save-hook
            (lambda nil
              (byte-recompile-file

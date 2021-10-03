@@ -607,6 +607,15 @@ to be confusing for novices.  [[https://github.com/xFA25E/images/raw/main/do-nic
 (setq disabled-command-function nil)
 #+end_src
 
+*** Ob Http
+#+begin_src emacs-lisp
+(with-eval-after-load 'org
+  (cl-pushnew
+   '(const :tag "Http" http)
+   (cdadr (memq :key-type (get 'org-babel-load-languages 'custom-type)))
+   :test 'equal))
+#+end_src
+
 *** Org
 Who doesn't know /org-mode/?  This is another killer feature of *GNU/Emacs*.
 

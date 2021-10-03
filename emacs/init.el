@@ -191,6 +191,12 @@
 (setq disabled-command-function nil)
 
 (with-eval-after-load 'org
+  (cl-pushnew
+   '(const :tag "Http" http)
+   (cdadr (memq :key-type (get 'org-babel-load-languages 'custom-type)))
+   :test 'equal))
+
+(with-eval-after-load 'org
   (define-key org-mode-map [?\C-c?\C-\S-t] 'org-todo-yesterday))
 
 (define-advice org-show-notification (:after (&rest _) sound)
