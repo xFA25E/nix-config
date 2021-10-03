@@ -1087,6 +1087,11 @@ statements.
   "if (" p ") {" n>
   p n>
   "}" >)
+
+(skempo-define-tempo (for :mode js-mode)
+  "for (" p ") {" n>
+  p n>
+  "}" >)
 #+end_src
 
 ** Nix
