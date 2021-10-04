@@ -230,6 +230,7 @@
 (define-key mode-specific-map "op" 'proced)
 
 (define-key mode-specific-map "ou" 'pueue)
+(add-hook 'pueue-list-mode-hook 'hl-line-mode)
 
 (define-key ctl-x-r-map "v" 'view-register)
 (define-key ctl-x-r-map "L" 'list-registers)
