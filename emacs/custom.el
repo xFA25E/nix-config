@@ -376,12 +376,12 @@ The document was typeset with
  '(browse-url-browser-function 'browse-url-multi)
  '(browse-url-generic-program "brave-incognito")
  '(browse-url-multi-answers
-   '(("brave" 98 "Open in brave" browse-url-generic)
+   '(("firefox" 102 "Open in firefox" browse-url-firefox)
      ("eww" 101 "Open in eww" eww-browse-url)
      ("ytdli" 121 "Download with ytdli" browse-url-multi-ytdli)
      ("mpvi" 109 "Open in mpvi" browse-url-multi-mpvi)
      ("invidious" 105 "Open as invidious url in eww" browse-url-multi-invidious)
-     ("firefox" 102 "Open in firefox" browse-url-firefox)
+     ("brave" 98 "Open in brave" browse-url-generic)
      ("transmission" 116 "Add to transmission" browse-url-multi-transmission)))
  '(browse-url-multi-invidious-instances
    '("vid.puffyan.us" "yewtu.be" "ytprivate.com" "invidious.kavin.rocks"))
