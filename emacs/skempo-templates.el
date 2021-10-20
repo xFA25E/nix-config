@@ -110,6 +110,13 @@
   p n>
   "}" >)
 
+(skempo-define-tempo (try :mode js-mode)
+  "try {" n>
+  p n>
+  "} catch (" p "error) {" > n>
+  p n>
+  "}" >)
+
 (skempo-define-tempo (github :mode nix-mode)
   "fetchFromGitHub {" n>
   "owner = \"" p "\";" n>

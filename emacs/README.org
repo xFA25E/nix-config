@@ -1102,6 +1102,13 @@ statements.
   "for (" p ") {" n>
   p n>
   "}" >)
+
+(skempo-define-tempo (try :mode js-mode)
+  "try {" n>
+  p n>
+  "} catch (" p "error) {" > n>
+  p n>
+  "}" >)
 #+end_src
 
 ** Nix
