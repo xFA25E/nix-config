@@ -512,6 +512,7 @@ The document was typeset with
  '(eldoc-minor-mode-string "")
  '(emacs-lisp-mode-hook '(skempo-mode flymake-mode smartparens-mode abbrev-mode))
  '(enable-recursive-minibuffers t)
+ '(envrc-global-mode t)
  '(eshell-directory-name (expand-file-name "emacs/eshell/" (xdg-cache-home)))
  '(eval-expression-print-length t)
  '(eval-expression-print-level t)

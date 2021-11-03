@@ -125,6 +125,8 @@ in {
     sdcv shell-pwd skempo sly sly-asdf sly-quicklisp smartparens sql-indent
     sqlup-mode transmission vlf web-mode wgrep
 
+    envrc
+
   ]);
 
 }
