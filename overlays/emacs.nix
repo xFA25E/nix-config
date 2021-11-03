@@ -96,8 +96,8 @@ self: super: let
     skempo = make-melpa {
       name = "skempo";
       url = "https://github.com/xFA25E/skempo";
-      version = "0.1.0";
-      sha256 = "0na465f27p6n64sf0pj0aqdi384m1wy3hxcc2d6a67hs39rkyvi9";
+      version = "0.1.2";
+      sha256 = "0p5j66nqn2id8az52nkbnnmfgzbavkjc9fw701qyjd4sm1g4l50i";
       deps = [ eself.parent-mode ];
     };
 
