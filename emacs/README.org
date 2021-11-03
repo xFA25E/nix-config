@@ -706,7 +706,7 @@ A queue of tasks.  Used mostly for downloading youtube videos through
 
 #+begin_src emacs-lisp
 (define-key mode-specific-map "ou" 'pueue)
-(add-hook 'pueue-list-mode-hook 'hl-line-mode)
+(add-hook 'pueue-mode-hook 'hl-line-mode)
 #+end_src
 
 *** Register
