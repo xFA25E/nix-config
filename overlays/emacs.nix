@@ -88,8 +88,8 @@ self: super: let
     pueue = make-melpa {
       name = "pueue";
       url = "https://github.com/xFA25E/pueue";
-      version = "1.0.1";
-      sha256 = "1whfr5d7w8c72hfkdrihkqz67swipv47a194riasry9pjwrnwi48";
+      version = "1.0.3";
+      sha256 = "165hb306r16bhfr442dpjz68dwvbk5mq1b61gm9an9gcpm25igsm";
       deps = [ eself.transient ];
     };
 
