@@ -49,8 +49,6 @@
 
 (with-eval-after-load 'dired (require 'dired-x))
 
-(with-eval-after-load 'dired (define-key dired-mode-map "r" 'dired-rsync))
-
 (with-eval-after-load 'dired (dired-async-mode))
 
 (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)

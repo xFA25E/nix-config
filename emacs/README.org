@@ -276,14 +276,6 @@ Same as the above, but has one of my favorite /dired/ features:
 (with-eval-after-load 'dired (require 'dired-x))
 #+end_src
 
-**** [[https://github.com/stsquad/dired-rsync][Dired Rsync]]
-Neat little package that facilitates the usage of rsync.  Very helpful when
-using tramp on remote hosts.
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'dired (define-key dired-mode-map "r" 'dired-rsync))
-#+end_src
-
 **** [[https://github.com/jwiegley/emacs-async/blob/master/dired-async.el][Dired Async]]
 Makes a lot of dired commands asyncronous.  Not =delete= though.
 
