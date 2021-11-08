@@ -1,6 +1,8 @@
 #!/bin/bash
-dur=$(video_duration "$1" | format_duration | cut -d" " -f1)
-ext=${1##*.}
-len=$((${#ext} + 1))
-printf -v newfile "%s - %s.%s" "${1:0:-${len}}" "$dur" "$ext"
-mv -v "$1" "$newfile"
+for file in "$@"; do
+    dur=$(video_duration "$file" | format_duration | cut -d" " -f1)
+    ext=${file##*.}
+    len=$((${#ext} + 1))
+    printf -v newfile "%s - %s.%s" "${file:0:-${len}}" "$dur" "$ext"
+    mv -v "$file" "$newfile"
+done
