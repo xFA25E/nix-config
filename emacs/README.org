@@ -973,8 +973,8 @@ of three situations:
     ('elisp-group (string-trim-right (buffer-name) (rx (? "-mode") ".el" eos)))
     (`(lisp-with-parens . ,body)
      (let* ((region-p (use-region-p))
-            (before-p (or region-p (/= (char-before) ?\()))
-            (after-p (or region-p (/= (char-after) ?\)))))
+            (before-p (or region-p (not (eql (char-before) ?\())))
+            (after-p (or region-p (not (eql (char-after) ?\))))))
        `(l ,(when before-p "(") ,@body ,(when after-p ")"))))))
 
 (add-to-list 'tempo-user-elements 'skempo-user-element)
