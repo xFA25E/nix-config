@@ -457,7 +457,7 @@ in {
         };
         Service = {
           Environment = [ "PATH=${pkgs.gnused}/bin:${pkgs.coreutils}/bin" ];
-          ExecStart = "${pkgs.findutils}/bin/updatedb --output=${dir.cache}/locatedb";
+          ExecStart = "${pkgs.findutils}/bin/updatedb --output=${dir.cache}/locatedb --prunepaths=\"/tmp /usr/tmp /var/tmp /afs /nix ${dir.cache} ${dir.data}\"";
           IOSchedulingClass = "idle";
           Type = "oneshot";
         };
