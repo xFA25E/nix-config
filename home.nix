@@ -62,10 +62,6 @@ in {
     extraOutputsToInstall = [ "man" "doc" "info" "devdoc" ];
 
     file = {
-      ".abclrc".source = ./common-lisp.lisp;
-      ".ccl-init.lisp".source = ./common-lisp.lisp;
-      ".clisprc.lisp".source = ./common-lisp.lisp;
-      ".eclrc".source = ./common-lisp.lisp;
       ".Xresources".onChange = ''
         ${pkgs.xorg.xrdb}/bin/xrdb -load ~/.Xresources || true
       '';
@@ -78,7 +74,6 @@ in {
 
         eval `${pkgs.openssh}/bin/ssh-agent`
       '';
-      ".sbclrc".source = ./common-lisp.lisp;
       ".shinit".text = ''
         ${pkgs.coreutils}/bin/stty -ixon
         PS1='[$USER $?] $(test $UID -eq 0 && echo "#" || echo "$") '
@@ -173,7 +168,6 @@ in {
       LOCATE_PATH = "${dir.cache}/locatedb";
       RUSTUP_HOME = "${dir.cache}/rustup";
       CARGO_HOME = "${dir.cache}/cargo";
-      QUICKLISP = "${dir.cache}/quicklisp";
       INFOPATH = "$INFOPATH\${INFOPATH:+:}/usr/local/share/info";
       WGETRC = "${dir.config}/wgetrc";
     };

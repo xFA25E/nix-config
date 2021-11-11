@@ -340,6 +340,15 @@ The document was typeset with
        (buffer-file-name))
       " ends here
 ")
+     (("/common-lisp/[^/]+/shell\\.nix\\'" . "shell.nix for Common Lisp")
+      .
+      ["shell-common-lisp.nix"
+       (lambda nil
+         (goto-char 1428)
+         (insert
+          (file-name-nondirectory
+           (directory-file-name
+            (file-name-directory buffer-file-name)))))])
      (lisp-mode .
                 [(nil "(in-package :cl)
 ")
@@ -843,6 +852,8 @@ The document was typeset with
  '(skempo-delete-duplicate-marks t)
  '(skempo-mode-lighter "")
  '(skempo-skeleton-marks-support t)
+ '(skempo-update-identical-tags t)
+ '(sly-default-lisp 'sbcl)
  '(small-temporary-file-directory "/dev/shm/")
  '(sql-input-ring-file-name (expand-file-name "emacs/sql_history" (xdg-cache-home)))
  '(sql-interactive-mode-hook '(sql-indent-enable))

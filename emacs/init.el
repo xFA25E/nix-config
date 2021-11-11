@@ -288,6 +288,14 @@
   (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
   (load (expand-file-name "emacs/skempo-templates.el" (xdg-config-home))))
 
+(with-eval-after-load 'sly
+  (setq sly-lisp-implementations
+        '((sbcl  ("sbcl"))
+          (ecl   ("ecl"))
+          (ccl   ("ccl"))
+          (clisp ("clisp"))
+          (abcl  ("abcl")))))
+
 (with-eval-after-load 'smartparens (require 'smartparens-config))
 
 (add-hook 'minibuffer-setup-hook 'smartparens-mode)
