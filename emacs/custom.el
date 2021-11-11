@@ -361,7 +361,10 @@ The document was typeset with
          (insert
           (file-name-nondirectory
            (directory-file-name
-            (file-name-directory buffer-file-name)))))])))
+            (file-name-directory buffer-file-name)))))])
+     ((".envrc\\'" . "Direnv envrc")
+      nil "use nix
+")))
  '(auto-insert-directory (expand-file-name "emacs/auto-insert/" (xdg-config-home)))
  '(auto-insert-mode t)
  '(auto-revert-avoid-polling t)
