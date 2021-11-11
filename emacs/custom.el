@@ -343,7 +343,17 @@ The document was typeset with
      (lisp-mode .
                 [(nil "(in-package :cl)
 ")
-                 skeleton-template-lisp-defpackage])))
+                 skeleton-template-lisp-defpackage])
+     (("/emacs-lisp/[^/]+/shell\\.nix\\'" . "shell.nix for Emacs Lisp")
+      .
+      ["shell-emacs-lisp.nix"
+       (lambda nil
+         (goto-char 572)
+         (insert
+          (file-name-nondirectory
+           (directory-file-name
+            (file-name-directory buffer-file-name)))))])))
+ '(auto-insert-directory (expand-file-name "emacs/auto-insert/" (xdg-config-home)))
  '(auto-insert-mode t)
  '(auto-revert-avoid-polling t)
  '(auto-revert-mode-text " AR")

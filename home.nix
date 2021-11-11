@@ -174,7 +174,6 @@ in {
       RUSTUP_HOME = "${dir.cache}/rustup";
       CARGO_HOME = "${dir.cache}/cargo";
       QUICKLISP = "${dir.cache}/quicklisp";
-      ELDEV_DIR = "${dir.cache}/eldev";
       INFOPATH = "$INFOPATH\${INFOPATH:+:}/usr/local/share/info";
       WGETRC = "${dir.config}/wgetrc";
     };

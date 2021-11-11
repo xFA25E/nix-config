@@ -939,7 +939,9 @@ Finally, I load [[custom.el]] settings.
 (load (expand-file-name "nixpkgs/emacs/custom.el" (xdg-config-home)) nil nil t)
 #+end_src
 
-* Skempo Templates
+* Templates
+
+** Skempo
 :properties:
 :header-args:emacs-lisp: :tangle skempo-templates.el
 :end:
@@ -951,7 +953,7 @@ Header with imports.
 (require 'skempo)
 #+end_src
 
-** User Elements
+*** User Elements
 /Tempo/ is very extensible (there is a similar feature for /skeleton/).  Here, I
 define a function that processes unknown elements to /tempo/ and returns other
 /tempo/ elements.  Very easy.
@@ -980,7 +982,7 @@ of three situations:
 (add-to-list 'tempo-user-elements 'skempo-user-element)
 #+end_src
 
-** Lisp templates
+*** Lisp templates
 Templates used in /lisp-mode/ and /emacs-lisp-mode/.
 
 #+begin_src emacs-lisp
@@ -995,7 +997,7 @@ Templates used in /lisp-mode/ and /emacs-lisp-mode/.
    r>))
 #+end_src
 
-*** Common Lisp
+**** Common Lisp
 #+begin_src emacs-lisp
 (skempo-define-tempo (defvar :mode lisp-mode)
   (lisp-with-parens
@@ -1025,7 +1027,7 @@ Templates used in /lisp-mode/ and /emacs-lisp-mode/.
   "\n(in-package " str ")" > "\n")
 #+end_src
 
-*** Emacs Lisp
+**** Emacs Lisp
 They are different from Common Lisp, because I want every e-lisp symbol to be
 prefixed with buffer name.
 
@@ -1064,7 +1066,7 @@ prefixed with buffer name.
    ":group '" elisp-group))
 #+end_src
 
-** Js
+*** Js
 The power of /skeleton/ iterative templates.  It can insert multiple /case/
 statements.
 
@@ -1103,7 +1105,7 @@ statements.
   "}" >)
 #+end_src
 
-** Nix
+*** Nix
 Very useful nix templates.
 
 #+begin_src emacs-lisp
@@ -1135,8 +1137,42 @@ Very useful nix templates.
   "}" p >)
 #+end_src
 
-** Php
+*** Php
 #+begin_src emacs-lisp
 (skempo-define-tempo (vd :mode php-mode)
   "echo '<pre>'; var_dump(" r "); echo '</pre>';")
+#+end_src
+
+** Auto Insert
+:PROPERTIES:
+:header-args: :mkdirp yes
+:END:
+
+*** Nix Shell
+
+**** Emacs Lisp
+#+begin_src nix :tangle auto-insert/shell-emacs-lisp.nix
+let
+  pkgs = import <nixpkgs> {};
+  eldev = pkgs.stdenv.mkDerivation rec {
+    pname = "eldev";
+    version = "0.9.3";
+    src = pkgs.fetchurl {
+      url = "https://raw.githubusercontent.com/doublep/eldev/${version}/bin/eldev";
+      sha256 = "0ikhhfxm1rz3wp37spsy8bcnx5071ard71pd1riw09rsybilxhgn";
+    };
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    unpackPhase = "true";
+    installPhase = ''
+      install -D -v -m555 "$src" "$out/bin/eldev"
+      wrapProgram "$out/bin/eldev" --set ELDEV_EMACS "${pkgs.emacs}/bin/emacs"
+    '';
+  };
+in pkgs.mkShell {
+  name = "-dev-env";
+  buildInputs = [ eldev ];
+  shellHook = ''
+    export ELDEV_DIR=$PWD/.eldev
+  '';
+}
 #+end_src
