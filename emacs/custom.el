@@ -341,27 +341,13 @@ The document was typeset with
       " ends here
 ")
      (("/common-lisp/[^/]+/shell\\.nix\\'" . "shell.nix for Common Lisp")
-      .
-      ["shell-common-lisp.nix"
-       (lambda nil
-         (goto-char 1428)
-         (insert
-          (file-name-nondirectory
-           (directory-file-name
-            (file-name-directory buffer-file-name)))))])
+      . "shell-common-lisp.nix")
      (lisp-mode .
                 [(nil "(in-package :cl)
 ")
                  skeleton-template-lisp-defpackage])
      (("/emacs-lisp/[^/]+/shell\\.nix\\'" . "shell.nix for Emacs Lisp")
-      .
-      ["shell-emacs-lisp.nix"
-       (lambda nil
-         (goto-char 572)
-         (insert
-          (file-name-nondirectory
-           (directory-file-name
-            (file-name-directory buffer-file-name)))))])
+      . "shell-emacs-lisp.nix")
      ((".envrc\\'" . "Direnv envrc")
       nil "use nix
 ")))

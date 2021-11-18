@@ -441,6 +441,9 @@ Highlight current line in these modes.
 #+end_src
 
 *** Image Dired
+Somewhat nice gallery for *GNU/Emacs*.  It's database format is awful because it
+uses plain-text.  I rewritten it with a serialized /e-lisp/ data structure.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'image-dired
   (load (expand-file-name "emacs/image-dired-db.el" (xdg-config-home))))
@@ -532,6 +535,8 @@ becomes a +butterfly+ nice and usable *mpc* front-end.
 #+end_src
 
 **** Mpc Bindings
+Yeah, it does not have default bindings at all!
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'mpc
   (define-key mpc-mode-map "p" 'mpc-playlist)
@@ -599,7 +604,10 @@ to be confusing for novices.  [[https://github.com/xFA25E/images/raw/main/do-nic
 (setq disabled-command-function nil)
 #+end_src
 
-*** Ob Http
+*** [[https://github.com/zweifisch/ob-http][Ob Http]]
+A great http client that uses /Org Mode/.  It does not add itself to
+~org-babel-load-languges~ /custom/ type.  Let's help it to be even greater.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'org
   (cl-pushnew
@@ -767,6 +775,8 @@ Mode for editing all XML-like languages.
 #+end_src
 
 *** Shell
+Plain old shell.  I prefer it to /eshell/ because it uses proper pipes.
+
 #+begin_src emacs-lisp
 (define-key mode-specific-map "s" 'shell)
 #+end_src
@@ -814,6 +824,9 @@ package that fixes problems of /tempo/ and /skeleton/.
 #+end_src
 
 *** [[https://github.com/joaotavora/sly][Sly]]
+Author of the best *Common Lisp* IDE doesn't know how to use ~defcustom~.  I
+send him a patch, but he ignores me.
+
 #+begin_src emacs-lisp
 (with-eval-after-load 'sly
   (setq sly-lisp-implementations
@@ -832,6 +845,8 @@ Handle pairs smartly.
 #+end_src
 
 **** Smartparens Hooks
+Sadly, some hooks are not /custom/ hooks.
+
 #+begin_src emacs-lisp
 (add-hook 'minibuffer-setup-hook 'smartparens-mode)
 (add-hook 'nix-mode-hook 'smartparens-mode)
@@ -890,6 +905,8 @@ Consider ~SubWord~ as two separate words.  Useful for camel-case languages.
 #+end_src
 
 *** Tex Mode
+Small settings for /tex-mode/ and /ispell/.  Never used it :/
+
 #+begin_src emacs-lisp
 (add-hook 'tex-mode-hook (lambda nil (setq-local ispell-parser 'tex)))
 #+end_src
@@ -951,6 +968,7 @@ Finally, I load [[custom.el]] settings.
 #+end_src
 
 * Templates
+*GNU/Emacs* can do templates out of the box!
 
 ** Skempo
 :properties:
@@ -1159,9 +1177,16 @@ Very useful nix templates.
 :header-args: :mkdirp yes
 :END:
 
+Auto Insert supports files as templates if you give it a directory.
+
 *** Nix Shell
+Let's write some reproducible /nix-shell/ templates.
 
 **** Emacs Lisp
+This ~shell.nix~ file will configure an environment with [[https://github.com/doublep/eldev][Eldev]].  I use it mostly
+for great linters via ~eldev lint~ command.  All eldev directories will be local
+to the project directory.
+
 #+begin_src nix :tangle auto-insert/shell-emacs-lisp.nix
 let
   pkgs = import <nixpkgs> {};
@@ -1180,37 +1205,47 @@ let
     '';
   };
 in pkgs.mkShell {
-  name = "-dev-env";
   buildInputs = [ eldev ];
-  shellHook = ''
-    export ELDEV_DIR=$PWD/.eldev
-  '';
+  ELDEV_DIR = "${builtins.toString ./.}/.eldev";
 }
 #+end_src
 
 **** Common Lisp
+This ~shell.nix~ configures local environment *Common Lisp*.  It automaticall
+downloads quicklisp in project local directory and patches various
+implementations to use it by default.
+
 #+begin_src nix :tangle auto-insert/shell-common-lisp.nix
 let
   pkgs = import <nixpkgs> {};
+
+  PROJECT_ROOT = builtins.toString ./.;
+  QUICKLISP_DIR = "${PROJECT_ROOT}/.quicklisp";
+  ASDF_OUTPUT_TRANSLATIONS = ''
+    (:output-translations
+     :ignore-inherited-configuration
+     (t ("${PROJECT_ROOT}" ".common-lisp" :implementation)))
+  '';
+
   quicklisp-lisp = builtins.fetchurl https://beta.quicklisp.org/quicklisp.lisp;
   quickstart = pkgs.writeShellScriptBin "quickstart" ''
     ${pkgs.sbcl}/bin/sbcl \
         --non-interactive \
         --no-userinit \
         --load "${quicklisp-lisp}" \
-        --eval "(quicklisp-quickstart:install :path #p\".quicklisp/\")"
+        --eval "(quicklisp-quickstart:install :path #P\"${QUICKLISP_DIR}/\")"
   '';
+
   init-lisp = pkgs.writeText "init.lisp" ''
     #-quicklisp
-    (let ((quicklisp-init ".quicklisp/setup.lisp"))
+    (let ((quicklisp-init #P"${QUICKLISP_DIR}/setup.lisp"))
       (when (probe-file quicklisp-init)
         (load quicklisp-init)))
 
     ,#+quicklisp
-    (let ((docs-dir (uiop:run-program '("xdg-user-dir" "DOCUMENTS") :output '(:string :stripped t))))
-      (pushnew (uiop:subpathname* docs-dir "projects/common-lisp/")
-               ql:*local-project-directories*))
+    (pushnew #P"${builtins.toString ./../.}/" ql:*local-project-directories*)
   '';
+
   make-implementation = name: pkg: flags: pkgs.symlinkJoin {
     name = name;
     paths = [ pkg ];
@@ -1219,13 +1254,18 @@ let
       wrapProgram $out/bin/${name} --add-flags '${flags}'
     '';
   };
+
   sbcl = make-implementation "sbcl" pkgs.sbcl "--userinit ${init-lisp}";
   ecl = make-implementation "ecl" pkgs.ecl "--norc --load ${init-lisp}";
   ccl = make-implementation "ccl" pkgs.ccl "--no-init --load ${init-lisp}";
   clisp = make-implementation "clisp" pkgs.clisp "-norc -i ${init-lisp}";
   abcl = make-implementation "abcl" pkgs.abcl "--noinit --load ${init-lisp}";
+
 in pkgs.mkShell {
-  name = "-dev-env";
+  inherit ASDF_OUTPUT_TRANSLATIONS;
   buildInputs =  [ quickstart sbcl ecl ccl clisp abcl ];
+  shellHook = ''
+    [ -d "${QUICKLISP_DIR}" ] || quickstart
+  '';
 }
 #+end_src

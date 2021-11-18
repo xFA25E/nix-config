@@ -15,9 +15,6 @@ let
     '';
   };
 in pkgs.mkShell {
-  name = "-dev-env";
   buildInputs = [ eldev ];
-  shellHook = ''
-    export ELDEV_DIR=$PWD/.eldev
-  '';
+  ELDEV_DIR = "${builtins.toString ./.}/.eldev";
 }
