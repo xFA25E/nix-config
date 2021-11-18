@@ -816,6 +816,7 @@ package that fixes problems of /tempo/ and /skeleton/.
 #+begin_src emacs-lisp
 (add-hook 'nix-mode-hook 'skempo-mode)
 (add-hook 'js-mode-hook 'skempo-mode)
+(autoload 'skeleton-template-lisp-defpackage "skempo")
 (with-eval-after-load 'skempo
   (define-key skempo-mode-map "\C-z" 'skempo-complete-tag-or-call-on-region)
   (define-key skempo-mode-map "\M-g\M-e" 'skempo-forward-mark)
@@ -1040,9 +1041,8 @@ Templates used in /lisp-mode/ and /emacs-lisp-mode/.
    "\"" p "\"" n>
    r>))
 
-;; make skempo
 (skempo-define-skeleton (defpackage :mode lisp-mode)
-  (skeleton-read "Package name: " (concat ":" (string-remove-suffix ".lisp" (buffer-name))))
+  "Package name: "
   '(let ((region-p (use-region-p)))
      (setq v1 (when (or region-p (not (eql (char-before) ?\())) "(")
            v2 (when (or region-p (not (eql (char-after) ?\)))) ")")))

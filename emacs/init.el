@@ -282,6 +282,7 @@
 
 (add-hook 'nix-mode-hook 'skempo-mode)
 (add-hook 'js-mode-hook 'skempo-mode)
+(autoload 'skeleton-template-lisp-defpackage "skempo")
 (with-eval-after-load 'skempo
   (define-key skempo-mode-map "\C-z" 'skempo-complete-tag-or-call-on-region)
   (define-key skempo-mode-map "\M-g\M-e" 'skempo-forward-mark)

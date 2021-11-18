@@ -348,7 +348,7 @@ The document was typeset with
                  skeleton-template-lisp-defpackage])
      (("/emacs-lisp/[^/]+/shell\\.nix\\'" . "shell.nix for Emacs Lisp")
       . "shell-emacs-lisp.nix")
-     ((".envrc\\'" . "Direnv envrc")
+     (("/.envrc\\'" . "Direnv envrc")
       nil "use nix
 ")))
  '(auto-insert-directory (expand-file-name "emacs/auto-insert/" (xdg-config-home)))

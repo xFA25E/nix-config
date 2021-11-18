@@ -36,9 +36,8 @@
    "\"" p "\"" n>
    r>))
 
-;; make skempo
 (skempo-define-skeleton (defpackage :mode lisp-mode)
-  (skeleton-read "Package name: " (concat ":" (string-remove-suffix ".lisp" (buffer-name))))
+  "Package name: "
   '(let ((region-p (use-region-p)))
      (setq v1 (when (or region-p (not (eql (char-before) ?\())) "(")
            v2 (when (or region-p (not (eql (char-after) ?\)))) ")")))
