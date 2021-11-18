@@ -343,7 +343,7 @@ The document was typeset with
      (("/common-lisp/[^/]+/shell\\.nix\\'" . "shell.nix for Common Lisp")
       . "shell-common-lisp.nix")
      (lisp-mode .
-                [(nil "(in-package :cl)
+                [(nil "(in-package :cl-user)
 ")
                  skeleton-template-lisp-defpackage])
      (("/emacs-lisp/[^/]+/shell\\.nix\\'" . "shell.nix for Emacs Lisp")
