@@ -1,17 +1,35 @@
 self: super: let
-  deps = super.lib.strings.concatMapStringsSep " "
-    (url: "\"${super.fetchzip url}/\"") (import ./deps.nix);
+  inherit (super) fetchFromGitHub fetchzip writeText;
+  inherit (super.lib.strings) makeSearchPath concatMapStringsSep;
+  inherit (super.lib.trivial) importJSON;
+  inherit (super.stdenv) mkDerivation;
 
-  my-deps = super.lib.strings.concatMapStringsSep " " (dep: "\"${dep}\"") [
-    "dexador" "jsown" "trivia"
+  slynk = fetchFromGitHub {
+    name = "slynk";
+    owner = "joaotavora";
+    repo = "sly";
+    rev = "eb67be9698794ba66a09f46b7cfffab742863a91";
+    sha256 = "11yclc8i6gpy26m1yj6bid6da22639zpil1qzj87m5gfvxiv4zg6";
+  };
+
+  dependencies = (map fetchzip (importJSON ./dependency-urls.json)) ++ [ "${slynk}/slynk" ];
+  to-load = (importJSON ./dependencies.json) ++ [
+    "slynk"
+    "slynk/arglists"
+    "slynk/fancy-inspector"
+    "slynk/package-fu"
+    "slynk/mrepl"
+    "slynk/trace-dialog"
+    "slynk/profiler"
+    "slynk/stickers"
+    "slynk/indentation"
+    "slynk/retro"
   ];
 
-  defineDeps = super.writeText "define-deps.lisp" ''
-    (dolist (dep '(${deps}))
-      (push dep asdf:*central-registry*))
-  '';
+  load-my-deps = writeText "load-my-deps.lisp" ''
+    (in-package :cl-user)
+    (require "asdf")
 
-  loadMyDeps = super.writeText "load-my-deps.lisp" ''
     (asdf:load-system "cffi")
     (cffi:define-foreign-library libcrypto
      (:unix "${self.openssl.out}/lib/libcrypto.so"))
@@ -20,37 +38,30 @@ self: super: let
     (cffi:use-foreign-library libcrypto)
     (cffi:use-foreign-library libssl)
 
-    (dolist (dep '(${my-deps}))
-      (asdf:load-system dep))
-
-    (defun stumpwm::data-dir () (uiop:xdg-cache-home "stumpwm/"))
+    (mapc #'asdf:load-system (list ${concatMapStringsSep " " (item: "\"${item}\"") to-load}))
   '';
-  stumpwm = super.stdenv.mkDerivation rec {
+in {
+  stumpwm = mkDerivation {
     pname = "stumpwm";
     version = "20.11";
-    src = super.fetchFromGitHub {
+    src = fetchFromGitHub {
+      name = "stumpwm";
       owner = "stumpwm";
       repo = "stumpwm";
-      rev = version;
+      rev = "20.11";
       sha256 = "1ghs6ihvmb3bz4q4ys1d3h6rdi96xyiw7l2ip7jh54c25049aymf";
     };
     nativeBuildInputs = with self; [ sbcl autoconf texinfo makeWrapper pkgconfig ];
     buildInputs = with self; [ openssl.out ];
+    CL_SOURCE_REGISTRY = "${makeSearchPath "" dependencies}:";
     configurePhase = ''
       ./autogen.sh
       ./configure --prefix=$out --with-module-dir=$out/share/stumpwm/modules
     '';
     preBuild = ''
-      mkdir -p $PWD/tmp
-      export HOME=$PWD/tmp
-      substituteInPlace load-stumpwm.lisp --replace "(require 'asdf)" "(require 'asdf) (load \"$defineDeps\")"
-      echo "(load \"$loadMyDeps\")" >>load-stumpwm.lisp
+      makeFlagsArray+=(sbcl_BUILDOPTS="--load ${load-my-deps} --load ./make-image.lisp")
+      export ASDF_OUTPUT_TRANSLATIONS="(:output-translations :ignore-inherited-configuration (t \"$out/share/stumpwm/common-lisp/\"))"
     '';
     dontStrip = true;
-    inherit loadMyDeps;
-    inherit defineDeps;
   };
-in {
-  stumpwm = stumpwm;
-  stumpwmDev = (import ./stumpwmDev.nix) self super;
 }

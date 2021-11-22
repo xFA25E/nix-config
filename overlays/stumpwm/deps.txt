@@ -1,6 +1,0 @@
-alexandria
-cl-ppcre
-clx
-trivia
-jsown
-dexador

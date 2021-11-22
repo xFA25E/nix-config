@@ -1,0 +1,10 @@
+#+TITLE: Custom StumpWM build
+
+This is my custom build of *StumpWM* for *nix* with arbitrary dependencies and
+slynk.
+
+* Instructions
+
+1. Write /quicklisp/ dependencies to ~dependencies.json~ as on array of strings
+2. Run ~./generate-dependency-urls.sh~
+3. Build with ~nix-build '<nixpkgs>' -A stumpwm~
