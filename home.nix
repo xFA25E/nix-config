@@ -531,10 +531,7 @@ in {
         tmp = "\${XDG_RUNTIME_DIR}/npm";
       };
 
-      "stumpwm" = {
-        source = ./stumpwm;
-        recursive = true;
-      };
+      "stumpwm/config".text = "(swm-config:init)";
 
       "wgetrc".text = "hsts-file=${dir.cache}/wget-hsts";
 
