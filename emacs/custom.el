@@ -342,10 +342,7 @@ The document was typeset with
 ")
      (("/common-lisp/[^/]+/shell\\.nix\\'" . "shell.nix for Common Lisp")
       . "shell-common-lisp.nix")
-     (lisp-mode .
-                [(nil "(in-package :cl-user)
-")
-                 skeleton-template-lisp-defpackage])
+     (lisp-mode . skeleton-template-lisp-defpackage)
      (("/emacs-lisp/[^/]+/shell\\.nix\\'" . "shell.nix for Emacs Lisp")
       . "shell-emacs-lisp.nix")
      (("/.envrc\\'" . "Direnv envrc")
@@ -795,7 +792,8 @@ The document was typeset with
  '(register-separator 43)
  '(rust-format-on-save t)
  '(safe-local-variable-values
-   '((org-confirm-babel-evaluate)
+   '((eval add-hook 'after-save-hook #'org-md-export-to-markdown nil t)
+     (org-confirm-babel-evaluate)
      (eval hl-line-mode t)
      (eval add-hook 'after-save-hook
            (lambda nil

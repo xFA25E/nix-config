@@ -3,6 +3,7 @@ let
 
   PROJECT_ROOT = builtins.toString ./.;
   QUICKLISP_DIR = "${PROJECT_ROOT}/.quicklisp";
+  CL_SOURCE_REGISTRY="${PROJECT_ROOT}:";
   ASDF_OUTPUT_TRANSLATIONS = ''
     (:output-translations
      :ignore-inherited-configuration
@@ -23,9 +24,6 @@ let
     (let ((quicklisp-init #P"${QUICKLISP_DIR}/setup.lisp"))
       (when (probe-file quicklisp-init)
         (load quicklisp-init)))
-
-    #+quicklisp
-    (pushnew #P"${builtins.toString ./../.}/" ql:*local-project-directories*)
   '';
 
   make-implementation = name: pkg: flags: pkgs.symlinkJoin {
@@ -44,7 +42,7 @@ let
   abcl = make-implementation "abcl" pkgs.abcl "--noinit --load ${init-lisp}";
 
 in pkgs.mkShell {
-  inherit ASDF_OUTPUT_TRANSLATIONS;
+  inherit CL_SOURCE_REGISTRY ASDF_OUTPUT_TRANSLATIONS;
   buildInputs =  [ quickstart sbcl ecl ccl clisp abcl ];
   shellHook = ''
     [ -d "${QUICKLISP_DIR}" ] || quickstart

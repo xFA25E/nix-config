@@ -41,14 +41,13 @@
   '(let ((region-p (use-region-p)))
      (setq v1 (when (or region-p (not (eql (char-before) ?\())) "(")
            v2 (when (or region-p (not (eql (char-after) ?\)))) ")")))
-  v1 "defpackage " str > "\n"
-  "(:use :cl" ("Use: " " " str) ")" > "\n"
-  "(:nicknames" ("Nickname: " " " str) & ")" | -12 > "\n"
-  (nil "(:import-from " (skeleton-read "Import from: " nil t) ("Import: " " " str) ")" > "\n")
-  "(:export" ("Export: " " " str) & ")" | -9 > "\n"
+  v1 "defpackage #:" str > "\n"
+  "(:use #:cl)" > "\n"
+  (nil "(:import-from #:" (skeleton-read "Import from: " nil t) ("Import: " " #:" str) ")" > "\n")
+  "(:export" ("Export: " " #:" str) & ")" | -9 > "\n"
   "(:documentation \"" (skeleton-read "Documentation: ") "\")" v2 >
   (unless v2 (delete-char 1) ")")
-  "\n(in-package " str ")" > "\n")
+  "\n(in-package #:" str ")" > "\n")
 
 (skempo-define-tempo (defvar :mode emacs-lisp-mode)
   (lisp-with-parens

@@ -809,6 +809,33 @@ Some useful *GNU/Emacs* commands not bound by default (for some unknown reason).
 (define-key mode-specific-map "oP" 'list-processes)
 #+end_src
 
+*** Skeleton
+The *GNU/Emacs*'s standard templates.  I use ~C-h~ to delete backwards a
+character.  /Skeleton/ has an annoying feature: it displays help by default on
+~C-h~, even if ~help~ symbol is not bound.  The only reliable way to disable
+this is by an override advice.
+
+#+begin_src elisp
+(define-advice skeleton-read (:override (prompt &optional initial-input recursive) no-help)
+  (let ((minibuffer-help-form (when (boundp 'help) (symbol-value 'help)))
+        (eolp (eolp)))
+    (unless eolp (save-excursion (insert "\n")))
+    (unwind-protect
+        (setq prompt (cond ((stringp prompt)
+                            (read-string (format prompt skeleton-subprompt)
+                                         (setq initial-input (or initial-input (symbol-value 'input)))))
+                           ((functionp prompt) (funcall prompt))
+                           (t (eval prompt))))
+      (unless eolp (delete-char 1))))
+  (if (and recursive
+           (or (null prompt)
+               (string= prompt "")
+               (equal prompt initial-input)
+               (equal prompt (car-safe initial-input))))
+      (signal 'quit t)
+    prompt))
+#+end_src
+
 *** [[https://github.com/xFA25E/skempo][Skempo]]
 Enhance default *GNU/Emacs* templates.  I don't like Yasnippet, so I wrote a
 package that fixes problems of /tempo/ and /skeleton/.
@@ -1046,14 +1073,13 @@ Templates used in /lisp-mode/ and /emacs-lisp-mode/.
   '(let ((region-p (use-region-p)))
      (setq v1 (when (or region-p (not (eql (char-before) ?\())) "(")
            v2 (when (or region-p (not (eql (char-after) ?\)))) ")")))
-  v1 "defpackage " str > "\n"
-  "(:use :cl" ("Use: " " " str) ")" > "\n"
-  "(:nicknames" ("Nickname: " " " str) & ")" | -12 > "\n"
-  (nil "(:import-from " (skeleton-read "Import from: " nil t) ("Import: " " " str) ")" > "\n")
-  "(:export" ("Export: " " " str) & ")" | -9 > "\n"
+  v1 "defpackage #:" str > "\n"
+  "(:use #:cl)" > "\n"
+  (nil "(:import-from #:" (skeleton-read "Import from: " nil t) ("Import: " " #:" str) ")" > "\n")
+  "(:export" ("Export: " " #:" str) & ")" | -9 > "\n"
   "(:documentation \"" (skeleton-read "Documentation: ") "\")" v2 >
   (unless v2 (delete-char 1) ")")
-  "\n(in-package " str ")" > "\n")
+  "\n(in-package #:" str ")" > "\n")
 #+end_src
 
 **** Emacs Lisp
@@ -1221,6 +1247,7 @@ let
 
   PROJECT_ROOT = builtins.toString ./.;
   QUICKLISP_DIR = "${PROJECT_ROOT}/.quicklisp";
+  CL_SOURCE_REGISTRY="${PROJECT_ROOT}:";
   ASDF_OUTPUT_TRANSLATIONS = ''
     (:output-translations
      :ignore-inherited-configuration
@@ -1241,9 +1268,6 @@ let
     (let ((quicklisp-init #P"${QUICKLISP_DIR}/setup.lisp"))
       (when (probe-file quicklisp-init)
         (load quicklisp-init)))
-
-    ,#+quicklisp
-    (pushnew #P"${builtins.toString ./../.}/" ql:*local-project-directories*)
   '';
 
   make-implementation = name: pkg: flags: pkgs.symlinkJoin {
@@ -1262,7 +1286,7 @@ let
   abcl = make-implementation "abcl" pkgs.abcl "--noinit --load ${init-lisp}";
 
 in pkgs.mkShell {
-  inherit ASDF_OUTPUT_TRANSLATIONS;
+  inherit CL_SOURCE_REGISTRY ASDF_OUTPUT_TRANSLATIONS;
   buildInputs =  [ quickstart sbcl ecl ccl clisp abcl ];
   shellHook = ''
     [ -d "${QUICKLISP_DIR}" ] || quickstart
