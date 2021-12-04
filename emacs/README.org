@@ -815,7 +815,7 @@ character.  /Skeleton/ has an annoying feature: it displays help by default on
 ~C-h~, even if ~help~ symbol is not bound.  The only reliable way to disable
 this is by an override advice.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
 (define-advice skeleton-read (:override (prompt &optional initial-input recursive) no-help)
   (let ((minibuffer-help-form (when (boundp 'help) (symbol-value 'help)))
         (eolp (eolp)))
@@ -827,11 +827,7 @@ this is by an override advice.
                            ((functionp prompt) (funcall prompt))
                            (t (eval prompt))))
       (unless eolp (delete-char 1))))
-  (if (and recursive
-           (or (null prompt)
-               (string= prompt "")
-               (equal prompt initial-input)
-               (equal prompt (car-safe initial-input))))
+  (if (and recursive (or (null prompt) (string= prompt "")))
       (signal 'quit t)
     prompt))
 #+end_src
@@ -844,6 +840,7 @@ package that fixes problems of /tempo/ and /skeleton/.
 (add-hook 'nix-mode-hook 'skempo-mode)
 (add-hook 'js-mode-hook 'skempo-mode)
 (autoload 'skeleton-template-lisp-defpackage "skempo")
+(autoload 'skeleton-template-lisp-defsystem "skempo")
 (with-eval-after-load 'skempo
   (define-key skempo-mode-map "\C-z" 'skempo-complete-tag-or-call-on-region)
   (define-key skempo-mode-map "\M-g\M-e" 'skempo-forward-mark)
@@ -1037,6 +1034,19 @@ of three situations:
        `(l ,(when before-p "(") ,@body ,(when after-p ")"))))))
 
 (add-to-list 'tempo-user-elements 'skempo-user-element)
+
+(defun skempo-lisp-mode-further-elements ()
+  (setq skeleton-further-elements
+        '((delete-parens ''(progn
+                             (let ((no-region-p (not (use-region-p))))
+                               (when (and (eql (char-before) ?\() no-region-p)
+                                 (delete-char -1))
+                               (when (and (eql (char-after) ?\)) no-region-p)
+                                 (delete-char 1))))))))
+
+(with-eval-after-load 'lisp-mode
+  (add-hook 'lisp-mode-hook 'skempo-lisp-mode-further-elements))
+
 #+end_src
 
 *** Lisp templates
@@ -1069,17 +1079,40 @@ Templates used in /lisp-mode/ and /emacs-lisp-mode/.
    r>))
 
 (skempo-define-skeleton (defpackage :mode lisp-mode)
-  "Package name: "
-  '(let ((region-p (use-region-p)))
-     (setq v1 (when (or region-p (not (eql (char-before) ?\())) "(")
-           v2 (when (or region-p (not (eql (char-after) ?\)))) ")")))
-  v1 "defpackage #:" str > "\n"
+  "Package name: " delete-parens
+  "(defpackage #:" str > "\n"
   "(:use #:cl)" > "\n"
-  (nil "(:import-from #:" (skeleton-read "Import from: " nil t) ("Import: " " #:" str) ")" > "\n")
+  "(:nicknames" ("Nickname: " " #:" str) & ")" | -12 > "\n"
+  "(:local-nicknames" ("Local nickname: " " (#:" str " #:" (skeleton-read "Nickname of package: " nil t) ")") & ")" | -18 > "\n"
+  ("Import from: " "(:import-from #:" str ("Import: " " #:" str) ")" > "\n")
   "(:export" ("Export: " " #:" str) & ")" | -9 > "\n"
-  "(:documentation \"" (skeleton-read "Documentation: ") "\")" v2 >
-  (unless v2 (delete-char 1) ")")
-  "\n(in-package #:" str ")" > "\n")
+  "(:documentation \"" (skeleton-read "Documentation: ") "\"))" > "\n"
+  "(in-package #:" str ")" > "\n")
+
+(skempo-define-skeleton (defsystem :mode lisp-mode)
+  "System name: " delete-parens
+  "(defsystem \"" str "\"" > "\n"
+  ":long-name \"" (skeleton-read "Long name: ") "\"" | -13 > "\n"
+  ":version \"" (skeleton-read "Version: " "0.0.1") & "\"" | -11 > "\n"
+  ":author \"" (setq v1 (skeleton-read "Author: ")) & "\"" | -10 > "\n"
+  ":maintainer \"" (skeleton-read "Maintainer: " v1) & "\"" | -14 > "\n"
+  ":license \"" (skeleton-read "License: " "GPL3") & "\"" | -11 > "\n"
+  ":homepage \"" (setq v2 (skeleton-read "Homepage: ")) & "\"" | -12 > "\n"
+  ":bug-tracker \"" (skeleton-read "Bug tracker: " (when (and v2 (not (string-empty-p v2))) (concat v2 "/issues"))) & "\"" | -15 > "\n"
+  ":description \"" (skeleton-read "Description: ") "\"" > "\n"
+  ":mailto \"" (skeleton-read "Mailto: " (string-trim-right (string-trim-left (or v1 "") ".*?<") ">")) & "\"" | -10 > "\n"
+  (nil ":source-control (:" (skeleton-read "Source control: " "git" t) " \"" (skeleton-read "Link: " (when (and v2 (not (string-empty-p v2))) (concat v2 ".git")) t) "\")" > "\n")
+  ":long-description #.(let ((file (probe-file* (subpathname *load-pathname* \"README.md\")))) (when file (read-file-string file)))" > "\n"
+  ":depends-on (" ("Dependency: " "\"" str "\" ") & -1 & ")" | -14 > "\n"
+  ":components ((:module \"src\" :components ((:file \"" str "\"))))" > "\n"
+  ":in-order-to ((test-op (test-op \"" str "/tests\")))" > "\n"
+  -1 ")" "\n"
+  "\n"
+  "(defsystem \"" str "/tests\"" > "\n"
+  ":depends-on (\"" str "\" \"fiveam\")" > "\n"
+  ":components ((:module \"tests\" :components ((:file \"" str "\"))))" > "\n"
+  ":perform (test-op (op c) (symbol-call '#:fiveam '#:run! (find-symbol* '#:" str " '#:" str ".tests)))" > "\n"
+  -1 ")")
 #+end_src
 
 **** Emacs Lisp
@@ -1198,6 +1231,32 @@ Very useful nix templates.
   "echo '<pre>'; var_dump(" r "); echo '</pre>';")
 #+end_src
 
+*** Org
+#+begin_src emacs-lisp
+(skempo-define-tempo (readmeorg :mode org-mode)
+  "#+TITLE: " (P "Project title: ") n
+  (P "A short, one-line description of the project: ") n
+  n
+  "* Overview" n
+  p "# A longer description of the project" n
+  n
+  "** Features" n
+  "** History" n
+  "** Motivation" n
+  "* Usage" n
+  p "# Examples of usage" n
+  n
+  "* Documentation" n
+  "* License" n
+  "Copyright (c) " (format-time-string "%Y") " " (P "Authors: ") n
+  "Licensed under the " p "GPL3 License." n
+  n
+  "* COMMENT Local Variables" n
+  "# Local Variables:" n
+  "# eval: (add-hook 'after-save-hook #'org-md-export-to-markdown nil t)" p n
+  "# End:")
+#+end_src
+
 ** Auto Insert
 :PROPERTIES:
 :header-args: :mkdirp yes
@@ -1247,12 +1306,6 @@ let
 
   PROJECT_ROOT = builtins.toString ./.;
   QUICKLISP_DIR = "${PROJECT_ROOT}/.quicklisp";
-  CL_SOURCE_REGISTRY="${PROJECT_ROOT}:";
-  ASDF_OUTPUT_TRANSLATIONS = ''
-    (:output-translations
-     :ignore-inherited-configuration
-     (t ("${PROJECT_ROOT}" ".common-lisp" :implementation)))
-  '';
 
   quicklisp-lisp = builtins.fetchurl https://beta.quicklisp.org/quicklisp.lisp;
   quickstart = pkgs.writeShellScriptBin "quickstart" ''
@@ -1286,10 +1339,37 @@ let
   abcl = make-implementation "abcl" pkgs.abcl "--noinit --load ${init-lisp}";
 
 in pkgs.mkShell {
-  inherit CL_SOURCE_REGISTRY ASDF_OUTPUT_TRANSLATIONS;
+  CL_SOURCE_REGISTRY="${PROJECT_ROOT}:";
+  ASDF_OUTPUT_TRANSLATIONS = ''
+    (:output-translations
+     :ignore-inherited-configuration
+     (t ("${PROJECT_ROOT}" ".common-lisp" :implementation)))
+  '';
   buildInputs =  [ quickstart sbcl ecl ccl clisp abcl ];
   shellHook = ''
     [ -d "${QUICKLISP_DIR}" ] || quickstart
   '';
 }
+#+end_src
+
+*** Gitignore
+
+**** Common Lisp
+#+begin_src text :tangle auto-insert/gitignore-common-lisp
+*.fasl
+*.dx32fsl
+*.dx64fsl
+*.lx32fsl
+*.lx64fsl
+*.x86f
+*~
+.#*
+.quicklisp
+.common-lisp
+#+end_src
+
+**** Emacs Lisp
+#+begin_src text :tangle auto-insert/gitignore-emacs-lisp
+*.elc
+.eldev
 #+end_src

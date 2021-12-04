@@ -340,11 +340,18 @@ The document was typeset with
        (buffer-file-name))
       " ends here
 ")
+     (("\\.lisp\\'" . "Defpackage definition")
+      . skeleton-template-lisp-defpackage)
+     (("\\.asd\\'" . "Asdf system definition")
+      . skeleton-template-lisp-defsystem)
      (("/common-lisp/[^/]+/shell\\.nix\\'" . "shell.nix for Common Lisp")
       . "shell-common-lisp.nix")
-     (lisp-mode . skeleton-template-lisp-defpackage)
+     (("/common-lisp/[^/]+/\\.gitignore\\'" . "Gitignore for Common Lisp")
+      . "gitignore-common-lisp")
      (("/emacs-lisp/[^/]+/shell\\.nix\\'" . "shell.nix for Emacs Lisp")
       . "shell-emacs-lisp.nix")
+     (("/emacs-lisp/[^/]+/\\.gitignore\\'" . "Gitignore for Emacs Lisp")
+      . "gitignore-emacs-lisp")
      (("/.envrc\\'" . "Direnv envrc")
       nil "use nix
 ")))
@@ -595,7 +602,10 @@ The document was typeset with
    '(("russian" "[А-Яа-яA-Za-z]" "[^А-Яа-яA-Za-z]" "[-]" nil
       ("-d" "ru_RU,en_US")
       "~tex" utf-8)
-     ("english" "[A-Za-z]" "[^A-Za-z]" "[-']" nil nil "~tex" utf-8)))
+     ("english" "[A-Za-z]" "[^A-Za-z]" "[-']" nil nil "~tex" utf-8)
+     ("italian" "[A-Za-zÀÒÈÙÌàòèùìÁÓÉÚÍáóéúí]" "[^A-Za-zÀÒÈÙÌàòèùìÁÓÉÚÍáóéúí]" "[-']" nil
+      ("-d" "it_IT,en_US")
+      "~tex" utf-8)))
  '(ispell-program-name "hunspell")
  '(java-mode-hook '(subword-mode))
  '(js-indent-level 2)
@@ -766,7 +776,7 @@ The document was typeset with
  '(org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home)))
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(smartparens-mode))
+ '(org-mode-hook '(skempo-mode smartparens-mode))
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
