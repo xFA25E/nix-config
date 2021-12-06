@@ -20,15 +20,15 @@ in {
         mbsync = {
           enable = true;
           groups."polimi" = {
-            channels = let makeChannel = master: slave: {
+            channels = let makeChannel = far: near: {
               extraConfig = {
                 Create = "Slave";
                 Sync = "All";
                 Expunge = "Both";
                 SyncState = "*";
               };
-              masterPattern = master;
-              slavePattern = slave;
+              farPattern = far;
+              nearPattern = near;
             }; in {
               "inbox" = makeChannel "INBOX" "inbox";
               "sent" = makeChannel "Sent Items" "sent";
@@ -40,7 +40,7 @@ in {
           extraConfig.logfile = "${dir.cache}/msmtp-polimi.log";
         };
         notmuch.enable = true;
-        passwordCommand = "${pkgs.pass}/bin/pass show mail/polimi | ${pkgs.coreutils}/bin/head -n1 | ${pkgs.coreutils}/bin/tr -d '\\n'";
+        passwordCommand = "${pkgs.pass}/bin/pass show mail/polimi | ${pkgs.coreutils}/bin/head -n1";
         primary = true;
         realName = "Valeriy Litkovskyy";
         smtp = {
@@ -62,9 +62,6 @@ in {
     extraOutputsToInstall = [ "man" "doc" "info" "devdoc" ];
 
     file = {
-      ".Xresources".onChange = ''
-        ${pkgs.xorg.xrdb}/bin/xrdb -load ~/.Xresources || true
-      '';
       ".profile".text = ''
         test -r "/home/${user}/.nix-profile/etc/profile.d/nix.sh" && . "/home/${user}/.nix-profile/etc/profile.d/nix.sh"
         test -r "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh" && . "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh"
@@ -210,7 +207,7 @@ in {
       };
       enable = true;
       enableBashIntegration = true;
-      enableNixDirenvIntegration = true;
+      nix-direnv.enable = true;
     };
 
     feh.enable = true;
@@ -238,14 +235,20 @@ in {
 
     htop = {
       enable = true;
-      enableMouse = false;
-      hideThreads = true;
-      hideUserlandThreads = true;
-      highlightBaseName = true;
-      meters.right = [ "Tasks" "LoadAverage" "Uptime" "Battery" ];
-      showCpuUsage = true;
-      showCpuFrequency = true;
-      showThreadNames = true;
+      settings = {
+        enable_mouse = 0;
+        hide_threads = 1;
+        hide_userland_threads = 1;
+        highlight_base_name = 1;
+        show_cpu_usage = 1;
+        show_cpu_frequency = 1;
+        show_thread_names = 1;
+      } // (with config.lib.htop; rightMeters [
+        (text "Tasks")
+        (text "LoadAverage")
+        (text "Uptime")
+        (text "Battery")
+      ]);
     };
 
     info.enable = true;
@@ -489,22 +492,6 @@ in {
           WantedBy = [ "graphical-session.target" ];
         };
       };
-
-      xrdb = {
-        Unit = {
-          Description = "Load Xresources with xrdb";
-          After = [ "graphical-session-pre.target" ];
-          PartOf = [ "graphical-session.target" ];
-        };
-        Service = {
-          ExecStart = "${pkgs.xorg.xrdb}/bin/xrdb -load %h/.Xresources";
-          IOSchedulingClass = "idle";
-          Type = "oneshot";
-        };
-        Install = {
-          WantedBy = [ "graphical-session.target" ];
-        };
-      };
     };
   };
 
@@ -575,7 +562,7 @@ in {
         added = {
           "application/pdf" = [ "emacs.desktop" ];
           "application/epub" = [ "emacs.desktop" ];
-          "x-scheme-handler/tg" = [ "userapp-Telegram Desktop-1GLA50.desktop" ];
+          "x-scheme-handler/tg" = [ "userapp-Telegram Desktop-8D2FD1.desktop" ];
         };
         removed = {};
       };
@@ -585,7 +572,7 @@ in {
         "text/html" = [ "browser.desktop" ];
         "x-scheme-handler/https" = [ "browser.desktop" ];
         "x-scheme-handler/http" = [ "browser.desktop" ];
-        "x-scheme-handler/tg" = [ "userapp-Telegram Desktop-1GLA50.desktop" ];
+        "x-scheme-handler/tg" = [ "userapp-Telegram Desktop-8D2FD1.desktop" ];
       };
     };
 

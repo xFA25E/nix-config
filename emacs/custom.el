@@ -534,7 +534,7 @@ The document was typeset with
  '(executable-chmod 64)
  '(fd-dired-ls-option
    '("| xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
- '(fill-column 80)
+ '(fill-column 100)
  '(find-ls-option
    '("-print0 | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
  '(flymake-mode-line-format
