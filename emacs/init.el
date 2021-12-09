@@ -252,8 +252,7 @@
               (cl-pushnew f result :test #'string-equal)))))
       (setq file-name-history result))))
 
-(autoload 'sdcv-search-input "sdcv" nil t)
-(define-key mode-specific-map "ot" 'sdcv-search-input)
+(define-key mode-specific-map "ot" 'sdcwoc)
 
 (with-eval-after-load 'sgml-mode
   (define-key sgml-mode-map "\C-\M-n" 'sgml-skip-tag-forward)

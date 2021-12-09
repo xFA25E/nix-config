@@ -799,6 +799,7 @@ The document was typeset with
      (project-eshell "Eshell" nil)))
  '(read-buffer-completion-ignore-case t)
  '(read-file-name-completion-ignore-case t)
+ '(recenter-positions '(top middle bottom))
  '(register-separator 43)
  '(rust-format-on-save t)
  '(safe-local-variable-values
@@ -829,9 +830,6 @@ The document was typeset with
  '(scroll-bar-mode nil)
  '(scroll-conservatively 10000)
  '(scroll-step 1)
- '(sdcv-env-lang "en_US.UTF-8")
- '(sdcv-translate-command
-   '(program "--non-interactive" dictionary-data-dir dictionary-list word))
  '(search-whitespace-regexp ".*?")
  '(send-mail-function 'message-send-mail-with-sendmail)
  '(sendmail-program "msmtp")

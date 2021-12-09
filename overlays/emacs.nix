@@ -64,10 +64,18 @@ self: super: let
     pueue = githubPackageBuild {
       owner = "xFA25E";
       repo = "pueue";
-      version = "1.0.3";
-      rev = "af91c99dd5911b3a6913c695ea0651ac7d4f7bb0";
-      sha256 = "0cwsaqplgdy7y7qsf22b0kwlxi9xm3m0gaqcc73vzq3d7aif1lw4";
+      version = "1.0.4";
+      rev = "e6f5119ed4f85c3f686c0b5af7ff7aca36c9da88";
+      sha256 = "1ngdapdrajsby4v04av05lvh8lx7vl96mbcscx856q8gh7r647ck";
       packageRequires = [ eself.transient ];
+    };
+
+    sdcwoc = githubPackageBuild {
+      owner = "xFA25E";
+      repo = "sdcwoc";
+      version = "0.0.1";
+      rev = "ef9acd43e93edfc8ae5474dd02feee8331ec88a0";
+      sha256 = "1mj2h8673vhi0pj3343wwbchdgv7fvz2gchd0cjaymi535156jgg";
     };
 
     shell-pwd = githubPackageBuild {
@@ -99,7 +107,7 @@ in {
     async avy browse-url-multi cargo consult csv-mode cyrillic-dvorak-im dumb-jump ebdb
     edit-indirect eglot emmet-mode envrc flymake-shellcheck format-all htmlize ipretty ledger-mode
     link-hint magit marginalia nix-mode notmuch nov ob-http org-mime org-plus-contrib pcmpl-args
-    pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg rust-mode sdcv shell-pwd skempo
+    pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg rust-mode sdcwoc shell-pwd skempo
     sly sly-asdf sly-quicklisp smartparens sql-indent sqlup-mode transmission vlf web-mode wgrep
 
   ]);
