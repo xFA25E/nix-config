@@ -261,6 +261,11 @@ in {
 
     mpv = {
       enable = true;
+      bindings = {
+        B = "script_message bookmarker-menu";
+        b = "script_message bookmarker-quick-save";
+        "ctrl+b" = "script_message bookmarker-quick-load";
+      };
       config = {
         save-position-on-quit = true;
         watch-later-directory = "${dir.cache}/mpv/watch_later";
@@ -508,6 +513,7 @@ in {
 
       "fontconfig/fonts.conf".source = ./fonts.conf;
 
+      "mpv/scripts/bookmarker-menu.lua".source = "${pkgs.mpvBookmarker}/bookmarker-menu.lua";
       "mpv/scripts/youtube-quality.lua".source = "${pkgs.mpvYoutubeQuality}/youtube-quality.lua";
       "mpv/script-opts/youtube-quality.conf".source = "${pkgs.mpvYoutubeQuality}/youtube-quality.conf";
 
