@@ -252,7 +252,12 @@
               (cl-pushnew f result :test #'string-equal)))))
       (setq file-name-history result))))
 
-(define-key mode-specific-map "ot" 'sdcwoc)
+(define-key mode-specific-map "ot" 'sdcv-search-input)
+
+(defun sdcv-disable-outline-font-lock ()
+   (setq-local outline-font-lock-keywords nil))
+
+(add-hook 'sdcv-mode-hook 'sdcv-disable-outline-font-lock)
 
 (with-eval-after-load 'sgml-mode
   (define-key sgml-mode-map "\C-\M-n" 'sgml-skip-tag-forward)

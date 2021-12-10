@@ -70,12 +70,13 @@ self: super: let
       packageRequires = [ eself.transient ];
     };
 
-    sdcwoc = githubPackageBuild {
+    sdcv = githubPackageBuild {
       owner = "xFA25E";
-      repo = "sdcwoc";
-      version = "0.0.1";
-      rev = "ef9acd43e93edfc8ae5474dd02feee8331ec88a0";
-      sha256 = "1mj2h8673vhi0pj3343wwbchdgv7fvz2gchd0cjaymi535156jgg";
+      repo = "sdcv";
+      version = "3.4";
+      rev = "f0dee3226766f73fbdd8fe52946be022158b110f";
+      sha256 = "0m164cls6mdc1z1c0z8whvdacw875qrr5g3902xa7qhipba0k928";
+      packageRequires = [ eself.posframe ];
     };
 
     shell-pwd = githubPackageBuild {
@@ -104,11 +105,13 @@ in {
 
     emacs-default
 
-    async avy browse-url-multi cargo consult csv-mode cyrillic-dvorak-im dumb-jump ebdb
-    edit-indirect eglot emmet-mode envrc flymake-shellcheck format-all htmlize ipretty ledger-mode
-    link-hint magit marginalia nix-mode notmuch nov ob-http org-mime org-plus-contrib pcmpl-args
-    pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg rust-mode sdcwoc shell-pwd skempo
-    sly sly-asdf sly-quicklisp smartparens sql-indent sqlup-mode transmission vlf web-mode wgrep
+    async avy browse-url-multi cargo consult csv-mode cyrillic-dvorak-im
+    dumb-jump ebdb edit-indirect eglot emmet-mode envrc flymake-shellcheck
+    format-all htmlize ipretty ledger-mode link-hint magit marginalia nix-mode
+    notmuch nov ob-http org-mime org-plus-contrib pcmpl-args pdf-tools php-mode
+    pueue rainbow-mode restclient reverse-im rg rust-mode sdcv shell-pwd skempo
+    sly sly-asdf sly-quicklisp smartparens sql-indent sqlup-mode transmission
+    vlf web-mode wgrep
 
   ]);
 

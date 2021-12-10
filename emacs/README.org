@@ -755,11 +755,20 @@ out: remote files, http links or non-existent files.
       (setq file-name-history result))))
 #+end_src
 
-*** [[https://github.com/xFA25E/sdcwoc][SDCWOC]]
+*** [[https://github.com/manateelazycat/sdcv][SDCV]]
 Do you like browsing dictionaries offline inside *GNU/Emacs*?
 
 #+begin_src emacs-lisp
-(define-key mode-specific-map "ot" 'sdcwoc)
+(define-key mode-specific-map "ot" 'sdcv-search-input)
+#+end_src
+
+Disable outline /font-lock/ in ~sdcv-mode~.
+
+#+begin_src emacs-lisp
+(defun sdcv-disable-outline-font-lock ()
+   (setq-local outline-font-lock-keywords nil))
+
+(add-hook 'sdcv-mode-hook 'sdcv-disable-outline-font-lock)
 #+end_src
 
 *** Sgml Mode

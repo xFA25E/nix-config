@@ -534,7 +534,7 @@ The document was typeset with
  '(executable-chmod 64)
  '(fd-dired-ls-option
    '("| xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
- '(fill-column 100)
+ '(fill-column 80)
  '(find-ls-option
    '("-print0 | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
  '(flymake-mode-line-format
@@ -776,7 +776,7 @@ The document was typeset with
  '(org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home)))
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(skempo-mode smartparens-mode))
+ '(org-mode-hook '(skempo-mode smartparens-mode) t)
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
@@ -830,6 +830,8 @@ The document was typeset with
  '(scroll-bar-mode nil)
  '(scroll-conservatively 10000)
  '(scroll-step 1)
+ '(sdcv-dictionary-data-dir "/home/val/.local/share/stardict")
+ '(sdcv-program "sdcv --utf8-input --utf8-output")
  '(search-whitespace-regexp ".*?")
  '(send-mail-function 'message-send-mail-with-sendmail)
  '(sendmail-program "msmtp")
