@@ -62,15 +62,6 @@ in {
     extraOutputsToInstall = [ "man" "doc" "info" "devdoc" ];
 
     file = {
-      ".profile".text = ''
-        test -r "/home/${user}/.nix-profile/etc/profile.d/nix.sh" && . "/home/${user}/.nix-profile/etc/profile.d/nix.sh"
-        test -r "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh" && . "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh"
-
-        test -r "/home/${user}/.guix-profile/etc/profile" && . "/home/${user}/.guix-profile/etc/profile"
-        test -r "${dir.config}/guix/current/etc/profile" && . "${dir.config}/guix/current/etc/profile"
-
-        eval `${pkgs.openssh}/bin/ssh-agent`
-      '';
       ".shinit".text = ''
         ${pkgs.coreutils}/bin/stty -ixon
         PS1='[$USER $?] $(test $UID -eq 0 && echo "#" || echo "$") '
@@ -196,6 +187,18 @@ in {
         for f in ${dir.config}/guix/current/etc/bash_completion.d/* ; do
             test -r "$f" && . "$f"
         done
+      '';
+      profileExtra = ''
+        test -r "/home/${user}/.nix-profile/etc/profile.d/nix.sh" && . "/home/${user}/.nix-profile/etc/profile.d/nix.sh"
+        test -r "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh" && . "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh"
+
+        test -r "/home/${user}/.guix-profile/etc/profile" && . "/home/${user}/.guix-profile/etc/profile"
+        test -r "${dir.config}/guix/current/etc/profile" && . "${dir.config}/guix/current/etc/profile"
+
+        eval `${pkgs.openssh}/bin/ssh-agent`
+      '';
+      logoutExtra = ''
+        eval `${pkgs.openssh}/bin/ssh-agent -k`
       '';
     };
 
