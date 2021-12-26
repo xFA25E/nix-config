@@ -16,7 +16,7 @@ self: super: let
   playlist-index-fmt = "%(playlist_uploader)s - %(playlist)s - %(playlist_index)s";
   playlist-video-fmt = "${playlist-index-fmt}${video-title-fmt}";
   playlist-audio-fmt = "${playlist-index-fmt} - ${title-ext-fmt}";
-  youtube-video-fmt = "${ytdl-dir}/%(uploader)s - ${video-title-fmt}";
+  youtube-video-fmt = "${ytdl-dir}/%(channel)s - ${video-title-fmt}";
 
 in {
   scripts = super.stdenv.mkDerivation {

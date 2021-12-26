@@ -34,6 +34,7 @@ in {
               "sent" = makeChannel "Sent Items" "sent";
             };
           };
+          extraConfig.account.AuthMechs = "XOAUTH2";
         };
         msmtp = {
           enable = true;
@@ -539,8 +540,8 @@ in {
         "--continue" = "";
         "--no-playlist" = "";
         "--embed-subs" = "";
-        "--output" = "'%(uploader)s - %(upload_date)s - %(title)s.%(ext)s'";
-        "--format" = "'(bestvideo+bestaudio/best)[height<=?768][width<=?1366]'";
+        "--output" = "'%(channel)s - %(upload_date)s - %(title)s.%(ext)s'";
+        "--format" = "'(bestvideo+bestaudio/best)[height<=?768][width<=?1366]/(bestvideo+bestaudio/best)[height<=?1080][width<=?1920]/bestvideo+bestaudio/best'";
       };
     };
 

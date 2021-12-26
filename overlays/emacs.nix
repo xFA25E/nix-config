@@ -65,8 +65,8 @@ self: super: let
       owner = "xFA25E";
       repo = "pueue";
       version = "1.0.4";
-      rev = "e6f5119ed4f85c3f686c0b5af7ff7aca36c9da88";
-      sha256 = "1ngdapdrajsby4v04av05lvh8lx7vl96mbcscx856q8gh7r647ck";
+      rev = "3f18fc91f8c8843549a9e0bdb6320a751eb3a2e9";
+      sha256 = "08dxvwrv04dvibnpvrk0lxvp2l9mwvvgxn3vldjm5fq66qylsvil";
       packageRequires = [ eself.transient ];
     };
 
@@ -74,9 +74,8 @@ self: super: let
       owner = "xFA25E";
       repo = "sdcv";
       version = "3.4";
-      rev = "f0dee3226766f73fbdd8fe52946be022158b110f";
-      sha256 = "0m164cls6mdc1z1c0z8whvdacw875qrr5g3902xa7qhipba0k928";
-      packageRequires = [ eself.posframe ];
+      rev = "932c089a67d354e6bdabdbfecd5710abfb78b332";
+      sha256 = "0yp202g7h7cnai8w49918ry6qdx982gj85wpf9j8ylhpam6qvqzk";
     };
 
     shell-pwd = githubPackageBuild {
@@ -113,6 +112,7 @@ in {
     sly sly-asdf sly-quicklisp smartparens sql-indent sqlup-mode transmission
     vlf web-mode wgrep
 
+    mct
   ]);
 
 }

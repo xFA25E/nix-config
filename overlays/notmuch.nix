@@ -2,11 +2,11 @@ self: super: {
   notmuch = (super.notmuch.override {
     withEmacs = false;
   }).overrideAttrs (oldAttrs: {
-    version = "0.32.2";
+    version = "0.34.2";
     src = self.fetchgit {
       url = "https://git.notmuchmail.org/git/notmuch";
-      sha256 = "1a1l2w4bas7vi9h9if6c3ah0xh3ky39pkrk0lmc666assp1shamd";
-      rev = "04f378e673852ade100c54318124ff8c22f857b6";
+      rev = "a254a15861d3510adbe2897fed100a3c77642165";
+      sha256 = "1sn6qb2d7rr7jnlr3vyfcvlzzi7b1l1p0mi2s7nghv8x59b5dqp4";
     };
   });
 }

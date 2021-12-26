@@ -254,11 +254,6 @@
 
 (define-key mode-specific-map "ot" 'sdcv-search-input)
 
-(defun sdcv-disable-outline-font-lock ()
-   (setq-local outline-font-lock-keywords nil))
-
-(add-hook 'sdcv-mode-hook 'sdcv-disable-outline-font-lock)
-
 (with-eval-after-load 'sgml-mode
   (define-key sgml-mode-map "\C-\M-n" 'sgml-skip-tag-forward)
   (define-key sgml-mode-map "\C-\M-p" 'sgml-skip-tag-backward)
@@ -362,7 +357,43 @@
 (add-hook 'tex-mode-hook (lambda nil (setq-local ispell-parser 'tex)))
 
 (define-key mode-specific-map "or" 'transmission)
-(with-eval-after-load 'transmission (define-key transmission-mode-map "M" 'transmission-move))
+
+(with-eval-after-load 'transmission
+  (define-key transmission-mode-map "M" 'transmission-move)
+  (define-key transmission-files-mode-map "R" 'transmission-files-rename-path)
+
+  (defun transmission-files-rename-path (torrent-id old-path new-name)
+    "Rename an OLD-PATH to NEW-NAME of TORRENT-ID.
+
+TORRENT-ID is a hashString of torrent.
+
+OLD-PATH is a path to file in a torrent.  It can be a directory
+or a file.
+
+NEW-NAME is a new name of a file at OLD-PATH.
+
+When called interactively, values are taken from current buffer
+with `transmission-files-mode'.  OLD-PATH can be set explicitly
+with prefix argument, otherwise the file at point is taken.
+
+Note: it is forbidden to move a file to other locations, only
+renaming is allowed."
+    (interactive
+     (let* ((old-path (cdr (assq 'name (tabulated-list-get-id))))
+            (old-path-prompt (format "Old path (default %s): " old-path))
+            (old-path (if current-prefix-arg
+                          (read-string old-path-prompt nil nil old-path)
+                        old-path))
+            (new-name (file-name-nondirectory old-path))
+            (new-name-prompt (format "Rename %s to: " new-name))
+            (new-name (read-string new-name-prompt nil nil new-name)))
+       (list transmission-torrent-id old-path new-name)))
+
+    (when (string= new-name (file-name-nondirectory old-path))
+      (user-error "Cannot rename to the same name: %s" new-name))
+
+    (let ((arguments (list :ids (list torrent-id) :path old-path :name new-name)))
+      (transmission-request-async nil "torrent-rename-path" arguments))))
 
 (with-eval-after-load 'url-parse
   (define-advice url-generic-parse-url (:around (fn &rest args) save-match-data)
