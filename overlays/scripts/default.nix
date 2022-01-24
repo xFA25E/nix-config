@@ -35,7 +35,7 @@ in {
       wrapScripts = with self; {
         "compress_video" = [ ffmpeg ];
         "extract_eml" = [ coreutils mu ];
-        "filename_put_duration" = [ coreutils "$out" ];
+        "filename_put_duration" = [ coreutils findutils "$out" ];
         "format_duration" = [ gawk ];
         "image_clipboard" = [ file xclip ];
         "image-dired-external-viewer" = [ mpv sxiv ];
@@ -44,6 +44,7 @@ in {
         "notify_sound" = [ mpv ];
         "qrshow" = [ libnotify coreutils qrencode sxiv ];
         "search_ebook" = [ coreutils findutils ];
+        "sort_videos_by_duration" = [ coreutils "$out" ];
         "strip_video" = [ ffmpeg ];
         "studies_plot" = [ gnuplot ];
         "sudo_askpass" = [ pass ];

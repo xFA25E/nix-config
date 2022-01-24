@@ -1,6 +1,6 @@
 #!/bin/bash
 for file in "$@"; do
-    dur=$(video_duration "$file" | format_duration | cut -d" " -f1)
+    dur=$(video_duration "$file" | xargs format_duration)
     ext=${file##*.}
     len=$((${#ext} + 1))
     printf -v newfile "%s - %s.%s" "${file:0:-${len}}" "$dur" "$ext"

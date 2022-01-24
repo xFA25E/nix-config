@@ -1,17 +1,4 @@
 #!/bin/sh
 
-print_duration() {
-    ffprobe -v quiet -of json -show_entries format=duration "${1:?}" \
-        | jq -j '.format.duration | tonumber | round'
-    echo " $1"
-}
-
-if [ "${#}" -eq 0 ]; then
-    while read -r video; do
-        print_duration "${video}"
-    done
-else
-    for video in "${@}"; do
-        print_duration "${video}"
-    done
-fi
+ffprobe -v quiet -of json -show_entries format=duration "${1:?provide file}" \
+    | jq '.format.duration | tonumber | round'
