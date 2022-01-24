@@ -240,6 +240,10 @@
 
 (define-key search-map "r" 'rg-menu)
 
+(with-eval-after-load 'wid-edit
+  (require 'rx-widget)
+  (define-widget 'regexp 'rx-widget "A regular expression in rx form."))
+
 (with-eval-after-load 'savehist
   (defun savehist-filter-file-name-history ()
     (let (result)

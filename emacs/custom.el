@@ -14,7 +14,7 @@
  '(async-shell-command-buffer 'new-buffer)
  '(auth-sources '("~/.authinfo.gpg" "~/.netrc" "~/.authinfo"))
  '(auto-insert-alist
-   '((("\\.\\([Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C / C++ header")
+   '((("\\.\\(?:[Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C / C++ header")
       (replace-regexp-in-string "[^A-Z0-9]" "_"
                                 (replace-regexp-in-string "\\+" "P"
                                                           (upcase
@@ -24,7 +24,7 @@
 " _ "
 
 #endif")
-     (("\\.\\([Cc]\\|cc\\|cpp\\|cxx\\|c\\+\\+\\)\\'" . "C / C++ program")
+     (("\\.\\(?:[Cc]\\|cc\\|cpp\\|cxx\\|c\\+\\+\\)\\'" . "C / C++ program")
       nil "#include \""
       (let
           ((stem
@@ -117,7 +117,7 @@
       (progn user-mail-address)
       ">
 ")
-     (".dir-locals.el" nil ";;; Directory Local Variables
+     ("\\.dir-locals\\.el" nil ";;; Directory Local Variables
 " ";;; For more information see (info \"(emacs) Directory Variables\")
 
 " "(("
@@ -241,7 +241,7 @@
        (buffer-file-name))
       " ends here
 ")
-     (("\\.texi\\(nfo\\)?\\'" . "Texinfo file skeleton")
+     (("\\.texi\\(?:nfo\\)?\\'" . "Texinfo file skeleton")
       "Title: " "\\input texinfo   @c -*-texinfo-*-
 @c %**start of header
 @setfilename "
@@ -352,7 +352,7 @@ The document was typeset with
       . "shell-emacs-lisp.nix")
      (("/emacs-lisp/[^/]+/\\.gitignore\\'" . "Gitignore for Emacs Lisp")
       . "gitignore-emacs-lisp")
-     (("/.envrc\\'" . "Direnv envrc")
+     (("/\\.envrc\\'" . "Direnv envrc")
       nil "use nix
 ")))
  '(auto-insert-directory (expand-file-name "emacs/auto-insert/" (xdg-config-home)))
@@ -414,16 +414,6 @@ The document was typeset with
  '(comint-input-ignoredups t)
  '(comint-input-ring-size 10000)
  '(comint-mode-hook '(smartparens-mode))
- '(comint-password-prompt-regexp
-   (rx
-    (or
-     (regexp
-      (eval
-       (car
-        (get 'comint-password-prompt-regexp 'standard-value))))
-     (and
-      (any "Pp")
-      "assword " eos))))
  '(compilation-always-kill t)
  '(compilation-scroll-output t)
  '(completion-category-overrides '((bookmark (styles basic))))
@@ -443,47 +433,16 @@ The document was typeset with
  '(dired-create-destination-dirs 'ask)
  '(dired-dwim-target t)
  '(dired-guess-shell-alist-user
-   (list
-    (list
-     (rx "."
-         (or "csv" "doc" "docx" "odp" "ods" "odt" "ppt" "pptx" "xls" "xlsx")
-         eos)
-     "setsid -f libreoffice * >/dev/null 2>&1" "libreoffice --invisible --headless --convert-to pdf * &")
-    (list
-     (rx "."
-         (or "bmp" "gif" "jfif" "jpeg" "jpg" "nef" "png" "thm" "tif" "webp" "xpm")
-         eos)
-     "setsid -f sxiv * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
-    (list
-     (rx "."
-         (or "ai" "eps")
-         eos)
-     "setsid -f inkscape * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
-    (list
-     (rx "."
-         (or "djvu" "fb2")
-         eos)
-     "ebook-convert ? .epub &")
-    (list
-     (rx ".pdf" eos)
-     "setsid -f libreoffice * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
-    (list
-     (rx "."
-         (or "3gp" "aiff" "avi" "flac" "flv" "m4a" "mkv" "mov" "mp3" "mp4" "mpg" "ogg" "ogv" "opus" "vob" "wav" "webm" "wmv")
-         eos)
-     "setsid -f mpv --profile=gui * >/dev/null 2>&1" "video_duration * | format_duration" "video_duration * | awk '{s+=$1}END{print s}' | format_duration" "compress_video * &" "strip_video * &" "mediainfo" "mpv -vo=drm")
-    (list
-     (rx ".cue" eos)
-     "setsid -f mpv --profile=gui * >/dev/null 2>&1")
-    (list
-     (rx ".rar" eos)
-     "temp=\"$(echo `?` | rev | cut -d. -f 2- | rev)\"; mkdir -p \"${temp}\"; unrar x ? \"${temp}\"")
-    (list
-     (rx ".torrent" eos)
-     "transmission-show")
-    (list
-     (rx ".epub" eos)
-     "ebook-convert ? .mobi &")))
+   '(("\\.\\(?:csv\\|doc\\|docx\\|odp\\|ods\\|odt\\|ppt\\|pptx\\|xls\\|xlsx\\)\\'" "setsid -f libreoffice * >/dev/null 2>&1" "libreoffice --invisible --headless --convert-to pdf * &")
+     ("\\.\\(?:bmp\\|gif\\|jfif\\|jpeg\\|jpg\\|nef\\|png\\|thm\\|tif\\|webp\\|xpm\\)\\'" "setsid -f sxiv * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
+     ("\\.\\(?:ai\\|eps\\)\\'" "setsid -f inkscape * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
+     ("\\.\\(?:djvu\\|fb2\\)\\'" "ebook-convert ? .epub &")
+     ("\\.pdf\\'" "setsid -f libreoffice * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
+     ("\\.\\(?:3gp\\|aiff\\|avi\\|flac\\|flv\\|m4a\\|mkv\\|mov\\|mp3\\|mp4\\|mpg\\|ogg\\|ogv\\|opus\\|vob\\|wav\\|webm\\|wmv\\)\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1" "sort_videos_by_duration *" "for vid in * ; do dur=$(video_duration \"$vid\"); sum=$((sum + dur)); done; format_duration \"$sum\"" "compress_video * &" "strip_video * &" "mediainfo" "mpv -vo=drm")
+     ("\\.cue\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1")
+     ("\\.rar\\'" "temp=\"$(echo `?` | rev | cut -d. -f 2- | rev)\"; mkdir -p \"${temp}\"; unrar x ? \"${temp}\"")
+     ("\\.torrent\\'" "transmission-show")
+     ("\\.epub\\'" "ebook-convert ? .mobi &")))
  '(dired-listing-switches "-lFAv --si --group-directories-first")
  '(dired-ls-F-marks-symlinks t)
  '(dired-mode-hook '(dired-hide-details-mode hl-line-mode))
@@ -652,16 +611,7 @@ The document was typeset with
  '(message-kill-buffer-on-exit t)
  '(message-send-mail-function 'message-send-mail-with-sendmail)
  '(message-subject-re-regexp
-   (rx bol
-       (* blank)
-       (*
-        (or "R" "RE" "Re" "Ris")
-        (* "["
-           (* digit)
-           "]")
-        (32 " ")
-        ":"
-        (* blank))))
+   "^[[:blank:]]*\\(?:\\(?:R\\|RE\\|Re\\|Ris\\)\\(?:\\[[[:digit:]]*]\\)* ?:[[:blank:]]*\\)*")
  '(minibuffer-beginning-of-buffer-movement t)
  '(minibuffer-depth-indicate-mode t)
  '(minibuffer-eldef-shorten-default t)
@@ -708,7 +658,9 @@ The document was typeset with
      ("Алексей Шевцов" "https://www.youtube.com/feeds/videos.xml?channel_id=UCM7-8EfoIv0T9cCI4FhHbKQ" nil nil nil)
      ("The Люди" "https://www.youtube.com/feeds/videos.xml?channel_id=UCwPzq5yQwczLmivBX8zq7Mw" nil nil nil)
      ("Редакция" "https://www.youtube.com/feeds/videos.xml?channel_id=UC1eFXmJNkjITxPFWTy6RsWg" nil nil nil)
-     ("Ben Eater" "https://odysee.com/$/rss/@beneater:6" nil nil nil)))
+     ("Ben Eater" "https://odysee.com/$/rss/@beneater:6" nil nil nil)
+     ("3Blue1Brown" "https://odysee.com/$/rss/@3Blue1Brown:b" nil nil nil)
+     ("Welch Labs" "https://www.youtube.com/feeds/videos.xml?channel_id=UConVfxXodg78Tzh5nNu85Ew" nil nil nil)))
  '(newsticker-url-list-defaults nil)
  '(next-screen-context-lines 10)
  '(notmuch-address-internal-completion '(received nil))
@@ -822,13 +774,7 @@ The document was typeset with
  '(save-place-limit 1000)
  '(save-place-mode t)
  '(save-place-skip-check-regexp
-   (rx
-    (or
-     (regexp
-      (eval
-       (car
-        (get 'save-place-skip-check-regexp 'standard-value))))
-     (and bos "http"))))
+   "\\`\\(?:http\\|/\\(?:cdrom\\|floppy\\|mnt\\|\\(?:[^/:@]*@\\)?[^/:@]*[^./:@]:\\)\\)")
  '(savehist-file (expand-file-name "emacs/savehist" (xdg-cache-home)))
  '(savehist-mode t)
  '(savehist-save-hook '(savehist-filter-file-name-history))

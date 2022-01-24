@@ -737,6 +737,13 @@ Super fast *grep*-killer.  In *Rust* we trust.
 (define-key search-map "r" 'rg-menu)
 #+end_src
 
+*** [[https://github.com/xFA25E/rx-widget][Rx Widget]]
+#+begin_src emacs-lisp
+(with-eval-after-load 'wid-edit
+  (require 'rx-widget)
+  (define-widget 'regexp 'rx-widget "A regular expression in rx form."))
+#+end_src
+
 *** Savehist
 Persistent history in the minibuffer.  This particular setting is used to filter
 out: remote files, http links or non-existent files.

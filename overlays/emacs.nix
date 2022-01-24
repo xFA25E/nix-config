@@ -70,6 +70,15 @@ self: super: let
       packageRequires = [ eself.transient ];
     };
 
+    rx-widget = githubPackageBuild {
+      owner = "xFA25E";
+      repo = "rx-widget";
+      version = "0.0.1";
+      rev = "b75e60d3b551db160cd495b1d65418be0cbdbf53";
+      sha256 = "1s5dw7xn3d37da8hx6ibc20xfm2nwis0ijicmri62av5xgypwin1";
+      packageRequires = [ eself.xr ];
+    };
+
     sdcv = githubPackageBuild {
       owner = "xFA25E";
       repo = "sdcv";
@@ -112,7 +121,7 @@ in {
     sly sly-asdf sly-quicklisp smartparens sql-indent sqlup-mode transmission
     vlf web-mode wgrep
 
-    mct
+    mct rx-widget
   ]);
 
 }
