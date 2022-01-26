@@ -8,8 +8,7 @@
                          "trivia"
 
                          "flexi-streams")
-  :components ((:file "fixes")
-               (:file "timers")
+  :components ((:file "timers")
                (:file "pass")
                (:file "reverse-im")
                (:file "status")

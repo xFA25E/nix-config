@@ -59,10 +59,10 @@
     (throw 'error (format nil "\"~A\" is an invalid time specification!" when))))
 
 (defun read-timer (&optional (prompt "Timer: "))
-  (flet ((make-entry (timer) (cons (format nil "~A" timer) (timer timer))))
+  (flet ((make-entry (timer) (list (format nil "~A" timer) (timer timer))))
     (if-let ((menu (mapcar #'make-entry (timers (make-instance 'timers)))))
       (match (swm:select-from-menu (swm:current-screen) menu prompt)
-        ((cons _ timer) timer)
+        ((list _ timer) timer)
         (_ (throw 'error "No timer!")))
       (throw 'error "No timers!"))))
 
@@ -80,9 +80,9 @@
   (swm:message "~A" (make-instance 'timers)))
 
 (swm:defcommand timer-menu () ()
-  (let ((menu '(("add" . "timer-add")
-                ("list" . "timer-list")
-                ("kill" . "timer-kill"))))
+  (let ((menu '(("add" "timer-add")
+                ("list" "timer-list")
+                ("kill" "timer-kill"))))
     (match (swm:select-from-menu (swm:current-screen) menu "Timer: ")
-      ((cons _ command)
+      ((list _ command)
        (swm::eval-command command t)))))

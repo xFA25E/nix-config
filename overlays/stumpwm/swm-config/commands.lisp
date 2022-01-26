@@ -129,13 +129,13 @@
 ;;; MAIN MENU
 
 (defvar *main-menu*
-  (list (list "screenshot"     :command "screenshot")
-        (list "suspend"        :shell (list "systemctl" "suspend"))
-        (list "mount"          :shell (list "rmount"))
-        (list "unmount"        :shell (list "rumount"))
-        (list "clipboard-type" :command "clipboard-type")))
+  '(("screenshot"     (:command "screenshot"))
+    ("suspend"        (:shell ("systemctl" "suspend")))
+    ("mount"          (:shell ("rmount")))
+    ("unmount"        (:shell ("rumount")))
+    ("clipboard-type" (:command "clipboard-type"))))
 
 (swm:defcommand main-menu () ()
   (match (swm:select-from-menu (swm:current-screen) *main-menu* "Main menu: ")
-    ((list _ :command command) (swm::eval-command command t))
-    ((list _ :shell shell) (launch-program shell))))
+    ((list _ (list :command command)) (swm::eval-command command t))
+    ((list _ (list :shell shell)) (launch-program shell))))
