@@ -4,7 +4,7 @@
   (:import-from #:trivia #:match)
   (:import-from #:uiop #:run-program)
   (:local-nicknames (#:swm #:stumpwm))
-  (:export #:timer-add #:timer-kill #:timer-list #:timer-menu))
+  (:export #:timer-add #:timer-kill #:timer-list #:timer-menu #:init))
 (in-package #:swm-config.timers)
 
 (defun seconds-left (timer)
@@ -86,3 +86,6 @@
     (match (swm:select-from-menu (swm:current-screen) menu "Timer: ")
       ((list _ command)
        (swm::eval-command command t)))))
+
+(defun init ()
+  (local-time:define-timezone local-time:*default-timezone* #p"/etc/localtime" :load t))
