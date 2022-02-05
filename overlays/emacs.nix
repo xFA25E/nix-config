@@ -3,8 +3,8 @@ self: super: let
   emacs-overlay-src = super.fetchFromGitHub {
     owner = "nix-community";
     repo = "emacs-overlay";
-    rev = "1ad30847e88737fde2421da86ec48410e3d414a0";
-    sha256 = "1zlfrf73gwbkq5r6j85f25dkvlypfc5ni38mxh01k2wq98lc92vf";
+    rev = "4faef893814812fda93cc04081d40a09b2064dd9";
+    sha256 = "09hcdrxyhvavajjf8klym2lg81gskz6qxv0p5y2c68nlhqk2a2bs";
   };
 
   emacs-overlay = import emacs-overlay-src self super;
@@ -116,7 +116,7 @@ in {
     async avy browse-url-multi cargo consult csv-mode cyrillic-dvorak-im
     dumb-jump ebdb edit-indirect eglot emmet-mode envrc flymake-shellcheck
     format-all htmlize ipretty ledger-mode link-hint magit marginalia nix-mode
-    notmuch nov ob-http org-mime org-plus-contrib pcmpl-args pdf-tools php-mode
+    notmuch nov ob-http org org-mime org-contrib pcmpl-args pdf-tools php-mode
     pueue rainbow-mode restclient reverse-im rg rust-mode sdcv shell-pwd skempo
     sly sly-asdf sly-quicklisp smartparens sql-indent sqlup-mode transmission
     vlf web-mode wgrep
