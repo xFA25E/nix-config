@@ -141,6 +141,8 @@
 (with-eval-after-load 'link-hint
   (cl-pushnew 'rg-mode (get 'link-hint-compilation-link :vars)))
 
+(define-key global-map "\M-[" 'delete-pair)
+
 (define-key search-map "l" 'locate)
 
 (define-key project-prefix-map "m" 'magit-project-status)
@@ -315,44 +317,6 @@
           (ccl   ("ccl"))
           (clisp ("clisp"))
           (abcl  ("abcl")))))
-
-(with-eval-after-load 'smartparens (require 'smartparens-config))
-
-(add-hook 'minibuffer-setup-hook 'smartparens-mode)
-(add-hook 'nix-mode-hook 'smartparens-mode)
-(add-hook 'rust-mode-hook 'smartparens-mode)
-(add-hook 'js-mode-hook 'smartparens-mode)
-(add-hook 'restclient-mode-hook 'smartparens-mode)
-(add-hook 'smartparens-mode-hook 'show-smartparens-mode)
-
-(defun sp-kill-region-dwim (&optional count)
-  (interactive "p")
-  (if (use-region-p)
-      (sp-kill-region (region-beginning) (region-end))
-    (sp-backward-kill-word count)))
-
-(autoload 'sp-backward-barf-sexp "smartparens" nil t)
-(autoload 'sp-backward-slurp-sexp "smartparens" nil t)
-(autoload 'sp-copy-sexp "smartparens" nil t)
-(autoload 'sp-forward-barf-sexp "smartparens" nil t)
-(autoload 'sp-forward-slurp-sexp "smartparens" nil t)
-(autoload 'sp-rewrap-sexp "smartparens" nil t)
-(autoload 'sp-unwrap-sexp "smartparens" nil t)
-
-(define-key global-map [?\C-\(] 'sp-backward-slurp-sexp)
-(define-key global-map [?\C-\)] 'sp-forward-slurp-sexp)
-(define-key global-map [?\C-\M-\(] 'sp-backward-barf-sexp)
-(define-key global-map [?\C-\M-\)] 'sp-forward-barf-sexp)
-(define-key global-map "\C-\M-w" 'sp-copy-sexp)
-(define-key global-map "\M-[" 'sp-unwrap-sexp)
-(define-key global-map "\M-]" 'sp-rewrap-sexp)
-
-(define-key smartparens-mode-map "\C-\M-u" 'sp-backward-up-sexp)
-(define-key smartparens-mode-map "\C-\M-d" 'sp-down-sexp)
-(define-key smartparens-mode-map "\C-\M-t" 'sp-transpose-sexp)
-(define-key smartparens-mode-map "\C-\M-k" 'sp-kill-sexp)
-(define-key smartparens-mode-map "\M-d" 'sp-kill-word)
-(define-key smartparens-mode-map "\C-w" 'sp-kill-region-dwim)
 
 (add-hook 'rust-mode-hook 'subword-mode)
 (add-hook 'nix-mode-hook 'subword-mode)

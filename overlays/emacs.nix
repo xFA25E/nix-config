@@ -118,8 +118,8 @@ in {
     format-all htmlize ipretty ledger-mode link-hint magit marginalia nix-mode
     notmuch nov ob-http org org-mime org-contrib pcmpl-args pdf-tools php-mode
     pueue rainbow-mode restclient reverse-im rg rust-mode sdcv shell-pwd skempo
-    sly sly-asdf sly-quicklisp smartparens sql-indent sqlup-mode transmission
-    vlf web-mode wgrep
+    sly sly-asdf sly-quicklisp sql-indent sqlup-mode transmission vlf web-mode
+    wgrep
 
     mct rx-widget
   ]);

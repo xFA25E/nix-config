@@ -1,7 +1,7 @@
 #+title: Average GNU/Emacs Enjoyer's config
 
 #+options: toc:nil
-#+property: header-args:emacs-lisp :results silent
+#+property: header-args:elisp :results silent
 
 For a long time, I refused to write a literate emacs config.  The main reason
 was that, I thought that it was needed only for novices, who do not know any
@@ -21,14 +21,14 @@ So, here we go, my *GNU/Emacs* config.
 
 * Early Init
 :properties:
-:header-args:emacs-lisp: :tangle early-init.el
+:header-args:elisp: :tangle early-init.el
 :end:
 
 First thing first.  *GNU/Emacs* now has an /early-init.el/ file.  It is a
 special file that is loaded before the package system and GUI is initialized.
 It is a good place to fine-tune the startup performance.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 ;; -*- lexical-binding: t; -*-
 #+end_src
 
@@ -39,7 +39,7 @@ during the loading of /init.el/ and restore it after.  By doing this,
 startup will be faster.  I'm not claiming to be a low-level *GNU/Emacs* expert,
 feel free to correct me.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (let ((old-threshold gc-cons-threshold))
   (add-hook 'emacs-startup-hook
             (lambda ()
@@ -52,7 +52,7 @@ This is a nice little snippet of code, that helps you stay in a good shape.  If
 your startup time is bigger than the usual, you fucked something up.  Also, it
 enhances your ability to *FLEX* on /e-lisp/ peasants.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (add-hook 'emacs-startup-hook
           (lambda ()
             (message "Emacs ready in %s with %d garbage collections." (emacs-init-time) gcs-done)))
@@ -63,18 +63,18 @@ An import of /xdg/ library.  If you are still not using [[https://wiki.archlinux
 +killing yourself+ start using it.  It provides a good *STRUCTURE™* to your
 hamster (from rus: hamster -> хомяк -> homyak -> home).
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (require 'xdg)
 #+end_src
 
 * Init
 :properties:
-:header-args:emacs-lisp: :tangle init.el
+:header-args:elisp: :tangle init.el
 :end:
 
 Here is the juicy part of my *GNU/Emacs* config.  We start by writing a header.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 ;; -*- lexical-binding: t; -*-
 #+end_src
 
@@ -145,7 +145,7 @@ space.  You can use it just for anything:
 You can see a list of my abbrevs [[abbrev_defs][here]].  Of course, I have not defined them all
 by myself.  There is a good list of abbrevs [[https://www.emacswiki.org/emacs/autocorrection_abbrev_defs][here]].
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (add-hook 'js-mode-hook 'abbrev-mode)
 #+end_src
 
@@ -153,7 +153,7 @@ by myself.  There is a good list of abbrevs [[https://www.emacswiki.org/emacs/au
 We still don't have nice things in 2k20.  /Compilation/ mode is still unable to
 interprent special sequences by default.  Lets help him.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'compile
   (defun colorize-compilation ()
     (let ((inhibit-read-only t))
@@ -166,7 +166,7 @@ Gotta move fast.  A must-have package to quickly jump to places in a buffer.
 Instead of prefixes, I just highlight every /symbol/.  It can be slower with a
 lot of short /symbols/ in a buffer, but it works fine most of the time.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key global-map "\M-z" 'avy-goto-word-0)
 (define-key goto-map "\M-g" 'avy-goto-line)
 #+end_src
@@ -175,7 +175,7 @@ lot of short /symbols/ in a buffer, but it works fine most of the time.
 Sometimes, I need to browse a url (at point or by inserting it into the
 minibuffer).
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key ctl-x-map "B" 'browse-url)
 #+end_src
 
@@ -184,21 +184,21 @@ My package that enhances default /browse-url/.  It provides a multi-choice
 prompt for a url, because, sometimes, I want to open a url through *youtube-dl*,
 *mpv* or *transmission*.
 
-#+Begin_src emacs-lisp
+#+Begin_src elisp
 (define-key mode-specific-map "oy" 'browse-url-multi-youtube-search)
 #+end_src
 
 *** [[https://github.com/jwiegley/emacs-async/blob/master/async-bytecomp.el][Bytecomp Async]]
 I don't like to wait for byte-compilation.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'bytecomp (async-bytecomp-package-mode))
 #+end_src
 
 *** [[https://github.com/kwrooijen/cargo.el][Cargo]]
 Nice cargo commands, for /state-of-the-art/ experience of *Rust* compilation.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (add-hook 'rust-mode-hook 'cargo-minor-mode)
 #+end_src
 
@@ -206,7 +206,7 @@ Nice cargo commands, for /state-of-the-art/ experience of *Rust* compilation.
 In /comint/ we trust.  I like how easy it is to create custom repls with this
 package.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
 (add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
 #+end_src
@@ -215,7 +215,7 @@ package.
 This is a game changer.  A package that strives to be a
 completion-framework-agnostic replacement for [[https://github.com/abo-abo/swiper][counsel]].
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key global-map "\M-H" 'consult-history)
 (define-key goto-map "o" 'consult-outline)
 (define-key goto-map "i" 'consult-imenu)
@@ -228,7 +228,7 @@ completion-framework-agnostic replacement for [[https://github.com/abo-abo/swipe
 *** Css Mode
 /Css-mode/ has a good command to lookup documentation.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'css-mode (define-key css-mode-map "\C-cm" 'css-lookup-symbol))
 #+end_src
 
@@ -236,7 +236,7 @@ completion-framework-agnostic replacement for [[https://github.com/abo-abo/swipe
 By default, /custom/ does not have any keybindings.  This is a shame, since they
 are a must-have for it.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (defvar cus-edit-map (make-sparse-keymap))
 (define-key cus-edit-map "v" 'customize-option)
 (define-key cus-edit-map "g" 'customize-group)
@@ -250,7 +250,7 @@ are a must-have for it.
 A package, copied from EmacsWiki (bless them), that provides an input-method for
 russian keybord using dvorak.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (require 'cyrillic-dvorak-im)
 #+end_src
 
@@ -261,7 +261,7 @@ without it anymore.
 **** Dired Aux
 A package with many useful functions.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'dired-aux
   (define-key dired-mode-map "\M-+" 'dired-create-empty-file)
   (add-to-list 'dired-compress-file-suffixes
@@ -272,21 +272,21 @@ A package with many useful functions.
 Same as the above, but has one of my favorite /dired/ features:
 ~dired-guess-shell-alist-user~.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'dired (require 'dired-x))
 #+end_src
 
 **** [[https://github.com/jwiegley/emacs-async/blob/master/dired-async.el][Dired Async]]
 Makes a lot of dired commands asyncronous.  Not =delete= though.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'dired (dired-async-mode))
 #+end_src
 
 *** [[https://github.com/jacktasia/dumb-jump][Dumb Jump]]
 Poor man's goto-definition facility.  It uses regexps and *grep/rg/whatever*.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
 #+end_src
 
@@ -294,7 +294,7 @@ Poor man's goto-definition facility.  It uses regexps and *grep/rg/whatever*.
 An EIEIO port of BBDB (Big Brother DataBase).  Allows you to save contacts.
 Also, integrates with MUAs.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'ebdb-com
   (define-key ebdb-mode-map "\C-cm" 'ebdb-complete-push-mail-and-quit-window)
   (define-key ebdb-mode-map "\C-cM" 'ebdb-complete-push-mail))
@@ -312,14 +312,14 @@ Also, integrates with MUAs.
 Allows you to edit any region in different /major-mode/.  Very helpful when you
 have a file which is a mix of different languages.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key ctl-x-map "E" 'edit-indirect-region)
 #+end_src
 
 *** Elisp Mode
 Some macro-expansion commands.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key emacs-lisp-mode-map "\C-cM" 'emacs-lisp-macroexpand)
 (define-key lisp-interaction-mode-map "\C-cM" 'emacs-lisp-macroexpand)
 #+end_src
@@ -328,14 +328,14 @@ Some macro-expansion commands.
 Here are some options, that can't be changed through /custom/.  Mostly, because
 the developers forgot abouth them.  Shame on developers!
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (setq completion-ignore-case t)
 #+end_src
 
 *** [[https://github.com/smihica/emmet-mode][Emmet Mode]]
 A must-have when you need to write XML by hand.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (add-hook 'nxml-mode-hook 'emmet-mode)
 (add-hook 'mhtml-mode-hook 'emmet-mode)
 (add-hook 'web-mode-hook 'emmet-mode)
@@ -344,7 +344,7 @@ A must-have when you need to write XML by hand.
 *** Env
 Force programs to disable ansi escape sequences.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (setenv "PAGER" "cat")
 #+end_src
 
@@ -353,7 +353,7 @@ This is a textual web-browser.  It is very useful for browsing "Common Lisp
 HyperSpec", "Source Hut" or Youtube (through [[https://invidio.us][Invidious]] instances).  This snippet
 lets me use /browse-url-multi/ inside /eww/.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'eww
   (defun eww-browse-url-custom ()
     (interactive)
@@ -367,7 +367,7 @@ lets me use /browse-url-multi/ inside /eww/.
 Another great *GNU/Emacs* feature.  Results of arbitrary *find* commands can be
 displayed inside /dired/.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key search-map "n" 'find-name-dired)
 (define-key search-map "N" 'find-dired)
 #+end_src
@@ -375,7 +375,7 @@ displayed inside /dired/.
 *** Find Func
 Usefull commands to jump to /e-lisp/ definitions.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key ctl-x-map "L" 'find-library)
 (define-key ctl-x-map "F" 'find-function)
 (define-key ctl-x-map "K" 'find-function-on-key)
@@ -385,7 +385,7 @@ Usefull commands to jump to /e-lisp/ definitions.
 Push xref marker before using some ~find-func~ commands.  By doing this, we can
 go back with =M-,=.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (dolist (fn '(find-library find-function find-function-on-key find-variable))
   (advice-add fn :before 'xref-push-marker-stack-ignore-args))
 #+end_src
@@ -393,14 +393,14 @@ go back with =M-,=.
 *** Finder
 Show the *Commentary* section of a package.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key help-map "\M-c" 'finder-commentary)
 #+end_src
 
 *** Flymake
 On-the-fly linter.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'flymake
   (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error)
   (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error))
@@ -412,7 +412,7 @@ Another great *GNU/Emacs* package.  You can run arbitatry *grep* commands.
 long lines.  To fix this in /grep/, I define this advice that trims the result
 to 500 chars.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key search-map "g" 'rgrep)
 (with-eval-after-load 'grep
   (define-advice grep-expand-template (:filter-return (cmd) add-cut)
@@ -423,14 +423,14 @@ to 500 chars.
 Handy in-buffer completion.  It can use a lot of sources.  Mostly useful to
 complete file-name paths.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key global-map "\C-_" 'hippie-expand)
 #+end_src
 
 *** Hl Line
 Highlight current line in these modes.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (add-hook 'csv-mode-hook 'hl-line-mode)
 (add-hook 'grep-mode-hook 'hl-line-mode)
 (add-hook 'tar-mode-hook 'hl-line-mode)
@@ -444,7 +444,7 @@ Highlight current line in these modes.
 Somewhat nice gallery for *GNU/Emacs*.  It's database format is awful because it
 uses plain-text.  I rewritten it with a serialized /e-lisp/ data structure.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'image-dired
   (load (expand-file-name "emacs/image-dired-db.el" (xdg-config-home))))
 #+end_src
@@ -452,7 +452,7 @@ uses plain-text.  I rewritten it with a serialized /e-lisp/ data structure.
 *** Ipretty
 Pretty-print /e-lisp/ result of last S-EXpression.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key lisp-interaction-mode-map "\C-j" 'ipretty-last-sexp)
 #+end_src
 
@@ -460,7 +460,7 @@ Pretty-print /e-lisp/ result of last S-EXpression.
 A great in-buffer search facility.  It is well integrated with ~query-replace~
 and ~occur~.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key isearch-mode-map "\C-h" 'isearch-delete-char)
 (define-key isearch-mode-map "\C-?" isearch-help-map)
 #+end_src
@@ -471,7 +471,7 @@ regex.  By default, it can't recognize amounts with equal sign (~=~) at the
 beginning and, as a consequence, can't indent, properly, lines with this kinds
 of amounts.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'ledger-regex
   (setq ledger-amount-regex
         (concat "\\(  \\|\t\\| \t\\)[ \t]*-?"
@@ -488,39 +488,44 @@ Another favorite package of mine.  It lets you do actions to various points of
 interest in buffers using Avy.  It can do anything: buttons, links, completion
 candidates.  You name it!
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key goto-map "\M-l" 'link-hint-open-link)
 (define-key goto-map "\M-L" 'link-hint-copy-link)
 (with-eval-after-load 'link-hint
   (cl-pushnew 'rg-mode (get 'link-hint-compilation-link :vars)))
 #+end_src
 
+*** Lisp
+#+begin_src elisp
+(define-key global-map "\M-[" 'delete-pair)
+#+end_src
+
 *** Locate
 Locate integration.  Unfortunately it is using a simplified (and half-assed)
 version of /dired/ to display the results.  It bothers me sometimes.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key search-map "l" 'locate)
 #+end_src
 
 *** [[https://github.com/magit/magit][Magit]]
 A killer feature.  Best *git* front-end.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key project-prefix-map "m" 'magit-project-status)
 #+end_src
 
 *** Man
 Do you like /smoking/ manuals?
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key help-map "\M-m" 'man)
 #+end_src
 
 *** Minibuffer
 Some enhancements for default completion-framework.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
 (define-key minibuffer-local-must-match-map "\C-j" 'minibuffer-force-complete-and-exit)
 #+end_src
@@ -530,14 +535,14 @@ Mpc front-end.  It might feel wanky, but that's because it was intended to be
 used with ~tool-bar-mode~ enabled.  By giving it some nice keybindings, it
 becomes a +butterfly+ nice and usable *mpc* front-end.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key mode-specific-map "os" 'mpc)
 #+end_src
 
 **** Mpc Bindings
 Yeah, it does not have default bindings at all!
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'mpc
   (define-key mpc-mode-map "p" 'mpc-playlist)
   (define-key mpc-mode-map "u" 'mpc-update)
@@ -563,7 +568,7 @@ Yeah, it does not have default bindings at all!
 Some good net utils, when you need to find out why your pages won't load in your
 default web-browser.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key mode-specific-map "nh" 'nslookup-host)
 (define-key mode-specific-map "ni" 'ifconfig)
 (define-key mode-specific-map "nn" 'netstat)
@@ -575,7 +580,7 @@ default web-browser.
 An out-of-the-box rss/atom reader.  It has some bizarre defaults, but it is very
 usable.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key mode-specific-map "on" 'newsticker-show-news)
 #+end_src
 
@@ -583,7 +588,7 @@ usable.
 My main MUA.  The tag system is fantastic.  Switched to it after using /mu4e/
 for some years. [[https://www.youtube.com/watch?v=3xWEnAVl1Tw][Thanks!]]
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key mode-specific-map "om" 'notmuch)
 (autoload 'notmuch-mua-mail "notmuch-mua")
 (define-mail-user-agent 'notmuch-user-agent 'notmuch-mua-mail 'notmuch-mua-send-and-exit 'notmuch-mua-kill-buffer 'notmuch-mua-send-hook)
@@ -592,7 +597,7 @@ for some years. [[https://www.youtube.com/watch?v=3xWEnAVl1Tw][Thanks!]]
 *** [[https://depp.brause.cc/nov.el/][Nov]]
 You can read EPUB in *GNU/Emacs*.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (add-to-list 'auto-mode-alist (cons (rx ".epub" eos) 'nov-mode))
 #+end_src
 
@@ -600,7 +605,7 @@ You can read EPUB in *GNU/Emacs*.
 Some commands in *GNU/Emacs* are disabled by default, because they are thought
 to be confusing for novices.  [[https://github.com/xFA25E/images/raw/main/do-nice-things-to-normies.mp4][As one famous philosopher said]].
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (setq disabled-command-function nil)
 #+end_src
 
@@ -608,7 +613,7 @@ to be confusing for novices.  [[https://github.com/xFA25E/images/raw/main/do-nic
 A great http client that uses /Org Mode/.  It does not add itself to
 ~org-babel-load-languges~ /custom/ type.  Let's help it to be even greater.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'org
   (cl-pushnew
    '(const :tag "Http" http)
@@ -619,7 +624,7 @@ A great http client that uses /Org Mode/.  It does not add itself to
 *** Org
 Who doesn't know /org-mode/?  This is another killer feature of *GNU/Emacs*.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'org
   (define-key org-mode-map [?\C-c?\C-\S-t] 'org-todo-yesterday))
 #+end_src
@@ -627,7 +632,7 @@ Who doesn't know /org-mode/?  This is another killer feature of *GNU/Emacs*.
 Play a sound after org notification.  I know that one could use
 ~org-show-notification-handler~, but I'm lazy!
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-advice org-show-notification (:after (&rest _) sound)
   (call-process "notify_sound" nil 0 nil))
 #+end_src
@@ -635,7 +640,7 @@ Play a sound after org notification.  I know that one could use
 **** Org Agenda
 My tasks, habits etc.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key mode-specific-map "Ga" 'org-agenda)
 (with-eval-after-load 'org-agenda
   (define-key org-agenda-mode-map "T" 'org-agenda-todo-yesterday))
@@ -644,14 +649,14 @@ My tasks, habits etc.
 **** Org Capture
 This is like enhanced /remember-mode/.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key mode-specific-map "Gc" 'org-capture)
 #+end_src
 
 **** [[https://github.com/org-mime/org-mime][Org Mime]]
 Write your e-mail in /org-mode/.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (autoload 'org-mime-edit-mail-in-org-mode "org-mime" nil t)
 (autoload 'org-mime-revert-to-plain-text-mail "org-mime" nil t)
 (with-eval-after-load 'message
@@ -663,7 +668,7 @@ Write your e-mail in /org-mode/.
 *** Paragraphs
 Sometimes I need to transpose paragraphs.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
 #+end_src
 
@@ -671,7 +676,7 @@ Sometimes I need to transpose paragraphs.
 e/shell completion facility.  Very great package.  It provides a lot of
 completions and a great library for completion definition.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (autoload 'pcomplete/pass "pcmpl-args")
 (autoload 'pcomplete/parted "pcmpl-args")
 (with-eval-after-load 'pcmpl-args
@@ -681,14 +686,14 @@ completions and a great library for completion definition.
 *** [[https://github.com/politza/pdf-tools][Pdf Tools]]
 Do you like viewing PDFs?
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (pdf-loader-install t t)
 #+end_src
 
 *** Pp
 Small PP!  Another pretty-printer for /e-lisp/ S-EXpressions.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key emacs-lisp-mode-map "\C-cm" 'pp-macroexpand-last-sexp)
 (define-key lisp-interaction-mode-map "\C-cm" 'pp-macroexpand-last-sexp)
 #+end_src
@@ -696,7 +701,7 @@ Small PP!  Another pretty-printer for /e-lisp/ S-EXpressions.
 *** Proced
 Poor man's *htop*.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key mode-specific-map "op" 'proced)
 #+end_src
 
@@ -704,7 +709,7 @@ Poor man's *htop*.
 A queue of tasks.  Used mostly for downloading youtube videos through
 *youtube-dl*.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key mode-specific-map "ou" 'pueue)
 (add-hook 'pueue-mode-hook 'hl-line-mode)
 #+end_src
@@ -712,7 +717,7 @@ A queue of tasks.  Used mostly for downloading youtube videos through
 *** Register
 Are you familiar with registers?  You can store things!
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key ctl-x-r-map "v" 'view-register)
 (define-key ctl-x-r-map "L" 'list-registers)
 (define-key ctl-x-r-map "p" 'prepend-to-register)
@@ -725,7 +730,7 @@ a speaker of a language with a cyrillic alphabet.  You would like to write
 something in this, bizarre, language and use *GNU/Emacs* bindings at the same
 time.  That's what this package does.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (require 'reverse-im)
 (reverse-im-activate "cyrillic-dvorak")
 #+end_src
@@ -733,12 +738,12 @@ time.  That's what this package does.
 *** [[https://github.com/dajva/rg.el][Rg]]
 Super fast *grep*-killer.  In *Rust* we trust.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key search-map "r" 'rg-menu)
 #+end_src
 
 *** [[https://github.com/xFA25E/rx-widget][Rx Widget]]
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'wid-edit
   (require 'rx-widget)
   (define-widget 'regexp 'rx-widget "A regular expression in rx form."))
@@ -748,7 +753,7 @@ Super fast *grep*-killer.  In *Rust* we trust.
 Persistent history in the minibuffer.  This particular setting is used to filter
 out: remote files, http links or non-existent files.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'savehist
   (defun savehist-filter-file-name-history ()
     (let (result)
@@ -765,14 +770,14 @@ out: remote files, http links or non-existent files.
 *** [[https://github.com/manateelazycat/sdcv][SDCV]]
 Do you like browsing dictionaries offline inside *GNU/Emacs*?
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key mode-specific-map "ot" 'sdcv-search-input)
 #+end_src
 
 *** Sgml Mode
 Mode for editing all XML-like languages.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'sgml-mode
   (define-key sgml-mode-map "\C-\M-n" 'sgml-skip-tag-forward)
   (define-key sgml-mode-map "\C-\M-p" 'sgml-skip-tag-backward)
@@ -782,14 +787,14 @@ Mode for editing all XML-like languages.
 *** Shell
 Plain old shell.  I prefer it to /eshell/ because it uses proper pipes.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key mode-specific-map "s" 'shell)
 #+end_src
 
 *** [[https://github.com/xFA25E/shell-pwd][Shell Pwd]]
 Show /shell/ current directory inside mode-line.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key mode-specific-map "l" 'shell-pwd-list-buffers)
 (with-eval-after-load 'shell
   (define-key shell-mode-map "\C-c\M-d" 'shell-pwd-change-directory))
@@ -798,7 +803,7 @@ Show /shell/ current directory inside mode-line.
 *** Simple
 Some useful *GNU/Emacs* commands not bound by default (for some unknown reason).
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (defun kill-region-dwim (&optional count)
   (interactive "p")
   (if (use-region-p)
@@ -820,7 +825,7 @@ character.  /Skeleton/ has an annoying feature: it displays help by default on
 ~C-h~, even if ~help~ symbol is not bound.  The only reliable way to disable
 this is by an override advice.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-advice skeleton-read (:override (prompt &optional initial-input recursive) no-help)
   (let ((minibuffer-help-form (when (boundp 'help) (symbol-value 'help)))
         (eolp (eolp)))
@@ -841,7 +846,7 @@ this is by an override advice.
 Enhance default *GNU/Emacs* templates.  I don't like Yasnippet, so I wrote a
 package that fixes problems of /tempo/ and /skeleton/.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (add-hook 'nix-mode-hook 'skempo-mode)
 (add-hook 'js-mode-hook 'skempo-mode)
 (autoload 'skeleton-template-lisp-defpackage "skempo")
@@ -857,7 +862,7 @@ package that fixes problems of /tempo/ and /skeleton/.
 Author of the best *Common Lisp* IDE doesn't know how to use ~defcustom~.  I
 send him a patch, but he ignores me.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'sly
   (setq sly-lisp-implementations
         '((sbcl  ("sbcl"))
@@ -867,68 +872,10 @@ send him a patch, but he ignores me.
           (abcl  ("abcl")))))
 #+end_src
 
-*** [[https://github.com/Fuco1/smartparens][Smartparens]]
-Handle pairs smartly.
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'smartparens (require 'smartparens-config))
-#+end_src
-
-**** Smartparens Hooks
-Sadly, some hooks are not /custom/ hooks.
-
-#+begin_src emacs-lisp
-(add-hook 'minibuffer-setup-hook 'smartparens-mode)
-(add-hook 'nix-mode-hook 'smartparens-mode)
-(add-hook 'rust-mode-hook 'smartparens-mode)
-(add-hook 'js-mode-hook 'smartparens-mode)
-(add-hook 'restclient-mode-hook 'smartparens-mode)
-(add-hook 'smartparens-mode-hook 'show-smartparens-mode)
-#+end_src
-
-**** Smartparens Defs
-Some /smartparens/ commands are not autoloaded.
-
-#+begin_src emacs-lisp
-(defun sp-kill-region-dwim (&optional count)
-  (interactive "p")
-  (if (use-region-p)
-      (sp-kill-region (region-beginning) (region-end))
-    (sp-backward-kill-word count)))
-
-(autoload 'sp-backward-barf-sexp "smartparens" nil t)
-(autoload 'sp-backward-slurp-sexp "smartparens" nil t)
-(autoload 'sp-copy-sexp "smartparens" nil t)
-(autoload 'sp-forward-barf-sexp "smartparens" nil t)
-(autoload 'sp-forward-slurp-sexp "smartparens" nil t)
-(autoload 'sp-rewrap-sexp "smartparens" nil t)
-(autoload 'sp-unwrap-sexp "smartparens" nil t)
-#+end_src
-
-**** Smartparens Bindings
-I like to bind /smartparens/ commands only to ~smartparens-mode~.
-
-#+begin_src emacs-lisp
-(define-key global-map [?\C-\(] 'sp-backward-slurp-sexp)
-(define-key global-map [?\C-\)] 'sp-forward-slurp-sexp)
-(define-key global-map [?\C-\M-\(] 'sp-backward-barf-sexp)
-(define-key global-map [?\C-\M-\)] 'sp-forward-barf-sexp)
-(define-key global-map "\C-\M-w" 'sp-copy-sexp)
-(define-key global-map "\M-[" 'sp-unwrap-sexp)
-(define-key global-map "\M-]" 'sp-rewrap-sexp)
-
-(define-key smartparens-mode-map "\C-\M-u" 'sp-backward-up-sexp)
-(define-key smartparens-mode-map "\C-\M-d" 'sp-down-sexp)
-(define-key smartparens-mode-map "\C-\M-t" 'sp-transpose-sexp)
-(define-key smartparens-mode-map "\C-\M-k" 'sp-kill-sexp)
-(define-key smartparens-mode-map "\M-d" 'sp-kill-word)
-(define-key smartparens-mode-map "\C-w" 'sp-kill-region-dwim)
-#+end_src
-
 *** Subword
 Consider ~SubWord~ as two separate words.  Useful for camel-case languages.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (add-hook 'rust-mode-hook 'subword-mode)
 (add-hook 'nix-mode-hook 'subword-mode)
 (add-hook 'js-mode-hook 'subword-mode)
@@ -937,14 +884,14 @@ Consider ~SubWord~ as two separate words.  Useful for camel-case languages.
 *** Tex Mode
 Small settings for /tex-mode/ and /ispell/.  Never used it :/
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (add-hook 'tex-mode-hook (lambda nil (setq-local ispell-parser 'tex)))
 #+end_src
 
 *** [[https://github.com/holomorph/transmission][Transmission]]
 Do you like downloading torrents?
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key mode-specific-map "or" 'transmission)
 
 (with-eval-after-load 'transmission
@@ -990,7 +937,7 @@ This is a *GREAT POSOS* (from rus: posos -> sosat -> сосать -> to suck), a
 like to call it.  Because /url-parse/ doesn't protect ~match-data~, it fucks up
 ~url-handler-mode~ and, as a result, fucks up /org-mime/ too.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (with-eval-after-load 'url-parse
   (define-advice url-generic-parse-url (:around (fn &rest args) save-match-data)
     (save-match-data (apply fn args))))
@@ -999,14 +946,14 @@ like to call it.  Because /url-parse/ doesn't protect ~match-data~, it fucks up
 *** [[https://github.com/fxbois/web-mode][Web Mode]]
 You can edit files with a lot of different web languages in it.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (add-to-list 'auto-mode-alist (cons (rx ".twig" eos) 'web-mode))
 #+end_src
 
 *** Window
 Do you like windows?  Me neither.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (define-key global-map "\M-V" 'scroll-down-line)
 (define-key global-map [?\C-\S-v] 'scroll-up-line)
 (define-key global-map [?\C-\M-\S-b] 'previous-buffer)
@@ -1020,7 +967,7 @@ Built-in general facility for finding and referencing definitions.  Here, a
 function is defined that saves current place to xref stack, but it ignores it's
 arguments.  It is used mostly in advices and hooks.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (autoload 'xref-push-marker-stack "xref")
 (defun xref-push-marker-stack-ignore-args (&rest _)
   (xref-push-marker-stack))
@@ -1029,7 +976,7 @@ arguments.  It is used mostly in advices and hooks.
 ** Load Custom
 Finally, I load [[custom.el]] settings.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (load (expand-file-name "nixpkgs/emacs/custom.el" (xdg-config-home)) nil nil t)
 #+end_src
 
@@ -1038,12 +985,12 @@ Finally, I load [[custom.el]] settings.
 
 ** Skempo
 :properties:
-:header-args:emacs-lisp: :tangle skempo-templates.el
+:header-args:elisp: :tangle skempo-templates.el
 :end:
 
 Header with imports.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 ;; -*- lexical-binding: t; -*-
 (require 'skempo)
 #+end_src
@@ -1062,7 +1009,7 @@ of three situations:
 - ~(word SPC~
 - ~word SPC)~
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (defun skempo-user-element (arg)
   (pcase arg
     ('nix-hash (make-string 52 ?1))
@@ -1092,7 +1039,7 @@ of three situations:
 *** Lisp templates
 Templates used in /lisp-mode/ and /emacs-lisp-mode/.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (skempo-define-tempo (lambda :mode (emacs-lisp-mode lisp-mode))
   delete-parens
   "(lambda (" p ") " r> ")")
@@ -1104,7 +1051,7 @@ Templates used in /lisp-mode/ and /emacs-lisp-mode/.
 #+end_src
 
 **** Common Lisp
-#+begin_src emacs-lisp
+#+begin_src elisp
 (skempo-define-tempo (defvar :mode lisp-mode)
   delete-parens
   "(defvar " p n>
@@ -1158,7 +1105,7 @@ Templates used in /lisp-mode/ and /emacs-lisp-mode/.
 They are different from Common Lisp, because I want every e-lisp symbol to be
 prefixed with buffer name.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (skempo-define-tempo (defvar :mode emacs-lisp-mode)
   delete-parens
   "(defvar " elisp-namespace "-" p n>
@@ -1197,7 +1144,7 @@ prefixed with buffer name.
 The power of /skeleton/ iterative templates.  It can insert multiple /case/
 statements.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (skempo-define-skeleton (switch :mode js-mode)
   "Expression: "
   "switch (" str ") {" > \n
@@ -1235,7 +1182,7 @@ statements.
 *** Nix
 Very useful nix templates.
 
-#+begin_src emacs-lisp
+#+begin_src elisp
 (skempo-define-tempo (github :mode nix-mode)
   "fetchFromGitHub {" n>
   "owner = \"" p "\";" n>
@@ -1265,13 +1212,13 @@ Very useful nix templates.
 #+end_src
 
 *** Php
-#+begin_src emacs-lisp
+#+begin_src elisp
 (skempo-define-tempo (vd :mode php-mode)
   "echo '<pre>'; var_dump(" r "); echo '</pre>';")
 #+end_src
 
 *** Org
-#+begin_src emacs-lisp
+#+begin_src elisp
 (skempo-define-tempo (readmeorg :mode org-mode)
   "#+TITLE: " (P "Project title: ") n
   (P "A short, one-line description of the project: ") n
