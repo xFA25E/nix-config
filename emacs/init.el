@@ -49,6 +49,9 @@
 
 (with-eval-after-load 'dired (require 'dired-x))
 
+(autoload 'dired-jump "dired-x" nil t)
+(define-key ctl-x-map "\C-j" 'dired-jump)
+
 (with-eval-after-load 'dired (dired-async-mode))
 
 (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)

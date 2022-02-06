@@ -274,6 +274,9 @@ Same as the above, but has one of my favorite /dired/ features:
 
 #+begin_src elisp
 (with-eval-after-load 'dired (require 'dired-x))
+
+(autoload 'dired-jump "dired-x" nil t)
+(define-key ctl-x-map "\C-j" 'dired-jump)
 #+end_src
 
 **** [[https://github.com/jwiegley/emacs-async/blob/master/dired-async.el][Dired Async]]
