@@ -427,7 +427,6 @@ The document was typeset with
    (expand-file-name "nixpkgs/emacs/custom.el"
                      (xdg-config-home)))
  '(delete-old-versions t)
- '(diary-file "~/org/diary")
  '(dired-async-mode-lighter "")
  '(dired-create-destination-dirs 'ask)
  '(dired-dwim-target t)
@@ -714,7 +713,6 @@ The document was typeset with
  '(nxml-child-indent 4)
  '(org-adapt-indentation nil)
  '(org-agenda-files '("~/org/study.org" "~/org/life.org"))
- '(org-agenda-include-diary t)
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
  '(org-babel-load-languages

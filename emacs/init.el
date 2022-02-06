@@ -57,10 +57,6 @@
   (define-key ebdb-mode-map "\C-cm" 'ebdb-complete-push-mail-and-quit-window)
   (define-key ebdb-mode-map "\C-cM" 'ebdb-complete-push-mail))
 
-(with-eval-after-load 'org-agenda
-  (unless (bound-and-true-p ebdb-db-list)
-    (ebdb-load)))
-
 (with-eval-after-load 'message
   (require 'ebdb-message)
   (define-key message-mode-map "\C-ce" 'ebdb-complete))
