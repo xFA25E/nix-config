@@ -137,7 +137,28 @@
 (with-eval-after-load 'link-hint
   (cl-pushnew 'rg-mode (get 'link-hint-compilation-link :vars)))
 
+(defun change-pair (change-to)
+  (interactive "cChange to:")
+  (pcase (assq change-to insert-pair-alist)
+    ((or `(,open ,close) `(,_ ,open ,close))
+     (save-excursion
+       (insert-pair 1 open close)
+       (delete-pair)))))
+
+(defun slurp-pair ()
+  (interactive)
+  (save-excursion
+    (backward-up-list)
+    (save-excursion
+      (pcase (assq (char-after) insert-pair-alist)
+        ((or `(,open ,close) `(_ ,open ,close))
+         (insert-pair 2 open close)
+         (delete-pair))))
+    (indent-sexp)))
+
+(define-key global-map "\M-]" 'change-pair)
 (define-key global-map "\M-[" 'delete-pair)
+(define-key global-map [?\C-\)] 'slurp-pair)
 
 (define-key search-map "l" 'locate)
 
