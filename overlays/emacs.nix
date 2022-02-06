@@ -74,8 +74,8 @@ self: super: let
       owner = "xFA25E";
       repo = "rx-widget";
       version = "0.0.1";
-      rev = "b75e60d3b551db160cd495b1d65418be0cbdbf53";
-      sha256 = "1s5dw7xn3d37da8hx6ibc20xfm2nwis0ijicmri62av5xgypwin1";
+      rev = "5fba827d3749d0dda9f951b804ac48fee9231100";
+      sha256 = "08w9n0lmamq8px061w9b8jwym7ysg3azx4plv4a4wrj8lx28l6gl";
       packageRequires = [ eself.xr ];
     };
 
