@@ -29,6 +29,8 @@
 (define-key goto-map "F" 'consult-flymake)
 (define-key project-prefix-map "i" 'consult-project-imenu)
 (define-key kmacro-keymap "c" 'consult-kmacro)
+(with-eval-after-load 'consult
+  (add-hook 'completion-list-mode-hook 'consult-preview-at-point-mode))
 
 (with-eval-after-load 'css-mode (define-key css-mode-map "\C-cm" 'css-lookup-symbol))
 

@@ -619,6 +619,7 @@ The document was typeset with
  '(minibuffer-depth-indicate-mode t)
  '(minibuffer-eldef-shorten-default t)
  '(minibuffer-electric-default-mode t)
+ '(minibuffer-prompt-properties '(read-only t cursor-intangible t face minibuffer-prompt))
  '(mpc-browser-tags '(file))
  '(mpc-data-directory (expand-file-name "emacs/mpc" (xdg-cache-home)))
  '(mpc-mpd-music-directory "~/Music")
