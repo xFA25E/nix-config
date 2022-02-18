@@ -485,8 +485,12 @@ The document was typeset with
  '(electric-pair-mode t)
  '(emacs-lisp-mode-hook '(skempo-mode flymake-mode abbrev-mode))
  '(enable-recursive-minibuffers t)
+ '(envrc-error-lighter
+   '(" "
+     (:propertize "envrc" face envrc-mode-line-error-face)))
  '(envrc-global-mode t)
  '(envrc-none-lighter nil)
+ '(envrc-on-lighter '(" " (:propertize "envrc" face envrc-mode-line-on-face)))
  '(eshell-directory-name (expand-file-name "emacs/eshell/" (xdg-cache-home)))
  '(eval-expression-print-length t)
  '(eval-expression-print-level t)
