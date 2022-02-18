@@ -54,6 +54,9 @@
 
 (with-eval-after-load 'dired (dired-async-mode))
 
+(with-eval-after-load 'dired
+  (define-key dired-mode-map "\C-c\C-t" 'dired-tags-prefix-map))
+
 (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
 
 (with-eval-after-load 'ebdb-com
@@ -116,9 +119,6 @@
 (add-hook 'transmission-mode-hook 'hl-line-mode)
 (add-hook 'transmission-peers-mode-hook 'hl-line-mode)
 (add-hook 'mpc-mode-hook 'hl-line-mode)
-
-(with-eval-after-load 'image-dired
-  (load (expand-file-name "emacs/image-dired-db.el" (xdg-config-home))))
 
 (define-key lisp-interaction-mode-map "\C-j" 'ipretty-last-sexp)
 

@@ -534,7 +534,6 @@ The document was typeset with
  '(html-mode-hook '(emmet-mode))
  '(ibuffer-default-sorting-mode 'major-mode)
  '(ibuffer-show-empty-filter-groups nil)
- '(image-dired-db-enabled t)
  '(image-dired-db-file (expand-file-name "emacs/image-dired-db" (xdg-data-home)))
  '(image-dired-dir
    (expand-file-name "emacs/image-dired/thumbnails/"
@@ -766,7 +765,15 @@ The document was typeset with
  '(register-separator 43)
  '(rust-format-on-save t)
  '(safe-local-variable-values
-   '((eval add-hook 'after-save-hook #'org-md-export-to-markdown nil t)
+   '((eval dolist
+           (sym
+            '(dired-tags-test-with-temp-file dired-tags-test-with-empty-temp-file))
+           (put sym 'lisp-indent-function 1))
+     (eval dolist
+           (sym
+            '(xattr-test-with-temp-file xattr-test-with-map xattr-test-with-empty-map))
+           (put sym 'lisp-indent-function 1))
+     (eval add-hook 'after-save-hook #'org-md-export-to-markdown nil t)
      (org-confirm-babel-evaluate)
      (eval hl-line-mode t)
      (eval add-hook 'after-save-hook

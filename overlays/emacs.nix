@@ -1,21 +1,11 @@
 self: super: let
 
-  emacs-overlay-src = super.fetchFromGitHub {
+  emacs-overlay = import (super.fetchFromGitHub {
     owner = "nix-community";
     repo = "emacs-overlay";
     rev = "4faef893814812fda93cc04081d40a09b2064dd9";
     sha256 = "09hcdrxyhvavajjf8klym2lg81gskz6qxv0p5y2c68nlhqk2a2bs";
-  };
-
-  emacs-overlay = import emacs-overlay-src self super;
-
-  emacs-source = let
-    src = super.lib.trivial.importJSON "${emacs-overlay-src}/repos/emacs/emacs-master.json";
-  in super.fetchgit {
-    url = "https://git.savannah.gnu.org/git/emacs.git";
-    rev = src.rev;
-    sha256 = src.sha256;
-  };
+  }) self super;
 
   hyperspec = super.fetchzip {
     name = "common-lisp-hyperspec";
@@ -28,20 +18,25 @@ self: super: let
     (setq common-lisp-hyperspec-root "file://${hyperspec}/HyperSpec/")
   '';
 
-  # emacs-default = super.writeTextDir "share/emacs/site-lisp/default.el" ''
-  #   (setq common-lisp-hyperspec-root "${self.hyperspec}/HyperSpec/")
-  #   (setq find-function-C-source-directory "${emacs-source}/src")
-  # '';
-
   overrides = eself: esuper: let
 
-    githubPackageBuild = { owner, repo, version, rev, sha256, packageRequires ? [] }: esuper.melpaBuild {
+    githubPackageBuild = {
+      owner, repo, version, rev, sha256
+      , packageRequires ? []
+      , additionalRecipe ? ""
+      , additionalAttributes ? {}
+    }: esuper.melpaBuild ({
       inherit version packageRequires;
       pname = repo;
       commit = rev;
       src = super.fetchFromGitHub { inherit repo owner rev sha256; };
-      recipe = super.writeText "recipe" "(${repo} :repo \"${owner}/${repo}\" :fetcher github)";
-    };
+      recipe = super.writeText "recipe" ''
+        (${repo}
+         :fetcher github
+         :repo "${owner}/${repo}"
+         ${additionalRecipe})
+      '';
+    } // additionalAttributes);
 
   in {
 
@@ -104,24 +99,44 @@ self: super: let
       packageRequires = [ eself.parent-mode ];
     };
 
+    xattr = githubPackageBuild {
+      owner = "xFA25E";
+      repo = "xattr";
+      version = "0.0.3";
+      rev = "815eef3fd89f5bcc816140466b9c03c706e72157";
+      sha256 = "1hnwavh20qyph7i5mj34ryswp6021w1kpri18dkqhmx82id5k117";
+      additionalRecipe = ":files (\"xattr-core.so\" \"xattr.el\" \"xattr-map.el\")";
+      additionalAttributes = {
+        EMACS_SRC = "${super.emacs}/share/emacs/${super.emacs.version}/src";
+        buildInputs = [ super.gnulib ];
+        preBuild = "make";
+      };
+    };
+
+    dired-tags = githubPackageBuild {
+      owner = "xFA25E";
+      repo = "dired-tags";
+      version = "0.0.2";
+      rev = "8421bdb6f7e63f60c8c63a438cd26a2f29a7760f";
+      sha256 = "1mid1gyfd2zhf3lkn3g2cpyyssqyl4z4qfxgxj1jzq9l65i2vsx8";
+      packageRequires = [ eself.xattr ];
+    };
+
   };
   emacsWithPackages = ((emacs-overlay.emacsPackagesFor super.emacs).overrideScope' overrides).emacsWithPackages;
-  emacsWithPackagesGit = ((emacs-overlay.emacsPackagesFor emacs-overlay.emacsGit).overrideScope' overrides).emacsWithPackages;
-  emacsWithPackagesGcc = ((emacs-overlay.emacsPackagesFor emacs-overlay.emacsGcc).overrideScope' overrides).emacsWithPackages;
 in {
   myEmacs = emacsWithPackages (epkgs: with epkgs; [
 
     emacs-default
 
     async avy browse-url-multi cargo consult csv-mode cyrillic-dvorak-im
-    dumb-jump ebdb edit-indirect eglot emmet-mode envrc flymake-shellcheck
-    format-all htmlize ipretty ledger-mode link-hint magit marginalia nix-mode
-    notmuch nov ob-http org org-mime org-contrib pcmpl-args pdf-tools php-mode
-    pueue rainbow-mode restclient reverse-im rg rust-mode sdcv shell-pwd skempo
-    sly sly-asdf sly-quicklisp sql-indent sqlup-mode transmission vlf web-mode
-    wgrep
+    dired-tags dumb-jump ebdb edit-indirect eglot emmet-mode envrc
+    flymake-shellcheck format-all htmlize ipretty ledger-mode link-hint magit
+    marginalia nix-mode notmuch nov ob-http org org-contrib org-mime pcmpl-args
+    pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg rust-mode
+    rx-widget sdcv shell-pwd skempo sly sly-asdf sly-quicklisp sql-indent
+    sqlup-mode transmission vlf web-mode wgrep
 
-    mct rx-widget
   ]);
 
 }

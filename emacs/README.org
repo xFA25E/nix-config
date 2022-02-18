@@ -286,6 +286,14 @@ Makes a lot of dired commands asyncronous.  Not =delete= though.
 (with-eval-after-load 'dired (dired-async-mode))
 #+end_src
 
+**** [[https://github.com/xFA25E/dired-tags][Dired Tags]]
+Manage file tags in dired
+
+#+begin_src elisp
+(with-eval-after-load 'dired
+  (define-key dired-mode-map "\C-c\C-t" 'dired-tags-prefix-map))
+#+end_src
+
 *** [[https://github.com/jacktasia/dumb-jump][Dumb Jump]]
 Poor man's goto-definition facility.  It uses regexps and *grep/rg/whatever*.
 
@@ -437,15 +445,6 @@ Highlight current line in these modes.
 (add-hook 'transmission-mode-hook 'hl-line-mode)
 (add-hook 'transmission-peers-mode-hook 'hl-line-mode)
 (add-hook 'mpc-mode-hook 'hl-line-mode)
-#+end_src
-
-*** Image Dired
-Somewhat nice gallery for *GNU/Emacs*.  It's database format is awful because it
-uses plain-text.  I rewritten it with a serialized /e-lisp/ data structure.
-
-#+begin_src elisp
-(with-eval-after-load 'image-dired
-  (load (expand-file-name "emacs/image-dired-db.el" (xdg-config-home))))
 #+end_src
 
 *** Ipretty
