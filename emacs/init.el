@@ -307,25 +307,10 @@
 (define-key global-map "\C-w" 'kill-region-dwim)
 (define-key mode-specific-map "oP" 'list-processes)
 
-(define-advice skeleton-read (:override (prompt &optional initial-input recursive) no-help)
-  (let ((minibuffer-help-form (when (boundp 'help) (symbol-value 'help)))
-        (eolp (eolp)))
-    (unless eolp (save-excursion (insert "\n")))
-    (unwind-protect
-        (setq prompt (cond ((stringp prompt)
-                            (read-string (format prompt skeleton-subprompt)
-                                         (setq initial-input (or initial-input (symbol-value 'input)))))
-                           ((functionp prompt) (funcall prompt))
-                           (t (eval prompt))))
-      (unless eolp (delete-char 1))))
-  (if (and recursive (or (null prompt) (string= prompt "")))
-      (signal 'quit t)
-    prompt))
-
 (add-hook 'nix-mode-hook 'skempo-mode)
 (add-hook 'js-mode-hook 'skempo-mode)
-(autoload 'skeleton-template-lisp-defpackage "skempo")
-(autoload 'skeleton-template-lisp-defsystem "skempo")
+(autoload 'skempo-template-lisp-defpackage "skempo")
+(autoload 'skempo-template-lisp-defsystem "skempo")
 (with-eval-after-load 'skempo
   (define-key skempo-mode-map "\C-z" 'skempo-complete-tag-or-call-on-region)
   (define-key skempo-mode-map "\M-g\M-e" 'skempo-forward-mark)
@@ -343,6 +328,19 @@
 (add-hook 'rust-mode-hook 'subword-mode)
 (add-hook 'nix-mode-hook 'subword-mode)
 (add-hook 'js-mode-hook 'subword-mode)
+
+(defun tempo-custom-user-elements (arg)
+  (pcase arg
+    (:nix-hash (make-string 52 ?1))
+    (:elisp-namespace (string-trim-right (buffer-name) (rx ".el" eos)))
+    (:elisp-group (string-trim-right (buffer-name) (rx (? "-mode") ".el" eos)))
+    (`(:lisp-with-parens . ,body)
+     (if (or (not (eql (char-before) ?\()) (use-region-p))
+         `(l "(" ,@body ")")
+       `(l ,@body)))))
+
+(with-eval-after-load 'tempo
+  (add-to-list 'tempo-user-elements 'tempo-custom-user-elements))
 
 (add-hook 'tex-mode-hook (lambda nil (setq-local ispell-parser 'tex)))
 

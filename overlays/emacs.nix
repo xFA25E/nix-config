@@ -93,9 +93,9 @@ self: super: let
     skempo = githubPackageBuild {
       owner = "xFA25E";
       repo = "skempo";
-      version = "0.1.2";
-      rev = "74206140cc8e93d105c88be520db54c4ae87fc1a";
-      sha256 = "0fzvaznnrcdnkl4jy1x04apksjrhr2fc6gak5xkbqnjib63rd3v9";
+      version = "0.2.1";
+      rev = "992274f378d9876ed2a5bc812980be9df23349b1";
+      sha256 = "1dbhkrixkwm39mxhkn7wv48aybzlzcgig8xabyiwp2fz9hhi7qh3";
       packageRequires = [ eself.parent-mode ];
     };
 
