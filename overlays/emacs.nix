@@ -23,8 +23,8 @@ self: super: let
     githubPackageBuild = {
       owner, repo, version, rev, sha256
       , packageRequires ? []
-      , additionalRecipe ? ""
-      , additionalAttributes ? {}
+      , extraRecipe ? ""
+      , extraAttributes ? {}
     }: esuper.melpaBuild ({
       inherit version packageRequires;
       pname = repo;
@@ -34,9 +34,9 @@ self: super: let
         (${repo}
          :fetcher github
          :repo "${owner}/${repo}"
-         ${additionalRecipe})
+         ${extraRecipe})
       '';
-    } // additionalAttributes);
+    } // extraAttributes);
 
   in {
 
@@ -105,8 +105,8 @@ self: super: let
       version = "0.0.3";
       rev = "815eef3fd89f5bcc816140466b9c03c706e72157";
       sha256 = "1hnwavh20qyph7i5mj34ryswp6021w1kpri18dkqhmx82id5k117";
-      additionalRecipe = ":files (\"xattr-core.so\" \"xattr.el\" \"xattr-map.el\")";
-      additionalAttributes = {
+      extraRecipe = ":files (\"xattr-core.so\" \"xattr.el\" \"xattr-map.el\")";
+      extraAttributes = {
         EMACS_SRC = "${super.emacs}/share/emacs/${super.emacs.version}/src";
         buildInputs = [ super.gnulib ];
         preBuild = "make";
