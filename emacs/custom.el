@@ -770,29 +770,17 @@ The document was typeset with
  '(recenter-positions '(top middle bottom))
  '(register-separator 43)
  '(rust-format-on-save t)
- '(safe-local-variable-values
-   '((eval add-hook 'after-save-hook
-           (lambda nil
-             (org-babel-tangle)
-             (byte-recompile-directory
-              (expand-file-name "./")))
-           nil t)
-     (eval dolist
-           (sym
-            '(dired-tags-test-with-temp-file dired-tags-test-with-empty-temp-file))
-           (put sym 'lisp-indent-function 1))
-     (eval dolist
-           (sym
-            '(xattr-test-with-temp-file xattr-test-with-map xattr-test-with-empty-map))
-           (put sym 'lisp-indent-function 1))
-     (eval add-hook 'after-save-hook #'org-md-export-to-markdown nil t)
-     (org-confirm-babel-evaluate)
-     (eval hl-line-mode t)
-     (eval add-hook 'after-save-hook
-           (lambda nil
-             (byte-recompile-file
-              (buffer-file-name)))
-           nil t)))
+ '(safe-local-eval-forms
+   '((add-hook 'write-file-hooks 'time-stamp)
+     (add-hook 'write-file-functions 'time-stamp)
+     (add-hook 'before-save-hook 'time-stamp nil t)
+     (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
+     (add-hook 'after-save-hook
+               (lambda nil
+                 (org-babel-tangle)
+                 (byte-recompile-directory
+                  (expand-file-name "./")))
+               nil t)))
  '(save-place-file (expand-file-name "emacs/saveplace" (xdg-cache-home)))
  '(save-place-limit 1000)
  '(save-place-mode t)
