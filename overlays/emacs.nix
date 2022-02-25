@@ -56,6 +56,14 @@ self: super: let
       sha256 = "12adszd4p9i9glx2chasgq68i6cnxcrwbf5c268jjb5dw4q7ci0n";
     };
 
+    dired-tags = githubPackageBuild {
+      owner = "xFA25E";
+      repo = "dired-tags";
+      version = "0.0.2";
+      rev = "8421bdb6f7e63f60c8c63a438cd26a2f29a7760f";
+      sha256 = "1mid1gyfd2zhf3lkn3g2cpyyssqyl4z4qfxgxj1jzq9l65i2vsx8";
+      packageRequires = [ eself.xattr ];
+    };
 
     pcmpl-args-parted = githubPackageBuild {
       owner = "xFA25E";
@@ -104,8 +112,8 @@ self: super: let
       owner = "xFA25E";
       repo = "skempo";
       version = "0.2.1";
-      rev = "992274f378d9876ed2a5bc812980be9df23349b1";
-      sha256 = "1dbhkrixkwm39mxhkn7wv48aybzlzcgig8xabyiwp2fz9hhi7qh3";
+      rev = "0c62bf238d55a0dcb201466d69b1aa33d2af066a";
+      sha256 = "0mi3fn8l62x3ni0bkxh6y0dxw5nrypiybv1qrjbiq56b737yqgwr";
       packageRequires = [ eself.parent-mode ];
     };
 
@@ -121,15 +129,6 @@ self: super: let
         buildInputs = [ super.gnulib ];
         preBuild = "make";
       };
-    };
-
-    dired-tags = githubPackageBuild {
-      owner = "xFA25E";
-      repo = "dired-tags";
-      version = "0.0.2";
-      rev = "8421bdb6f7e63f60c8c63a438cd26a2f29a7760f";
-      sha256 = "1mid1gyfd2zhf3lkn3g2cpyyssqyl4z4qfxgxj1jzq9l65i2vsx8";
-      packageRequires = [ eself.xattr ];
     };
 
   };

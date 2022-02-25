@@ -354,7 +354,8 @@ The document was typeset with
       . "gitignore-emacs-lisp")
      (("/\\.envrc\\'" . "Direnv envrc")
       nil "use nix
-")))
+")
+     ("/README\\.org\\'" . skempo-template-org-readmeorg)))
  '(auto-insert-directory (expand-file-name "emacs/auto-insert/" (xdg-config-home)))
  '(auto-insert-mode t)
  '(auto-revert-avoid-polling t)
@@ -491,6 +492,10 @@ The document was typeset with
  '(envrc-global-mode t)
  '(envrc-none-lighter nil)
  '(envrc-on-lighter '(" " (:propertize "envrc" face envrc-mode-line-on-face)))
+ '(enwc-default-backend 'nm)
+ '(enwc-display-mode-line nil)
+ '(enwc-wired-device "eno1")
+ '(enwc-wireless-device "wlo1")
  '(eshell-directory-name (expand-file-name "emacs/eshell/" (xdg-cache-home)))
  '(eval-expression-print-length t)
  '(eval-expression-print-level t)
@@ -766,7 +771,13 @@ The document was typeset with
  '(register-separator 43)
  '(rust-format-on-save t)
  '(safe-local-variable-values
-   '((eval dolist
+   '((eval add-hook 'after-save-hook
+           (lambda nil
+             (org-babel-tangle)
+             (byte-recompile-directory
+              (expand-file-name "./")))
+           nil t)
+     (eval dolist
            (sym
             '(dired-tags-test-with-temp-file dired-tags-test-with-empty-temp-file))
            (put sym 'lisp-indent-function 1))
@@ -808,8 +819,6 @@ The document was typeset with
  '(shr-max-image-proportion 0.7)
  '(shr-use-fonts nil)
  '(size-indication-mode t)
- '(skempo-always-create-abbrev t)
- '(skempo-always-create-tag t)
  '(skempo-completing-read t)
  '(skempo-delete-duplicate-marks t)
  '(skempo-enable-tempo-elements t)

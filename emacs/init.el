@@ -32,6 +32,7 @@
 (with-eval-after-load 'consult
   (add-hook 'completion-list-mode-hook 'consult-preview-at-point-mode))
 
+(defvar css-mode-map)
 (with-eval-after-load 'css-mode (define-key css-mode-map "\C-cm" 'css-lookup-symbol))
 
 (defvar cus-edit-map (make-sparse-keymap))
@@ -108,6 +109,7 @@
   (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error))
 
 (define-key search-map "g" 'rgrep)
+(declare-function grep-expand-template@add-cut "grep")
 (with-eval-after-load 'grep
   (define-advice grep-expand-template (:filter-return (cmd) add-cut)
     (concat cmd " | cut -c-500")))
@@ -127,6 +129,8 @@
 (define-key isearch-mode-map "\C-h" 'isearch-delete-char)
 (define-key isearch-mode-map "\C-?" isearch-help-map)
 
+(defvar ledger-amount-regex)
+(defvar ledger-commodity-regexp)
 (with-eval-after-load 'ledger-regex
   (setq ledger-amount-regex
         (concat "\\(  \\|\t\\| \t\\)[ \t]*-?"
@@ -176,6 +180,8 @@
 
 (define-key mode-specific-map "os" 'mpc)
 
+(defvar mpc-mode-map)
+(defvar mpc-songs-mode-map)
 (with-eval-after-load 'mpc
   (define-key mpc-mode-map "p" 'mpc-playlist)
   (define-key mpc-mode-map "u" 'mpc-update)
@@ -240,9 +246,7 @@
 (define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
 
 (autoload 'pcomplete/pass "pcmpl-args")
-(autoload 'pcomplete/parted "pcmpl-args")
-(with-eval-after-load 'pcmpl-args
-  (load (expand-file-name "emacs/pcmpl-args-extra.el" (xdg-config-home))))
+(autoload 'pcomplete/parted "pcmpl-args-parted")
 
 (pdf-loader-install t t)
 
@@ -282,6 +286,7 @@
 
 (define-key mode-specific-map "ot" 'sdcv-search-input)
 
+(defvar sgml-mode-map)
 (with-eval-after-load 'sgml-mode
   (define-key sgml-mode-map "\C-\M-n" 'sgml-skip-tag-forward)
   (define-key sgml-mode-map "\C-\M-p" 'sgml-skip-tag-backward)
@@ -309,14 +314,232 @@
 
 (add-hook 'nix-mode-hook 'skempo-mode)
 (add-hook 'js-mode-hook 'skempo-mode)
-(autoload 'skempo-template-lisp-defpackage "skempo")
-(autoload 'skempo-template-lisp-defsystem "skempo")
+
 (with-eval-after-load 'skempo
   (define-key skempo-mode-map "\C-z" 'skempo-complete-tag-or-call-on-region)
   (define-key skempo-mode-map "\M-g\M-e" 'skempo-forward-mark)
   (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
-  (load (expand-file-name "emacs/skempo-templates.el" (xdg-config-home))))
 
+(defun tempo-custom-user-elements (arg)
+  (pcase arg
+    (:nix-hash (make-string 52 ?1))
+    (:elisp-namespace (string-trim-right (buffer-name) (rx ".el" eos)))
+    (:elisp-group (string-trim-right (buffer-name) (rx (? "-mode") ".el" eos)))
+    (`(:lisp-with-parens . ,body)
+     (if (or (not (eql (char-before) ?\()) (use-region-p))
+         `(l "(" ,@body ")")
+       `(l ,@body)))))
+
+(add-to-list 'tempo-user-elements 'tempo-custom-user-elements)
+
+(let ((enable-fn (lambda () (or (eq this-command 'expand-abbrev)
+                                (eql ?\s last-command-event)))))
+  (dolist (mode '(lisp-mode emacs-lisp-mode))
+    (let ((table (skempo--abbrev-table mode)))
+      (define-abbrev-table table nil :enable-function enable-fn))))
+
+(skempo-define-tempo lambda (:mode lisp-mode :tag t :abbrev t)
+  (:lisp-with-parens
+   "lambda (" p ") " r>))
+
+(skempo-define-tempo let (:mode lisp-mode :tag t :abbrev t)
+  (:lisp-with-parens
+   "let ((" p "))" n>
+   r>))
+
+(skempo-define-tempo let* (:mode lisp-mode :tag t :abbrev t)
+  (:lisp-with-parens
+   "let* ((" p "))" n>
+   r>))
+
+(skempo-define-tempo defvar (:mode lisp-mode :tag t :abbrev t)
+  (:lisp-with-parens
+   "defvar " p n>
+   r> n>
+   "\"" p "\""))
+
+(skempo-define-tempo defun (:mode lisp-mode :tag t :abbrev t)
+  (:lisp-with-parens
+   "defun " p " (" p ")" n>
+   "\"" p "\"" n>
+   r>))
+
+(skempo-define-tempo defpackage (:mode lisp-mode :tag t :abbrev t)
+  (:lisp-with-parens
+   "defpackage #:" (P "Package name: " package) n>
+   "(:use #:cl)" n>
+   (:when ("Nickname: " nickname)
+          "(:nicknames #:" (s nickname)
+          (:while ("Nickname: " nickname) " #:" (s nickname))
+          ")" n>)
+   (:when ("Local nickname: " local-nickname)
+          (:when ("For package: " local-package)
+                 "(:local-nicknames (#:" (s local-nickname) " #:" (s local-package) ")"
+                 (:while ("Local nickname: " local-nickname)
+                         (:when ("For package: " local-package)
+                                " (#:" (s local-nickname) " #:" (s local-package) ")"))
+                 ")" n>))
+   (:while ("Import from: " import-package)
+           (:when ("Import symbol: " import-symbol)
+                  "(:import-from #:" (s import-package) " #:" (s import-symbol)
+                  (:while ("Import symbol: " import-symbol) " #:" (s import-symbol))
+                  ")" n>))
+   (:when ("Export: " export)
+          "(:export #:" (s export)
+          (:while ("Export: " export) " #:" (s export))
+          ")" n>)
+   "(:documentation \"" (P "Documentation: ") "\"))" n>
+   "(in-package #:" (s package) ")" n>))
+
+(skempo-define-tempo defsystem (:mode lisp-mode :tag t :abbrev t)
+  (:lisp-with-parens
+   "defsystem \"" (P "System: " system) "\"" n>
+   (:when ("Long name: " long-name) ":long-name \"" (s long-name) "\"" n>)
+   (:when ("Version: " version) ":version \""  (s version) "\"" n>)
+   (:when ("Author: " author) ":author \"" (s author) "\"" n>)
+   (:when ("Maintainer: " maintainer) ":maintainer \"" (s maintainer) "\"" n>)
+   (:when ("Mailto: " mailto) ":mailto \"" (s mailto) "\"" n>)
+   (:when ("License (ex: GPL3): " license) ":license \"" (s license) "\"" n>)
+   (:when ("Homepage: " homepage) ":homepage \"" (s homepage) "\"" n>)
+   (:when ("Bug tracker: " bug-tracker) ":bug-tracker \"" (s bug-tracker) "\"" n>)
+   (:when ("Source control (ex: git): " source-control)
+          (:when ("Link: " link) ":source-control (:" (s source-control) " \"" (s link) "\")" n>))
+   (:when ("Description: " description) ":description \"" (s description) "\"" n>)
+   ":long-description #.(let ((file (probe-file* (subpathname *load-pathname* \"README.md\")))) (when file (read-file-string file)))" n>
+   (:when ("Dependency: " dependency)
+          ":depends-on (" "\"" (s dependency) "\""
+          (:while ("Dependency: " dependency) " \"" (s dependency) "\"")
+          ")" n>)
+   ":components ((:module \"src\" :components ((:file \"" (s system) "\"))))" n>
+   ":in-order-to ((test-op (test-op \"" (s system) "/tests\"))))" n>
+   n>
+   "(defsystem \"" (s system) "/tests\"" n>
+   ":depends-on (\"" (s system) "\" \"fiveam\")" n>
+   ":components ((:module \"tests\" :components ((:file \"" (s system) "\"))))" n>
+   ":perform (test-op (op c) (symbol-call '#:fiveam '#:run! (find-symbol* '#:" (s system) " '#:" (s system) ".tests)))"))
+
+(skempo-define-tempo defvar (:mode emacs-lisp-mode :tag t :abbrev t)
+  (:lisp-with-parens
+   "defvar " :elisp-namespace "-" p n>
+   r> n>
+   "\"" p "\""))
+
+(skempo-define-tempo defun (:mode emacs-lisp-mode :tag t :abbrev t)
+  (:lisp-with-parens
+   "defun " :elisp-namespace "-" p " (" p ")" n>
+   "\"" p "\"" n>
+   r>))
+
+(skempo-define-tempo defgroup (:mode emacs-lisp-mode :tag t :abbrev t)
+  (:lisp-with-parens
+   "defgroup " :elisp-group " nil" n>
+   "\"" p "\"" n>
+   ":group " p "nil"))
+
+(skempo-define-tempo defcustom (:mode emacs-lisp-mode :tag t :abbrev t)
+  (:lisp-with-parens
+   "defcustom " :elisp-namespace "-" p n>
+   r> n>
+   "\"" p "\"" n>
+   ":type " p "nil" n>
+   ":group '" :elisp-group))
+
+(skempo-define-tempo defface (:mode emacs-lisp-mode :tag t :abbrev t)
+  (:lisp-with-parens
+   "defface " :elisp-namespace "-" p n>
+   "'((t :inherit " p "nil))" n>
+   "\"" p "\"" n>
+   ":group '" :elisp-group))
+
+(skempo-define-tempo switch (:mode js-mode :tag t :abbrev t)
+  "switch (" p ") {" n>
+  (:while ("Pattern: " pat)
+          "case " (s pat) ":" > n>
+          p n>
+          "break;" n>)
+  "default:" > n>
+  p n>
+  "break;" n>
+  "}" >)
+
+(skempo-define-tempo function (:mode js-mode :tag t :abbrev t)
+  "function " p "(" p ") {" n>
+  p n>
+  "}" >)
+
+(skempo-define-tempo if (:mode js-mode :tag t :abbrev t)
+  "if (" p ") {" n>
+  p n>
+  "}" >)
+
+(skempo-define-tempo for (:mode js-mode :tag t :abbrev t)
+  "for (" p ") {" n>
+  p n>
+  "}" >)
+
+(skempo-define-tempo try (:mode js-mode :tag t :abbrev t)
+  "try {" n>
+  p n>
+  "} catch (" p "error) {" > n>
+  p n>
+  "}" >)
+
+(skempo-define-tempo github (:mode nix-mode :tag t :abbrev t)
+  "fetchFromGitHub {" n>
+  "owner = \"" p "\";" n>
+  "repo = \"" p "\";" n>
+  "rev = \"" p "\";" n>
+  "sha256 = \"" p :nix-hash "\";" n>
+  "}" p >)
+
+(skempo-define-tempo url (:mode nix-mode :tag t :abbrev t)
+  "fetchurl {" n>
+  "url = \"" p "\";" n>
+  "sha256 = \"" p :nix-hash "\";" n>
+  "}" p >)
+
+(skempo-define-tempo zip (:mode nix-mode :tag t :abbrev t)
+  "fetchzip {" n>
+  "url = \"" p "\";" n>
+  "sha256 = \"" p :nix-hash "\";" n>
+  "}" p >)
+
+(skempo-define-tempo git (:mode nix-mode :tag t :abbrev t)
+  "fetchgit {" n>
+  "url = \"" p "\";" n>
+  "rev = \"" p "\";" n>
+  "sha256 = \"" p :nix-hash "\";" n>
+  "}" p >)
+
+(skempo-define-tempo vd (:mode php-mode :tag t :abbrev t)
+  "echo '<pre>'; var_dump(" r "); echo '</pre>';")
+
+(skempo-define-tempo readmeorg (:mode org-mode :tag t :abbrev t)
+  "#+TITLE: " (P "Project title: ") n
+  (P "A short, one-line description of the project: ") n
+  n
+  "* Overview" n
+  p "# A longer description of the project" n
+  n
+  "** Features" n
+  "** History" n
+  "** Motivation" n
+  "* Usage" n
+  p "# Examples of usage" n
+  n
+  "* Documentation" n
+  "* License" n
+  "Copyright (c) " (format-time-string "%Y") " " (P "Authors: ") n
+  "Licensed under the " p "GPL3 License." n
+  n
+  "* COMMENT Local Variables" n
+  "# Local Variables:" n
+  "# eval: (add-hook 'after-save-hook #'org-md-export-to-markdown nil t)" p n
+  "# End:")
+
+)
+
+(defvar sly-lisp-implementations)
 (with-eval-after-load 'sly
   (setq sly-lisp-implementations
         '((sbcl  ("sbcl"))
@@ -329,23 +552,14 @@
 (add-hook 'nix-mode-hook 'subword-mode)
 (add-hook 'js-mode-hook 'subword-mode)
 
-(defun tempo-custom-user-elements (arg)
-  (pcase arg
-    (:nix-hash (make-string 52 ?1))
-    (:elisp-namespace (string-trim-right (buffer-name) (rx ".el" eos)))
-    (:elisp-group (string-trim-right (buffer-name) (rx (? "-mode") ".el" eos)))
-    (`(:lisp-with-parens . ,body)
-     (if (or (not (eql (char-before) ?\()) (use-region-p))
-         `(l "(" ,@body ")")
-       `(l ,@body)))))
-
-(with-eval-after-load 'tempo
-  (add-to-list 'tempo-user-elements 'tempo-custom-user-elements))
-
+(defvar ispell-parser)
 (add-hook 'tex-mode-hook (lambda nil (setq-local ispell-parser 'tex)))
 
 (define-key mode-specific-map "or" 'transmission)
-
+(defvar transmission-mode-map)
+(defvar transmission-files-mode-map)
+(defvar transmission-torrent-id)
+(declare-function transmission-request-async "transmission")
 (with-eval-after-load 'transmission
   (define-key transmission-mode-map "M" 'transmission-move)
   (define-key transmission-files-mode-map "R" 'transmission-files-rename-path)
