@@ -56,6 +56,16 @@ self: super: let
       sha256 = "12adszd4p9i9glx2chasgq68i6cnxcrwbf5c268jjb5dw4q7ci0n";
     };
 
+
+    pcmpl-args-parted = githubPackageBuild {
+      owner = "xFA25E";
+      repo = "pcmpl-args-parted";
+      version = "0.0.1";
+      rev = "27f4048d93c11954cbb4376ecd51132035b12f68";
+      sha256 = "1vwvbap1ydfvk0s87rvv0bv0zpjc0isawhxhsd19hsdlafzdfwyb";
+      packageRequires = [ eself.pcmpl-args ];
+    };
+
     pueue = githubPackageBuild {
       owner = "xFA25E";
       repo = "pueue";
@@ -136,6 +146,8 @@ in {
     pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg rust-mode
     rx-widget sdcv shell-pwd skempo sly sly-asdf sly-quicklisp sql-indent
     sqlup-mode transmission vlf web-mode wgrep
+
+    enwc pcmpl-args-parted
 
   ]);
 

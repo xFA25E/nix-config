@@ -699,9 +699,7 @@ completions and a great library for completion definition.
 
 #+begin_src elisp
 (autoload 'pcomplete/pass "pcmpl-args")
-(autoload 'pcomplete/parted "pcmpl-args")
-(with-eval-after-load 'pcmpl-args
-  (load (expand-file-name "emacs/pcmpl-args-extra.el" (xdg-config-home))))
+(autoload 'pcomplete/parted "pcmpl-args-parted")
 #+end_src
 
 *** [[https://github.com/politza/pdf-tools][Pdf Tools]]
