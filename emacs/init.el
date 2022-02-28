@@ -94,6 +94,19 @@
 (define-key search-map "n" 'find-name-dired)
 (define-key search-map "N" 'find-dired)
 
+(defun find-dired-sort-by-video-duration ()
+  "Sort entries in *Find* buffer by video duration."
+  (sort-subr nil 'forward-line 'end-of-line
+             (lambda ()
+               (let ((file-name
+                      (buffer-substring-no-properties
+                       (next-single-property-change
+                        (point) 'dired-filename)
+                       (line-end-position))))
+                 (with-temp-buffer
+                   (call-process "video_duration" nil '(t nil) nil file-name)
+                   (string-to-number (buffer-string)))))))
+
 (define-key ctl-x-map "L" 'find-library)
 (define-key ctl-x-map "F" 'find-function)
 (define-key ctl-x-map "K" 'find-function-on-key)
@@ -284,7 +297,7 @@
               (cl-pushnew f result :test #'string-equal)))))
       (setq file-name-history result))))
 
-(define-key mode-specific-map "ot" 'sdcv-search-input)
+(define-key mode-specific-map "ot" 'sdcwoc)
 
 (defvar sgml-mode-map)
 (with-eval-after-load 'sgml-mode
