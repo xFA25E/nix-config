@@ -919,11 +919,11 @@ out: remote files, http links or non-existent files.
       (setq file-name-history result))))
 #+end_src
 
-*** [[https://github.com/manateelazycat/sdcv][SDCV]]
+*** [[https://github.com/xFA25E/sdcwoc][SDCWOC]]
 Do you like browsing dictionaries offline inside *GNU/Emacs*?
 
 #+begin_src elisp
-(define-key mode-specific-map "ot" 'sdcv-search-input)
+(define-key mode-specific-map "ot" 'sdcwoc)
 #+end_src
 
 *** Sgml Mode

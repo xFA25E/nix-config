@@ -92,12 +92,12 @@ self: super: let
       packageRequires = [ eself.xr ];
     };
 
-    sdcv = githubPackageBuild {
+    sdcwoc = githubPackageBuild {
       owner = "xFA25E";
-      repo = "sdcv";
-      version = "3.4";
-      rev = "932c089a67d354e6bdabdbfecd5710abfb78b332";
-      sha256 = "0yp202g7h7cnai8w49918ry6qdx982gj85wpf9j8ylhpam6qvqzk";
+      repo = "sdcwoc";
+      version = "0.0.1";
+      rev = "e33e7082c207cce33fdb74fd541b9d2464cbfc7b";
+      sha256 = "0v65hx0a97myc0mi7z9wjimjzlv4fjg4d8qgggk4j8w0bah3vjnf";
     };
 
     shell-pwd = githubPackageBuild {
@@ -143,7 +143,7 @@ in {
     flymake-shellcheck format-all htmlize ipretty ledger-mode link-hint magit
     marginalia nix-mode notmuch nov ob-http org org-contrib org-mime pcmpl-args
     pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg rust-mode
-    rx-widget sdcv shell-pwd skempo sly sly-asdf sly-quicklisp sql-indent
+    rx-widget sdcwoc shell-pwd skempo sly sly-asdf sly-quicklisp sql-indent
     sqlup-mode transmission vlf web-mode wgrep
 
     enwc pcmpl-args-parted

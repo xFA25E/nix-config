@@ -447,7 +447,7 @@ The document was typeset with
  '(dired-mode-hook '(dired-hide-details-mode hl-line-mode))
  '(display-battery-mode t)
  '(display-buffer-alist
-   '(("\\*Pueue\\>"
+   '(("\\(?:\\*Pueue\\*\\|\\*SDCWOC\\*\\)"
       (display-buffer-reuse-window display-buffer-same-window))))
  '(display-time-default-load-average nil)
  '(display-time-mail-function
@@ -670,7 +670,8 @@ The document was typeset with
      ("Редакция" "https://www.youtube.com/feeds/videos.xml?channel_id=UC1eFXmJNkjITxPFWTy6RsWg" nil nil nil)
      ("Ben Eater" "https://odysee.com/$/rss/@beneater:6" nil nil nil)
      ("3Blue1Brown" "https://odysee.com/$/rss/@3Blue1Brown:b" nil nil nil)
-     ("Welch Labs" "https://www.youtube.com/feeds/videos.xml?channel_id=UConVfxXodg78Tzh5nNu85Ew" nil nil nil)))
+     ("Welch Labs" "https://www.youtube.com/feeds/videos.xml?channel_id=UConVfxXodg78Tzh5nNu85Ew" nil nil nil)
+     ("Dad, how do I?" "https://www.youtube.com/feeds/videos.xml?channel_id=UCNepEAWZH0TBu7dkxIbluDw" nil nil nil)))
  '(newsticker-url-list-defaults nil)
  '(next-screen-context-lines 10)
  '(notmuch-address-internal-completion '(received nil))
@@ -744,7 +745,7 @@ The document was typeset with
  '(org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home)))
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(skempo-mode))
+ '(org-mode-hook '(skempo-mode) t)
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
@@ -793,8 +794,7 @@ The document was typeset with
  '(scroll-bar-mode nil)
  '(scroll-conservatively 10000)
  '(scroll-step 1)
- '(sdcv-env-lang "en_US.UTF-8")
- '(sdcv-only-data-dir nil)
+ '(sdcwoc-mode-hook '(toggle-truncate-lines))
  '(search-whitespace-regexp ".*?")
  '(send-mail-function 'message-send-mail-with-sendmail)
  '(sendmail-program "msmtp")
