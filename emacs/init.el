@@ -45,10 +45,50 @@
 
 (require 'cyrillic-dvorak-im)
 
+(declare-function dired-do-compress-to@async "dired-aux")
 (with-eval-after-load 'dired-aux
   (define-key dired-mode-map "\M-+" 'dired-create-empty-file)
   (add-to-list 'dired-compress-file-suffixes
-               (list (rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -")))
+               (list (rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -"))
+
+  (define-advice dired-do-compress-to (:override (&optional arg) async)
+    (interactive "P")
+    (require 'format-spec)
+    (let* ((in-files (dired-get-marked-files nil arg nil nil t))
+           (out-file (expand-file-name (read-file-name "Compress to: ")))
+           (rule (cl-find-if (lambda (x) (string-match-p (car x) out-file))
+                             dired-compress-files-alist)))
+      (cond
+       ((not rule)
+        (error "No compression rule found for %s, see `dired-compress-files-alist'" out-file))
+       ((and (file-exists-p out-file)
+             (not (y-or-n-p (format "%s exists, overwrite?" (abbreviate-file-name out-file)))))
+        (message "Compression aborted"))
+       (t
+        (let* ((in-count 0)
+               (proc-name (concat "compress " out-file))
+               (qout-file (shell-quote-argument out-file))
+               (qin-files (mapconcat (lambda (file) (cl-incf in-count)
+                                       (shell-quote-argument (file-name-nondirectory file)))
+                                     in-files " "))
+               (cmd (format-spec (cdr rule) `((?\o . ,qout-file) (?\i . ,qin-files))))
+               (buffer (generate-new-buffer "*dired-async-do-compress-to*"))
+               (proc (start-file-process-shell-command proc-name buffer cmd))
+               (sentinel
+                (lambda (process event)
+                  (pcase event
+                    ("finished\n"
+                     (message "Compressed %d file%s to %s" in-count
+                              (ngettext "" "s" in-count)
+                              (file-name-nondirectory out-file))
+                     (kill-buffer (process-buffer process))
+                     (dired-relist-file out-file))
+                    ((rx bos "exited abnormally with code")
+                     (dired-log (process-buffer process))
+                     (dired-log t)
+                     (message "Compress %s %s\nInspect %s buffer" out-file event dired-log-buffer)
+                     (kill-buffer (process-buffer process)))))))
+          (set-process-sentinel proc sentinel)))))))
 
 (with-eval-after-load 'dired (require 'dired-x))
 

@@ -592,8 +592,7 @@ The document was typeset with
  '(ledger-default-date-format "%Y-%m-%d")
  '(link-hint-types
    '(link-hint-shr-url link-hint-org-link link-hint-markdown-link link-hint-help-link link-hint-info-link link-hint-package-link link-hint-package-keyword-link link-hint-package-install-link link-hint-epkg-button link-hint-compilation-link link-hint-nov-link link-hint-customize-widget link-hint-notmuch-hello link-hint-button link-hint-completion-list-candidate link-hint-text-url link-hint-file-link link-hint-org-agenda-item link-hint-xref-item link-hint-man-button link-hint-dired-filename))
- '(lisp-mode-hook
-   '(skempo-lisp-mode-further-elements skempo-mode sly-editing-mode abbrev-mode))
+ '(lisp-mode-hook '(skempo-mode sly-editing-mode abbrev-mode))
  '(magit-credential-cache-daemon-socket (expand-file-name "git/credential/socket" (xdg-cache-home)))
  '(magit-define-global-key-bindings nil)
  '(mail-envelope-from 'header)
