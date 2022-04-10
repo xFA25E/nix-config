@@ -395,9 +395,11 @@ The document was typeset with
      ("mpvi" 109 "Open in mpvi" browse-url-multi-mpvi)
      ("invidious" 105 "Open as invidious url in eww" browse-url-multi-invidious)
      ("brave" 98 "Open in brave" browse-url-generic)
-     ("transmission" 116 "Add to transmission" browse-url-multi-transmission)))
- '(browse-url-multi-invidious-instances
-   '("vid.puffyan.us" "yewtu.be" "ytprivate.com" "invidious.kavin.rocks"))
+     ("transmission" 116 "Add to transmission" browse-url-multi-transmission)
+     ("ytcom" 99 "Youtube comments"
+      (lambda
+        (url _ignore)
+        (yt-com url)))))
  '(browse-url-secondary-browser-function 'browse-url-multi)
  '(byte-count-to-string-function '(lambda (s) (file-size-human-readable s 'si)))
  '(c-default-style '((java-mode . "java") (other . "awk")))
@@ -452,7 +454,7 @@ The document was typeset with
  '(dired-mode-hook '(dired-hide-details-mode hl-line-mode))
  '(display-battery-mode t)
  '(display-buffer-alist
-   '(("\\(?:\\*Pueue\\*\\|\\*SDCWOC\\*\\)"
+   '(("\\(?:\\*Pueue\\*\\|\\*SDCWOC\\*\\|\\*Yt-Com\\*\\)"
       (display-buffer-reuse-window display-buffer-same-window))))
  '(display-time-default-load-average nil)
  '(display-time-mail-function
@@ -645,14 +647,18 @@ The document was typeset with
  '(newsticker-url-list
    '(("Fringe Elements" "https://odysee.com/$/rss/@TheAltHype:6" nil nil nil)
      ("The Alternative Hypothesis" "http://thealternativehypothesis.org/index.php/feed" nil nil nil)
+     ("Alt Hype Livestream Archive" "https://odysee.com/$/rss/@AltHypeLiveArchive:9" nil nil nil)
      ("American Renaissance" "https://odysee.com/$/rss/@AmericanRenaissance:7" nil nil nil)
      ("Mouthy Buddha" "https://www.bitchute.com/feeds/rss/channel/mouthybuddha" nil nil nil)
      ("TealDeer" "https://odysee.com/$/rss/@TealDeer:5" nil nil nil)
      ("Простая Академия" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8mmPf2oKdfE2pdjqctTWUw" nil nil nil)
      ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg" nil nil nil)
+     ("Просто Extras" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8whgZ18JO0Hr4g0053LuGQ" nil nil nil)
      ("Простая Академия Сайт" "https://prosto.academy/feed/" nil nil nil)
      ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml" nil nil nil)
      ("Luke Smith PeerTube" "https://lukesmith.xyz/peertube" nil nil nil)
+     ("Not Related" "https://notrelated.xyz/rss" nil nil nil)
+     ("Luke Smith YouTube" "https://youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA" nil nil nil)
      ("WhatifAltHist" "https://www.youtube.com/feeds/videos.xml?user=WhatifAltHist" nil nil nil)
      ("JFG Tonight" "https://odysee.com/$/rss/@JFGTonight:0" nil nil nil)
      ("Sean Last" "https://www.youtube.com/feeds/videos.xml?channel_id=UCK1Uk2f36aglexxLkfOWnEQ" nil nil nil)
@@ -860,6 +866,8 @@ The document was typeset with
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 135 :width normal :foundry "PfEd" :family "DejaVu Sans Mono"))))
+ '(dired-async-message ((t (:foreground "dark orange"))))
+ '(dired-async-mode-message ((t (:foreground "dark orange"))))
  '(header-line ((t (:inherit mode-line :background "grey90" :foreground "grey20" :box nil :height 135))))
  '(mode-line ((t (:background "white smoke" :foreground "black" :box (:line-width 1 :color "grey75") :height 101))))
  '(mode-line-inactive ((t (:weight light :foreground "grey20" :background "dark gray" :inherit mode-line))))

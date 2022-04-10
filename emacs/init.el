@@ -95,7 +95,7 @@
 (autoload 'dired-jump "dired-x" nil t)
 (define-key ctl-x-map "\C-j" 'dired-jump)
 
-(with-eval-after-load 'dired (dired-async-mode))
+;; (with-eval-after-load 'dired (dired-async-mode))
 
 (with-eval-after-load 'dired
   (define-key dired-mode-map "\C-c\C-t" 'dired-tags-prefix-map))
@@ -517,25 +517,33 @@
 
 (skempo-define-tempo function (:mode js-mode :tag t :abbrev t)
   "function " p "(" p ") {" n>
-  p n>
+  r> n>
   "}" >)
 
 (skempo-define-tempo if (:mode js-mode :tag t :abbrev t)
   "if (" p ") {" n>
-  p n>
+  r> n>
   "}" >)
 
 (skempo-define-tempo for (:mode js-mode :tag t :abbrev t)
   "for (" p ") {" n>
-  p n>
+  r> n>
   "}" >)
 
 (skempo-define-tempo try (:mode js-mode :tag t :abbrev t)
   "try {" n>
-  p n>
+  r> n>
   "} catch (" p "error) {" > n>
   p n>
   "}" >)
+
+(skempo-define-tempo clog (:mode js-mode :tag t :abbrev t)
+  "console.log(" r ")")
+
+(skempo-define-tempo ctime (:mode js-mode :tag t :abbrev t)
+  "console.time(\"" (P "Time name: " time) "\");" > n>
+  r> n>
+  "console.timeEnd(\"" (s time) "\");" >)
 
 (skempo-define-tempo github (:mode nix-mode :tag t :abbrev t)
   "fetchFromGitHub {" n>

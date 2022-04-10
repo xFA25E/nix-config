@@ -44,8 +44,8 @@ self: super: let
       owner = "xFA25E";
       repo = "browse-url-multi";
       version = "0.1.1";
-      rev = "897a5e42107cc708b74ac37a5eecce39339b6d32";
-      sha256 = "0p11jlpdd29k5ljzd1j3829s3lzmw767xa3v0vn3dr1qmq8p9vj6";
+      rev = "fe6ca86be60e148e613ae23995fbc75d6838e687";
+      sha256 = "1fw2vxjn0nj5kpbynznala8y49hvp3m53062d0r1s06nigj87lbk";
     };
 
     cyrillic-dvorak-im = githubPackageBuild {
@@ -112,8 +112,8 @@ self: super: let
       owner = "xFA25E";
       repo = "skempo";
       version = "0.2.1";
-      rev = "0c62bf238d55a0dcb201466d69b1aa33d2af066a";
-      sha256 = "0mi3fn8l62x3ni0bkxh6y0dxw5nrypiybv1qrjbiq56b737yqgwr";
+      rev = "2841bf6381f1fc5edcc4850c3707f1b194b9a477";
+      sha256 = "0lm9lp6lmg84nvvpjkfra38h1pqqjkpcsyq4ggcr4yk2i0ahc4q2";
       packageRequires = [ eself.parent-mode ];
     };
 
@@ -131,6 +131,14 @@ self: super: let
       };
     };
 
+    yt-com = githubPackageBuild {
+      owner = "xFA25E";
+      repo = "yt-com";
+      version = "1.0.0";
+      rev = "be426f485c031664c2fa578b5c1a8dae954c4f8d";
+      sha256 = "1jmd0h147q7mflna30i21hshfnc6pi3n9qhhsdz81xbxyyamrzhw";
+    };
+
   };
   emacsWithPackages = ((emacs-overlay.emacsPackagesFor super.emacs).overrideScope' overrides).emacsWithPackages;
 in {
@@ -146,7 +154,7 @@ in {
     rx-widget sdcwoc shell-pwd skempo sly sly-asdf sly-quicklisp sql-indent
     sqlup-mode transmission vlf web-mode wgrep
 
-    enwc pcmpl-args-parted
+    enwc pcmpl-args-parted yt-com
 
   ]);
 
