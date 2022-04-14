@@ -4,8 +4,7 @@
   (:import-from #:alexandria #:format-symbol #:with-gensyms)
   (:import-from #:trivia #:match #:lambda-match #:let-match #:plist)
   (:import-from #:uiop #:launch-program #:run-program #:subpathname*)
-  (:export #:telegram-desktop
-           #:brave-incognito
+  (:export #:brave-incognito
            #:mpv
            #:firefox
            #:screenshot
@@ -26,9 +25,6 @@
 (in-package #:swm-config.commands)
 
 ;;; RUN OR RAISE COMMANDS
-
-(swm:defcommand telegram-desktop () ()
-  (swm:run-or-raise "telegram-desktop" '(:class "TelegramDesktop")))
 
 (swm:defcommand brave-incognito () ()
   (swm:run-or-raise "brave-incognito" '(:class "Brave-browser")))

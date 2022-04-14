@@ -51,7 +51,6 @@
   "C-d" "hardware"
   "C-m" "main-menu"
 
-  "C-t" "telegram-desktop"
   "C-b" "brave-incognito"
   "C-e" "mpv"
   "C-f" "firefox")
@@ -59,7 +58,7 @@
 ;;; REMAPPED KEYS
 
 (swm:define-remapped-keys
-    '(("(Tor Browser|Brave-browser|Firefox|TelegramDesktop)"
+    '(("(Tor Browser|Brave-browser|Firefox)"
        ("C-n"   . "Down")
        ("C-p"   . "Up")
        ("C-f"   . "Right")

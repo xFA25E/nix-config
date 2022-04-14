@@ -146,18 +146,6 @@ by myself.  There is a good list of abbrevs [[https://www.emacswiki.org/emacs/au
 (add-hook 'js-mode-hook 'abbrev-mode)
 #+end_src
 
-*** Ansi Color
-We still don't have nice things in 2k20.  /Compilation/ mode is still unable to
-interprent special sequences by default.  Lets help him.
-
-#+begin_src elisp
-(with-eval-after-load 'compile
-  (defun colorize-compilation ()
-    (let ((inhibit-read-only t))
-      (ansi-color-apply-on-region compilation-filter-start (point))))
-  (add-hook 'compilation-filter-hook 'colorize-compilation))
-#+end_src
-
 *** Auto Insert
 :PROPERTIES:
 :header-args: :mkdirp yes
@@ -306,6 +294,7 @@ prompt for a url, because, sometimes, I want to open a url through *youtube-dl*,
 I don't like to wait for byte-compilation.
 
 #+begin_src elisp
+(declare-function async-bytecomp-package-mode "async-bytecomp" (&optional arg))
 (with-eval-after-load 'bytecomp (async-bytecomp-package-mode))
 #+end_src
 
@@ -323,6 +312,15 @@ package.
 #+begin_src elisp
 (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
 (add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
+(add-hook 'comint-output-filter-functions 'comint-osc-process-output)
+#+end_src
+
+*** Compile
+We finally have nice things in 2k22.
+
+#+begin_src elisp
+(with-eval-after-load 'compile
+  (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter))
 #+end_src
 
 *** [[https://github.com/minad/consult][Consult]]
@@ -330,6 +328,7 @@ This is a game changer.  A package that strives to be a
 completion-framework-agnostic replacement for [[https://github.com/abo-abo/swiper][counsel]].
 
 #+begin_src elisp
+(defvar kmacro-keymap)
 (define-key global-map "\M-H" 'consult-history)
 (define-key goto-map "o" 'consult-outline)
 (define-key goto-map "i" 'consult-imenu)
@@ -371,15 +370,34 @@ russian keybord using dvorak.
 (require 'cyrillic-dvorak-im)
 #+end_src
 
+*** Dictionary
+New addition to *GNU/Emacs* in 2k22.  It can search [[https://datatracker.ietf.org/doc/html/rfc2229][dict]] servers.  I
+predominantly use /SDCV/ with tons of [[../overlays/stardict-dictionaries/urls.nix][offline dictionaries]], but maybe I can find
+use for this package.
+
+#+begin_src elisp
+(define-key mode-specific-map "oT" 'dictionary-search)
+#+end_src
+
 *** Dired
 Another favorite package of mine.  I can't imagine browsing my file-system
 without it anymore.
+
+#+begin_src elisp
+(defvar dired-mode-map)
+(defvar dired-compress-file-suffixes)
+(defvar dired-compress-files-alist)
+(defvar dired-log-buffer)
+(declare-function dired-log "dired" (log &rest args))
+(declare-function dired-get-marked-files "dired" (&optional localp arg filter distinguish-one-marked error))
+#+end_src
 
 **** Dired Aux
 A package with many useful functions.
 
 #+begin_src elisp
-(declare-function dired-do-compress-to@async "dired-aux")
+(declare-function dired-do-compress-to@async "dired-aux" (&optional arg))
+(declare-function dired-relist-file "dired-aux" (file))
 (with-eval-after-load 'dired-aux
   (define-key dired-mode-map "\M-+" 'dired-create-empty-file)
   (add-to-list 'dired-compress-file-suffixes
@@ -425,24 +443,6 @@ A package with many useful functions.
           (set-process-sentinel proc sentinel)))))))
 #+end_src
 
-**** Dired X
-Same as the above, but has one of my favorite /dired/ features:
-~dired-guess-shell-alist-user~.
-
-#+begin_src elisp
-(with-eval-after-load 'dired (require 'dired-x))
-
-(autoload 'dired-jump "dired-x" nil t)
-(define-key ctl-x-map "\C-j" 'dired-jump)
-#+end_src
-
-**** [[https://github.com/jwiegley/emacs-async/blob/master/dired-async.el][Dired Async]]
-Makes a lot of dired commands asyncronous.  Not =delete= though.
-
-#+begin_src elisp
-;; (with-eval-after-load 'dired (dired-async-mode))
-#+end_src
-
 **** [[https://github.com/xFA25E/dired-tags][Dired Tags]]
 Manage file tags in dired
 
@@ -463,6 +463,9 @@ An EIEIO port of BBDB (Big Brother DataBase).  Allows you to save contacts.
 Also, integrates with MUAs.
 
 #+begin_src elisp
+(defvar ebdb-mode-map)
+(defvar message-mode-map)
+
 (with-eval-after-load 'ebdb-com
   (define-key ebdb-mode-map "\C-cm" 'ebdb-complete-push-mail-and-quit-window)
   (define-key ebdb-mode-map "\C-cM" 'ebdb-complete-push-mail))
@@ -518,6 +521,8 @@ HyperSpec", "Source Hut" or Youtube (through [[https://invidio.us][Invidious]] i
 lets me use /browse-url-multi/ inside /eww/.
 
 #+begin_src elisp
+(defvar eww-mode-map)
+(declare-function eww-links-at-point "eww" ())
 (with-eval-after-load 'eww
   (defun eww-browse-url-custom ()
     (interactive)
@@ -578,6 +583,7 @@ Show the *Commentary* section of a package.
 On-the-fly linter.
 
 #+begin_src elisp
+(defvar flymake-mode-map)
 (with-eval-after-load 'flymake
   (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error)
   (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error))
@@ -591,7 +597,7 @@ to 500 chars.
 
 #+begin_src elisp
 (define-key search-map "g" 'rgrep)
-(declare-function grep-expand-template@add-cut "grep")
+(declare-function grep-expand-template@add-cut "grep" (cmd))
 (with-eval-after-load 'grep
   (define-advice grep-expand-template (:filter-return (cmd) add-cut)
     (concat cmd " | cut -c-500")))
@@ -718,6 +724,7 @@ Do you like /smoking/ manuals?
 Some enhancements for default completion-framework.
 
 #+begin_src elisp
+(setq minibuffer-allow-text-properties t)
 (define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
 (define-key minibuffer-local-must-match-map "\C-j" 'minibuffer-force-complete-and-exit)
 #+end_src
@@ -819,6 +826,7 @@ A great http client that uses /Org Mode/.  It does not add itself to
 Who doesn't know /org-mode/?  This is another killer feature of *GNU/Emacs*.
 
 #+begin_src elisp
+(defvar org-mode-map)
 (with-eval-after-load 'org
   (define-key org-mode-map [?\C-c?\C-\S-t] 'org-todo-yesterday))
 #+end_src
@@ -836,6 +844,7 @@ My tasks, habits etc.
 
 #+begin_src elisp
 (define-key mode-specific-map "Ga" 'org-agenda)
+(defvar org-agenda-mode-map)
 (with-eval-after-load 'org-agenda
   (define-key org-agenda-mode-map "T" 'org-agenda-todo-yesterday))
 #+end_src
@@ -879,6 +888,7 @@ completions and a great library for completion definition.
 Do you like viewing PDFs?
 
 #+begin_src elisp
+(declare-function pdf-loader-install "pdf-loader" (&optional no-query-p skip-dependencies-p no-error-p force-dependencies-p))
 (pdf-loader-install t t)
 #+end_src
 
@@ -989,6 +999,7 @@ Show /shell/ current directory inside mode-line.
 
 #+begin_src elisp
 (define-key mode-specific-map "l" 'shell-pwd-list-buffers)
+(defvar shell-mode-map)
 (with-eval-after-load 'shell
   (define-key shell-mode-map "\C-c\M-d" 'shell-pwd-change-directory))
 #+end_src
@@ -1020,17 +1031,27 @@ package that fixes problems of /tempo/ and /skeleton/.
 (add-hook 'nix-mode-hook 'skempo-mode)
 (add-hook 'js-mode-hook 'skempo-mode)
 
+(defvar skempo-mode-map)
 (with-eval-after-load 'skempo
   (define-key skempo-mode-map "\C-z" 'skempo-complete-tag-or-call-on-region)
   (define-key skempo-mode-map "\M-g\M-e" 'skempo-forward-mark)
   (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
+  (load (expand-file-name "emacs/skempo-templates.el" (xdg-config-home))))
 #+end_src
 
 **** Templates
+:properties:
+:header-args:elisp: :tangle skempo-templates.el
+:end:
+
 /Tempo/ is very extensible.  Here, I define a function that processes unknown
 elements to /tempo/ and returns other /tempo/ elements.  Very easy.
 
 #+begin_src elisp
+;; -*- lexical-binding: t; -*-
+
+(eval-when-compile (require 'skempo))
+
 (defun tempo-custom-user-elements (arg)
   (pcase arg
     (:nix-hash (make-string 52 ?1))
@@ -1286,11 +1307,6 @@ Very useful nix templates.
   "# End:")
 #+end_src
 
-**** End Skempo
-#+begin_src elisp
-)
-#+end_src
-
 *** [[https://github.com/joaotavora/sly][Sly]]
 Author of the best *Common Lisp* IDE doesn't know how to use ~defcustom~.  I
 send him a patch, but he ignores me.
@@ -1331,7 +1347,7 @@ Do you like downloading torrents?
 (defvar transmission-mode-map)
 (defvar transmission-files-mode-map)
 (defvar transmission-torrent-id)
-(declare-function transmission-request-async "transmission")
+(declare-function transmission-request-async "transmission" (callback method &optional arguments tag))
 (with-eval-after-load 'transmission
   (define-key transmission-mode-map "M" 'transmission-move)
   (define-key transmission-files-mode-map "R" 'transmission-files-rename-path)
@@ -1376,6 +1392,7 @@ like to call it.  Because /url-parse/ doesn't protect ~match-data~, it fucks up
 ~url-handler-mode~ and, as a result, fucks up /org-mime/ too.
 
 #+begin_src elisp
+(declare-function url-generic-parse-url@save-match-data "url-parse" (fn &rest args))
 (with-eval-after-load 'url-parse
   (define-advice url-generic-parse-url (:around (fn &rest args) save-match-data)
     (save-match-data (apply fn args))))
@@ -1415,6 +1432,7 @@ arguments.  It is used mostly in advices and hooks.
 Finally, I load [[custom.el]] settings.
 
 #+begin_src elisp
+(declare-function xdg-config-home "xdg" ())
 (load (expand-file-name "nixpkgs/emacs/custom.el" (xdg-config-home)) nil nil t)
 #+end_src
 

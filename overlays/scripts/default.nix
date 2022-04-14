@@ -34,11 +34,16 @@ in {
     postFixup = let
       wrapScripts = with self; {
         "compress_video" = [ ffmpeg ];
+        "compress_video_hevc" = [ ffmpeg ];
+        "crop_video_144" = [ ffmpeg ];
+        "crop_video_240" = [ ffmpeg ];
+        "crop_video_360" = [ ffmpeg ];
+        "crop_video_480" = [ ffmpeg ];
         "extract_eml" = [ coreutils mu ];
         "filename_put_duration" = [ coreutils findutils "$out" ];
         "format_duration" = [ gawk ];
-        "image_clipboard" = [ file xclip ];
         "image-dired-external-viewer" = [ mpv sxiv ];
+        "image_clipboard" = [ file xclip ];
         "make_backup" = [ utillinux coreutils rsync gawk dmenu ];
         "mpvi" = [ mpv libnotify jq gnused unixtools.column dmenu "$out" ];
         "notify_sound" = [ mpv ];
@@ -46,7 +51,7 @@ in {
         "search_ebook" = [ coreutils findutils ];
         "sort_videos_by_duration" = [ coreutils "$out" ];
         "strip_video" = [ ffmpeg ];
-        "studies_plot" = [ gnuplot ];
+        "strip_video_mp3" = [ ffmpeg ];
         "sudo_askpass" = [ pass ];
         "video_duration" = [ ffmpeg jq ];
         "ytdlam" = [ findutils coreutils dmenu "$out" ];

@@ -3,8 +3,8 @@ self: super: let
   emacs-overlay = import (super.fetchFromGitHub {
     owner = "nix-community";
     repo = "emacs-overlay";
-    rev = "4faef893814812fda93cc04081d40a09b2064dd9";
-    sha256 = "09hcdrxyhvavajjf8klym2lg81gskz6qxv0p5y2c68nlhqk2a2bs";
+    rev = "d570feea6d181b095b26a34acb2e4ef095ecf69b";
+    sha256 = "0p6nb5jj6vlkgvgh7fkn7chk031n01adm2q8pxhxgadhmbirh7sf";
   }) self super;
 
   hyperspec = super.fetchzip {
@@ -140,9 +140,38 @@ self: super: let
     };
 
   };
-  emacsWithPackages = ((emacs-overlay.emacsPackagesFor super.emacs).overrideScope' overrides).emacsWithPackages;
+
+  emacs28stage1 = super.emacs.override ({
+    srcRepo = true;
+    nativeComp = true;
+    withSQLite3 = true;
+  });
+
+  emacs28stage2 = emacs28stage1.overrideAttrs (old: {
+    name = "emacs-28.1";
+    version = "28.1";
+    src = super.fetchFromSavannah {
+      repo = "emacs";
+      rev = "emacs-28.1";
+      sha256 = "01mfwl6lh79f9icrfw07dns3g0nqwc06k6fm3gr45iv1bjgg0z8g";
+    };
+    patches = [ ];
+    postPatch = old.postPatch + ''
+      substituteInPlace lisp/loadup.el \
+        --replace '(emacs-repository-get-version)' '"emacs-28.1"' \
+        --replace '(emacs-repository-get-branch)' '"emacs-28"'
+    '';
+  });
+
+  emacs28stage3 = emacs28stage2.overrideAttrs (old: {
+    passthru = old.passthru // {
+      pkgs = emacs-overlay.emacsPackagesFor emacs28stage3;
+    };
+  });
+
+  emacs28 = (emacs-overlay.emacsPackagesFor emacs28stage3).overrideScope' overrides;
 in {
-  myEmacs = emacsWithPackages (epkgs: with epkgs; [
+  myEmacs = emacs28.emacsWithPackages (epkgs: with epkgs; [
 
     emacs-default
 
@@ -154,7 +183,7 @@ in {
     rx-widget sdcwoc shell-pwd skempo sly sly-asdf sly-quicklisp sql-indent
     sqlup-mode transmission vlf web-mode wgrep
 
-    enwc pcmpl-args-parted yt-com
+    enwc pcmpl-args-parted yt-com telega
 
   ]);
 

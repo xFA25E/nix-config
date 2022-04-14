@@ -1,0 +1,5 @@
+#!/bin/sh
+
+for video in "$@"; do
+    ffmpeg -n -i "${video}" -vcodec libx265 -crf 23 "${video%.*}-compHEVC.mkv"
+done
