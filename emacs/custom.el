@@ -386,21 +386,12 @@ The document was typeset with
  '(bookmark-fontify nil)
  '(bookmark-menu-confirm-deletion t)
  '(bookmark-save-flag 1)
- '(browse-url-browser-function 'browse-url-multi)
+ '(browse-url-browser-function 'browse-url-other)
  '(browse-url-generic-program "brave-incognito")
- '(browse-url-multi-answers
-   '(("firefox" 102 "Open in firefox" browse-url-firefox)
-     ("eww" 101 "Open in eww" eww-browse-url)
-     ("ytdli" 121 "Download with ytdli" browse-url-multi-ytdli)
-     ("mpvi" 109 "Open in mpvi" browse-url-multi-mpvi)
-     ("invidious" 105 "Open as invidious url in eww" browse-url-multi-invidious)
-     ("brave" 98 "Open in brave" browse-url-generic)
-     ("transmission" 116 "Add to transmission" browse-url-multi-transmission)
-     ("ytcom" 99 "Youtube comments"
-      (lambda
-        (url _ignore)
-        (yt-com url)))))
- '(browse-url-secondary-browser-function 'browse-url-multi)
+ '(browse-url-handlers
+   '(("\\.torrent\\'" . browse-url-transmission)
+     (browse-url-youtube-url-p . browse-url-youtube)))
+ '(browse-url-secondary-browser-function 'browse-url-other)
  '(byte-count-to-string-function '(lambda (s) (file-size-human-readable s 'si)))
  '(c-default-style '((java-mode . "java") (other . "awk")))
  '(calendar-time-zone-style 'numeric)

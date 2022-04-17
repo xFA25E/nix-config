@@ -6,8 +6,80 @@
 (define-key goto-map "\M-g" 'avy-goto-line)
 
 (define-key ctl-x-map "B" 'browse-url)
+(define-key mode-specific-map "oy" 'browse-url-youtube-search)
 
-(define-key mode-specific-map "oy" 'browse-url-multi-youtube-search)
+(autoload 'yt-com-invidious-hosts "yt-com")
+(declare-function browse-url-swap-host-to-youtube "browse-url" (url))
+(declare-function browse-url-choices "browse-url" (choices url &rest args))
+(declare-function url-path-and-query "url-parse" (urlobj))
+(declare-function yt-com "yt-com" (url-or-id))
+(declare-function transmission-add "transmission" (torrent &optional directory))
+(with-eval-after-load 'browse-url
+  (eval-and-compile (require 'url-parse))
+
+  (defvar browse-url-choices
+    '(("firefox" ?f "Open in firefox" browse-url-firefox)
+      ("eww" ?e "Open in eww" eww-browse-url)
+      ("brave" ?b "Open in brave" browse-url-generic)
+      ("ytdli" ?y "Download with ytdli" browse-url-ytdli)
+      ("mpvi" ?m "Open in mpvi" browse-url-mpvi)
+      ("invidious" ?i "Open as invidious url in eww" browse-url-invidious)
+      ("ytcom" ?c "Youtube comments" browse-url-yt-com)))
+
+  (defun browse-url-choices (choices url &rest args)
+    (let* ((regexp (cond ((null choices) (rx (* nonl)))
+                         ((listp choices) (rx bos (regexp (regexp-opt choices)) eos))
+                         (t choices)))
+           (answers (cl-remove regexp browse-url-choices :key #'car :test-not #'string-match-p))
+           (read-answer-short t)
+           (answer (read-answer (concat url " ") answers)))
+      (apply (nth 3 (assoc answer answers)) url args)))
+
+  (defun browse-url-youtube (url &rest args)
+    (apply #'browse-url-choices nil url args))
+
+  (defun browse-url-other (url &rest args)
+    (apply #'browse-url-choices '("firefox" "eww" "brave" "ytdli" "mpvi") url args))
+
+  (defun browse-url-youtube-url-p (url)
+    (member (url-host (url-generic-parse-url url))
+            (cl-list* "youtu.be" "youtube.com" "www.youtube.com"
+                      (yt-com-invidious-hosts))))
+
+  (defun browse-url-youtube-search (search &optional arg)
+    (interactive "SSearch term: \nP")
+    (let ((query (url-build-query-string `(("q" ,search)))))
+      (browse-url (concat "https://www.youtube.com/search?" query) arg)))
+
+  (defun browse-url-yt-com (url &rest _)
+    (yt-com url))
+
+  (defun browse-url-transmission (url &rest _)
+    (transmission-add url))
+
+  (defun browse-url-swap-host-to-youtube (url)
+    (let ((url-object (url-generic-parse-url url)))
+      (when (member (url-host url-object) (yt-com-invidious-hosts))
+        (setf (url-host url-object) "youtube.com"
+              url (url-recreate-url url-object)))))
+
+  (defun browse-url-mpvi (url &rest _args)
+    (let ((url (browse-url-swap-host-to-youtube url)))
+      (call-process "setsid" nil 0 nil "-f" "mpvi" url)))
+
+  (defun browse-url-ytdli (url &rest _args)
+    (let ((url (browse-url-swap-host-to-youtube url)))
+      (call-process "ytdli" nil 0 nil url)))
+
+  (defun browse-url-invidious (url &rest args)
+    (let ((instance (completing-read "Instance: " (yt-com-invidious-hosts) nil t))
+          (url-object (url-generic-parse-url url)))
+      (when (string= "youtu.be" (url-host url-object))
+        (let* ((video-id (substring (car (url-path-and-query url-object)) 1 12))
+               (query (url-build-query-string `(("v" ,video-id)))))
+          (setf (url-filename url-object) (concat "/watch?" query))))
+      (setf (url-host url-object) instance)
+      (apply #'eww-browse-url (url-recreate-url url-object) args))))
 
 (declare-function async-bytecomp-package-mode "async-bytecomp" (&optional arg))
 (with-eval-after-load 'bytecomp (async-bytecomp-package-mode))
@@ -130,16 +202,6 @@
 (add-hook 'web-mode-hook 'emmet-mode)
 
 (setenv "PAGER" "cat")
-
-(defvar eww-mode-map)
-(declare-function eww-links-at-point "eww" ())
-(with-eval-after-load 'eww
-  (defun eww-browse-url-custom ()
-    (interactive)
-    (let ((browse-url-browser-function (default-value 'browse-url-browser-function)))
-      (when-let ((url-at-point (car (eww-links-at-point))))
-        (browse-url url-at-point))))
-  (define-key eww-mode-map "V" 'eww-browse-url-custom))
 
 (define-key search-map "n" 'find-name-dired)
 (define-key search-map "N" 'find-dired)

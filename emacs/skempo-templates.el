@@ -20,16 +20,16 @@
     (let ((table (skempo--abbrev-table mode)))
       (define-abbrev-table table nil :enable-function enable-fn))))
 
-(skempo-define-tempo lambda (:mode lisp-mode :tag t :abbrev t)
+(skempo-define-tempo lambda (:mode (emacs-lisp-mode lisp-mode) :tag t :abbrev t)
   (:lisp-with-parens
    "lambda (" p ") " r>))
 
-(skempo-define-tempo let (:mode lisp-mode :tag t :abbrev t)
+(skempo-define-tempo let (:mode (emacs-lisp-mode lisp-mode) :tag t :abbrev t)
   (:lisp-with-parens
    "let ((" p "))" n>
    r>))
 
-(skempo-define-tempo let* (:mode lisp-mode :tag t :abbrev t)
+(skempo-define-tempo let* (:mode (emacs-lisp-mode lisp-mode) :tag t :abbrev t)
   (:lisp-with-parens
    "let* ((" p "))" n>
    r>))

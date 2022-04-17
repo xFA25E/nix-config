@@ -40,14 +40,6 @@ self: super: let
 
   in {
 
-    browse-url-multi = githubPackageBuild {
-      owner = "xFA25E";
-      repo = "browse-url-multi";
-      version = "0.1.1";
-      rev = "fe6ca86be60e148e613ae23995fbc75d6838e687";
-      sha256 = "1fw2vxjn0nj5kpbynznala8y49hvp3m53062d0r1s06nigj87lbk";
-    };
-
     cyrillic-dvorak-im = githubPackageBuild {
       owner = "xFA25E";
       repo = "cyrillic-dvorak-im";
@@ -111,10 +103,9 @@ self: super: let
     skempo = githubPackageBuild {
       owner = "xFA25E";
       repo = "skempo";
-      version = "0.2.1";
-      rev = "2841bf6381f1fc5edcc4850c3707f1b194b9a477";
-      sha256 = "0lm9lp6lmg84nvvpjkfra38h1pqqjkpcsyq4ggcr4yk2i0ahc4q2";
-      packageRequires = [ eself.parent-mode ];
+      version = "0.2.2";
+      rev = "c5e229ba4f811f890b5cb56854205a5ac3302ce8";
+      sha256 = "0xsr6819qaad0y8rhfrf555c9w7cmgbgkf1a2svgbp7rhhnywl0a";
     };
 
     xattr = githubPackageBuild {
@@ -175,13 +166,13 @@ in {
 
     emacs-default
 
-    async avy browse-url-multi cargo consult csv-mode cyrillic-dvorak-im
-    dired-tags dumb-jump ebdb edit-indirect eglot emmet-mode envrc
-    flymake-shellcheck format-all htmlize ipretty ledger-mode link-hint magit
-    marginalia nix-mode notmuch nov ob-http org org-contrib org-mime pcmpl-args
-    pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg rust-mode
-    rx-widget sdcwoc shell-pwd skempo sly sly-asdf sly-quicklisp sql-indent
-    sqlup-mode transmission vlf web-mode wgrep
+    async avy cargo consult csv-mode cyrillic-dvorak-im dired-tags dumb-jump
+    ebdb edit-indirect eglot emmet-mode envrc flymake-shellcheck format-all
+    htmlize ipretty ledger-mode link-hint magit marginalia nix-mode notmuch nov
+    ob-http org org-contrib org-mime pcmpl-args pdf-tools php-mode pueue
+    rainbow-mode restclient reverse-im rg rust-mode rx-widget sdcwoc shell-pwd
+    skempo sly sly-asdf sly-quicklisp sql-indent sqlup-mode transmission vlf
+    web-mode wgrep
 
     enwc pcmpl-args-parted yt-com telega
 
