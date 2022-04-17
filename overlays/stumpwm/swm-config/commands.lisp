@@ -33,7 +33,7 @@
   (swm:run-or-raise "true" '(:class "mpv")))
 
 (swm:defcommand firefox () ()
-  (swm:run-or-raise "firefox" '(:class "Firefox")))
+  (swm:run-or-raise "firefox" '(:class "firefox")))
 
 ;;; MISC
 

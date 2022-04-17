@@ -58,7 +58,7 @@
 ;;; REMAPPED KEYS
 
 (swm:define-remapped-keys
-    '(("(Tor Browser|Brave-browser|Firefox)"
+    '(("(Tor Browser|Brave-browser|firefox)"
        ("C-n"   . "Down")
        ("C-p"   . "Up")
        ("C-f"   . "Right")
