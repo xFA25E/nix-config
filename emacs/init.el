@@ -54,6 +54,8 @@
 (declare-function dired-log "dired" (log &rest args))
 (declare-function dired-get-marked-files "dired" (&optional localp arg filter distinguish-one-marked error))
 
+(with-eval-after-load 'dired (require 'dired-x))
+
 (declare-function dired-do-compress-to@async "dired-aux" (&optional arg))
 (declare-function dired-relist-file "dired-aux" (file))
 (with-eval-after-load 'dired-aux

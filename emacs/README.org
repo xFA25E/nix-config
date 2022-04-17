@@ -392,6 +392,14 @@ without it anymore.
 (declare-function dired-get-marked-files "dired" (&optional localp arg filter distinguish-one-marked error))
 #+end_src
 
+**** Dired X
+Same as the above, but has one of my favorite /dired/ features:
+~dired-guess-shell-alist-user~.
+
+#+begin_src elisp
+(with-eval-after-load 'dired (require 'dired-x))
+#+end_src
+
 **** Dired Aux
 A package with many useful functions.
 
