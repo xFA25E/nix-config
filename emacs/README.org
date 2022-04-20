@@ -166,7 +166,7 @@ let
   pkgs = import <nixpkgs> {};
   eldev = pkgs.stdenv.mkDerivation rec {
     pname = "eldev";
-    version = "1.0";
+    version = "1.1";
     src = pkgs.fetchurl {
       url = "https://raw.githubusercontent.com/doublep/eldev/${version}/bin/eldev";
       sha256 = "0spni3il3myv70zk18k76sj6yvh3rqi9j9wglz2j5mfs7z2dnr5f";
@@ -328,13 +328,14 @@ minibuffer).
     (yt-com url))
 
   (defun browse-url-transmission (url &rest _)
-    (transmission-add url))
+    (transmission-add url (read-directory-name "Target directory: ")))
 
   (defun browse-url-swap-host-to-youtube (url)
     (let ((url-object (url-generic-parse-url url)))
       (when (member (url-host url-object) (yt-com-invidious-hosts))
         (setf (url-host url-object) "youtube.com"
-              url (url-recreate-url url-object)))))
+              url (url-recreate-url url-object))))
+    url)
 
   (defun browse-url-mpvi (url &rest _args)
     (let ((url (browse-url-swap-host-to-youtube url)))

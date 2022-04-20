@@ -55,13 +55,14 @@
     (yt-com url))
 
   (defun browse-url-transmission (url &rest _)
-    (transmission-add url))
+    (transmission-add url (read-directory-name "Target directory: ")))
 
   (defun browse-url-swap-host-to-youtube (url)
     (let ((url-object (url-generic-parse-url url)))
       (when (member (url-host url-object) (yt-com-invidious-hosts))
         (setf (url-host url-object) "youtube.com"
-              url (url-recreate-url url-object)))))
+              url (url-recreate-url url-object))))
+    url)
 
   (defun browse-url-mpvi (url &rest _args)
     (let ((url (browse-url-swap-host-to-youtube url)))

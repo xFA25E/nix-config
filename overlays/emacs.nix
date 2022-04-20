@@ -87,9 +87,9 @@ self: super: let
     sdcwoc = githubPackageBuild {
       owner = "xFA25E";
       repo = "sdcwoc";
-      version = "0.0.1";
-      rev = "e33e7082c207cce33fdb74fd541b9d2464cbfc7b";
-      sha256 = "0v65hx0a97myc0mi7z9wjimjzlv4fjg4d8qgggk4j8w0bah3vjnf";
+      version = "0.0.2";
+      rev = "88fe1d448506ee66d4c5c1a5e05023c02a6a1808";
+      sha256 = "1nkivsfp2dd1c9alabwixdwibp2fjkk94vab6nva7kxz1mrwynns";
     };
 
     shell-pwd = githubPackageBuild {
@@ -125,9 +125,9 @@ self: super: let
     yt-com = githubPackageBuild {
       owner = "xFA25E";
       repo = "yt-com";
-      version = "1.0.0";
-      rev = "be426f485c031664c2fa578b5c1a8dae954c4f8d";
-      sha256 = "1jmd0h147q7mflna30i21hshfnc6pi3n9qhhsdz81xbxyyamrzhw";
+      version = "1.0.1";
+      rev = "7ad6b77ee76de667e1a0c7f7d383afd879ae6223";
+      sha256 = "0yi6aqs1hrjkgnn0qlv6bvn6fcf4pcdw5lnhq4ww04q0hjxjm52d";
     };
 
   };
@@ -174,7 +174,7 @@ in {
     skempo sly sly-asdf sly-quicklisp sql-indent sqlup-mode transmission vlf
     web-mode wgrep
 
-    enwc pcmpl-args-parted yt-com telega
+    enwc pcmpl-args-parted yt-com
 
   ]);
 
