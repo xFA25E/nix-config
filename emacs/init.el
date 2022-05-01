@@ -24,8 +24,7 @@
       ("ytdli" ?y "Download with ytdli" browse-url-ytdli)
       ("mpvi" ?m "Open in mpvi" browse-url-mpvi)
       ("invidious" ?i "Open as invidious url in eww" browse-url-invidious)
-      ("ytcom" ?c "Youtube comments" browse-url-yt-com)
-      ("cozy" ?z "Cozy download" browse-url-download-cozy)))
+      ("ytcom" ?c "Youtube comments" browse-url-yt-com)))
 
   (defun browse-url-choices (choices url &rest args)
     (let* ((regexp (cond ((null choices) (rx (* nonl)))
@@ -37,10 +36,7 @@
       (apply (nth 3 (assoc answer answers)) url args)))
 
   (defun browse-url-youtube (url &rest args)
-    (apply #'browse-url-choices nil url args))
-
-  (defun browse-url-cozy (url &rest args)
-    (apply #'browse-url-choices '("firefox" "brave" "cozy" "mpvi") url args))
+    (apply #'browse-url-choices '("firefox" "eww" "brave" "ytdli" "mpvi" "invidious" "ytcom") url args))
 
   (defun browse-url-other (url &rest args)
     (apply #'browse-url-choices '("firefox" "eww" "brave" "ytdli" "mpvi") url args))
@@ -84,24 +80,7 @@
                (query (url-build-query-string `(("v" ,video-id)))))
           (setf (url-filename url-object) (concat "/watch?" query))))
       (setf (url-host url-object) instance)
-      (apply #'eww-browse-url (url-recreate-url url-object) args)))
-
-  (defun browse-url-download-cozy (url &rest _args)
-    (pcase-let* (((cl-struct url filename) (url-generic-parse-url url))
-                 ((seq user _ id) (split-string filename "/" t))
-                 (api-url (format "https://api.cozy.tv/cache/%s/replay/%s" user id))
-                 ((map date id title user ('cdns (seq cdn)))
-                  (with-current-buffer (url-retrieve-synchronously api-url)
-                    (prog1 (json-parse-buffer :object-type 'alist)
-                      (kill-buffer (current-buffer)))))
-                 (m3u8-url (format "%s/replays/%s/%s/index.m3u8" cdn user id))
-                 ((seq _ _ _ day month year) (iso8601-parse date))
-                 (filename (format "%s/%s - %d%02d%02d - %s.%%(ext)s"
-                                   (getenv "YTDL_DIR") user year month day title)))
-      (call-process "pueue" nil 0 nil "add" "-e" "-g" "ytdl" "--"
-                    "ytdl" m3u8-url
-                    "--output" filename
-                    "--exec" "filename_put_duration {}"))))
+      (apply #'eww-browse-url (url-recreate-url url-object) args))))
 
 (declare-function async-bytecomp-package-mode "async-bytecomp" (&optional arg))
 (with-eval-after-load 'bytecomp (async-bytecomp-package-mode))

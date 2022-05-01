@@ -390,7 +390,6 @@ The document was typeset with
  '(browse-url-generic-program "brave-incognito")
  '(browse-url-handlers
    '(("\\.torrent\\'" . browse-url-transmission)
-     ("cozy\\.tv" . browse-url-cozy)
      (browse-url-youtube-url-p . browse-url-youtube)))
  '(browse-url-secondary-browser-function 'browse-url)
  '(byte-count-to-string-function '(lambda (s) (file-size-human-readable s 'si)))
