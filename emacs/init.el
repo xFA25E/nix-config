@@ -454,15 +454,6 @@
   (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
   (load (expand-file-name "emacs/skempo-templates.el" (xdg-config-home))))
 
-(defvar sly-lisp-implementations)
-(with-eval-after-load 'sly
-  (setq sly-lisp-implementations
-        '((sbcl  ("sbcl"))
-          (ecl   ("ecl"))
-          (ccl   ("ccl"))
-          (clisp ("clisp"))
-          (abcl  ("abcl")))))
-
 (add-hook 'rust-mode-hook 'subword-mode)
 (add-hook 'nix-mode-hook 'subword-mode)
 (add-hook 'js-mode-hook 'subword-mode)
@@ -472,45 +463,8 @@
 
 (define-key mode-specific-map "or" 'transmission)
 (defvar transmission-mode-map)
-(defvar transmission-files-mode-map)
-(defvar transmission-torrent-id)
-(declare-function transmission-request-async "transmission" (callback method &optional arguments tag))
 (with-eval-after-load 'transmission
-  (define-key transmission-mode-map "M" 'transmission-move)
-  (define-key transmission-files-mode-map "R" 'transmission-files-rename-path)
-
-  (defun transmission-files-rename-path (torrent-id old-path new-name)
-    "Rename an OLD-PATH to NEW-NAME of TORRENT-ID.
-
-TORRENT-ID is a hashString of torrent.
-
-OLD-PATH is a path to file in a torrent.  It can be a directory
-or a file.
-
-NEW-NAME is a new name of a file at OLD-PATH.
-
-When called interactively, values are taken from current buffer
-with `transmission-files-mode'.  OLD-PATH can be set explicitly
-with prefix argument, otherwise the file at point is taken.
-
-Note: it is forbidden to move a file to other locations, only
-renaming is allowed."
-    (interactive
-     (let* ((old-path (cdr (assq 'name (tabulated-list-get-id))))
-            (old-path-prompt (format "Old path (default %s): " old-path))
-            (old-path (if current-prefix-arg
-                          (read-string old-path-prompt nil nil old-path)
-                        old-path))
-            (new-name (file-name-nondirectory old-path))
-            (new-name-prompt (format "Rename %s to: " new-name))
-            (new-name (read-string new-name-prompt nil nil new-name)))
-       (list transmission-torrent-id old-path new-name)))
-
-    (when (string= new-name (file-name-nondirectory old-path))
-      (user-error "Cannot rename to the same name: %s" new-name))
-
-    (let ((arguments (list :ids (list torrent-id) :path old-path :name new-name)))
-      (transmission-request-async nil "torrent-rename-path" arguments))))
+  (define-key transmission-mode-map "M" 'transmission-move))
 
 (declare-function url-generic-parse-url@save-match-data "url-parse" (fn &rest args))
 (with-eval-after-load 'url-parse

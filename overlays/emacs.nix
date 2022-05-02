@@ -40,6 +40,26 @@ self: super: let
 
   in {
 
+    # Patched packages
+
+    sly = esuper.sly.overrideAttrs (old: {
+      patches = (if old ? "patches" then old.patches else []) ++ [(super.fetchpatch {
+        name = "sly-lisp-implementation-defcustom.patch";
+        url = "https://github.com/xFA25E/sly/commit/4f95f882a7179170c09074c5c6986b407caa60f1.diff";
+        sha256 = "038c2cyw00r78zhimvvyv3dydbzbjx6d1p6683yyq0mjfd28c01y";
+      })];
+    });
+
+    transmission = esuper.transmission.overrideAttrs (old: {
+      patches = (if old ? "patches" then old.patches else []) ++ [(super.fetchpatch {
+        name = "rename-path.patch";
+        url = "https://github.com/xFA25E/transmission/commit/a16a3516a84bb496da4b313f7185300c3def0f41.diff";
+        sha256 = "05zflff0ifmxjadgvszadw38v92kqsfsvq328596wjc47hzfdai1";
+      })];
+    });
+
+    # My packages
+
     cyrillic-dvorak-im = githubPackageBuild {
       owner = "xFA25E";
       repo = "cyrillic-dvorak-im";

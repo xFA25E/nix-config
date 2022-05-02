@@ -737,7 +737,7 @@ The document was typeset with
  '(org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home)))
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(skempo-mode))
+ '(org-mode-hook '(skempo-mode) t)
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
@@ -808,6 +808,17 @@ The document was typeset with
  '(skempo-mode-lighter "")
  '(skempo-skeleton-marks-support t)
  '(sly-default-lisp 'sbcl)
+ '(sly-lisp-implementations
+   '((sbcl
+      ("sbcl"))
+     (ecl
+      ("ecl"))
+     (ccl
+      ("ccl"))
+     (clisp
+      ("clisp"))
+     (abcl
+      ("abcl"))))
  '(small-temporary-file-directory "/dev/shm/")
  '(sql-input-ring-file-name (expand-file-name "emacs/sql_history" (xdg-cache-home)))
  '(sql-interactive-mode-hook '(sql-indent-enable))
