@@ -473,6 +473,12 @@
 
 (add-to-list 'auto-mode-alist (cons (rx ".twig" eos) 'web-mode))
 
+(defvar widget-field-keymap)
+(defvar widget-text-keymap)
+(with-eval-after-load 'wid-edit
+  (define-key widget-field-keymap "\C-xnf" 'widget-narrow-to-field)
+  (define-key widget-text-keymap "\C-xnf" 'widget-narrow-to-field))
+
 (define-key global-map "\M-V" 'scroll-down-line)
 (define-key global-map [?\C-\S-v] 'scroll-up-line)
 (define-key global-map [?\C-\M-\S-b] 'previous-buffer)

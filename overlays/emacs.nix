@@ -108,8 +108,8 @@ self: super: let
       owner = "xFA25E";
       repo = "sdcwoc";
       version = "0.0.2";
-      rev = "88fe1d448506ee66d4c5c1a5e05023c02a6a1808";
-      sha256 = "1nkivsfp2dd1c9alabwixdwibp2fjkk94vab6nva7kxz1mrwynns";
+      rev = "a91a6f611812a9c47ecb6edf3456da8c6c7fc01d";
+      sha256 = "0hk47gmfzwflwq38m9lcq6vmz17617x8hj7cr6inqqmzsprg30rk";
     };
 
     shell-pwd = githubPackageBuild {
@@ -126,6 +126,14 @@ self: super: let
       version = "0.2.2";
       rev = "c5e229ba4f811f890b5cb56854205a5ac3302ce8";
       sha256 = "0xsr6819qaad0y8rhfrf555c9w7cmgbgkf1a2svgbp7rhhnywl0a";
+    };
+
+    taggit = githubPackageBuild {
+      owner = "xFA25E";
+      repo = "taggit";
+      version = "0.0.1";
+      rev = "be0c8b0fdde33551121bb516c02afdac9cdc196b";
+      sha256 = "1s13gcklvkzj3vyi7jifnnxsq61nl86fx5rrh4ad3lp5cyj5av1y";
     };
 
     xattr = githubPackageBuild {
@@ -194,7 +202,7 @@ in {
     skempo sly sly-asdf sly-quicklisp sql-indent sqlup-mode transmission vlf
     web-mode wgrep
 
-    enwc pcmpl-args-parted yt-com
+    enwc pcmpl-args-parted yt-com taggit
 
   ]);
 

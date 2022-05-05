@@ -1360,7 +1360,8 @@ Very useful nix templates.
   "Licensed under the " p "GPL3 License." n
   n
   "* COMMENT Local Variables" n
-  "# Local Variables:" n
+  "# Local "
+  "Variables:" n
   "# eval: (add-hook 'after-save-hook #'org-md-export-to-markdown nil t)" p n
   "# End:")
 #+end_src
@@ -1411,6 +1412,14 @@ You can edit files with a lot of different web languages in it.
 (add-to-list 'auto-mode-alist (cons (rx ".twig" eos) 'web-mode))
 #+end_src
 
+*** Widget
+#+begin_src elisp
+(defvar widget-field-keymap)
+(defvar widget-text-keymap)
+(with-eval-after-load 'wid-edit
+  (define-key widget-field-keymap "\C-xnf" 'widget-narrow-to-field)
+  (define-key widget-text-keymap "\C-xnf" 'widget-narrow-to-field))
+#+end_src
 *** Window
 Do you like windows?  Me neither.
 
@@ -1444,5 +1453,5 @@ Finally, I load [[custom.el]] settings.
 
 * COMMENT Local Variables
 # Local Variables:
-# eval: (add-hook (quote after-save-hook) (lambda nil (org-babel-tangle) (byte-recompile-directory (expand-file-name "./"))) nil t)
+# eval: (add-hook 'after-save-hook (lambda nil (org-babel-tangle) (byte-recompile-directory (expand-file-name "./"))) nil t)
 # End:

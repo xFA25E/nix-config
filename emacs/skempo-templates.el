@@ -223,6 +223,7 @@
   "Licensed under the " p "GPL3 License." n
   n
   "* COMMENT Local Variables" n
-  "# Local Variables:" n
+  "# Local "
+  "Variables:" n
   "# eval: (add-hook 'after-save-hook #'org-md-export-to-markdown nil t)" p n
   "# End:")

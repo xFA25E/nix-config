@@ -737,7 +737,7 @@ The document was typeset with
  '(org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home)))
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(skempo-mode) t)
+ '(org-mode-hook '(skempo-mode))
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
@@ -832,6 +832,8 @@ The document was typeset with
  '(tab-bar-show 1)
  '(tab-bar-tab-hints t)
  '(tab-width 4)
+ '(taggit-editable-tags
+   '("album" "artist" "genre" "track-number" "track-title" "year"))
  '(text-mode-hook '(abbrev-mode text-mode-hook-identify))
  '(tool-bar-mode nil)
  '(tramp-completion-reread-directory-timeout nil)

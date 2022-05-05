@@ -124,6 +124,7 @@ in {
       discord
       xkb-switch
       torbrowser
+      amded
 
     ];
 
