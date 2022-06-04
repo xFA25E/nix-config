@@ -42,8 +42,23 @@ self: super: let
 
     # Patched packages
 
+    pcmpl-args = esuper.pcmpl-args.overrideAttrs (old: {
+      patches = old.patches or [] ++ [
+        (super.fetchpatch {
+          name = "add-pwgen.patch";
+          url = "https://github.com/xFA25E/pcmpl-args.el/commit/2bd30549d9a9f252c640250b89846b4dbe39f46b.diff";
+          sha256 = "1h8mpchiaa1msw5khwk5i105a1hvfp7qvhcs948lg9sav8f976y6";
+        })
+        (super.fetchpatch {
+          name = "add-parted.patch";
+          url = "https://github.com/xFA25E/pcmpl-args.el/commit/fdc51e554160963fb2f4c9ce0041822e1515d1e3.diff";
+          sha256 = "0cscz3npna668ywp7302j5f3qrpk4xy5i8f347nv3rwrjhkmwh12";
+        })
+      ];
+    });
+
     sly = esuper.sly.overrideAttrs (old: {
-      patches = (if old ? "patches" then old.patches else []) ++ [(super.fetchpatch {
+      patches = old.patches or [] ++ [(super.fetchpatch {
         name = "sly-lisp-implementation-defcustom.patch";
         url = "https://github.com/xFA25E/sly/commit/4f95f882a7179170c09074c5c6986b407caa60f1.diff";
         sha256 = "038c2cyw00r78zhimvvyv3dydbzbjx6d1p6683yyq0mjfd28c01y";
@@ -51,7 +66,7 @@ self: super: let
     });
 
     transmission = esuper.transmission.overrideAttrs (old: {
-      patches = (if old ? "patches" then old.patches else []) ++ [(super.fetchpatch {
+      patches = old.patches or [] ++ [(super.fetchpatch {
         name = "rename-path.patch";
         url = "https://github.com/xFA25E/transmission/commit/a16a3516a84bb496da4b313f7185300c3def0f41.diff";
         sha256 = "05zflff0ifmxjadgvszadw38v92kqsfsvq328596wjc47hzfdai1";
@@ -75,15 +90,6 @@ self: super: let
       rev = "8421bdb6f7e63f60c8c63a438cd26a2f29a7760f";
       sha256 = "1mid1gyfd2zhf3lkn3g2cpyyssqyl4z4qfxgxj1jzq9l65i2vsx8";
       packageRequires = [ eself.xattr ];
-    };
-
-    pcmpl-args-parted = githubPackageBuild {
-      owner = "xFA25E";
-      repo = "pcmpl-args-parted";
-      version = "0.0.1";
-      rev = "27f4048d93c11954cbb4376ecd51132035b12f68";
-      sha256 = "1vwvbap1ydfvk0s87rvv0bv0zpjc0isawhxhsd19hsdlafzdfwyb";
-      packageRequires = [ eself.pcmpl-args ];
     };
 
     pueue = githubPackageBuild {
@@ -132,8 +138,8 @@ self: super: let
       owner = "xFA25E";
       repo = "taggit";
       version = "0.0.1";
-      rev = "be0c8b0fdde33551121bb516c02afdac9cdc196b";
-      sha256 = "1s13gcklvkzj3vyi7jifnnxsq61nl86fx5rrh4ad3lp5cyj5av1y";
+      rev = "e1466f5aae3ef10de3ad15419707f1b0ab35d55f";
+      sha256 = "0bvkhncjbv858wgghvbv4aparj3x0ys1r07hs7zwa616maldmasp";
     };
 
     xattr = githubPackageBuild {
@@ -202,7 +208,7 @@ in {
     skempo sly sly-asdf sly-quicklisp sql-indent sqlup-mode transmission vlf
     web-mode wgrep
 
-    enwc pcmpl-args-parted yt-com taggit
+    enwc yt-com taggit
 
   ]);
 

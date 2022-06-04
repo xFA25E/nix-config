@@ -8,8 +8,8 @@ self: super: {
       })
       (super.fetchpatch {
         name = "cozytv-extractor.patch";
-        url = "https://github.com/xFA25E/youtube-dl/commit/53ab8d643241250bc789ab0e2283531256097f77.diff";
-        sha256 = "1wv6ipl18h8x6af4vz0ykiadxf071mvq1qk9p5vy2g3mcmx0r4mr";
+        url = "https://github.com/xFA25E/youtube-dl/commit/2e9fa3dffc43c32fc9776d651def58ee36c70f5f.diff";
+        sha256 = "1a4cpwr88vqmraykhf5rfif7wlj99ks2jba09qidfsngcipx05xw";
       })
     ];
   });

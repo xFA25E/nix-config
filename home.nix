@@ -125,6 +125,8 @@ in {
       xkb-switch
       torbrowser
       amded
+      teams
+      rar
 
     ];
 

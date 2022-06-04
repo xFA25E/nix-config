@@ -1,4 +1,4 @@
 #!/bin/sh
 for video in "$@"; do
-    ffmpeg -n -i "${video}" -vn -acodec copy "${video%.*}-strip.opus"
+    ffmpeg -n -i "${video}" -vn -acodec copy "${video%.*}.strip.opus"
 done

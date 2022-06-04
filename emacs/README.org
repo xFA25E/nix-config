@@ -164,9 +164,10 @@ to the project directory.
 #+begin_src nix :tangle auto-insert/shell-emacs-lisp.nix
 let
   pkgs = import <nixpkgs> {};
-  eldev = pkgs.stdenv.mkDerivation rec {
+  version = "1.1";
+  eldev = pkgs.stdenv.mkDerivation {
+    inherit version;
     pname = "eldev";
-    version = "1.1";
     src = pkgs.fetchurl {
       url = "https://raw.githubusercontent.com/doublep/eldev/${version}/bin/eldev";
       sha256 = "0spni3il3myv70zk18k76sj6yvh3rqi9j9wglz2j5mfs7z2dnr5f";
@@ -478,7 +479,7 @@ A package with many useful functions.
   (add-to-list 'dired-compress-file-suffixes
                (list (rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -"))
 
-  (define-advice dired-do-compress-to (:override (&optional arg) async)
+  (defun dired-do-compress-to@async (&optional arg)
     (interactive "P")
     (require 'format-spec)
     (let* ((in-files (dired-get-marked-files nil arg nil nil t))
@@ -598,18 +599,24 @@ displayed inside /dired/.
 (define-key search-map "n" 'find-name-dired)
 (define-key search-map "N" 'find-dired)
 
-(defun find-dired-sort-by-video-duration ()
-  "Sort entries in *Find* buffer by video duration."
-  (sort-subr nil 'forward-line 'end-of-line
-             (lambda ()
-               (let ((file-name
-                      (buffer-substring-no-properties
-                       (next-single-property-change
-                        (point) 'dired-filename)
-                       (line-end-position))))
-                 (with-temp-buffer
-                   (call-process "video_duration" nil '(t nil) nil file-name)
-                   (string-to-number (buffer-string)))))))
+(with-eval-after-load 'find-dired
+  (let ((type '(const :tag "Sort file names by video duration" find-dired-sort-by-video-duration))
+        (choices (cdr (get 'find-dired-refine-function 'custom-type))))
+    (cl-pushnew type choices :test #'equal)
+    (put 'find-dired-refine-function 'custom-type (cons 'choice choices)))
+
+  (defun find-dired-sort-by-video-duration ()
+    "Sort entries in *Find* buffer by video duration."
+    (sort-subr nil 'forward-line 'end-of-line
+               (lambda ()
+                 (let ((file-name
+                        (buffer-substring-no-properties
+                         (next-single-property-change
+                          (point) 'dired-filename)
+                         (line-end-position))))
+                   (with-temp-buffer
+                     (call-process "video_duration" nil '(t nil) nil file-name)
+                     (string-to-number (buffer-string))))))))
 #+end_src
 
 *** Find Func
@@ -931,15 +938,6 @@ Sometimes I need to transpose paragraphs.
 
 #+begin_src elisp
 (define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
-#+end_src
-
-*** [[https://github.com/JonWaltman/pcmpl-args.el][Pcmpl Args]]
-e/shell completion facility.  Very great package.  It provides a lot of
-completions and a great library for completion definition.
-
-#+begin_src elisp
-(autoload 'pcomplete/pass "pcmpl-args")
-(autoload 'pcomplete/parted "pcmpl-args-parted")
 #+end_src
 
 *** [[https://github.com/politza/pdf-tools][Pdf Tools]]

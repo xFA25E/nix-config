@@ -136,7 +136,7 @@
   (add-to-list 'dired-compress-file-suffixes
                (list (rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -"))
 
-  (define-advice dired-do-compress-to (:override (&optional arg) async)
+  (defun dired-do-compress-to@async (&optional arg)
     (interactive "P")
     (require 'format-spec)
     (let* ((in-files (dired-get-marked-files nil arg nil nil t))
@@ -207,18 +207,24 @@
 (define-key search-map "n" 'find-name-dired)
 (define-key search-map "N" 'find-dired)
 
-(defun find-dired-sort-by-video-duration ()
-  "Sort entries in *Find* buffer by video duration."
-  (sort-subr nil 'forward-line 'end-of-line
-             (lambda ()
-               (let ((file-name
-                      (buffer-substring-no-properties
-                       (next-single-property-change
-                        (point) 'dired-filename)
-                       (line-end-position))))
-                 (with-temp-buffer
-                   (call-process "video_duration" nil '(t nil) nil file-name)
-                   (string-to-number (buffer-string)))))))
+(with-eval-after-load 'find-dired
+  (let ((type '(const :tag "Sort file names by video duration" find-dired-sort-by-video-duration))
+        (choices (cdr (get 'find-dired-refine-function 'custom-type))))
+    (cl-pushnew type choices :test #'equal)
+    (put 'find-dired-refine-function 'custom-type (cons 'choice choices)))
+
+  (defun find-dired-sort-by-video-duration ()
+    "Sort entries in *Find* buffer by video duration."
+    (sort-subr nil 'forward-line 'end-of-line
+               (lambda ()
+                 (let ((file-name
+                        (buffer-substring-no-properties
+                         (next-single-property-change
+                          (point) 'dired-filename)
+                         (line-end-position))))
+                   (with-temp-buffer
+                     (call-process "video_duration" nil '(t nil) nil file-name)
+                     (string-to-number (buffer-string))))))))
 
 (define-key ctl-x-map "L" 'find-library)
 (define-key ctl-x-map "F" 'find-function)
@@ -374,9 +380,6 @@
   (define-key message-mode-map "\C-c\M-t" 'org-mime-revert-to-plain-text-mail))
 
 (define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
-
-(autoload 'pcomplete/pass "pcmpl-args")
-(autoload 'pcomplete/parted "pcmpl-args-parted")
 
 (declare-function pdf-loader-install "pdf-loader" (&optional no-query-p skip-dependencies-p no-error-p force-dependencies-p))
 (pdf-loader-install t t)

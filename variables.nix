@@ -1,6 +1,7 @@
 # -*- eval: (rainbow-mode); -*-
-rec {
-  user = "val";
+let user = "val";
+in {
+  inherit user;
   dir = {
     config = "/home/${user}/.config";
     data = "/home/${user}/.local/share";

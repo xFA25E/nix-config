@@ -1,6 +1,6 @@
 self: super: let
   libb64 = self.libb64.overrideAttrs (old: {
-    prePatch = if old ? "prePatch" then old.prePatch else "" + ''
+    prePatch = old.prePatch or "" + ''
       substituteInPlace include/b64/encode.h --replace BUFFERSIZE BUFSIZ
     '';
   });

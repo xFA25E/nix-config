@@ -1,5 +1,5 @@
 #!/bin/sh
 
 for video in "$@"; do
-    ffmpeg -n -i "${video}" -vcodec libx264 -crf 23 "${video%.*}-comp.mkv"
+    ffmpeg -n -i "${video}" -vcodec libx264 -crf 23 "${video%.*}.comp.mkv"
 done

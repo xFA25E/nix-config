@@ -437,7 +437,7 @@ The document was typeset with
      ("\\.\\(?:ai\\|eps\\)\\'" "setsid -f inkscape * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
      ("\\.\\(?:djvu\\|fb2\\)\\'" "ebook-convert ? .epub &")
      ("\\.pdf\\'" "setsid -f libreoffice * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
-     ("\\.\\(?:3gp\\|aiff\\|avi\\|flac\\|flv\\|m4a\\|mkv\\|mov\\|mp3\\|mp4\\|mpg\\|ogg\\|ogv\\|opus\\|vob\\|wav\\|webm\\|wmv\\)\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1" "for vid in * ; do dur=$(video_duration \"$vid\"); sum=$((sum + dur)); done; format_duration \"$sum\"" "compress_video * &" "strip_video * &" "mediainfo" "mpv -vo=drm" "sort_videos_by_duration *")
+     ("\\.\\(?:3gp\\|aiff\\|avi\\|flac\\|flv\\|m4a\\|mkv\\|mov\\|mp3\\|mp4\\|mpg\\|ogg\\|ogv\\|opus\\|vob\\|wav\\|webm\\|wmv\\|mka\\|m4v\\)\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1" "for vid in * ; do dur=$(video_duration \"$vid\"); sum=$((sum + dur)); done; format_duration \"$sum\"" "compress_video * &" "strip_video * &" "mediainfo" "mpv -vo=drm" "sort_videos_by_duration *")
      ("\\.cue\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1")
      ("\\.rar\\'"
       (let
@@ -852,6 +852,8 @@ The document was typeset with
  '(transient-values-file
    (expand-file-name "emacs/transient/values.el"
                      (xdg-cache-home)))
+ '(transmission-pieces-function 'transmission-format-pieces-brief)
+ '(transmission-units 'si)
  '(truncate-lines t)
  '(undo-limit 200000)
  '(undo-strong-limit 300000)
