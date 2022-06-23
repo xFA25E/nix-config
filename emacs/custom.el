@@ -4,9 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(Man-notify-method 'pushy)
- '(abbrev-file-name
-   (expand-file-name "nixpkgs/emacs/abbrev_defs"
-                     (xdg-config-home)))
+ '(abbrev-file-name "~/Documents/projects/nix-config/emacs/abbrev_defs")
  '(abbrev-suggest t)
  '(after-save-hook '(executable-make-buffer-file-executable-if-script-p))
  '(ange-ftp-netrc-filename "~/.authinfo.gpg")
@@ -418,9 +416,7 @@ The document was typeset with
  '(completions-group t)
  '(context-menu-mode t)
  '(create-lockfiles nil)
- '(custom-file
-   (expand-file-name "nixpkgs/emacs/custom.el"
-                     (xdg-config-home)))
+ '(custom-file "~/Documents/projects/nix-config/emacs/custom.el")
  '(delete-old-versions t)
  '(delete-pair-blink-delay 0)
  '(describe-bindings-outline t)

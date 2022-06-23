@@ -63,22 +63,30 @@
       stateVersion = "22.05";
     };
 
-    nixosConfigurations.stribog = nixpkgs.lib.nixosSystem {
-      inherit pkgs system;
-      modules = [
-        ./nixos/configuration.nix
-        self.nixosModules.nix
-        home-manager.nixosModules.home-manager
-        {
-          home-manager = {
-            sharedModules = [ self.nixosModules.nix ];
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            users.${username} = import ./home.nix;
-          };
-        }
-      ];
-      specialArgs = { inherit username; };
+    nixosConfigurations = {
+      stribog = nixpkgs.lib.nixosSystem {
+        inherit pkgs system;
+        modules = [
+          ./nixos/stribog.nix
+          self.nixosModules.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              sharedModules = [ self.nixosModules.nix ];
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.${username} = import ./home.nix;
+            };
+          }
+        ];
+        specialArgs = { inherit username; };
+      };
+
+      perun = nixpkgs.lib.nixosSystem {
+        inherit pkgs system;
+        modules = [ ./nixos/perun.nix self.nixosModules.nix ];
+        specialArgs = { inherit username; };
+      };
     };
 
     nixosModules.nix = { ... }: {
@@ -377,6 +385,14 @@
       inherit (pkgs.lib.attrsets) filterAttrs isDerivation;
       overlayPkgs = self.overlays.default pkgs pkgs;
     in filterAttrs (k: v: isDerivation v) overlayPkgs;
+
+    apps.${system}.default = {
+      type = "app";
+      program = let
+        c = builtins.readFile ./apps/partitionEncryptFormatMount;
+        s = pkgs.writeShellScript "partitionEncryptFormatMount" c;
+      in "${s}";
+    };
 
   };
 }
