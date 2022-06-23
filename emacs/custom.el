@@ -352,9 +352,6 @@ The document was typeset with
       . "shell-emacs-lisp.nix")
      (("/emacs-lisp/[^/]+/\\.gitignore\\'" . "Gitignore for Emacs Lisp")
       . "gitignore-emacs-lisp")
-     (("/\\.envrc\\'" . "Direnv envrc")
-      nil "use nix
-")
      ("/README\\.org\\'" . skempo-template-org-readmeorg)))
  '(auto-insert-directory (expand-file-name "emacs/auto-insert/" (xdg-config-home)))
  '(auto-insert-mode t)
@@ -386,11 +383,13 @@ The document was typeset with
  '(bookmark-fontify nil)
  '(bookmark-menu-confirm-deletion t)
  '(bookmark-save-flag 1)
- '(browse-url-browser-function 'browse-url-other)
+ '(browse-url-browser-function 'browse-url-choices)
  '(browse-url-generic-program "brave-incognito")
  '(browse-url-handlers
-   '(("\\.torrent\\'" . browse-url-transmission)
-     (browse-url-youtube-url-p . browse-url-youtube)))
+   '(("\\.torrent\\'" lambda
+      (url &rest _)
+      (transmission-add url
+                        (read-directory-name "Target directory: ")))))
  '(browse-url-secondary-browser-function 'browse-url)
  '(byte-count-to-string-function '(lambda (s) (file-size-human-readable s 'si)))
  '(c-default-style '((java-mode . "java") (other . "awk")))
@@ -452,7 +451,7 @@ The document was typeset with
  '(dired-mode-hook '(dired-hide-details-mode hl-line-mode))
  '(display-battery-mode t)
  '(display-buffer-alist
-   '(("\\(?:\\*Pueue\\*\\|\\*SDCWOC\\*\\|\\*Yt-Com\\*\\)"
+   '(("\\(?:\\*Pueue\\*\\|\\*SDCWOC\\*\\)"
       (display-buffer-reuse-window display-buffer-same-window))))
  '(display-time-default-load-average nil)
  '(display-time-mail-function
@@ -595,6 +594,7 @@ The document was typeset with
  '(link-hint-types
    '(link-hint-shr-url link-hint-org-link link-hint-markdown-link link-hint-help-link link-hint-info-link link-hint-package-link link-hint-package-keyword-link link-hint-package-install-link link-hint-epkg-button link-hint-compilation-link link-hint-nov-link link-hint-customize-widget link-hint-notmuch-hello link-hint-button link-hint-completion-list-candidate link-hint-text-url link-hint-file-link link-hint-org-agenda-item link-hint-xref-item link-hint-man-button link-hint-dired-filename))
  '(lisp-mode-hook '(skempo-mode sly-editing-mode abbrev-mode))
+ '(locate-update-command "systemctl --user start updatedb.service")
  '(magit-credential-cache-daemon-socket (expand-file-name "git/credential/socket" (xdg-cache-home)))
  '(magit-define-global-key-bindings nil)
  '(mail-envelope-from 'header)
@@ -628,7 +628,8 @@ The document was typeset with
  '(newsticker-treeview-listwindow-height 6)
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
-   '(("Fringe Elements" "https://odysee.com/$/rss/@TheAltHype:6" nil nil nil)
+   '(("Sacha Chua Emacs News" "https://sachachua.com/blog/category/emacs-news/feed/atom/" nil nil nil)
+     ("Fringe Elements" "https://odysee.com/$/rss/@TheAltHype:6" nil nil nil)
      ("The Alternative Hypothesis" "http://thealternativehypothesis.org/index.php/feed" nil nil nil)
      ("Alt Hype Livestream Archive" "https://odysee.com/$/rss/@AltHypeLiveArchive:9" nil nil nil)
      ("The Alt Hype" "https://www.bitchute.com/feeds/rss/channel/thealthype" nil nil nil)
@@ -884,6 +885,7 @@ The document was typeset with
  '(region ((t (:extend t :background "LemonChiffon2" :distant-foreground "gtk_selection_fg_color"))))
  '(tab-bar ((t (:inherit variable-pitch :background "black" :foreground "white smoke" :height 101))))
  '(tab-bar-tab ((t (:inherit tab-bar :background "white smoke" :foreground "black" :box (:line-width (1 . 1) :color "white smoke")))))
+ '(tab-bar-tab-group-current ((t (:weight bold :box nil :inverse-video t :inherit tab-bar-tab))))
  '(tab-bar-tab-group-inactive ((t (:inherit tab-bar-tab-inactive))))
  '(tab-bar-tab-inactive ((t (:inherit tab-bar-tab :background "dark grey" :foreground "black" :box (:line-width (1 . 1) :color "black")))))
  '(tab-bar-tab-ungrouped ((t (:inherit tab-bar-tab-inactive)))))

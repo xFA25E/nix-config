@@ -1,0 +1,11 @@
+#!/bin/sh -eu
+
+test -d "$1"
+
+rsync --delete --delete-excluded --archive --verbose --partial --progress --relative \
+      --xattrs --backup --backup-dir="${1%/}/backup" --suffix="$(date '+.~%Y%m%d~')" \
+      --exclude='lost+found' --exclude="${1}" \
+      ~/Documents ~/Downloads ~/Music ~/Pictures ~/Videos ~/archives ~/org \
+      ~/.authinfo.gpg ~/.bash_history ~/.gnupg ~/.ssh \
+      ~/.local/share/emacs ~/.local/share/mail ~/.local/share/password-store \
+      "${1%/}/current"

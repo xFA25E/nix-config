@@ -1,4 +1,9 @@
 colors: {
+  "dmenu.font" = "monospace:size=13";
+  "dmenu.normfgcolor" = colors.base05;
+  "dmenu.normbgcolor" = colors.base00;
+  "dmenu.selfgcolor" = colors.base05;
+  "dmenu.selbgcolor" = colors.base01;
   "xterm*cursorBlink" = "false";
   "xterm*font" = "xft:Hack:size=13:antialias=true:hinting=true";
   "xterm*internalBorder" = 0;

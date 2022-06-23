@@ -1,4 +1,0 @@
-#!/bin/sh
-for video in "$@"; do
-    ffmpeg -i "${video}" -vf scale=854:480 -acodec copy "${video%.*}.crop480.mkv"
-done

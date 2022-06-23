@@ -1,6 +1,0 @@
-#!/bin/sh
-mail="${1:?provide eml}"
-basename="$(basename "${mail}" .eml)"
-mkdir -p "${basename:?empty basename}" || exit 1
-mu extract --save-all --target-dir "${basename}" "${mail:?empty mail}" || exit 1
-mu view "${mail}" >"${basename}/mail.txt"

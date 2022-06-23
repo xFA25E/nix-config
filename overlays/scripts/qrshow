@@ -1,6 +1,0 @@
-#!/bin/sh
-[ -z "${1}" ] && notify-send "Url is empty"
-text="${1:?provide url}"
-temp_file="$(mktemp /tmp/qrXXXXX.png)"
-qrencode -o "${temp_file:?}" -s 15 "${text:?provide text}" && sxiv "${temp_file:?}"
-rm "${temp_file:?}"

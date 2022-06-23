@@ -1,0 +1,4 @@
+#!/bin/sh
+for video in "$@"; do
+    ffmpeg -y -loglevel repeat+info -i file:"${video}" -vn -acodec libmp3lame -q:a 5 file:"${video%.*}.mp3"
+done

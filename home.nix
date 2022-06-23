@@ -2,11 +2,8 @@
 # https://searx.be/?preferences=eJxtVcuO2zoM_ZrrjTFFH4uuvChaXNwBCkzRpN0KtEQrrCXRleRk3K8vnUSOMncWMSKaOjw8fFhDRsuRMHUWA0ZwjYNgZ7DYYXj4sWsca3DroYE5s2Y_OczYWWbrsCEvnmqK_Lx0-zhj4zEf2HTfnnb7JsGACSHqQ_e2yQf02HHSEJuIaXY5KQ4q4Ell6Lt_wSVsDJOSl-yOGDsGOb7haJvzrYeUFyHi2JJmg8fGUILeoVEYLAXJ4N2HDx-flTqSQU7_vP88kh4hJaX8nEiL4ciQlUqsCVzr0RCIcYFgUK5d8xeLJSvAkHJt1Fo_5GOFbik76JWiLIeIxpD4n_VY3yZEMyFGpQZyZ4ujPkJc2hUyUaqxBydM46u3t3A95X7WI-ZrxEsB2snB0no-SgUrZ7949CzBcoSQnBTZ1PES_gng7y1rmVZd2_VxjREWgJt6oG3iuYqSeVw4czrwCOHm57hPGd_EVFAmf_2XMsQ8rR1ThV7gwFwbeMIQceJ0007KTRDW25VIJxrJQIb67oXxxnCIiG3iIZ8gYmsoos4iy2sSruRvOWDkE91pNpjIq6VQOoCUc31cwYo6G70-G7L2dmGI4GFtgqLu75OkVIcoEIVEQdhI5cVzcNLrd8QihZFAV6FfFKYwmEOSXNOh8rzoVRy2gdkENMa2BgcKlInDXdPW6sE0pVdgttQhriWWWT9jzgbDXd7T2HqKkYuWL_jf2JDOf_g-fc-_EMfa0lOw9bnM5jX8u-f_5b8dKdTdg5nZpdcqVBIr0FXwa802kNsolzKWSy_20DqAdMT2fjVYSS6TxzJMVynLssZwvwKNrIj1ZyufbU9Obhav1P0k_-BoRHXgPOKysnySmVOftEYp25enR1nCp0gZ5c1jOFcfVdKRnSu-lxWupBnHbY_3MjRJMpV9njZmJejuvGFWV3355iwqoZN5FMQdukFJII4ezn0mtv_2-2-7isc-gmy_qH58_ypW2XgYG-kTFOi_m0eMQg==&q=%s
 # https://duckduckgo.com/?kk=-1&kah=it-it&kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&kak=-1&kax=-1&km=l&q=%s
 
-{ config, pkgs, ... }: let
-  variables = import ./variables.nix;
-  user = variables.user;
-  dir = variables.dir;
-  colors = variables.colors;
+{ config, pkgs, lib, ... }: let
+  colors = pkgs.base16Themes.theme "gruvbox-light-medium";
 in {
   accounts.email = {
     accounts = {
@@ -34,14 +31,16 @@ in {
               "sent" = makeChannel "Sent Items" "sent";
             };
           };
-          extraConfig.account.AuthMechs = "XOAUTH2";
         };
         msmtp = {
           enable = true;
-          extraConfig.logfile = "${dir.cache}/msmtp-polimi.log";
+          extraConfig.logfile = "${config.xdg.cacheHome}/msmtp-polimi.log";
         };
         notmuch.enable = true;
-        passwordCommand = "${pkgs.pass}/bin/pass show mail/polimi | ${pkgs.coreutils}/bin/head -n1";
+        passwordCommand = let
+          pass = "${config.programs.password-store.package}/bin/pass";
+          head = "${pkgs.coreutils}/bin/head";
+        in "${pass} show mail/polimi | ${head} -n1";
         primary = true;
         realName = "Valeriy Litkovskyy";
         smtp = {
@@ -54,21 +53,20 @@ in {
         userName = "10622800@polimi.it";
       };
     };
-    maildirBasePath = dir.mail;
+    maildirBasePath = "${config.xdg.dataHome}/mail";
   };
 
   fonts.fontconfig.enable = true;
   home = {
-    # enableDebugInfo = true;     # gdb symbols
     extraOutputsToInstall = [ "man" "doc" "info" "devdoc" ];
 
     file = {
       ".shinit".text = ''
         ${pkgs.coreutils}/bin/stty -ixon
-        PS1='[$USER $?] $(test $UID -eq 0 && echo "#" || echo "$") '
+        PS1='[$USER $?] $ '
       '';
-      ".stalonetrayrc".text = pkgs.lib.generators.toKeyValue {
-        mkKeyValue = pkgs.lib.generators.mkKeyValueDefault {} " ";
+      ".stalonetrayrc".text = lib.generators.toKeyValue {
+        mkKeyValue = lib.generators.mkKeyValueDefault {} " ";
       } {
         background = "\"#000000\"";
         fuzzy_edges = "3";
@@ -85,87 +83,60 @@ in {
       };
     };
 
-    homeDirectory = "/home/${user}";
-
     keyboard = {
       layout = "dvorak,ru";
       options = [ "ctrl:swapcaps" "grp:shifts_toggle" ];
       variant = ",ruu";
     };
 
-    language = {
-      address = "en_US.UTF-8";
-      base = "en_US.UTF-8";
-      collate = "en_US.UTF-8";
-      ctype = "en_US.UTF-8";
-      measurement = "en_US.UTF-8";
-      messages = "en_US.UTF-8";
-      monetary = "en_US.UTF-8";
-      name = "en_US.UTF-8";
-      numeric = "en_US.UTF-8";
-      paper = "en_US.UTF-8";
-      telephone = "en_US.UTF-8";
-      time = "en_US.UTF-8";
-    };
+    language = builtins.listToAttrs (map (n: { name = n; value = "en_US.UTF-8"; }) [
+      "address" "base" "collate" "ctype" "measurement" "messages" "monetary"
+      "name" "numeric" "paper" "telephone" "time"
+    ]);
 
     packages = with pkgs; [
-
-      acpi alsaUtils ascii bind brightnessctl brave braveIncognito browser
-      calibre cpulimit dmenu fd firefox ffmpeg file gimp hunspell
-      hunspellDicts.en_US-large hunspellDicts.it_IT hunspellDicts.ru_RU
-      imagemagick iw ledger leiningen libnotify libreoffice mediainfo mkpasswd
-      mpc_cli myEmacs nload p7zip pass-otp pdftk perlPackages.JSONPP pinentry
-      pueue pulsemixer pwgen qrencode ripgrep rsync scripts scrot sdcv
-      simplescreenrecorder sloccount speedtest-cli stalonetray stumpwm sxiv
-      syncthing transmission unzip wget woof xclip xdg-user-dirs xterm xz
+      acpi alsaUtils amded ascii bind brave brightnessctl browser calibre cloc
+      cpulimit discord dmenu exiftool fd ffmpeg file firefox ghostscript gimp
+      go-mtpfs hunspell hunspellDicts.en_US-large hunspellDicts.it_IT
+      hunspellDicts.ru_RU imagemagick iw ledger leiningen libjpeg libnotify
+      libreoffice mediainfo mkpasswd mpc_cli nload p7zip parted pdftk
+      perlPackages.JSONPP pinentry pueue pulsemixer pwgen qrencode rar ripgrep
+      rsync scripts scrot sdcv shellcheck simplescreenrecorder speedtest-cli
+      stalonetray stumpwm sxiv syncthing teams tor-browser-bundle-bin
+      transmission unzip wget woof xclip xdg-user-dirs xkb-switch xterm xz
       youtube-dl zip zoom-us
-
-      go-mtpfs parted exiftool libjpeg shellcheck
-      discord
-      xkb-switch
-      torbrowser
-      amded
-      teams
-      rar
-
     ];
 
-    sessionPath = [ "${dir.config}/composer/vendor/bin" "${dir.data}/npm/bin" "/usr/local/bin" ];
     sessionVariables = {
       EDITOR = "emacs";
-      VISUAL = "emacs";
+      VISUAL = config.home.sessionVariables.EDITOR;
       TERMINAL = "uxterm";
       LESSHISFILE = "/dev/null";
-      MAILDIR = "${dir.mail}";
+      MAILDIR = config.accounts.email.maildirBasePath;
       MPD_HOST = "localhost";
       MPD_PORT = "6600";
       SUDO_ASKPASS = "${pkgs.scripts}/bin/sudo_askpass";
-      ENV = "/home/${user}/.shinit";
+      ENV = "${config.home.homeDirectory}/.shinit";
       "_JAVA_AWT_WM_NONREPARENTING" = "1";
-      CUDA_CACHE_PATH = "${dir.cache}/nv";
-      NPM_CONFIG_USERCONFIG = "${dir.config}/npm/npmrc";
-      GEM_HOME = "${dir.cache}/gem";
-      GEM_SPEC_CACHE = "${dir.cache}/gem";
-      ANDROID_SDK_HOME = "${dir.cache}/android";
-      ADB_VENDOR_KEY = "${dir.cache}/android";
-      BOOT_HOME = "${dir.cache}/boot";
-      YTDL_DIR="${dir.videos}/youtube";
+      CUDA_CACHE_PATH = "${config.xdg.cacheHome}/nv";
+      NPM_CONFIG_USERCONFIG = "${config.xdg.configHome}/npm/npmrc";
+      GEM_HOME = "${config.xdg.cacheHome}/gem";
+      GEM_SPEC_CACHE = "${config.xdg.cacheHome}/gem";
+      ANDROID_SDK_HOME = "${config.xdg.cacheHome}/android";
+      ADB_VENDOR_KEY = "${config.xdg.cacheHome}/android";
+      BOOT_HOME = "${config.xdg.cacheHome}/boot";
+      YTDL_DIR="${config.xdg.userDirs.videos}/youtube";
       BROWSER = "browser";
-      GTK2_RC_FILES = "${dir.cache}/gtk-2.0/gtkrc";
+      GTK2_RC_FILES = "${config.xdg.cacheHome}/gtk-2.0/gtkrc";
       GTK_IM_MODULE = "ibus";
       QT_IM_MODULE = "ibus";
       XMODIFIERS = "ibus";
       XAUTHORITY = "\${XDG_RUNTIME_DIR}/Xauthority";
-      SSB_HOME = "${dir.cache}/zoom";
-      LOCATE_PATH = "${dir.cache}/locatedb";
-      RUSTUP_HOME = "${dir.cache}/rustup";
-      CARGO_HOME = "${dir.cache}/cargo";
-      INFOPATH = "$INFOPATH\${INFOPATH:+:}/usr/local/share/info";
-      WGETRC = "${dir.config}/wgetrc";
+      SSB_HOME = "${config.xdg.cacheHome}/zoom";
+      RUSTUP_HOME = "${config.xdg.cacheHome}/rustup";
+      CARGO_HOME = "${config.xdg.cacheHome}/cargo";
+      WGETRC = "${config.xdg.configHome}/wgetrc";
     };
-
-    stateVersion = "21.03";
-    username = user;
   };
 
   programs = {
@@ -181,23 +152,18 @@ in {
         "notify-send" "ping" "pkill" "printf" "pwd" "pwgen" "python" "quit"
         "read" "rg" "rm" "rmdir" "rofi" "setsid" "sh" "sleep" "stow" "strings"
         "strip" "studies_" "sxiv" "tail" "time" "timer" "top" "touch" "tr"
-        "uname" "uptime" "watch" "wc" "which" "woof" "xclip" "xz" "yay"
-        "youtube-dl" "ytdl"
+        "uname" "updatedb" "uptime" "watch" "wc" "which" "woof" "xclip" "xz"
+        "yay" "youtube-dl" "ytdl"
 
       ];
       initExtra = ''
         [ -n "$ENV" ] && . "$ENV"
-
-        for f in ${dir.config}/guix/current/etc/bash_completion.d/* ; do
-            test -r "$f" && . "$f"
-        done
       '';
-      profileExtra = ''
-        test -r "/home/${user}/.nix-profile/etc/profile.d/nix.sh" && . "/home/${user}/.nix-profile/etc/profile.d/nix.sh"
-        test -r "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh" && . "/home/${user}/.nix-profile/etc/profile.d/hm-session-vars.sh"
-
-        test -r "/home/${user}/.guix-profile/etc/profile" && . "/home/${user}/.guix-profile/etc/profile"
-        test -r "${dir.config}/guix/current/etc/profile" && . "${dir.config}/guix/current/etc/profile"
+      profileExtra = let
+        profileDir = "${config.home.homeDirectory}.nix-profile/etc/profile.d";
+      in ''
+        test -r "${profileDir}/nix.sh" && . "${profileDir}/nix.sh"
+        test -r "${profileDir}/hm-session-vars.sh" && . "${profileDir}/hm-session-vars.sh"
 
         eval `${pkgs.openssh}/bin/ssh-agent`
       '';
@@ -209,7 +175,7 @@ in {
     direnv = {
       config = {
         Whitelist = {
-          prefix = [ "/home/${user}/Documents/projects/" ];
+          prefix = [ "${config.xdg.userDirs.documents}/projects/" ];
         };
       };
       enable = true;
@@ -217,12 +183,26 @@ in {
       nix-direnv.enable = true;
     };
 
+    emacs = {
+      enable = true;
+      extraPackages = epkgs: with epkgs; [
+        async avy cargo consult csv-mode cyrillic-dvorak-im dired-tags dumb-jump
+        ebdb edit-indirect eglot emmet-mode envrc enwc flymake-shellcheck
+        format-all htmlize ipretty ledger-mode link-hint magit marginalia
+        nix-mode notmuch nov ob-http org org-contrib org-mime pcmpl-args
+        pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg rust-mode
+        rx-widget sdcwoc shell-pwd skempo sly sly-asdf sly-quicklisp sql-indent
+        sqlup-mode taggit transmission vlf web-mode wgrep
+      ];
+      package = pkgs.emacsNativeComp;
+    };
+
     feh.enable = true;
 
     git = {
       enable = true;
       extraConfig.credential.helper = "cache --timeout=86400";
-      ignores = [ ".direnv" ];
+      ignores = [ ".direnv" ".envrc" ];
       # signing = {
       #   key = "vlr.ltkvsk@protonmail.com";
       #   signByDefault = true;
@@ -250,12 +230,7 @@ in {
         show_cpu_usage = 1;
         show_cpu_frequency = 1;
         show_thread_names = 1;
-      } // (with config.lib.htop; rightMeters [
-        (text "Tasks")
-        (text "LoadAverage")
-        (text "Uptime")
-        (text "Battery")
-      ]);
+      };
     };
 
     info.enable = true;
@@ -275,8 +250,8 @@ in {
       };
       config = {
         save-position-on-quit = true;
-        watch-later-directory = "${dir.cache}/mpv/watch_later";
-        screenshot-directory = "${dir.pictures}/mpv";
+        watch-later-directory = "${config.xdg.cacheHome}/mpv/watch_later";
+        screenshot-directory = "${config.xdg.userDirs.pictures}/mpv";
       };
       profiles = {
         gui = {
@@ -294,26 +269,28 @@ in {
       new.tags = [ "new" ];
       search.excludeTags = [ "trash" "spam" "deleted" ];
       hooks = {
-        preNew = ''
+        preNew = let
+          maildir = config.accounts.email.maildirBasePath;
+        in ''
           export PATH="${pkgs.findutils}/bin''${PATH:+:}$PATH"
 
           notmuch search --format=text0 --output=files tag:deleted | xargs -r0 rm -v
 
           # polimi rules
 
-          mkdir -p '${dir.mail}'/polimi/{inbox,sent,all}/cur
+          mkdir -p '${maildir}'/polimi/{inbox,sent,all}/cur
 
           ## all tags sent should be in polimi/sent
           notmuch search --output=files --format=text0 tag:polimi AND tag:sent AND NOT 'path:polimi/sent/cur/**' \
-            | xargs -r0 -I '{}' mv -v '{}' '${dir.mail}/polimi/sent/cur'
+            | xargs -r0 -I '{}' mv -v '{}' '${maildir}/polimi/sent/cur'
 
           ## all tags archive/trash/spam should be in polimi/all
           notmuch search --output=files --format=text0 tag:polimi AND '(tag:archive OR tag:trash OR tag:spam)' AND NOT 'path:polimi/all/cur/**' \
-            | xargs -r0 -I '{}' mv -v '{}' '${dir.mail}/polimi/all/cur'
+            | xargs -r0 -I '{}' mv -v '{}' '${maildir}/polimi/all/cur'
 
           ## all tags inbox/flagged should be in polimi/inbox
           notmuch search --output=files --format=text0 tag:polimi AND '(tag:inbox OR tag:flagged)' AND NOT 'path:polimi/inbox/cur/**' \
-            | xargs -r0 -I '{}' mv -v '{}' '${dir.mail}/polimi/inbox/cur'
+            | xargs -r0 -I '{}' mv -v '{}' '${maildir}/polimi/inbox/cur'
 
         '';
         postNew = ''
@@ -339,6 +316,11 @@ in {
 
         '';
       };
+    };
+
+    password-store = {
+      enable = true;
+      package = pkgs.pass.withExtensions (exts: [ exts.pass-otp ]);
     };
 
     readline = {
@@ -395,14 +377,12 @@ in {
       verbose = true;
     };
 
-    # grobi.enable = true; # does not work on greypc. autorandr?
-
     mbsync = {
       enable = true;
 
       postExec = let
         mailSync = pkgs.writeShellScript "mailnotify" ''
-          export PATH="${with pkgs; lib.strings.makeBinPath [libnotify notmuch coreutils dbus]}''${PATH:+:}$PATH"
+          export PATH="${lib.strings.makeBinPath (with pkgs; [libnotify notmuch coreutils dbus])}''${PATH:+:}$PATH"
           export NOTMUCH_CONFIG="${config.home.sessionVariables.NOTMUCH_CONFIG}"
           notmuch new
           count="$(notmuch search --output=files tag:unread | wc -l)"
@@ -411,14 +391,14 @@ in {
           fi
         '';
       in "${mailSync}";
-      preExec = "${pkgs.coreutils}/bin/mkdir -p ${dir.mail}";
+      preExec = "${pkgs.coreutils}/bin/mkdir -p ${config.accounts.email.maildirBasePath}";
       verbose = true;
     };
 
     mpd = {
       enable = true;
-      dataDir = "${dir.cache}/mpd";
-      musicDirectory = dir.music;
+      dataDir = "${config.xdg.cacheHome}/mpd";
+      musicDirectory = config.xdg.userDirs.music;
       extraConfig = ''
         audio_output {
           type "pulse"
@@ -442,101 +422,69 @@ in {
     unclutter.enable = true;
   };
 
-  systemd.user = {
-    timers = {
-      updatedb = {
-        Unit = {
-          Description = "Updabedb timer";
-        };
-        Timer = {
-          Unit = "updatedb.service";
-          OnCalendar = "13:00";
-        };
-        Install = {
-          WantedBy = [ "timers.target" ];
-        };
+  systemd.user.services = {
+    pueue = {
+      Unit = {
+        Description = "Pueue Daemon - CLI process scheduler and manager";
+        After = [ "graphical-session-pre.target" ];
+        PartOf = [ "graphical-session.target" ];
+      };
+      Service = {
+        Restart = "no";
+        ExecStart = "${pkgs.pueue}/bin/pueued";
+        ExecReload = "${pkgs.pueue}/bin/pueued";
+        Environment = "ASYNC_STD_THREAD_COUNT=4";
+      };
+      Install = {
+        WantedBy = [ "graphical-session.target" ];
       };
     };
 
-    services = {
-      updatedb = {
-        Unit = {
-          Description = "Updatedb - filesystem database";
-        };
-        Service = {
-          Environment = [ "PATH=${pkgs.gnused}/bin:${pkgs.coreutils}/bin" ];
-          ExecStart = "${pkgs.findutils}/bin/updatedb --output=${dir.cache}/locatedb --prunepaths=\"/tmp /usr/tmp /var/tmp /afs /nix ${dir.cache} ${dir.data}\"";
-          IOSchedulingClass = "idle";
-          Type = "oneshot";
-        };
+    transmission = {
+      Unit = {
+        Description = "Transmission BitTorrent Daemon";
+        After = [ "network.target" "graphical-session-pre.target" ];
+        PartOf = [ "graphical-session.target" ];
       };
-
-      pueue = {
-        Unit = {
-          Description = "Pueue Daemon - CLI process scheduler and manager";
-          After = [ "graphical-session-pre.target" ];
-          PartOf = [ "graphical-session.target" ];
-        };
-        Service = {
-          Restart = "no";
-          ExecStart = "${pkgs.pueue}/bin/pueued";
-          ExecReload = "${pkgs.pueue}/bin/pueued";
-          Environment = "ASYNC_STD_THREAD_COUNT=4";
-        };
-        Install = {
-          WantedBy = [ "graphical-session.target" ];
-        };
+      Service = {
+        Type = "notify";
+        ExecStart = "${pkgs.transmission}/bin/transmission-daemon -f --log-error";
+        ExecReload = "${pkgs.utillinux}/bin/kill -s HUP $MAINPID";
+        NoNewPrivileges = true;
       };
-
-      transmission = {
-        Unit = {
-          Description = "Transmission BitTorrent Daemon";
-          After = [ "network.target" "graphical-session-pre.target" ];
-          PartOf = [ "graphical-session.target" ];
-        };
-        Service = {
-          Type = "notify";
-          ExecStart = "${pkgs.transmission}/bin/transmission-daemon -f --log-error";
-          ExecReload = "${pkgs.utillinux}/bin/kill -s HUP $MAINPID";
-          NoNewPrivileges = true;
-        };
-        Install = {
-          WantedBy = [ "graphical-session.target" ];
-        };
+      Install = {
+        WantedBy = [ "graphical-session.target" ];
       };
     };
+
+    udiskie.Service.Environment = "PATH=${pkgs.dbus}/bin:${pkgs.systemd}/bin";
   };
 
   xdg = {
     enable = true;
 
-    cacheHome = dir.cache;
-
     configFile = {
       "emacs" = {
-        source = ./emacs;
+        source = builtins.filterSource (p: t: t != "regular" || builtins.match ".*README.org" p == null) ./emacs;
         recursive = true;
       };
 
-      "fontconfig/fonts.conf".source = ./fonts.conf;
+      "mpv/scripts/youtube-quality.lua".source = "${pkgs.mpv-youtube-quality}/youtube-quality.lua";
+      "mpv/script-opts/youtube-quality.conf".source = "${pkgs.mpv-youtube-quality}/youtube-quality.conf";
 
-      "mpv/scripts/bookmarker-menu.lua".source = "${pkgs.mpvBookmarker}/bookmarker-menu.lua";
-      "mpv/scripts/youtube-quality.lua".source = "${pkgs.mpvYoutubeQuality}/youtube-quality.lua";
-      "mpv/script-opts/youtube-quality.conf".source = "${pkgs.mpvYoutubeQuality}/youtube-quality.conf";
-
-      "npm/npmrc".text = pkgs.lib.generators.toKeyValue {} {
-        prefix = "${dir.data}/npm";
-        cache = "${dir.cache}/npm";
-        init-module = "${dir.config}/npm/config/npm-init.js";
+      "npm/npmrc".text = lib.generators.toKeyValue {} {
+        prefix = "${config.xdg.dataHome}/npm";
+        cache = "${config.xdg.cacheHome}/npm";
+        init-module = "${config.xdg.configHome}/npm/config/npm-init.js";
         tmp = "\${XDG_RUNTIME_DIR}/npm";
       };
 
       "stumpwm/config".text = "(swm-config:init)";
 
-      "wgetrc".text = "hsts-file=${dir.cache}/wget-hsts";
+      "wgetrc".text = "hsts-file=${config.xdg.cacheHome}/wget-hsts";
 
-      "youtube-dl/config".text = pkgs.lib.generators.toKeyValue {
-        mkKeyValue = pkgs.lib.generators.mkKeyValueDefault {} " ";
+      "youtube-dl/config".text = lib.generators.toKeyValue {
+        mkKeyValue = lib.generators.mkKeyValueDefault {} " ";
       } {
         "--add-metadata" = "";
         "--ignore-errors" = "";
@@ -548,10 +496,8 @@ in {
       };
     };
 
-    configHome = dir.config;
-
     dataFile = {
-      "applications/browser.desktop".text = pkgs.lib.generators.toINI {} {
+      "applications/browser.desktop".text = lib.generators.toINI {} {
         "Desktop Entry" = {
           Categories = "Network;WebBrowser;";
           Comment = "";
@@ -564,10 +510,8 @@ in {
         };
       };
 
-      "stardict/dic".source = "${pkgs.stardictDictionaries}/share/stardict/dic";
+      "stardict/dic".source = "${pkgs.stardicts}/share/stardict/dic";
     };
-
-    dataHome = dir.data;
 
     mimeApps = {
       enable = true;
@@ -587,11 +531,15 @@ in {
       };
     };
 
-    userDirs = {
+    userDirs = let home = config.home.homeDirectory; in {
       enable = true;
-      music = dir.music;
-      videos = dir.videos;
-      pictures = dir.pictures;
+      createDirectories = true;
+      desktop = "${home}/Desktop";
+      documents = "${home}/Documents";
+      download = "${home}/Downloads";
+      music = "${home}/Music";
+      pictures = "${home}/Pictures";
+      videos = "${home}/Videos";
     };
   };
 

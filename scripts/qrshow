@@ -1,0 +1,6 @@
+#!/bin/bash -u
+t=$1
+o=$(mktemp /tmp/qrXXXXX.png)
+qrencode -o "$o" -s 15 "$t"
+sxiv "$o"
+rm "$o"

@@ -1,5 +1,0 @@
-#!/bin/sh
-
-image="${1:?provide image}"
-type="$(file -b --mime-type "${image}")"
-exec xclip -t "${type:?}" "${image}"

@@ -1,4 +1,0 @@
-#!/bin/sh
-
-dur=${1:?provide duration}
-printf '%02d:%02d:%02d' $((dur / (60 * 60))) $(((dur / 60) % 60)) $((dur % 60))

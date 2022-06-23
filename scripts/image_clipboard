@@ -1,0 +1,4 @@
+#!/bin/sh -u
+f=$1
+type="$(file --brief --mime-type "$f")"
+exec xclip -t "$type" "$f"
