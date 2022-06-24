@@ -1,4 +1,4 @@
-# shellcheck shell=bash
+#!/bin/bash
 
 set -eu
 
@@ -76,7 +76,3 @@ sudo swapon /dev/vg/swap
 
 echo ">>> Now you can run something like the following"
 echo ">>> # nixos-install --flake github:xFA25E/nix-config#hostname"
-
-# Local Variables:
-# mode: sh
-# End:

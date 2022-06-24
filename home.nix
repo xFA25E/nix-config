@@ -156,20 +156,9 @@ in {
         "yay" "youtube-dl" "ytdl"
 
       ];
-      initExtra = ''
-        [ -n "$ENV" ] && . "$ENV"
-      '';
-      profileExtra = let
-        profileDir = "${config.home.homeDirectory}.nix-profile/etc/profile.d";
-      in ''
-        test -r "${profileDir}/nix.sh" && . "${profileDir}/nix.sh"
-        test -r "${profileDir}/hm-session-vars.sh" && . "${profileDir}/hm-session-vars.sh"
-
-        eval `${pkgs.openssh}/bin/ssh-agent`
-      '';
-      logoutExtra = ''
-        eval `${pkgs.openssh}/bin/ssh-agent -k`
-      '';
+      initExtra = ''[ -n "$ENV" ] && . "$ENV"'';
+      profileExtra = ''eval `${pkgs.openssh}/bin/ssh-agent`'';
+      logoutExtra = ''eval `${pkgs.openssh}/bin/ssh-agent -k`'';
     };
 
     direnv = {

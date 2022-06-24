@@ -291,9 +291,9 @@
       });
 
       scripts = let paths = pkgs.lib.strings.makeBinPath (with pkgs; [
-        "$out" dmenu ffmpeg file findutils gawk gnugrep gnused jq libnotify mpv
-        mtpfs mu pass pueue qrencode sxiv unixtools.column utillinux xclip
-        youtube-dl
+        "$out" dmenu ffmpeg file findutils gawk git gnugrep gnupg gnused jq
+        libnotify mpv mtpfs mu pass pueue qrencode sxiv unixtools.column
+        utillinux xclip youtube-dl
       ]); in final.stdenv.mkDerivation {
         name = "scripts";
         src = ./scripts;
@@ -386,12 +386,14 @@
       overlayPkgs = self.overlays.default pkgs pkgs;
     in filterAttrs (k: v: isDerivation v) overlayPkgs;
 
-    apps.${system}.default = {
-      type = "app";
-      program = let
-        c = builtins.readFile ./apps/partitionEncryptFormatMount;
-        s = pkgs.writeShellScript "partitionEncryptFormatMount" c;
-      in "${s}";
+    apps.${system} = let
+      inherit (builtins) readFile;
+      inherit (pkgs) writeShellScript;
+    in {
+      default = {
+        type = "app";
+        program = "" + writeShellScript "preparehd" (readFile ./scripts/preparehd);
+      };
     };
 
   };

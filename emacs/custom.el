@@ -714,6 +714,7 @@ The document was typeset with
  '(org-agenda-files '("~/org/study.org" "~/org/life.org"))
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
+ '(org-attach-auto-tag nil)
  '(org-babel-load-languages
    '((calc . t)
      (emacs-lisp . t)
