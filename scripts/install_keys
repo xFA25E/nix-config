@@ -19,8 +19,13 @@ chmod 700 "$HOME"/.ssh
 cp "$tempdir"/keys/ssh/* "$HOME"/.ssh
 
 echo "Installing gpg.."
-gpg --import "$tempdir"/keys/gpg/secret.key
-gpg --import "$tempdir"/keys/gpg/public.key
+if [ -z "${DISPLAY:-}" ]; then
+    gpg --pinentry-mode=loopback --import "$tempdir"/keys/gpg/secret.key
+    gpg --pinentry-mode=loopback --import "$tempdir"/keys/gpg/public.key
+else
+    gpg --import "$tempdir"/keys/gpg/secret.key
+    gpg --import "$tempdir"/keys/gpg/public.key
+fi
 chmod 700 "$HOME"/.gnupg
 
 echo "Cloning pass.."

@@ -55,6 +55,7 @@
       overlays = [ emacs-overlay.overlay self.overlays.default ];
     };
   in {
+
     homeConfigurations."${username}" = home-manager.lib.homeManagerConfiguration {
       inherit system username pkgs;
       configuration = import ./home.nix;
@@ -67,8 +68,8 @@
       stribog = nixpkgs.lib.nixosSystem {
         inherit pkgs system;
         modules = [
-          ./nixos/stribog.nix
           self.nixosModules.nix
+          ./nixos/stribog.nix
           home-manager.nixosModules.home-manager
           {
             home-manager = {
@@ -84,7 +85,7 @@
 
       perun = nixpkgs.lib.nixosSystem {
         inherit pkgs system;
-        modules = [ ./nixos/perun.nix self.nixosModules.nix ];
+        modules = [ self.nixosModules.nix ./nixos/perun.nix ];
         specialArgs = { inherit username; };
       };
     };
@@ -119,7 +120,7 @@
       };
 
       base16Themes = let
-        themes = pkgs.runCommand "base16-themes" {
+        themes = final.runCommand "base16-themes" {
           srcs = [ base16-summerfruit-scheme base16-gruvbox-scheme ];
           nativeBuildInputs = [ final.yq-go ];
         } ''
@@ -148,8 +149,8 @@
         declare -A browsers=(
             ["firefox"]="${final.firefox}/bin/firefox"
             ["brave"]="${final.brave}/bin/brave-incognito"
-            ["ytdl"]="${final.scripts}/bin/ytdli"
-            ["mpv"]="${final.scripts}/bin/mpvi"
+            ["ytdl"]="${final.scripts.scripts.ytdli}/bin/ytdli"
+            ["mpv"]="${final.scripts.scripts.mpvi}/bin/mpvi"
         )
         choice=$(printf '%s\n' "''${!browsers[@]}" | "${final.dmenu}/bin/dmenu" || printf firefox)
         exec "''${browsers[$choice]}" "$@"
@@ -290,28 +291,7 @@
         src = notmuch;
       });
 
-      scripts = let paths = pkgs.lib.strings.makeBinPath (with pkgs; [
-        "$out" dmenu ffmpeg file findutils gawk git gnugrep gnupg gnused jq
-        libnotify mpv mtpfs mu pass pueue qrencode sxiv unixtools.column
-        utillinux xclip youtube-dl
-      ]); in final.stdenv.mkDerivation {
-        name = "scripts";
-        src = ./scripts;
-        dontUnpack = true;
-        dontPatch = true;
-        dontConfigure = true;
-        dontBuild = true;
-        nativeBuildInputs = [ final.makeWrapper ];
-        installPhase = ''
-          install -D -t $out/bin $src/*
-          for s in $out/bin/*; do
-              wrapProgram $s --prefix PATH : "${paths}";
-          done
-          for y in ${final.ytdl}/bin/*; do
-              makeWrapper $y $out/bin/$(basename $y) --add-flags "--exec '$out/bin/filename_put_duration {}'"
-          done
-        '';
-      };
+      scripts = import ./scripts/default.nix final;
 
       stardicts = final.runCommand "stardict-dictionaries" {
         srcs = let
@@ -326,14 +306,14 @@
         done
       '';
 
+      stumpwm = import ./stumpwm { src = stumpwm; pkgs = final; slynk = false; };
+
       unflac = final.buildGoModule {
         name = "unflac";
         src = unflac;
         vendorSha256 = "sha256-R5Sa7pYRg79tkZ0jsupjvJVZ6D5jqN1syPz/YR5wF8g=";
         proxyVendor = true;
       };
-
-      stumpwm = import ./stumpwm { src = stumpwm; pkgs = final; slynk = false; };
 
       wallpapers = let
         wallpapers = map final.fetchurl (import ./wallpapers.nix);
@@ -360,25 +340,6 @@
         ];
       });
 
-      ytdl = let
-        inherit (pkgs.lib.strings) escapeShellArg;
-        y = "${pkgs.youtube-dl}/bin/youtube-dl";
-        pre = "\${YTDL_DIR:-\${XDG_VIDEOS_DIR:-\${HOME}/Videos}/youtube}/";
-        suf = "%(channel)s - %(upload_date)s - %(title)s.%(ext)s";
-        vfmt = "${pre}${suf}";
-        pfmt = "${pre}%(playlist_uploader)s - %(playlist)s - %(playlist_index)s - ${suf}";
-        vflags = "--output \"${vfmt}\"";
-        pflags = "--output \"${pfmt}\"";
-        aflags = "--format bestaudio/best --extract-audio";
-        wrap = n: f: "makeWrapper ${y} $out/bin/${n} --add-flags ${escapeShellArg f}";
-      in final.runCommand "ytdl" { nativeBuildInputs = [ final.makeWrapper ]; } ''
-        mkdir -p $out
-        ${wrap "ytdl" vflags}
-        ${wrap "ytdla" (vflags + " " + aflags)}
-        ${wrap "ytdlp" pflags}
-        ${wrap "ytdlpa" (pflags + " " + aflags)}
-      '';
-
     };
 
     packages.${system} = let
@@ -386,14 +347,9 @@
       overlayPkgs = self.overlays.default pkgs pkgs;
     in filterAttrs (k: v: isDerivation v) overlayPkgs;
 
-    apps.${system} = let
-      inherit (builtins) readFile;
-      inherit (pkgs) writeShellScript;
-    in {
-      default = {
-        type = "app";
-        program = "" + writeShellScript "preparehd" (readFile ./scripts/preparehd);
-      };
+    apps.${system}.default = {
+      type = "app";
+      pragram = "${pkgs.scripts.scripts.preparehd}/bin/preparehd";
     };
 
   };

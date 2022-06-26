@@ -303,7 +303,7 @@
   (define-key org-mode-map [?\C-c?\C-\S-t] 'org-todo-yesterday))
 
 (define-advice org-show-notification (:after (&rest _) sound)
-  (call-process "notify_sound" nil 0 nil))
+  (call-process "notify_bruh" nil 0 nil))
 
 (define-key mode-specific-map "Ga" 'org-agenda)
 (defvar org-agenda-mode-map)
@@ -434,4 +434,4 @@
   (xref-push-marker-stack))
 
 (declare-function xdg-config-home "xdg" ())
-(load (expand-file-name "nixpkgs/emacs/custom.el" (xdg-config-home)) nil nil t)
+(load (expand-file-name "emacs/custom.el" (xdg-config-home)) nil nil t)

@@ -840,7 +840,7 @@ Play a sound after org notification.  I know that one could use
 
 #+begin_src elisp
 (define-advice org-show-notification (:after (&rest _) sound)
-  (call-process "notify_sound" nil 0 nil))
+  (call-process "notify_bruh" nil 0 nil))
 #+end_src
 
 **** Org Agenda
@@ -1385,7 +1385,7 @@ Finally, I load [[custom.el]] settings.
 
 #+begin_src elisp
 (declare-function xdg-config-home "xdg" ())
-(load (expand-file-name "nixpkgs/emacs/custom.el" (xdg-config-home)) nil nil t)
+(load (expand-file-name "emacs/custom.el" (xdg-config-home)) nil nil t)
 #+end_src
 
 * COMMENT Local Variables

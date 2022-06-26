@@ -43,7 +43,7 @@
 (defun callback (name)
   (lambda ()
     (run-program `("notify-send" ,(format nil "Timer \"~A\" is out!" name)))
-    (run-program '("notify_sound"))))
+    (run-program '("notify_bruh"))))
 
 (defun launch (name universal-time)
   (let ((timer (sb-ext:make-timer (callback name) :name name :thread t)))

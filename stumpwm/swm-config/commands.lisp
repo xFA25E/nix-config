@@ -127,8 +127,6 @@
 (defvar *main-menu*
   '(("screenshot"     (:command "screenshot"))
     ("suspend"        (:shell ("systemctl" "suspend")))
-    ("mount"          (:shell ("rmount")))
-    ("unmount"        (:shell ("rumount")))
     ("clipboard-type" (:command "clipboard-type"))))
 
 (swm:defcommand main-menu () ()
