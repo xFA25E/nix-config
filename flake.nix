@@ -216,6 +216,13 @@
           }) ];
         });
 
+        tree-sitter = eprev.tree-sitter.overrideAttrs ({ patches ? [], ...}: {
+          patches = patches ++ [ (final.fetchpatch {
+            url = "https://github.com/emacs-tree-sitter/elisp-tree-sitter/pull/231.diff";
+            hash = "sha256-3ZJF27x/sezNij0veMAy42gRxq48l88asuiJLWoshZo=";
+          }) ];
+        });
+
         cyrillic-dvorak-im = makePkg {
           src = cyrillic-dvorak-im;
           pname = "cyrillic-dvorak-im";

@@ -182,6 +182,9 @@ in {
         pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg rust-mode
         rx-widget sdcwoc shell-pwd skempo sly sly-asdf sly-quicklisp sql-indent
         sqlup-mode taggit transmission vlf web-mode wgrep
+
+        tree-sitter
+        tree-sitter-langs
       ];
       package = pkgs.emacsNativeComp;
     };

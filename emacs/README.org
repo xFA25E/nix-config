@@ -1330,6 +1330,14 @@ Do you like downloading torrents?
   (define-key transmission-mode-map "M" 'transmission-move))
 #+end_src
 
+*** [[https://github.com/emacs-tree-sitter/elisp-tree-sitter][Tree Sitter]]
+#+begin_src elisp
+(with-eval-after-load 'js
+  (add-hook 'js-mode-hook 'tree-sitter-mode))
+(with-eval-after-load 'nix-mode
+  (add-hook 'nix-mode-hook 'tree-sitter-mode))
+#+end_src
+
 *** Url Parse
 This is a *GREAT POSOS* (from rus: posos -> sosat -> сосать -> to suck), as I
 like to call it.  Because /url-parse/ doesn't protect ~match-data~, it fucks up

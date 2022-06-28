@@ -852,6 +852,7 @@ The document was typeset with
                      (xdg-cache-home)))
  '(transmission-pieces-function 'transmission-format-pieces-brief)
  '(transmission-units 'si)
+ '(tree-sitter-after-on-hook '(tree-sitter-hl-mode))
  '(truncate-lines t)
  '(undo-limit 200000)
  '(undo-strong-limit 300000)
