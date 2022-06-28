@@ -11,7 +11,7 @@
   (setf swm:*mouse-focus-policy* :click)
   (swm:set-prefix-key (swm:kbd "C-z"))
   (mapc #'swm:update-color-map swm:*screen-list*)
-  (swm:set-font "-*-terminus-medium-r-*-*-24-*-*-*-*-*-iso10646-1")
+  (swm:set-font "-*-terminus-medium-r-*-*-22-*-*-*-*-*-iso10646-1")
   (swm:clear-window-placement-rules)
   (launch-program '("systemctl" "--user" "start" "random-background.service"))
   (swm-config.reverse-im:init)

@@ -17,6 +17,17 @@
     "/boot" = { device = "/dev/disk/by-label/boot"; fsType = "vfat"; };
   };
 
+  fonts = {
+    enableGhostscriptFonts = true;
+    fontDir.enable = true;
+    fontconfig.defaultFonts.monospace = [ "Iosevka" ];
+    fonts = with pkgs; [
+      corefonts fira-code font-awesome hack-font hasklig inconsolata iosevka
+      # nerdfonts
+      open-sans source-code-pro unifont
+    ];
+  };
+
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   i18n.defaultLocale = "en_US.UTF-8";
