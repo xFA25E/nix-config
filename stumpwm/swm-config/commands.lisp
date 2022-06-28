@@ -90,8 +90,8 @@
 
 (define-interactive-controller mpd ("mpc" "-q")
   "~A" (list (run-program '("mpc") :output :string))
-  (("<" "prev")
-   (">" "next")
+  (("less" "prev")
+   ("greater" "next")
    ("t" "toggle")
    ("n" "volume -10")
    ("p" "volume +10")
