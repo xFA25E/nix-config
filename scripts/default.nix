@@ -71,7 +71,7 @@ pkgs: let
     notify_bruh = pkgs.writeShellScriptBin "notify_bruh" ''
       exec ${pkgs.mpv}/bin/mpv --no-terminal ${bruh_sound_effect_2}
     '';
-    notify_bubble = pkgs.writeShellScriptBin "notify_bruh" ''
+    notify_bubble = pkgs.writeShellScriptBin "notify_bubble" ''
       exec ${pkgs.mpv}/bin/mpv --no-terminal ${bubble_notification_tone}
     '';
   };
