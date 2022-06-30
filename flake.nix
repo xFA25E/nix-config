@@ -94,10 +94,7 @@
       config.nix = {
         package = pkgs.nix;
         registry = {
-          nix-config = {
-            from = { id = "nix-config"; type = "indirect"; };
-            to = { owner = "xFA25E"; repo = "nix-config"; type = "github"; };
-          };
+          nix-config.flake = self;
           nixpkgs.flake = nixpkgs;
         };
         settings = {
