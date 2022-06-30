@@ -102,9 +102,8 @@ in {
       libreoffice mediainfo mkpasswd mpc_cli nload p7zip parted pdftk
       perlPackages.JSONPP pinentry pueue pulsemixer pwgen qrencode rar ripgrep
       rsync scripts scrot sdcv shellcheck simplescreenrecorder speedtest-cli
-      stalonetray stumpwm sxiv syncthing teams tor-browser-bundle-bin
-      transmission unzip wget woof xclip xdg-user-dirs xkb-switch xterm xz
-      youtube-dl zip zoom-us
+      stalonetray stumpwm sxiv teams tor-browser-bundle-bin transmission unzip
+      wget woof xclip xdg-user-dirs xkb-switch xterm xz youtube-dl zip zoom-us
     ];
 
     sessionVariables = {
@@ -408,6 +407,11 @@ in {
       enable = true;
       imageDirectory = "${pkgs.wallpapers}";
       interval = "5min";
+    };
+
+    syncthing = {
+      enable = true;
+      tray.enable = false;
     };
 
     udiskie.enable = true;
