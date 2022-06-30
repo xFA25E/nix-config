@@ -1,28 +1,16 @@
 pkgs: let
-  inherit (pkgs.lib.strings) makeBinPath optionalString;
+  inherit (pkgs.lib.strings) makeBinPath nameFromURL optionalString;
 
-  bruh_sound_effect_2 = pkgs.runCommand "bruh_sound_effect_2.mp3" {
-    src = pkgs.fetchzip {
-      stripRoot = false;
-      url = "https://www.orangefreesounds.com/wp-content/uploads/2018/02/Bruh-sound-effect.zip";
-      sha256 = "sha256-CbJ7US6mV88L/+XywCAT1IZ0winIlcFbrRrJiakHHP8=";
-    };
+  makeOrangeSound = { url, hash }: pkgs.runCommand (nameFromURL url "." + ".mp3") {
+    src = pkgs.fetchzip { inherit url hash; stripRoot = false; };
     nativeBuildInputs = [ pkgs.ffmpeg ];
   } ''
-    ffmpeg -i $src/Bruh-sound-effect.mp3 -ss 00:00:00 -to 00:00:01 -c copy $out
+    ffmpeg -i $src/*.mp3 -ss 00:00:00 -to 00:00:01 -c copy $out
   '';
 
-  bubble_notification_tone = pkgs.runCommand "bubble_notification_tone.mp3" {
-    src = pkgs.fetchzip {
-      stripRoot = false;
-      url = "https://www.orangefreesounds.com/wp-content/uploads/2021/03/Bubble-notification-tone.zip";
-      sha256 = "sha256-nw+lVweCm63IGp6AhDJzVQwOxYPRFUz2RoTmvyFXg5g=";
-    };
-    nativeBuildInputs = [ pkgs.ffmpeg ];
-  } ''
-    ffmpeg -i $src/Bubble-notification-tone.mp3 -ss 00:00:00 -to 00:00:01 -c copy $out
+  makeNotificator = name: url: pkgs.writeShellScriptBin name ''
+    exec ${pkgs.mpv}/bin/mpv --no-terminal ${makeOrangeSound url}
   '';
-
 
   scriptDeps = with pkgs; with pkgs.scripts.scripts; {
     extract_eml = [ mu ];
@@ -68,12 +56,14 @@ pkgs: let
       wrapProgram $out/bin/${name} --prefix PATH : '${makeBinPath deps}'
     '';
   }) scriptDeps // {
-    notify_bruh = pkgs.writeShellScriptBin "notify_bruh" ''
-      exec ${pkgs.mpv}/bin/mpv --no-terminal ${bruh_sound_effect_2}
-    '';
-    notify_bubble = pkgs.writeShellScriptBin "notify_bubble" ''
-      exec ${pkgs.mpv}/bin/mpv --no-terminal ${bubble_notification_tone}
-    '';
+    notify_bubble = makeNotificator "notify_bubble" {
+      url = "https://www.orangefreesounds.com/wp-content/uploads/2021/03/Bubble-notification-tone.zip";
+      hash = "sha256-nw+lVweCm63IGp6AhDJzVQwOxYPRFUz2RoTmvyFXg5g=";
+    };
+    notify_bruh = makeNotificator "notify_bruh" {
+      url = "https://www.orangefreesounds.com/wp-content/uploads/2018/02/Bruh-sound-effect.zip";
+      hash = "sha256-CbJ7US6mV88L/+XywCAT1IZ0winIlcFbrRrJiakHHP8=";
+    };
   };
 
 in pkgs.symlinkJoin {
