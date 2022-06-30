@@ -93,9 +93,12 @@
     nixosModules.nix = { ... }: {
       config.nix = {
         package = pkgs.nix;
-        registry."nix-config" = {
-          from = { id = "nix-config"; type = "indirect"; };
-          to = { owner = "xFA25E"; repo = "nix-config"; type = "github"; };
+        registry = {
+          nix-config = {
+            from = { id = "nix-config"; type = "indirect"; };
+            to = { owner = "xFA25E"; repo = "nix-config"; type = "github"; };
+          };
+          nixpkgs.flake = nixpkgs;
         };
         settings = {
           bash-prompt-suffix = "dev ";
@@ -103,6 +106,7 @@
           keep-derivations = true;
           keep-outputs = true;
           max-jobs = "auto";
+          nix-path = [ "nixpkgs=${nixpkgs}" ];
         };
       };
     };
