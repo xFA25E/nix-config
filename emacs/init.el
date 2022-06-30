@@ -409,10 +409,12 @@
 (with-eval-after-load 'transmission
   (define-key transmission-mode-map "M" 'transmission-move))
 
-(with-eval-after-load 'js
-  (add-hook 'js-mode-hook 'tree-sitter-mode))
-(with-eval-after-load 'nix-mode
-  (add-hook 'nix-mode-hook 'tree-sitter-mode))
+(add-hook 'css-mode-hook 'tree-sitter-mode)
+(add-hook 'js-mode-hook 'tree-sitter-mode)
+(add-hook 'mhtml-mode-hook 'tree-sitter-mode)
+(add-hook 'nix-mode-hook 'tree-sitter-mode)
+(add-hook 'python-mode-hook 'tree-sitter-mode)
+(add-hook 'rust-mode-hook 'tree-sitter-mode)
 
 (declare-function url-generic-parse-url@save-match-data "url-parse" (fn &rest args))
 (with-eval-after-load 'url-parse

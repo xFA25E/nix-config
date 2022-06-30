@@ -1332,10 +1332,12 @@ Do you like downloading torrents?
 
 *** [[https://github.com/emacs-tree-sitter/elisp-tree-sitter][Tree Sitter]]
 #+begin_src elisp
-(with-eval-after-load 'js
-  (add-hook 'js-mode-hook 'tree-sitter-mode))
-(with-eval-after-load 'nix-mode
-  (add-hook 'nix-mode-hook 'tree-sitter-mode))
+(add-hook 'css-mode-hook 'tree-sitter-mode)
+(add-hook 'js-mode-hook 'tree-sitter-mode)
+(add-hook 'mhtml-mode-hook 'tree-sitter-mode)
+(add-hook 'nix-mode-hook 'tree-sitter-mode)
+(add-hook 'python-mode-hook 'tree-sitter-mode)
+(add-hook 'rust-mode-hook 'tree-sitter-mode)
 #+end_src
 
 *** Url Parse
