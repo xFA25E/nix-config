@@ -6,11 +6,8 @@
 (in-package #:swm-config)
 
 (defun init ()
-  ;;                 '("black"   "red"     "green"   "magenta" "blue"    "yellow"  "cyan"    "white"))
-  (setf swm:*colors* '("#101010" "#ff0086" "#00c918" "#ad00a1" "#3777e6" "#aba800" "#1faaaa" "#ffffff"))
   (setf swm:*mouse-focus-policy* :click)
   (swm:set-prefix-key (swm:kbd "C-z"))
-  (mapc #'swm:update-color-map swm:*screen-list*)
   (swm:set-font "-*-terminus-medium-r-*-*-22-*-*-*-*-*-iso10646-1")
   (swm:clear-window-placement-rules)
   (launch-program '("systemctl" "--user" "start" "random-background.service"))

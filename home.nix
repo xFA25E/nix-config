@@ -475,7 +475,16 @@ in {
         tmp = "\${XDG_RUNTIME_DIR}/npm";
       };
 
-      "stumpwm/config".text = "(swm-config:init)";
+      "stumpwm/config".text = with colors; ''
+        (swm-config:init)
+        (stumpwm:set-fg-color "${base04}")
+        (stumpwm:set-bg-color "${base00}")
+        (stumpwm:set-border-color "${base03}")
+        (stumpwm:set-focus-color "${base04}")
+        (stumpwm:set-unfocus-color "${base00}")
+        (setf stumpwm:*colors* '("${base00}" "${base08}" "${base0B}" "${base0A}" "${base0D}" "${base0E}" "${base0C}" "${base05}"))
+        (mapc #'stumpwm:update-color-map stumpwm:*screen-list*)
+      '';
 
       "wgetrc".text = "hsts-file=${config.xdg.cacheHome}/wget-hsts";
 
