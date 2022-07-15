@@ -250,6 +250,7 @@
 
 (setq minibuffer-allow-text-properties t)
 (define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
+(define-key minibuffer-local-completion-map " " nil)
 (define-key minibuffer-local-must-match-map "\C-j" 'minibuffer-force-complete-and-exit)
 
 (define-key mode-specific-map "os" 'mpc)
@@ -318,6 +319,10 @@
   (define-key message-mode-map "\C-c\M-o" 'org-mime-htmlize)
   (define-key message-mode-map "\C-c\M-e" 'org-mime-edit-mail-in-org-mode)
   (define-key message-mode-map "\C-c\M-t" 'org-mime-revert-to-plain-text-mail))
+
+(define-key mode-specific-map "Gf" 'org-roam-node-find)
+(define-key mode-specific-map "Gi" 'org-roam-node-insert)
+(define-key mode-specific-map "Gl" 'org-roam-buffer-toggle)
 
 (define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
 

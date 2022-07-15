@@ -184,6 +184,7 @@ in {
 
         tree-sitter
         tree-sitter-langs
+        org-roam
       ];
       package = pkgs.emacsNativeComp;
     };

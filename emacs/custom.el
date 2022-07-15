@@ -448,7 +448,12 @@ The document was typeset with
  '(display-battery-mode t)
  '(display-buffer-alist
    '(("\\(?:\\*Pueue\\*\\|\\*SDCWOC\\*\\)"
-      (display-buffer-reuse-window display-buffer-same-window))))
+      (display-buffer-reuse-window display-buffer-same-window))
+     ("\\*org-roam\\*"
+      (display-buffer-in-direction)
+      (direction . right)
+      (window-width . 0.33)
+      (window-height . fit-window-to-buffer))))
  '(display-time-default-load-average nil)
  '(display-time-mail-function
    '(lambda nil
@@ -714,7 +719,6 @@ The document was typeset with
  '(org-agenda-files '("~/org/study.org" "~/org/life.org"))
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
- '(org-attach-auto-tag nil)
  '(org-babel-load-languages
    '((calc . t)
      (emacs-lisp . t)
@@ -739,6 +743,10 @@ The document was typeset with
  '(org-refile-allow-creating-parent-nodes 'confirm)
  '(org-refile-targets '((org-agenda-files :level . 1)))
  '(org-refile-use-outline-path 'file)
+ '(org-roam-db-autosync-mode t)
+ '(org-roam-db-location (expand-file-name "emacs/org-roam.db" (xdg-cache-home)))
+ '(org-roam-db-node-include-function '(lambda nil (not (member "ATTACH" (org-get-tags)))))
+ '(org-roam-directory "~/roam/")
  '(org-startup-folded t)
  '(org-tags-column 0)
  '(outline-minor-mode-cycle t)
@@ -761,6 +769,7 @@ The document was typeset with
  '(read-minibuffer-restore-windows nil)
  '(recenter-positions '(top middle bottom))
  '(register-separator 43)
+ '(repeat-mode t)
  '(rust-format-on-save t)
  '(safe-local-eval-forms
    '((add-hook 'write-file-hooks 'time-stamp)
