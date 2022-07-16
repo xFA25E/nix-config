@@ -323,6 +323,8 @@
 (define-key mode-specific-map "Gf" 'org-roam-node-find)
 (define-key mode-specific-map "Gi" 'org-roam-node-insert)
 (define-key mode-specific-map "Gl" 'org-roam-buffer-toggle)
+(declare-function org-roam-db-autosync-mode "org-roam-db" (&optional arg))
+(with-eval-after-load 'org-roam (org-roam-db-autosync-mode))
 
 (define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
 
@@ -411,8 +413,16 @@
 
 (define-key mode-specific-map "or" 'transmission)
 (defvar transmission-mode-map)
+(declare-function transmission-request "transmission" (method &optional arguments tag))
+(declare-function transmission-torrents "transmission" (response))
+(declare-function transmission-draw-info@comment "transmission" (id))
 (with-eval-after-load 'transmission
-  (define-key transmission-mode-map "M" 'transmission-move))
+  (define-key transmission-mode-map "M" 'transmission-move)
+  (define-advice transmission-draw-info (:after (id) comment)
+    (let* ((arguments `(:ids ,id :fields ["comment"]))
+           (response (transmission-request "torrent-get" arguments))
+           (torrent (aref (transmission-torrents response) 0)))
+      (insert "\nComment: " (or (cdr (assq 'comment torrent)) "")))))
 
 (add-hook 'css-mode-hook 'tree-sitter-mode)
 (add-hook 'js-mode-hook 'tree-sitter-mode)
