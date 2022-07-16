@@ -432,7 +432,7 @@ The document was typeset with
      ("\\.\\(?:ai\\|eps\\)\\'" "setsid -f inkscape * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
      ("\\.\\(?:djvu\\|fb2\\)\\'" "ebook-convert ? .epub &")
      ("\\.pdf\\'" "setsid -f libreoffice * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
-     ("\\.\\(?:3gp\\|aiff\\|avi\\|flac\\|flv\\|m4a\\|mkv\\|mov\\|mp3\\|mp4\\|mpg\\|ogg\\|ogv\\|opus\\|vob\\|wav\\|webm\\|wmv\\|mka\\|m4v\\)\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1" "for vid in * ; do dur=$(video_duration \"$vid\"); sum=$((sum + dur)); done; format_duration \"$sum\"" "compress_video * &" "strip_video * &" "mediainfo" "mpv -vo=drm" "sort_videos_by_duration *")
+     ("\\.\\(?:3gp\\|aiff\\|avi\\|flac\\|flv\\|m4a\\|mkv\\|mov\\|mp3\\|mp4\\|mpg\\|ogg\\|ogv\\|opus\\|vob\\|wav\\|webm\\|wmv\\|mka\\|m4v\\)\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1" "for vid in * ; do dur=$(video_seconds \"$vid\"); sum=$((sum + dur)); done; format_seconds \"%02h:%02m:%02s\" \"$sum\"" "compress_video * &" "strip_video * &" "mediainfo" "mpv -vo=drm" "sort_videos_by_duration *")
      ("\\.cue\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1")
      ("\\.rar\\'"
       (let

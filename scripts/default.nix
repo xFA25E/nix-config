@@ -14,8 +14,8 @@ pkgs: let
 
   scriptDeps = with pkgs; with pkgs.scripts.scripts; {
     extract_eml = [ mu ];
-    filename_put_duration = [ format_duration video_duration ];
-    format_duration = [];
+    filename_put_duration = [ format_seconds video_seconds ];
+    format_seconds = [ emacs ];
     image-dired-external-viewer = [ mpv sxiv ];
     image_clipboard = [ xclip ];
     install_keys = [ git gnupg ];
@@ -29,11 +29,11 @@ pkgs: let
     resize_video_240 = [ ffmpeg ];
     resize_video_360 = [ ffmpeg ];
     resize_video_480 = [ ffmpeg ];
-    sort_videos_by_duration = [ video_duration ];
+    sort_videos_by_duration = [ video_seconds ];
     strip_video_mp3 = [ ffmpeg ];
     strip_video_opus = [ ffmpeg ];
     sudo_askpass = [ pass ];
-    video_duration = [ ffmpeg ];
+    video_seconds = [ ffmpeg ];
     ytdl = [ filename_put_duration youtube-dl ];
     ytdla = [ ytdl ];
     ytdlam = [ dmenu youtube-dl ];

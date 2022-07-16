@@ -163,7 +163,7 @@
                           (point) 'dired-filename)
                          (line-end-position))))
                    (with-temp-buffer
-                     (call-process "video_duration" nil '(t nil) nil file-name)
+                     (call-process "video_seconds" nil '(t nil) nil file-name)
                      (string-to-number (buffer-string))))))))
 
 (define-key ctl-x-map "L" 'find-library)

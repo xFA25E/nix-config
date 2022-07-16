@@ -6,7 +6,7 @@ if [ "$1" = "-0" ]; then
 fi
 
 for video in "$@"; do
-    duration=$(video_duration "$video")
+    duration=$(video_seconds "$video")
     printf '%d %s\0' "$duration" "$video"
 done \
     | sort -z -n \

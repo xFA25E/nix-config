@@ -1,4 +1,4 @@
 #!/bin/sh
 for video in "$@"; do
-    ffmpeg -i "${video}" -vf scale=640:360 -acodec copy "${video%.*}.h360.mkv"
+    ffmpeg -i "${video}" -vf scale=640:360 -acodec copy "${video%.*}.h360.${video##*.}"
 done
