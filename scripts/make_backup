@@ -8,4 +8,5 @@ rsync --delete --delete-excluded --archive --verbose --partial --progress --rela
       ~/Documents ~/Downloads ~/Music ~/Pictures ~/Videos ~/archives ~/org \
       ~/.authinfo.gpg ~/.bash_history ~/.gnupg ~/.ssh \
       ~/.local/share/emacs ~/.local/share/mail ~/.local/share/password-store \
+      ~/.config/transmission-daemon \
       "${1%/}/current"

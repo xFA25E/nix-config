@@ -83,6 +83,24 @@
         specialArgs = { inherit username; };
       };
 
+      stribogc = nixpkgs.lib.nixosSystem {
+        inherit pkgs system;
+        modules = [
+          self.nixosModules.nix
+          ./nixos/stribog.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              sharedModules = [ self.nixosModules.nix ];
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.${username} = import ./home.nix;
+            };
+          }
+        ];
+        specialArgs = { inherit username; };
+      };
+
       perun = nixpkgs.lib.nixosSystem {
         inherit pkgs system;
         modules = [ self.nixosModules.nix ./nixos/perun.nix ];
