@@ -4,7 +4,15 @@
   imports = [ (import ./common.nix) ];
 
   boot = {
-    initrd.availableKernelModules = [ "xhci_pci" "ehci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "sr_mod" "rtsx_pci_sdmmc" ];
+    initrd = {
+      availableKernelModules = [ "xhci_pci" "ehci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "sr_mod" "rtsx_pci_sdmmc" ];
+      kernelModules = [ "dm-snapshot" ];
+      luks.devices.luks = {
+        device = "/dev/disk/by-label/luks";
+        preLVM = true;
+        allowDiscards = true;
+      };
+    };
     kernelModules = [ "kvm-intel" ];
     loader = {
       grub = {

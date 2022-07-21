@@ -65,25 +65,8 @@
     };
 
     nixosConfigurations = {
-      stribog = nixpkgs.lib.nixosSystem {
-        inherit pkgs system;
-        modules = [
-          self.nixosModules.nix
-          ./nixos/stribog.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              sharedModules = [ self.nixosModules.nix ];
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users.${username} = import ./home.nix;
-            };
-          }
-        ];
-        specialArgs = { inherit username; };
-      };
 
-      stribogc = nixpkgs.lib.nixosSystem {
+      stribog = nixpkgs.lib.nixosSystem {
         inherit pkgs system;
         modules = [
           self.nixosModules.nix
@@ -106,6 +89,7 @@
         modules = [ self.nixosModules.nix ./nixos/perun.nix ];
         specialArgs = { inherit username; };
       };
+
     };
 
     nixosModules.nix = { ... }: {
@@ -375,7 +359,7 @@
 
     apps.${system}.default = {
       type = "app";
-      pragram = "${pkgs.scripts.scripts.preparehd}/bin/preparehd";
+      program = "${pkgs.scripts.scripts.preparehd}/bin/preparehd";
     };
 
   };
