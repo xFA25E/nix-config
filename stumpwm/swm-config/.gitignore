@@ -6,4 +6,7 @@
 *.x86f
 *~
 .#*
-.quicklisp/
+
+/.direnv/
+/.envrc
+/.quicklisp/

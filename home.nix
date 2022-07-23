@@ -162,11 +162,6 @@ in {
     };
 
     direnv = {
-      config = {
-        Whitelist = {
-          prefix = [ "${config.xdg.userDirs.documents}/projects/" ];
-        };
-      };
       enable = true;
       enableBashIntegration = true;
       nix-direnv.enable = true;
@@ -195,7 +190,6 @@ in {
     git = {
       enable = true;
       extraConfig.credential.helper = "cache --timeout=86400";
-      ignores = [ ".direnv" ".envrc" ];
       # signing = {
       #   key = "vlr.ltkvsk@protonmail.com";
       #   signByDefault = true;

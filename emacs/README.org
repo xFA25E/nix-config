@@ -156,35 +156,6 @@ Auto Insert supports files as templates if you give it a directory.
 **** Nix Shell
 Let's write some reproducible /nix-shell/ templates.
 
-***** Emacs Lisp
-This ~shell.nix~ file will configure an environment with [[https://github.com/doublep/eldev][Eldev]].  I use it mostly
-for great linters via ~eldev lint~ command.  All eldev directories will be local
-to the project directory.
-
-#+begin_src nix :tangle auto-insert/shell-emacs-lisp.nix
-let
-  pkgs = import <nixpkgs> {};
-  version = "1.1";
-  eldev = pkgs.stdenv.mkDerivation {
-    inherit version;
-    pname = "eldev";
-    src = pkgs.fetchurl {
-      url = "https://raw.githubusercontent.com/doublep/eldev/${version}/bin/eldev";
-      sha256 = "0spni3il3myv70zk18k76sj6yvh3rqi9j9wglz2j5mfs7z2dnr5f";
-    };
-    nativeBuildInputs = [ pkgs.makeWrapper ];
-    unpackPhase = "true";
-    installPhase = ''
-      install -D -v -m555 "$src" "$out/bin/eldev"
-      wrapProgram "$out/bin/eldev" --set ELDEV_EMACS "${pkgs.emacs}/bin/emacs"
-    '';
-  };
-in pkgs.mkShell {
-  buildInputs = [ eldev ];
-  ELDEV_DIR = "${builtins.toString ./.}/.eldev";
-}
-#+end_src
-
 ***** Common Lisp
 This ~shell.nix~ configures local environment *Common Lisp*.  It automaticall
 downloads quicklisp in project local directory and patches various
@@ -256,12 +227,6 @@ in pkgs.mkShell {
 .#*
 .quicklisp
 .common-lisp
-#+end_src
-
-***** Emacs Lisp
-#+begin_src text :tangle auto-insert/gitignore-emacs-lisp
-*.elc
-.eldev
 #+end_src
 
 *** [[https://github.com/abo-abo/avy][Avy]]

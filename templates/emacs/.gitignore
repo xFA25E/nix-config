@@ -1,0 +1,6 @@
+result
+/.eldev/
+/.direnv/
+/.envrc
+*.elc
+/Eldev-local

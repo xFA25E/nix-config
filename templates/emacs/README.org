@@ -1,0 +1,21 @@
+#+TITLE: Foo Bar
+# one-line description of foo-bar package
+
+* Overview
+# A longer description of the project
+
+** Features
+** History
+** Motivation
+* Usage
+# Examples of usage
+
+* Documentation
+* License
+Copyright (c) 2022 Valeriy Litkovskyy
+Licensed under the GPL3 License.
+
+* COMMENT Local Variables
+# Local Variables:
+# eval: (add-hook 'after-save-hook #'org-md-export-to-markdown nil t)
+# End:

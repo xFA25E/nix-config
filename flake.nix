@@ -362,5 +362,7 @@
       program = "${pkgs.scripts.scripts.preparehd}/bin/preparehd";
     };
 
+    templates = import ./templates/default.nix;
+
   };
 }
