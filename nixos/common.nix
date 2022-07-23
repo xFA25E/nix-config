@@ -3,7 +3,17 @@
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
-  boot.cleanTmpDir = true;
+  boot = {
+    cleanTmpDir = true;
+    initrd = {
+      kernelModules = [ "dm-snapshot" ];
+      luks.devices.luks = {
+        device = "/dev/disk/by-label/luks";
+        preLVM = true;
+        allowDiscards = true;
+      };
+    };
+  };
 
   console = {
     font = "Lat2-Terminus16";

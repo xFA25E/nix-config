@@ -4,15 +4,8 @@
   imports = [ (import ./common.nix) ];
 
   boot = {
-    initrd = {
-      availableKernelModules = [ "ahci" "ohci_pci" "ehci_pci" "pata_atiixp" "usb_storage" "sd_mod" "sr_mod" ];
-      kernelModules = [ "dm-snapshot" ];
-      luks.devices.luks = {
-        device = "/dev/disk/by-label/luks";
-        preLVM = true;
-        allowDiscards = true;
-      };
-    };
+    initrd.availableKernelModules = [ "ahci" "ohci_pci" "ehci_pci" "pata_atiixp" "usb_storage" "sd_mod" "sr_mod" ];
+
     loader.grub = {
       enable = true;
       version = 2;
