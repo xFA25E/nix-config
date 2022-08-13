@@ -13,10 +13,9 @@
     mpv-youtube-quality = { url = "github:jgreco/mpv-youtube-quality"; flake = false; };
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
     notmuch = { url = "git+https://git.notmuchmail.org/git/notmuch?ref=release"; flake = false; };
-    pueue = { url = "github:xFA25E/pueue"; flake = false; };
+    pueue.url = "github:xFA25E/pueue";
     rx-widget = { url = "github:xFA25E/rx-widget"; flake = false; };
     sdcwoc = { url = "github:xFA25E/sdcwoc"; flake = false; };
-    shell-pwd = { url = "github:xFA25E/shell-pwd"; flake = false; };
     skempo = { url = "github:xFA25E/skempo"; flake = false; };
     stumpwm = { url = "github:stumpwm/stumpwm/22.05"; flake = false; };
     taggit = { url = "github:xFA25E/taggit"; flake = false; };
@@ -40,7 +39,6 @@
     , pueue
     , rx-widget
     , sdcwoc
-    , shell-pwd
     , skempo
     , stumpwm
     , taggit
@@ -52,7 +50,11 @@
     pkgs = import nixpkgs {
       inherit system;
       config.allowUnfree = true;
-      overlays = [ emacs-overlay.overlay self.overlays.default ];
+      overlays = [
+        emacs-overlay.overlay
+        pueue.overlays.default
+        self.overlays.default
+      ];
     };
   in {
 
@@ -166,6 +168,13 @@
         stripRoot = false;
       };
 
+      discord = prev.discord.overrideAttrs (old: {
+        src = final.fetchurl {
+          url = "https://dl.discordapp.net/apps/linux/0.0.19/discord-0.0.19.tar.gz";
+          hash = "sha256-GfSyddbGF8WA6JmHo4tUM27cyHV5kRAyrEiZe1jbA5A=";
+        };
+      });
+
       dmenu = prev.dmenu.override {
         patches = [
           (final.fetchpatch {
@@ -239,13 +248,6 @@
           packageRequires = [ efinal.xattr ];
         };
 
-        pueue = makePkg {
-          src = pueue;
-          pname = "pueue";
-          version = "1.0.4";
-          packageRequires = [ efinal.transient ];
-        };
-
         rx-widget = makePkg {
           src = rx-widget;
           pname = "rx-widget";
@@ -257,12 +259,6 @@
           src = sdcwoc;
           pname = "sdcwoc";
           version = "0.0.2";
-        };
-
-        shell-pwd = makePkg {
-          src = shell-pwd;
-          pname = "shell-pwd";
-          version = "0.2";
         };
 
         skempo = makePkg {
@@ -301,6 +297,19 @@
         src = notmuch;
       });
 
+      pueue = final.rustPlatform.buildRustPackage {
+        pname = "pueue";
+        version = "2.1.1";
+        src = final.fetchFromGitHub {
+          owner = "Nukesor";
+          repo = "pueue";
+          rev = "platform_specific_module_cleanup";
+          sha256 = "sha256-W+bHd1hvN9rTTQrqCj/J3+dSit5tuGc1P45Tsf56C+0=";
+        };
+        cargoSha256 = "sha256-jifRalBdJmxszomlAIHC9Vxtg50atTURwTW7Hz2N5Pw=";
+        doCheck = false;
+      };
+
       scripts = import ./scripts/default.nix final;
 
       stardicts = final.runCommand "stardict-dictionaries" {
@@ -336,19 +345,6 @@
         for src in $srcs; do ln -s $src $out/$(stripHash $src); done
         convert $pepe -resize 1366x -crop 1366x768+0+200 $out/pepefishing.jpg
       '';
-
-      youtube-dl = prev.youtube-dl.overrideAttrs ({ patches, ... }: {
-        patches = patches ++ [
-          (final.fetchpatch {
-            url = "https://github.com/ytdl-org/youtube-dl/commit/a0068bd6bec16008bda7a39caecccbf84881c603.diff";
-            sha256 = "1b03fz3jx719zzsyrzy93gg4lyhmdjia73kkv9dfp9i3rsg88axm";
-          })
-          (final.fetchpatch {
-            url = "https://github.com/xFA25E/youtube-dl/commit/2e9fa3dffc43c32fc9776d651def58ee36c70f5f.diff";
-            sha256 = "1a4cpwr88vqmraykhf5rfif7wlj99ks2jba09qidfsngcipx05xw";
-          })
-        ];
-      });
 
     };
 

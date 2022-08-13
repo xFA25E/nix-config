@@ -1,7 +1,6 @@
 #!/bin/sh
 
 MUSIC_DIRECTORY="${XDG_MUSIC_DIR:-${HOME}/Music}"
-
 [ -d "${MUSIC_DIRECTORY}" ] || exit 1
 
 select_directory() {
@@ -11,17 +10,20 @@ select_directory() {
         | dmenu -p "Select directory" -l 19
 }
 
-selected_dir="$(select_directory)"
+selected_dir=$(select_directory)
+[ -z "$selected_dir" ] && exit 1
 
-output="${MUSIC_DIRECTORY}/${selected_dir}/%(title)s.%(ext)s"
+DIR="${MUSIC_DIRECTORY}/${selected_dir}"
+
+output="%(title)s.%(ext)s"
 # args="--audio-format mp3 --embed-thumbnail"
 # args="--audio-format mp3"
 # args="--audio-format opus"
 
 if [ "$(printf 'no\nyes' | dmenu -p 'Playlist?')" = yes ]; then
-    output="${MUSIC_DIRECTORY}/${selected_dir}/%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
+    output="%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
     args="${args} --yes-playlist"
 fi
 
 
-exec youtube-dl --format bestaudio/best --extract-audio --output "${output}" ${args} "$@"
+exec yt-dlp --format bestaudio/best --extract-audio --paths "$DIR" --output "$output" $args "$@"

@@ -374,11 +374,35 @@
   (define-key sgml-mode-map "\C-c\C-r" 'sgml-namify-char))
 
 (define-key mode-specific-map "s" 'shell)
+(define-key mode-specific-map "l" 'shell-list)
 
-(define-key mode-specific-map "l" 'shell-pwd-list-buffers)
+(defun shell-list (&optional other-window-p)
+  "Open shell buffers in ibuffer.
+`OTHER-WINDOW-P' is like in `ibuffer'."
+  (interactive "P")
+  (let ((buffer-name "*Shells-List*"))
+    (ibuffer other-window-p buffer-name `((mode . shell-mode)) nil nil
+             '(("Shells" (name . "\\`\\*shell\\*"))
+               ("Async shell commands" (name . "\\`\\*Async Shell Command\\*")))
+             '((mark " " (name 40 50 :left :elide) " " filename-and-process)))
+    (with-current-buffer buffer-name
+      (setq-local ibuffer-use-header-line nil)
+      (hl-line-mode t))))
+
 (defvar shell-mode-map)
 (with-eval-after-load 'shell
-  (define-key shell-mode-map "\C-c\M-d" 'shell-pwd-change-directory))
+  (define-key shell-mode-map "\C-c\M-d" 'shell-cd)
+
+  (defun shell-cd ()
+    "Change directory in a shell, interactively."
+    (interactive)
+    (comint-show-maximum-output)
+    (comint-delete-input)
+    (let* ((read-dir (read-directory-name "Change directory: "))
+           (dir (or (file-remote-p read-dir 'localname) read-dir)))
+      (insert (concat "cd " (shell-quote-argument (expand-file-name dir))))
+      (comint-send-input)
+      (cd dir))))
 
 (defun kill-region-dwim (&optional count)
   (interactive "p")

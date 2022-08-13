@@ -20,7 +20,7 @@ pkgs: let
     image_clipboard = [ xclip ];
     install_keys = [ git gnupg ];
     make_backup = [ rsync ];
-    mpvi = [ dmenu mpv youtube-dl ];
+    mpvi = [ dmenu mpv yt-dlp ];
     preparehd = [];
     qrshow = [ qrencode sxiv ];
     recode_video_avc = [ ffmpeg ];
@@ -34,11 +34,11 @@ pkgs: let
     strip_video_opus = [ ffmpeg ];
     sudo_askpass = [ pass ];
     video_seconds = [ ffmpeg ];
-    ytdl = [ filename_put_duration youtube-dl ];
+    ytdl = [ filename_put_duration yt-dlp ];
     ytdla = [ ytdl ];
-    ytdlam = [ dmenu youtube-dl ];
-    ytdli = [ dmenu jq pueue youtube-dl ytdl ytdla ytdlam ];
-    ytdlp = [ filename_put_duration youtube-dl ];
+    ytdlam = [ dmenu yt-dlp ];
+    ytdli = [ dmenu jq pueue yt-dlp ytdl ytdla ytdlam ];
+    ytdlp = [ ytdl ];
     ytdlpa = [ ytdlp ];
   };
 

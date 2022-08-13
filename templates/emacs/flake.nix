@@ -1,7 +1,7 @@
 {
-  inputs.eldev = { url = "github:doublep/eldev/1.1.3"; flake = false; };
+  inputs.eldev = { url = "github:doublep/eldev/1.2"; flake = false; };
   outputs = { self, nixpkgs, eldev }: let
-    name = "foo-bar";
+    name = "package-name";
     system = "x86_64-linux";
     pkgs = import nixpkgs { inherit system; overlays = [ self.overlays.eldev ]; };
 
@@ -41,9 +41,8 @@
           dontBuild = true;
           nativeBuildInputs = [ final.emacs ];
           installPhase = ''
-            cp -r $src/* .
             mkdir -p $out/bin
-            ELDEV_DIR=$out/share/eldev ./install.sh $out/bin
+            cp $src/bin/eldev $out/bin/
           '';
         };
       };
@@ -53,10 +52,8 @@
     devShells.${system}.default = pkgs.mkShell {
       inherit name;
       buildInputs = [ pkgs.eldev ];
-      ELDEV_DIR = "${builtins.toString ./.}/.eldev";
       shellHook = ''
-        mkdir -p .eldev
-        ${pkgs.xorg.lndir}/bin/lndir -silent ${pkgs.eldev}/share/eldev .eldev
+        export ELDEV_DIR=$PWD/.eldev
       '';
     };
 

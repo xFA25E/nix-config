@@ -1,4 +1,3 @@
 #!/bin/sh
 DIR=${YTDL_DIR:-${XDG_VIDEOS_DIR:-${HOME}/Videos}/youtube}
-FMT=$DIR'/%(channel)s - %(upload_date)s - %(title)s.%(ext)s'
-exec youtube-dl --output "$FMT" --exec 'filename_put_duration {}' "$@"
+exec yt-dlp --paths "$DIR" --exec 'filename_put_duration {}' "$@"

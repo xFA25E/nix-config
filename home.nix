@@ -62,10 +62,6 @@ in {
     extraOutputsToInstall = [ "man" "doc" "info" "devdoc" ];
 
     file = {
-      ".shinit".text = ''
-        ${pkgs.coreutils}/bin/stty -ixon
-        PS1='[$USER $?] $ '
-      '';
       ".stalonetrayrc".text = lib.generators.toKeyValue {
         mkKeyValue = lib.generators.mkKeyValueDefault {} " ";
       } {
@@ -104,7 +100,8 @@ in {
       perlPackages.JSONPP pinentry pueue pulsemixer pwgen qrencode rar ripgrep
       rsync scripts scrot sdcv shellcheck simplescreenrecorder speedtest-cli
       stalonetray stumpwm sxiv teams tor-browser-bundle-bin transmission unzip
-      wget woof xclip xdg-user-dirs xkb-switch xterm xz youtube-dl zip zoom-us
+      wget woof xclip xdg-user-dirs xkb-switch xterm xz yt-dlp zip zoom-us
+      djvulibre
     ];
 
     sessionVariables = {
@@ -116,7 +113,6 @@ in {
       MPD_HOST = "localhost";
       MPD_PORT = "6600";
       SUDO_ASKPASS = "${pkgs.scripts}/bin/sudo_askpass";
-      ENV = "${config.home.homeDirectory}/.shinit";
       "_JAVA_AWT_WM_NONREPARENTING" = "1";
       CUDA_CACHE_PATH = "${config.xdg.cacheHome}/nv";
       NPM_CONFIG_USERCONFIG = "${config.xdg.configHome}/npm/npmrc";
@@ -153,10 +149,29 @@ in {
         "read" "rg" "rm" "rmdir" "rofi" "setsid" "sh" "sleep" "stow" "strings"
         "strip" "studies_" "sxiv" "tail" "time" "timer" "top" "touch" "tr"
         "uname" "updatedb" "uptime" "watch" "wc" "which" "woof" "xclip" "xz"
-        "yay" "youtube-dl" "ytdl"
+        "yay" "youtube-dl" "ytdl" "yt-dlp"
 
       ];
-      initExtra = ''[ -n "$ENV" ] && . "$ENV"'';
+      initExtra = ''
+        apwd() {
+            local p=''${PWD#"$HOME"}
+            if [[ $PWD != "$p" ]]; then
+                printf "~"
+            fi
+
+            local q
+            local IFS=/
+            for q in ''${p:1}; do
+                printf '/%s' "''${q:0:1}"
+                if [[ ''${q:0:1} = . ]]; then
+                    printf '%s' "''${q:1:1}"
+                fi
+            done
+            printf '%s' "''${q:1}"
+        }
+
+        PS1='\n$? \u $(apwd) \$ '
+      '';
       profileExtra = ''eval `${pkgs.openssh}/bin/ssh-agent`'';
       logoutExtra = ''eval `${pkgs.openssh}/bin/ssh-agent -k`'';
     };
@@ -175,12 +190,13 @@ in {
         format-all htmlize ipretty ledger-mode link-hint magit marginalia
         nix-mode notmuch nov ob-http org org-contrib org-mime pcmpl-args
         pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg rust-mode
-        rx-widget sdcwoc shell-pwd skempo sly sly-asdf sly-quicklisp sql-indent
+        rx-widget sdcwoc skempo sly sly-asdf sly-quicklisp sql-indent
         sqlup-mode taggit transmission vlf web-mode wgrep
 
         tree-sitter
         tree-sitter-langs
         org-roam
+        djvu
       ];
       package = pkgs.emacsNativeComp;
     };
@@ -484,7 +500,7 @@ in {
 
       "wgetrc".text = "hsts-file=${config.xdg.cacheHome}/wget-hsts";
 
-      "youtube-dl/config".text = lib.generators.toKeyValue {
+      "yt-dlp/config".text = lib.generators.toKeyValue {
         mkKeyValue = lib.generators.mkKeyValueDefault {} " ";
       } {
         "--add-metadata" = "";
@@ -492,8 +508,9 @@ in {
         "--continue" = "";
         "--no-playlist" = "";
         "--embed-subs" = "";
-        "--output" = "'%(channel)s - %(upload_date)s - %(title)s.%(ext)s'";
+        "--output" = "'%(channel,uploader)s - %(upload_date)s - %(title)s.%(ext)s'";
         "--format" = "'(bestvideo+bestaudio/best)[height<=?768][width<=?1366]/(bestvideo+bestaudio/best)[height<=?1080][width<=?1920]/bestvideo+bestaudio/best'";
+        "--compat-options" = "no-live-chat";
       };
     };
 

@@ -1,21 +1,70 @@
-#+TITLE: Foo Bar
-# one-line description of foo-bar package
+#+TITLE: package-name
 
-* Overview
-# A longer description of the project
+This is my package.  It is nice.  You should try it.
 
-** Features
-** History
-** Motivation
+* Screenshots
+
+This screenshot shows how to frobnicate the fripulator:
+
+screenshot1.png
+
+* Installation
+** MELPA
+
+If you installed from MELPA, you're done.  Just run one of the commands below.
+
+** Manual
+
+Install these required packages:
+
++ foo
++ bar
+
+Then put this file in your load-path, and put this in your init file:
+
+#+BEGIN_SRC elisp
+(require 'package-name)
+#+END_SRC
+
 * Usage
-# Examples of usage
+Run one of these commands:
 
-* Documentation
++ package-name-command: Frobnicate the flange.
+
+** Tips
+
++ You can customize settings in the package-name group.
+
+* Changelog
+** 1.1.0
+
+Additions
++  Add command package-name-debarnacle to de-barnacle the hull.
+
+Changes
++ Command package-name-anchor now takes an argument, weigh or let-go.
+
+Internal
++  Rewrote input parsing.
++  Factored out anchor-weighing.
+
+** 1.0.1
+
+Fixes
++  Ensure anchor is secure before returning from package-name-anchor.
+
+** 1.0.0
+
+Initial release.
+
+* Credits
+
+This package would not have been possible without the following packages: foo which showed me how to bifurcate, and bar, which takes care of flanges.
+
+* Development
+
+Bug reports, feature requests, suggestions — oh my!
+
 * License
-Copyright (c) 2022 Valeriy Litkovskyy
-Licensed under the GPL3 License.
 
-* COMMENT Local Variables
-# Local Variables:
-# eval: (add-hook 'after-save-hook #'org-md-export-to-markdown nil t)
-# End:
+GPLv3

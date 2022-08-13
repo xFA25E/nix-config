@@ -7,7 +7,7 @@ get_formats() {
     columns='format_id,width,height,ext,filesize,vcodec,acodec'
     jq_format=".formats[] | (\"\(.$(echo "${columns}" | sed 's/,/)|\\(./g'))\")"
     #                                                     "," -> ")|\(."
-    youtube-dl --no-color --dump-json "${url}" \
+    yt-dlp --no-color --dump-json "${url}" \
         | jq --raw-output "${jq_format}" \
         | column --table --separator '|'
 }
