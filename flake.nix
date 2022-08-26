@@ -58,14 +58,6 @@
     };
   in {
 
-    homeConfigurations."${username}" = home-manager.lib.homeManagerConfiguration {
-      inherit system username pkgs;
-      configuration = import ./home.nix;
-      extraModules = [ self.nixosModules.nix ];
-      homeDirectory = "/home/${username}";
-      stateVersion = "22.05";
-    };
-
     nixosConfigurations = {
 
       stribog = nixpkgs.lib.nixosSystem {
@@ -76,7 +68,6 @@
           home-manager.nixosModules.home-manager
           {
             home-manager = {
-              sharedModules = [ self.nixosModules.nix ];
               useGlobalPkgs = true;
               useUserPackages = true;
               users.${username} = import ./home.nix;
@@ -94,22 +85,12 @@
 
     };
 
-    nixosModules.nix = { ... }: {
-      config.nix = {
-        package = pkgs.nix;
-        registry = {
-          nix-config.flake = self;
-          nixpkgs.flake = nixpkgs;
-        };
-        settings = {
-          bash-prompt-suffix = "dev ";
-          experimental-features = [ "nix-command" "flakes" ];
-          keep-derivations = true;
-          keep-outputs = true;
-          max-jobs = "auto";
-          nix-path = [ "nixpkgs=${nixpkgs}" ];
-        };
+    nixosModules.nix.config.nix = {
+      registry = {
+        nix-config.flake = self;
+        nixpkgs.flake = nixpkgs;
       };
+      settings.nix-path = [ "nixpkgs=${nixpkgs}" ];
     };
 
     overlays.default = final: prev: {

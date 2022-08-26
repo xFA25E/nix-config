@@ -152,26 +152,6 @@ in {
         "yay" "youtube-dl" "ytdl" "yt-dlp"
 
       ];
-      initExtra = ''
-        apwd() {
-            local p=''${PWD#"$HOME"}
-            if [[ $PWD != "$p" ]]; then
-                printf "~"
-            fi
-
-            local q
-            local IFS=/
-            for q in ''${p:1}; do
-                printf '/%s' "''${q:0:1}"
-                if [[ ''${q:0:1} = . ]]; then
-                    printf '%s' "''${q:1:1}"
-                fi
-            done
-            printf '%s' "''${q:1}"
-        }
-
-        PS1='\n$? \u $(apwd) \$ '
-      '';
       profileExtra = ''eval `${pkgs.openssh}/bin/ssh-agent`'';
       logoutExtra = ''eval `${pkgs.openssh}/bin/ssh-agent -k`'';
     };
