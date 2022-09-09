@@ -83,6 +83,23 @@
     "eldev": {
       "flake": false,
       "locked": {
+        "lastModified": 1662672849,
+        "narHash": "sha256-yna3SPVUb6Dzt0Wrl7EY05oNrGHSFVJL1QFhUKNb3DQ=",
+        "owner": "doublep",
+        "repo": "eldev",
+        "rev": "659f4d9c97a44cf29ded5594b3f5de8da99ec973",
+        "type": "github"
+      },
+      "original": {
+        "owner": "doublep",
+        "ref": "1.2.2",
+        "repo": "eldev",
+        "type": "github"
+      }
+    },
+    "eldev_2": {
+      "flake": false,
+      "locked": {
         "lastModified": 1660672003,
         "narHash": "sha256-RD+7MCSdQ+fb2Lwe5ts+JcaCBfzbf8OT/9oK43MBsbY=",
         "owner": "doublep",
@@ -146,6 +163,25 @@
         "type": "github"
       }
     },
+    "flymake-statix": {
+      "inputs": {
+        "eldev": "eldev",
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1662832192,
+        "narHash": "sha256-vynqD6qpPkHYF93YuKP1J9itb8fiz/no4I4rqDIyOSI=",
+        "owner": "xFA25E",
+        "repo": "flymake-statix",
+        "rev": "54388a9c6246e9fc02bee35da4190c83f97a0e7c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "xFA25E",
+        "repo": "flymake-statix",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -198,6 +234,18 @@
     },
     "nixpkgs_2": {
       "locked": {
+        "lastModified": 0,
+        "narHash": "sha256-2f5NzHbi1NLSYnDg6cRu25B+XRxqngicvggg+0GgKHI=",
+        "path": "/nix/store/ps7746rfm0is1rl5mgsq6q3yd9c0qbfn-source",
+        "type": "path"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "type": "indirect"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
         "lastModified": 1658321858,
         "narHash": "sha256-2f5NzHbi1NLSYnDg6cRu25B+XRxqngicvggg+0GgKHI=",
         "owner": "NixOS",
@@ -212,7 +260,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_3": {
+    "nixpkgs_4": {
       "locked": {
         "lastModified": 1658321858,
         "narHash": "sha256-2f5NzHbi1NLSYnDg6cRu25B+XRxqngicvggg+0GgKHI=",
@@ -244,8 +292,8 @@
     },
     "pueue": {
       "inputs": {
-        "eldev": "eldev",
-        "nixpkgs": "nixpkgs_3"
+        "eldev": "eldev_2",
+        "nixpkgs": "nixpkgs_4"
       },
       "locked": {
         "lastModified": 1661372175,
@@ -270,9 +318,10 @@
         "dired-tags": "dired-tags",
         "emacs-overlay": "emacs-overlay",
         "flake-utils": "flake-utils_2",
+        "flymake-statix": "flymake-statix",
         "home-manager": "home-manager",
         "mpv-youtube-quality": "mpv-youtube-quality",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs_3",
         "notmuch": "notmuch",
         "pueue": "pueue",
         "rx-widget": "rx-widget",

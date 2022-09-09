@@ -5,7 +5,7 @@
     welcomeText = ''
       Welcome to emacs-lisp development environment!
 
-      !!! REMEMBER TO CUSTOMIZE FOO-BAR NAME THROUGHOUT THE PROJECT !!!
+      !!! REMEMBER TO CUSTOMIZE PACKAGE-NAME THROUGHOUT THE PROJECT !!!
     '';
   };
 }

@@ -73,6 +73,10 @@ Here is the juicy part of my *GNU/Emacs* config.  We start by writing a header.
 
 #+begin_src elisp
 ;; -*- lexical-binding: t; -*-
+
+(define-prefix-command 'region-commands-map)
+(define-prefix-command 'load-command-map)
+(define-prefix-command 'ediff-command-map)
 #+end_src
 
 ** Packages
@@ -144,6 +148,11 @@ by myself.  There is a good list of abbrevs [[https://www.emacswiki.org/emacs/au
 
 #+begin_src elisp
 (add-hook 'js-mode-hook 'abbrev-mode)
+#+end_src
+
+*** Align
+#+begin_src elisp
+(define-key region-commands-map "\C-a" 'align-regexp)
 #+end_src
 
 *** Auto Insert
@@ -282,9 +291,21 @@ In /comint/ we trust.  I like how easy it is to create custom repls with this
 package.
 
 #+begin_src elisp
+(define-key mode-specific-map "c" 'comint-run)
+
 (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
 (add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
 (add-hook 'comint-output-filter-functions 'comint-osc-process-output)
+
+(define-advice comint-run (:override (name command) shell)
+  (declare (interactive-only make-comint))
+  (interactive
+   (let* ((command (read-shell-command "Command: "))
+          (name (car (split-string-shell-command command))))
+     (list name command)))
+  (switch-to-buffer
+   (make-comint name shell-file-name nil shell-command-switch command))
+  (run-hooks (intern-soft (concat "comint-" name "-hook"))))
 #+end_src
 
 *** Compile
@@ -431,6 +452,13 @@ Manage file tags in dired
   (define-key dired-mode-map "\C-c\C-t" 'dired-tags-prefix-map))
 #+end_src
 
+*** Disass
+#+begin_src elisp
+(with-eval-after-load 'disass
+  (define-key emacs-lisp-mode-map "\C-c\C-d" 'disassemble)
+  (define-key lisp-interaction-mode-map "\C-c\C-d" 'disassemble))
+#+end_src
+
 *** [[https://github.com/jacktasia/dumb-jump][Dumb Jump]]
 Poor man's goto-definition facility.  It uses regexps and *grep/rg/whatever*.
 
@@ -443,6 +471,8 @@ An EIEIO port of BBDB (Big Brother DataBase).  Allows you to save contacts.
 Also, integrates with MUAs.
 
 #+begin_src elisp
+(define-key mode-specific-map "oe" 'ebdb)
+
 (defvar ebdb-mode-map)
 (defvar message-mode-map)
 
@@ -455,6 +485,28 @@ Also, integrates with MUAs.
   (define-key message-mode-map "\C-ce" 'ebdb-complete))
 #+end_src
 
+*** Ediff
+#+begin_src elisp
+(define-key ediff-command-map "\C-k" 'ediff-backup)
+(define-key ediff-command-map "\C-b" 'ediff-buffers)
+(define-key ediff-command-map "\C-c" 'ediff-current-file)
+(define-key ediff-command-map "\C-d" 'ediff-directories)
+(define-key ediff-command-map [?\C-\S-v] 'ediff-directory-revisions)
+(define-key ediff-command-map "\C-f" 'ediff-files)
+(define-key ediff-command-map "\C-m\C-b" 'ediff-merge-buffers)
+(define-key ediff-command-map "\C-m\C-d" 'ediff-merge-directories)
+(define-key ediff-command-map [?\C-m ?\C-\S-v] 'ediff-merge-directory-revisions)
+(define-key ediff-command-map "\C-m\C-f" 'ediff-merge-files)
+(define-key ediff-command-map "\C-m\C-v" 'ediff-merge-revisions)
+(define-key ediff-command-map "\C-p\C-b" 'ediff-patch-buffer)
+(define-key ediff-command-map "\C-p\C-f" 'ediff-patch-file)
+(define-key ediff-command-map "\C-r\C-w" 'ediff-regions-linewise)
+(define-key ediff-command-map "\C-r\C-l" 'ediff-regions-wordwise)
+(define-key ediff-command-map "\C-v" 'ediff-revision)
+(define-key ediff-command-map "\C-w\C-w" 'ediff-windows-linewise)
+(define-key ediff-command-map "\C-w\C-l" 'ediff-windows-wordwise)
+#+end_src
+
 *** [[https://github.com/Fanael/edit-indirect][Edit Indirect]]
 Allows you to edit any region in different /major-mode/.  Very helpful when you
 have a file which is a mix of different languages.
@@ -463,12 +515,17 @@ have a file which is a mix of different languages.
 (define-key ctl-x-map "E" 'edit-indirect-region)
 #+end_src
 
+*** Eldoc
+#+begin_src elisp
+(add-hook 'nix-mode-hook 'eldoc-mode)
+#+end_src
+
 *** Elisp Mode
 Some macro-expansion commands.
 
 #+begin_src elisp
-(define-key emacs-lisp-mode-map "\C-cM" 'emacs-lisp-macroexpand)
-(define-key lisp-interaction-mode-map "\C-cM" 'emacs-lisp-macroexpand)
+(define-key emacs-lisp-mode-map [?\C-c ?\C-\S-m] 'emacs-lisp-macroexpand)
+(define-key lisp-interaction-mode-map [?\C-c ?\C-\S-m] 'emacs-lisp-macroexpand)
 #+end_src
 
 *** Emacs
@@ -477,6 +534,8 @@ the developers forgot abouth them.  Shame on developers!
 
 #+begin_src elisp
 (setq completion-ignore-case t)
+(define-key ctl-x-map "\C-\M-t" 'transpose-regions)
+(define-key ctl-x-map "\C-l" 'load-command-map)
 #+end_src
 
 *** [[https://github.com/smihica/emmet-mode][Emmet Mode]]
@@ -493,6 +552,32 @@ Force programs to disable ansi escape sequences.
 
 #+begin_src elisp
 (setenv "PAGER" "cat")
+(with-eval-after-load 'env
+  (define-key global-map [?\C-\M-$] 'getenv))
+#+end_src
+
+*** [[https://github.com/purcell/envrc][Envrc]]
+#+begin_src elisp
+(with-eval-after-load 'envrc
+  (define-key envrc-command-map "R" 'envrc-reload-all)
+  (define-key envrc-mode-map "\C-xd" 'envrc-command-map))
+#+end_src
+
+*** Files
+#+begin_src elisp
+(with-eval-after-load 'files
+  (define-key ctl-x-map "\C-r" 'region-commands-map)
+  (define-key load-command-map "\C-l" 'load-library)
+  (define-key load-command-map "\C-f" 'load-file)
+  (define-key ctl-x-map "\C-d" 'ediff-command-map))
+#+end_src
+
+*** Files X
+#+begin_src elisp
+(with-eval-after-load 'files-x
+  (define-key ctl-x-x-map "ad" 'add-dir-local-variable)
+  (define-key ctl-x-x-map "aa" 'add-file-local-variable)
+  (define-key ctl-x-x-map "ap" 'add-file-local-variable-prop-line))
 #+end_src
 
 *** Find Dired
@@ -552,10 +637,24 @@ Show the *Commentary* section of a package.
 On-the-fly linter.
 
 #+begin_src elisp
+(add-hook 'nix-mode-hook 'flymake-mode)
 (defvar flymake-mode-map)
 (with-eval-after-load 'flymake
   (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error)
   (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error))
+#+end_src
+
+*** [[https://github.com/xFA25E/flymake-statix][Flymake Statix]]
+#+begin_src elisp
+(add-hook 'nix-mode-hook 'flymake-statix-setup)
+#+end_src
+
+*** [[https://github.com/lassik/emacs-format-all-the-code][Format All]]
+#+begin_src elisp
+(add-hook 'nix-mode-hook 'format-all-mode)
+(defvar format-all-formatters)
+(with-eval-after-load 'format-all
+  (setq-default format-all-formatters '(("Nix" alejandra))))
 #+end_src
 
 *** Grep
@@ -572,12 +671,24 @@ to 500 chars.
     (concat cmd " | cut -c-500")))
 #+end_src
 
+*** Help
+#+begin_src elisp
+(define-key ctl-x-map "h" 'help-command)
+#+end_src
+
+*** Help Fns
+#+begin_src elisp
+(with-eval-after-load 'help-fns
+  (define-key help-map "\M-f" 'describe-face)
+  (define-key help-map "\M-k" 'describe-keymap))
+#+end_src
+
 *** Hippie Exp
 Handy in-buffer completion.  It can use a lot of sources.  Mostly useful to
 complete file-name paths.
 
 #+begin_src elisp
-(define-key global-map "\C-_" 'hippie-expand)
+(define-key global-map "\M-\\" 'hippie-expand)
 #+end_src
 
 *** Hl Line
@@ -591,6 +702,12 @@ Highlight current line in these modes.
 (add-hook 'transmission-mode-hook 'hl-line-mode)
 (add-hook 'transmission-peers-mode-hook 'hl-line-mode)
 (add-hook 'mpc-mode-hook 'hl-line-mode)
+#+end_src
+
+*** Ibuffer
+#+begin_src elisp
+(defvar ibuffer-mode-map)
+(with-eval-after-load 'ibuffer (define-key ibuffer-mode-map "\M-o" nil))
 #+end_src
 
 *** Ipretty
@@ -667,6 +784,11 @@ candidates.  You name it!
 (define-key global-map [?\C-\)] 'slurp-pair)
 #+end_src
 
+*** Loadhist
+#+begin_src elisp
+(define-key load-command-map "\C-u" 'unload-feature)
+#+end_src
+
 *** Locate
 Locate integration.  Unfortunately it is using a simplified (and half-assed)
 version of /dired/ to display the results.  It bothers me sometimes.
@@ -687,6 +809,12 @@ Do you like /smoking/ manuals?
 
 #+begin_src elisp
 (define-key help-map "\M-m" 'man)
+#+end_src
+
+*** Menu Bar
+#+begin_src elisp
+(with-eval-after-load 'menu-bar
+  (define-key ctl-x-map "`" 'toggle-debug-on-error))
 #+end_src
 
 *** Minibuffer
@@ -747,12 +875,129 @@ default web-browser.
 (define-key mode-specific-map "nw" 'iwconfig)
 #+end_src
 
+*** Newcomment
+#+begin_src elisp
+(with-eval-after-load 'newcomment
+  (define-key global-map [?\C-\;] 'comment-line))
+#+end_src
+
 *** Newsticker
 An out-of-the-box rss/atom reader.  It has some bizarre defaults, but it is very
 usable.
 
 #+begin_src elisp
 (define-key mode-specific-map "on" 'newsticker-show-news)
+#+end_src
+
+*** [[https://github.com/NixOS/nix-mode][Nix Mode]]
+#+begin_src elisp
+(add-hook 'proced-mode-hook 'nix-prettify-mode)
+
+(with-eval-after-load 'nix-mode
+  (define-key nix-mode-map "\C-c\C-e" 'nix-edit)
+  (define-key nix-mode-map "\C-c\C-f" 'nix-flake)
+  (define-key nix-mode-map "\C-c\C-r" 'nix-repl)
+  (define-key nix-mode-map "\C-c\C-s" 'nix-search)
+  (define-key nix-mode-map "\C-c\C-p" 'nix-store-show-path))
+
+(declare-function nix-edit@flake "nix-edit")
+(with-eval-after-load 'nix-edit
+  (define-advice nix-edit (:override () flake)
+    (interactive)
+    (let ((cmd (read-shell-command "Nix edit command: " "nix edit "))
+          (process-environment (cons "EDITOR=echo" process-environment)))
+      (find-file
+       (with-temp-buffer
+         (call-process-shell-command cmd nil (list (current-buffer) nil) nil)
+         (buffer-substring-no-properties (point-min) (1- (point-max))))))))
+
+(defvar nix-flake-ref)
+(declare-function nix-flake--installable-command "nix-flake")
+(declare-function nix-flake--build-attribute-names "nix-flake")
+(declare-function nix-flake--options "nix-flake")
+(declare-function nix-flake--registry-refs@all "nix-flake")
+(declare-function nix-flake--registry-list "nix-flake")
+(with-eval-after-load 'nix-flake
+  (define-advice nix-flake--registry-refs (:override () all)
+    (cl-delete-duplicates
+     (cl-remove
+      "path:"
+      (flatten-list (mapcar #'cdr (nix-flake--registry-list)))
+      :test #'string-prefix-p)
+     :test #'string=))
+
+  (defun nix-flake-log-attribute (options flake-ref attribute)
+    "Log a derivation in the current flake.
+
+For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
+`nix-flake-run-attribute'."
+    (interactive (list (nix-flake--options)
+                       nix-flake-ref
+                       (completing-read "Nix package: "
+                                        (nix-flake--build-attribute-names))))
+    (compile (nix-flake--installable-command "log" options flake-ref attribute)))
+
+  (transient-append-suffix 'nix-flake-dispatch '(2 -1)
+    '("l" "Log attribute" nix-flake-log-attribute)))
+
+(declare-function nix-search--display@display-buffer "nix-search")
+(with-eval-after-load 'nix-search
+  (define-advice nix-search--display (:filter-args (args) display-buffer)
+    (list (car args) (get-buffer-create "*Nix-Search*") (cddr args))))
+
+(with-eval-after-load 'nix-shell
+  (define-advice nix-read-flake (:override () always-prompt)
+    (let ((default "nixpkgs"))
+      (read-string (format-prompt "Nix flake" default) nil nil default))))
+#+end_src
+
+*** Nix Options
+#+begin_src elisp
+(autoload 'nixos-options-show "nix-options")
+
+(with-eval-after-load 'nix-mode
+  (define-key nix-mode-map "\C-c\C-o" 'nixos-options-show))
+
+(defvar nixos-options)
+(with-eval-after-load 'nix-options
+  (defun nixos-options-show (option)
+    (interactive (list (completing-read "Nixos option: " nixos-options nil t)))
+    (pcase-let (((map ("name" name)
+                      ("description" description)
+                      ("type" type)
+                      ("default" default)
+                      ("example" example)
+                      ("declarations" declarations))
+                 (cdr (assoc option nixos-options))))
+      (with-current-buffer (get-buffer-create "*Nixos option*")
+        (fundamental-mode)
+        (buffer-disable-undo)
+        (with-silent-modifications
+          (erase-buffer)
+          (insert "# `" name "`\n\n")
+          (let ((beg (point)))
+            (insert "<para>" description "</para>")
+            (call-process-region beg (point) "pandoc" t t nil
+                                 "-f" "docbook" "-t" "markdown"))
+          (insert "\n## Type\n\n" type "\n\n## Default\n\n```nix\n")
+          (let ((beg (point)))
+            (call-process
+             "nix" nil t nil "eval" "--expr"
+             (concat "builtins.fromJSON ''\n" (json-encode default) "\n''"))
+            (call-process-region beg (point) "alejandra" t '(t nil) nil))
+          (insert "```\n\n## Example\n\n```nix\n")
+          (let ((beg (point)))
+            (call-process
+             "nix" nil t nil "eval" "--expr"
+             (concat "builtins.fromJSON ''\n" (json-encode example) "\n''"))
+            (call-process-region beg (point) "alejandra" t '(t nil) nil))
+          (insert "```\n\n## Declarations\n\n")
+          (let ((path (string-trim (shell-command-to-string "nix flake metadata --json nixpkgs 2>/dev/null | jq -r .path"))))
+            (seq-doseq (d declarations)
+              (insert "- " path "/" d "\n"))))
+        (gfm-view-mode)
+        (nix-prettify-mode t)
+        (pop-to-buffer (current-buffer))))))
 #+end_src
 
 *** [[https://notmuchmail.org/notmuch-emacs/][Notmuch]]
@@ -845,6 +1090,7 @@ Personal wiki - knowledge database.
 (define-key mode-specific-map "Gf" 'org-roam-node-find)
 (define-key mode-specific-map "Gi" 'org-roam-node-insert)
 (define-key mode-specific-map "Gl" 'org-roam-buffer-toggle)
+(define-key mode-specific-map "Gs" 'org-roam-db-sync)
 (declare-function org-roam-db-autosync-mode "org-roam-db" (&optional arg))
 (with-eval-after-load 'org-roam (org-roam-db-autosync-mode))
 #+end_src
@@ -868,8 +1114,8 @@ Do you like viewing PDFs?
 Small PP!  Another pretty-printer for /e-lisp/ S-EXpressions.
 
 #+begin_src elisp
-(define-key emacs-lisp-mode-map "\C-cm" 'pp-macroexpand-last-sexp)
-(define-key lisp-interaction-mode-map "\C-cm" 'pp-macroexpand-last-sexp)
+(define-key emacs-lisp-mode-map "\C-c\C-m" 'pp-macroexpand-last-sexp)
+(define-key lisp-interaction-mode-map "\C-c\C-m" 'pp-macroexpand-last-sexp)
 #+end_src
 
 *** Proced
@@ -896,6 +1142,18 @@ Are you familiar with registers?  You can store things!
 (define-key ctl-x-r-map "L" 'list-registers)
 (define-key ctl-x-r-map "p" 'prepend-to-register)
 (define-key ctl-x-r-map "a" 'append-to-register)
+#+end_src
+
+*** Re Builder
+#+begin_src elisp
+(define-key emacs-lisp-mode-map "\C-c\C-r" 're-builder)
+(define-key lisp-interaction-mode-map "\C-c\C-r" 're-builder)
+#+end_src
+
+*** Replace
+#+begin_src elisp
+(define-key region-commands-map "\C-k" 'keep-lines)
+(define-key region-commands-map "\C-f" 'flush-lines)
 #+end_src
 
 *** [[https://github.com/a13/reverse-im.el][Reverse Im]]
@@ -972,33 +1230,23 @@ Plain old shell.  I prefer it to /eshell/ because it uses proper pipes.
   (interactive "P")
   (let ((buffer-name "*Shells-List*"))
     (ibuffer other-window-p buffer-name `((mode . shell-mode)) nil nil
-             '(("Shells" (name . "\\`\\*shell\\*"))
+             '(("Project shells" (name . "-shell\\*\\'"))
+               ("Shells" (name . "\\`\\*shell\\*"))
                ("Async shell commands" (name . "\\`\\*Async Shell Command\\*")))
              '((mark " " (name 40 50 :left :elide) " " filename-and-process)))
     (with-current-buffer buffer-name
       (setq-local ibuffer-use-header-line nil)
       (hl-line-mode t))))
-
-(defvar shell-mode-map)
-(with-eval-after-load 'shell
-  (define-key shell-mode-map "\C-c\M-d" 'shell-cd)
-
-  (defun shell-cd ()
-    "Change directory in a shell, interactively."
-    (interactive)
-    (comint-show-maximum-output)
-    (comint-delete-input)
-    (let* ((read-dir (read-directory-name "Change directory: "))
-           (dir (or (file-remote-p read-dir 'localname) read-dir)))
-      (insert (concat "cd " (shell-quote-argument (expand-file-name dir))))
-      (comint-send-input)
-      (cd dir))))
 #+end_src
 
 *** Simple
 Some useful *GNU/Emacs* commands not bound by default (for some unknown reason).
 
 #+begin_src elisp
+(defun cycle-spacing-fast (&optional n)
+  (interactive "*p")
+  (cycle-spacing n nil 'fast))
+
 (defun kill-region-dwim (&optional count)
   (interactive "p")
   (if (use-region-p)
@@ -1011,6 +1259,12 @@ Some useful *GNU/Emacs* commands not bound by default (for some unknown reason).
 (define-key global-map "\M-l" 'downcase-dwim)
 (define-key global-map "\M-u" 'upcase-dwim)
 (define-key global-map "\C-w" 'kill-region-dwim)
+(define-key global-map "\M- " 'cycle-spacing-fast)
+(define-key global-map "\M-\\" 'delete-indentation)
+(define-key ctl-x-map "w" 'mark-whole-buffer)
+(define-key ctl-x-x-map "f" 'auto-fill-mode)
+(define-key ctl-x-x-map "v" 'visual-line-mode)
+(define-key ctl-x-x-map "w" 'whitespace-mode)
 (define-key mode-specific-map "oP" 'list-processes)
 #+end_src
 
@@ -1304,6 +1558,17 @@ Very useful nix templates.
   "# End:")
 #+end_src
 
+*** Sort
+#+begin_src elisp
+(define-key region-commands-map "\C-c" 'sort-columns)
+(define-key region-commands-map "\C-d" 'delete-duplicate-lines)
+(define-key region-commands-map "\C-f" 'sort-fields)
+(define-key region-commands-map "\C-n" 'sort-numeric-fields)
+(define-key region-commands-map "\C-r" 'reverse-region)
+(define-key region-commands-map "\C-s" 'sort-lines)
+(define-key region-commands-map "\C-x" 'sort-regexp-fields)
+#+end_src
+
 *** Subword
 Consider ~SubWord~ as two separate words.  Useful for camel-case languages.
 
@@ -1319,6 +1584,16 @@ Small settings for /tex-mode/ and /ispell/.  Never used it :/
 #+begin_src elisp
 (defvar ispell-parser)
 (add-hook 'tex-mode-hook (lambda nil (setq-local ispell-parser 'tex)))
+#+end_src
+
+*** Term
+#+begin_src elisp
+(define-key mode-specific-map "t" 'term)
+#+end_src
+
+*** Tramp Cmds
+#+begin_src elisp
+(define-key ctl-x-x-map "T" 'tramp-cleanup-all-buffers)
 #+end_src
 
 *** [[https://github.com/holomorph/transmission][Transmission]]
@@ -1376,6 +1651,7 @@ You can edit files with a lot of different web languages in it.
   (define-key widget-field-keymap "\C-xnf" 'widget-narrow-to-field)
   (define-key widget-text-keymap "\C-xnf" 'widget-narrow-to-field))
 #+end_src
+
 *** Window
 Do you like windows?  Me neither.
 
@@ -1386,6 +1662,11 @@ Do you like windows?  Me neither.
 (define-key global-map [?\C-\M-\S-f] 'next-buffer)
 (define-key global-map "\M-Q" 'quit-window)
 (define-key global-map "\M-o" 'other-window)
+#+end_src
+
+*** [[https://github.com/magit/with-editor][With Editor]]
+#+begin_src elisp
+(define-key global-map [?\C-\M-&] 'with-editor-async-shell-command)
 #+end_src
 
 *** Xref

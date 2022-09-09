@@ -937,3 +937,11 @@
     ("emacs" "GNU/Emacs" nil :count 5)
    ))
 
+(define-abbrev-table 'shell-mode-abbrev-table
+  '(
+    ("df" "df --si" nil :count 5)
+    ("du" "du --si" nil :count 3)
+    ("free" "free --si" nil :count 1)
+    ("ls" "ls --si" nil :count 2)
+   ))
+

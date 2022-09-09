@@ -1,11 +1,15 @@
-{ config, pkgs, lib, username ? "val", ... }:
-
 {
-  imports = [ (import ./common.nix) ];
+  config,
+  pkgs,
+  lib,
+  username ? "val",
+  ...
+}: {
+  imports = [(import ./common.nix)];
 
   boot = {
-    initrd.availableKernelModules = [ "xhci_pci" "ehci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "sr_mod" "rtsx_pci_sdmmc" ];
-    kernelModules = [ "kvm-intel" ];
+    initrd.availableKernelModules = ["xhci_pci" "ehci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "sr_mod" "rtsx_pci_sdmmc"];
+    kernelModules = ["kvm-intel"];
     loader = {
       grub = {
         efiSupport = true;
@@ -22,6 +26,7 @@
   };
 
   networking = {
+    firewall.allowedTCPPorts = [1337 8080 8000];
     hostName = "stribog";
     interfaces = {
       eno1.useDHCP = lib.mkDefault true;
@@ -49,12 +54,11 @@
         startx.enable = true;
         defaultSession = "none";
       };
-      videoDrivers = [ "modesetting" "nvidia" ];
+      videoDrivers = ["modesetting" "nvidia"];
     };
   };
 
   sound.enable = true;
 
-  users.users.${username}.extraGroups = [ "video" "audio" ];
-
+  users.users.${username}.extraGroups = ["video" "audio"];
 }

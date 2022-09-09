@@ -370,11 +370,7 @@ The document was typeset with
  '(avy-keys '(97 111 101 117 104 116 110 115))
  '(avy-style 'words)
  '(backup-by-copying t)
- '(backup-directory-alist
-   (list
-    (cons ".*"
-          (expand-file-name "emacs/backups"
-                            (xdg-data-home)))))
+ '(backup-directory-alist '(("." . "~/.local/share/emacs/backups")))
  '(before-save-hook '(whitespace-cleanup delete-trailing-whitespace))
  '(blink-cursor-mode nil)
  '(bookmark-default-file (expand-file-name "emacs/bookmarks" (xdg-data-home)))
@@ -480,6 +476,7 @@ The document was typeset with
  '(ebdb-sources (expand-file-name "emacs/ebdb" (xdg-data-home)))
  '(ebdb-user-mail-address-re 'self)
  '(ede-project-placeholder-cache-file (expand-file-name "emacs/ede/projects.el" (xdg-cache-home)))
+ '(ediff-autostore-merges nil)
  '(ediff-before-setup-hook
    '((lambda
        (&rest _)
@@ -520,6 +517,7 @@ The document was typeset with
  '(flymake-no-changes-timeout nil)
  '(flyspell-default-dictionary "russian")
  '(flyspell-dictionaries-that-consider-dash-as-word-delimiter '("francais" "deutsch8" "norsk" "russian"))
+ '(format-all-mode-lighter "")
  '(gdb-many-windows t)
  '(gdb-show-main t)
  '(global-so-long-mode t)
@@ -632,7 +630,8 @@ The document was typeset with
  '(newsticker-treeview-listwindow-height 6)
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
-   '(("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg" nil nil nil)
+   '(("thuletide" "https://thuletide.wordpress.com/feed/" nil nil nil)
+     ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg" nil nil nil)
      ("Просто Глеб" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8whgZ18JO0Hr4g0053LuGQ" nil nil nil)
      ("Простая Академия Сайт" "https://prosto.academy/feed/" nil nil nil)
      ("Простая Академия" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8mmPf2oKdfE2pdjqctTWUw" nil nil nil)
@@ -819,7 +818,7 @@ The document was typeset with
  '(sgml-basic-offset 4)
  '(sh-mode-hook
    '(sh-electric-here-document-mode flymake-shellcheck-load flymake-mode tree-sitter-mode))
- '(shell-mode-hook '(ansi-color-for-comint-mode-on))
+ '(shell-mode-hook '(abbrev-mode ansi-color-for-comint-mode-on))
  '(shift-select-mode nil)
  '(shr-max-image-proportion 0.7)
  '(shr-use-fonts nil)
@@ -863,7 +862,9 @@ The document was typeset with
  '(tramp-default-method "ssh")
  '(tramp-persistency-file-name (expand-file-name "emacs/tramp" (xdg-cache-home)))
  '(tramp-remote-path
-   '("/run/current-system/sw/bin" "~/.local/bin" tramp-own-remote-path tramp-default-remote-path "/bin" "/usr/bin" "/sbin" "/usr/sbin" "/usr/local/bin" "/usr/local/sbin" "/local/bin" "/local/freeware/bin" "/local/gnu/bin" "/usr/freeware/bin" "/usr/pkg/bin" "/usr/contrib/bin" "/opt/bin" "/opt/sbin" "/opt/local/bin"))
+   '("/run/wrappers/bin" "/run/current-system/sw/bin" tramp-default-remote-path "/bin" "/usr/bin" "/sbin" "/usr/sbin" "/usr/local/bin" "/usr/local/sbin" "/local/bin" "/local/freeware/bin" "/local/gnu/bin" "/usr/freeware/bin" "/usr/pkg/bin" "/usr/contrib/bin" "/opt/bin" "/opt/sbin" "/opt/local/bin"))
+ '(tramp-remote-process-environment
+   '("ENV=~/.profile" "TMOUT=0" "LC_CTYPE=''" "CDPATH=" "HISTORY=" "MAIL=" "MAILCHECK=" "MAILPATH=" "PAGER=cat" "autocorrect=" "correct="))
  '(transient-enable-popup-navigation t)
  '(transient-history-file
    (expand-file-name "emacs/transient/history.el"

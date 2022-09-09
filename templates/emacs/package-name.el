@@ -3,7 +3,7 @@
 ;; Copyright (C) 2017 Valeriy Litkovskyy
 
 ;; Author: Valeriy Litkovskyy <vlr.ltkvsk@protonmail.com>
-;; URL: https://github.com/xFA25E/package-name.el
+;; URL: https://github.com/xFA25E/package-name
 ;; Version: 0.0.1
 ;; Package-Requires: ((emacs "24.1"))
 ;; Keywords: something
@@ -29,9 +29,10 @@
 
 ;;;; Installation
 
-;;;;; MELPA
+;;;;; Package manager
 
-;; If you installed from MELPA, you're done.
+;; If you've installed it with your package manager, you're done.
+;; `package-name' is autoloaded, so you can call it right away.
 
 ;;;;; Manual
 
@@ -40,7 +41,7 @@
 ;; + foo
 ;; + bar
 
-;; Then put this file in your load-path, and put this in your init
+;; Then put this file in your load-path, and put the following in your init
 ;; file:
 
 ;; (require 'package-name)

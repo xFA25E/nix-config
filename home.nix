@@ -2,15 +2,19 @@
 # https://searx.be/?preferences=eJxtVcuO2zoM_ZrrjTFFH4uuvChaXNwBCkzRpN0KtEQrrCXRleRk3K8vnUSOMncWMSKaOjw8fFhDRsuRMHUWA0ZwjYNgZ7DYYXj4sWsca3DroYE5s2Y_OczYWWbrsCEvnmqK_Lx0-zhj4zEf2HTfnnb7JsGACSHqQ_e2yQf02HHSEJuIaXY5KQ4q4Ell6Lt_wSVsDJOSl-yOGDsGOb7haJvzrYeUFyHi2JJmg8fGUILeoVEYLAXJ4N2HDx-flTqSQU7_vP88kh4hJaX8nEiL4ciQlUqsCVzr0RCIcYFgUK5d8xeLJSvAkHJt1Fo_5GOFbik76JWiLIeIxpD4n_VY3yZEMyFGpQZyZ4ujPkJc2hUyUaqxBydM46u3t3A95X7WI-ZrxEsB2snB0no-SgUrZ7949CzBcoSQnBTZ1PES_gng7y1rmVZd2_VxjREWgJt6oG3iuYqSeVw4czrwCOHm57hPGd_EVFAmf_2XMsQ8rR1ThV7gwFwbeMIQceJ0007KTRDW25VIJxrJQIb67oXxxnCIiG3iIZ8gYmsoos4iy2sSruRvOWDkE91pNpjIq6VQOoCUc31cwYo6G70-G7L2dmGI4GFtgqLu75OkVIcoEIVEQdhI5cVzcNLrd8QihZFAV6FfFKYwmEOSXNOh8rzoVRy2gdkENMa2BgcKlInDXdPW6sE0pVdgttQhriWWWT9jzgbDXd7T2HqKkYuWL_jf2JDOf_g-fc-_EMfa0lOw9bnM5jX8u-f_5b8dKdTdg5nZpdcqVBIr0FXwa802kNsolzKWSy_20DqAdMT2fjVYSS6TxzJMVynLssZwvwKNrIj1ZyufbU9Obhav1P0k_-BoRHXgPOKysnySmVOftEYp25enR1nCp0gZ5c1jOFcfVdKRnSu-lxWupBnHbY_3MjRJMpV9njZmJejuvGFWV3355iwqoZN5FMQdukFJII4ezn0mtv_2-2-7isc-gmy_qH58_ypW2XgYG-kTFOi_m0eMQg==&q=%s
 # https://duckduckgo.com/?kk=-1&kah=it-it&kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&kak=-1&kax=-1&km=l&q=%s
 # https://startpage.com/sp/search?query=hello&prfe=a715a36c09c1472e9d5d804b0ba9312716a96d474575edbfa5e7cb0c646b34216e65fa4ae420b5df58e6c8d3e420eb1771f23caa2663bb5435b01ebb741af66083a80b0bb3682e008b0e7e1126
-
-{ config, pkgs, lib, ... }: let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
   colors = pkgs.base16Themes.theme "gruvbox-light-medium";
 in {
   accounts.email = {
     accounts = {
       "polimi" = {
         address = "valeriy.litkovskyy@mail.polimi.it";
-        aliases = [ "10622800@polimi.it" ];
+        aliases = ["10622800@polimi.it"];
         imap = {
           host = "outlook.office365.com";
           tls.enable = true;
@@ -18,16 +22,18 @@ in {
         mbsync = {
           enable = true;
           groups."polimi" = {
-            channels = let makeChannel = far: near: {
-              extraConfig = {
-                Create = "Slave";
-                Sync = "All";
-                Expunge = "Both";
-                SyncState = "*";
+            channels = let
+              makeChannel = far: near: {
+                extraConfig = {
+                  Create = "Slave";
+                  Sync = "All";
+                  Expunge = "Both";
+                  SyncState = "*";
+                };
+                farPattern = far;
+                nearPattern = near;
               };
-              farPattern = far;
-              nearPattern = near;
-            }; in {
+            in {
               "inbox" = makeChannel "INBOX" "inbox";
               "sent" = makeChannel "Sent Items" "sent";
             };
@@ -59,101 +65,253 @@ in {
 
   fonts.fontconfig.enable = true;
   home = {
-    extraOutputsToInstall = [ "man" "doc" "info" "devdoc" ];
+    extraOutputsToInstall = ["man" "doc" "info" "devdoc"];
 
     file = {
-      ".stalonetrayrc".text = lib.generators.toKeyValue {
-        mkKeyValue = lib.generators.mkKeyValueDefault {} " ";
-      } {
-        background = "\"#000000\"";
-        fuzzy_edges = "3";
-        geometry = "1x1+10+742";
-        grow_gravity = "SW";
-        icon_gravity = "SW";
-        icon_size = "16";
-        skip_taskbar = true;
-        sticky = true;
-        transparent = true;
-        window_layer = "bottom";
-        window_strut = "bottom";
-        window_type = "desktop";
-      };
+      ".stalonetrayrc".text =
+        lib.generators.toKeyValue {
+          mkKeyValue = lib.generators.mkKeyValueDefault {} " ";
+        } {
+          background = "\"#000000\"";
+          fuzzy_edges = "3";
+          geometry = "1x1+10+742";
+          grow_gravity = "SW";
+          icon_gravity = "SW";
+          icon_size = "16";
+          skip_taskbar = true;
+          sticky = true;
+          transparent = true;
+          window_layer = "bottom";
+          window_strut = "bottom";
+          window_type = "desktop";
+        };
     };
 
     keyboard = {
       layout = "dvorak,ru";
-      options = [ "ctrl:swapcaps" "grp:shifts_toggle" ];
+      options = ["ctrl:swapcaps" "grp:shifts_toggle"];
       variant = ",ruu";
     };
 
-    language = builtins.listToAttrs (map (n: { name = n; value = "en_US.UTF-8"; }) [
-      "address" "base" "collate" "ctype" "measurement" "messages" "monetary"
-      "name" "numeric" "paper" "telephone" "time"
-    ]);
+    language = builtins.listToAttrs (map (n: {
+        name = n;
+        value = "en_US.UTF-8";
+      }) [
+        "address"
+        "base"
+        "collate"
+        "ctype"
+        "measurement"
+        "messages"
+        "monetary"
+        "name"
+        "numeric"
+        "paper"
+        "telephone"
+        "time"
+      ]);
 
     packages = with pkgs; [
-      acpi alsaUtils amded ascii bind brave brightnessctl browser calibre cloc
-      cpulimit discord dmenu exiftool fd ffmpeg file firefox ghostscript gimp
-      go-mtpfs hunspell hunspellDicts.en_US-large hunspellDicts.it_IT
-      hunspellDicts.ru_RU imagemagick iw ledger leiningen libjpeg libnotify
-      libreoffice mediainfo mkpasswd mpc_cli nload p7zip parted pdftk
-      perlPackages.JSONPP pinentry pueue pulsemixer pwgen qrencode rar ripgrep
-      rsync scripts scrot sdcv shellcheck simplescreenrecorder speedtest-cli
-      stalonetray stumpwm sxiv teams tor-browser-bundle-bin transmission unzip
-      wget woof xclip xdg-user-dirs xkb-switch xterm xz yt-dlp zip zoom-us
+      acpi
+      alejandra
+      alsaUtils
+      amded
+      ascii
+      bind
+      binutils
+      brave
+      brightnessctl
+      browser
+      calibre
+      cloc
+      cpulimit
+      discord
       djvulibre
+      dmenu
+      exiftool
+      fd
+      ffmpeg
+      file
+      firefox
+      ghostscript
+      gimp
+      go-mtpfs
+      hunspell
+      hunspellDicts.en_US-large
+      hunspellDicts.it_IT
+      hunspellDicts.ru_RU
+      imagemagick
+      iw
+      ledger
+      leiningen
+      libjpeg
+      libnotify
+      libreoffice
+      mediainfo
+      mkpasswd
+      mpc_cli
+      nload
+      p7zip
+      pandoc
+      parted
+      pdftk
+      perlPackages.JSONPP
+      pinentry
+      pueue
+      pulsemixer
+      pwgen
+      qrencode
+      rar
+      ripgrep
+      rsync
+      scripts
+      scrot
+      sdcv
+      shellcheck
+      simplescreenrecorder
+      speedtest-cli
+      stalonetray
+      statix
+      stumpwm
+      sxiv
+      teams
+      tor-browser-bundle-bin
+      transmission
+      unzip
+      wget
+      woof
+      xclip
+      xdg-user-dirs
+      xkb-switch
+      xterm
+      xz
+      yt-dlp
+      zip
+      zoom-us
     ];
 
     sessionVariables = {
+      "_JAVA_AWT_WM_NONREPARENTING" = "1";
+      ADB_VENDOR_KEY = "${config.xdg.cacheHome}/android";
+      ANDROID_SDK_HOME = "${config.xdg.cacheHome}/android";
+      BOOT_HOME = "${config.xdg.cacheHome}/boot";
+      BROWSER = "browser";
+      CARGO_HOME = "${config.xdg.cacheHome}/cargo";
+      CUDA_CACHE_PATH = "${config.xdg.cacheHome}/nv";
       EDITOR = "emacs";
-      VISUAL = config.home.sessionVariables.EDITOR;
-      TERMINAL = "uxterm";
+      GEM_HOME = "${config.xdg.cacheHome}/gem";
+      GEM_SPEC_CACHE = "${config.xdg.cacheHome}/gem";
+      GTK2_RC_FILES = "${config.xdg.cacheHome}/gtk-2.0/gtkrc";
+      GTK_IM_MODULE = "ibus";
       LESSHISFILE = "/dev/null";
       MAILDIR = config.accounts.email.maildirBasePath;
       MPD_HOST = "localhost";
       MPD_PORT = "6600";
-      SUDO_ASKPASS = "${pkgs.scripts}/bin/sudo_askpass";
-      "_JAVA_AWT_WM_NONREPARENTING" = "1";
-      CUDA_CACHE_PATH = "${config.xdg.cacheHome}/nv";
       NPM_CONFIG_USERCONFIG = "${config.xdg.configHome}/npm/npmrc";
-      GEM_HOME = "${config.xdg.cacheHome}/gem";
-      GEM_SPEC_CACHE = "${config.xdg.cacheHome}/gem";
-      ANDROID_SDK_HOME = "${config.xdg.cacheHome}/android";
-      ADB_VENDOR_KEY = "${config.xdg.cacheHome}/android";
-      BOOT_HOME = "${config.xdg.cacheHome}/boot";
-      YTDL_DIR="${config.xdg.userDirs.videos}/youtube";
-      BROWSER = "browser";
-      GTK2_RC_FILES = "${config.xdg.cacheHome}/gtk-2.0/gtkrc";
-      GTK_IM_MODULE = "ibus";
       QT_IM_MODULE = "ibus";
-      XMODIFIERS = "ibus";
-      XAUTHORITY = "\${XDG_RUNTIME_DIR}/Xauthority";
-      SSB_HOME = "${config.xdg.cacheHome}/zoom";
       RUSTUP_HOME = "${config.xdg.cacheHome}/rustup";
-      CARGO_HOME = "${config.xdg.cacheHome}/cargo";
+      SSB_HOME = "${config.xdg.cacheHome}/zoom";
+      SUDO_ASKPASS = "${pkgs.scripts}/bin/sudo_askpass";
+      TERMINAL = "uxterm";
+      VISUAL = config.home.sessionVariables.EDITOR;
       WGETRC = "${config.xdg.configHome}/wgetrc";
+      XAUTHORITY = "\${XDG_RUNTIME_DIR}/Xauthority";
+      XMODIFIERS = "ibus";
+      YTDL_DIR = "${config.xdg.userDirs.videos}/youtube";
     };
   };
 
   programs = {
     bash = {
       enable = true;
-      historyControl = [ "erasedups" "ignoredups" "ignorespace" ];
+      historyControl = ["erasedups" "ignoredups" "ignorespace"];
       historyIgnore = map (cmd: "${cmd}*") [
-
-        "awk" "bash" "cat" "cd" "chmod" "chown" "command" "cp" "cut" "dash" "dd"
-        "df" "dh" "du" "ebook-convert" "echo" "emacs" "env" "exit" "export" "fd"
-        "feh" "file" "find" "gawk" "gparted" "grep" "gzip" "hash" "host" "htop"
-        "id" "ln" "locate" "ls" "man" "mbsync" "millisleep" "mkdir" "mpv" "mv"
-        "notify-send" "ping" "pkill" "printf" "pwd" "pwgen" "python" "quit"
-        "read" "rg" "rm" "rmdir" "rofi" "setsid" "sh" "sleep" "stow" "strings"
-        "strip" "studies_" "sxiv" "tail" "time" "timer" "top" "touch" "tr"
-        "uname" "updatedb" "uptime" "watch" "wc" "which" "woof" "xclip" "xz"
-        "yay" "youtube-dl" "ytdl" "yt-dlp"
-
+        "awk"
+        "bash"
+        "cat"
+        "cd"
+        "chmod"
+        "chown"
+        "command"
+        "cp"
+        "cut"
+        "dash"
+        "dd"
+        "df"
+        "dh"
+        "du"
+        "ebook-convert"
+        "echo"
+        "emacs"
+        "env"
+        "exit"
+        "export"
+        "fd"
+        "feh"
+        "file"
+        "find"
+        "gawk"
+        "gparted"
+        "grep"
+        "gzip"
+        "hash"
+        "host"
+        "htop"
+        "id"
+        "ln"
+        "locate"
+        "ls"
+        "man"
+        "mbsync"
+        "millisleep"
+        "mkdir"
+        "mpv"
+        "mv"
+        "notify-send"
+        "ping"
+        "pkill"
+        "printf"
+        "pwd"
+        "pwgen"
+        "python"
+        "quit"
+        "read"
+        "rg"
+        "rm"
+        "rmdir"
+        "rofi"
+        "setsid"
+        "sh"
+        "sleep"
+        "stow"
+        "strings"
+        "strip"
+        "studies_"
+        "sxiv"
+        "tail"
+        "time"
+        "timer"
+        "top"
+        "touch"
+        "tr"
+        "uname"
+        "updatedb"
+        "uptime"
+        "watch"
+        "wc"
+        "which"
+        "woof"
+        "xclip"
+        "xz"
+        "yay"
+        "youtube-dl"
+        "yt-dlp"
+        "ytdl"
       ];
-      profileExtra = ''eval `${pkgs.openssh}/bin/ssh-agent`'';
-      logoutExtra = ''eval `${pkgs.openssh}/bin/ssh-agent -k`'';
+      profileExtra = ''
+        pidof ssh-agent >/dev/null 2>&1 || eval "$(${pkgs.openssh}/bin/ssh-agent)"
+      '';
+      logoutExtra = ''eval "$(${pkgs.openssh}/bin/ssh-agent -k)"'';
     };
 
     direnv = {
@@ -164,20 +322,67 @@ in {
 
     emacs = {
       enable = true;
-      extraPackages = epkgs: with epkgs; [
-        async avy cargo consult csv-mode cyrillic-dvorak-im dired-tags dumb-jump
-        ebdb edit-indirect eglot emmet-mode envrc enwc flymake-shellcheck
-        format-all htmlize ipretty ledger-mode link-hint magit marginalia
-        nix-mode notmuch nov ob-http org org-contrib org-mime pcmpl-args
-        pdf-tools php-mode pueue rainbow-mode restclient reverse-im rg rust-mode
-        rx-widget sdcwoc skempo sly sly-asdf sly-quicklisp sql-indent
-        sqlup-mode taggit transmission vlf web-mode wgrep
-
-        tree-sitter
-        tree-sitter-langs
-        org-roam
-        djvu
-      ];
+      extraPackages = epkgs:
+        with epkgs; [
+          async
+          avy
+          cargo
+          consult
+          csv-mode
+          cyrillic-dvorak-im
+          dired-tags
+          djvu
+          dumb-jump
+          ebdb
+          edit-indirect
+          eglot
+          emmet-mode
+          envrc
+          enwc
+          flymake-shellcheck
+          flymake-statix
+          format-all
+          htmlize
+          ipretty
+          json-navigator
+          ledger-mode
+          link-hint
+          magit
+          marginalia
+          nix-mode
+          nixos-options
+          notmuch
+          nov
+          ob-http
+          org
+          org-contrib
+          org-mime
+          org-roam
+          pcmpl-args
+          pdf-tools
+          php-mode
+          pueue
+          rainbow-mode
+          restclient
+          reverse-im
+          rg
+          rust-mode
+          rx-widget
+          sdcwoc
+          skempo
+          sly
+          sly-asdf
+          sly-quicklisp
+          sql-indent
+          sqlup-mode
+          taggit
+          transmission
+          tree-sitter
+          tree-sitter-langs
+          vlf
+          web-mode
+          wgrep
+        ];
       package = pkgs.emacsNativeComp;
     };
 
@@ -249,8 +454,8 @@ in {
 
     notmuch = {
       enable = true;
-      new.tags = [ "new" ];
-      search.excludeTags = [ "trash" "spam" "deleted" ];
+      new.tags = ["new"];
+      search.excludeTags = ["trash" "spam" "deleted"];
       hooks = {
         preNew = let
           maildir = config.accounts.email.maildirBasePath;
@@ -303,7 +508,7 @@ in {
 
     password-store = {
       enable = true;
-      package = pkgs.pass.withExtensions (exts: [ exts.pass-otp ]);
+      package = pkgs.pass.withExtensions (exts: [exts.pass-otp]);
     };
 
     readline = {
@@ -320,16 +525,16 @@ in {
       enable = true;
       settings = {
         global = {
-          geometry = "0x0-0+0";
-          dmenu = "${pkgs.dmenu}/bin/dmenu";
           browser = "${pkgs.browser}/bin/browser";
-          padding = 8;
-          horizontal_padding = 8;
-          frame_width = 3;
-          frame_color = colors.base04;
-          separator_color = "frame";
+          dmenu = "${pkgs.dmenu}/bin/dmenu";
           font = "monospace 15";
+          frame_color = colors.base04;
+          frame_width = 3;
+          geometry = "0x0-0+0";
+          horizontal_padding = 8;
           markup = "full";
+          padding = 8;
+          separator_color = "frame";
           word_wrap = true;
         };
         urgency_low = {
@@ -389,8 +594,8 @@ in {
           mixer_type "software"
         }
 
-        volume_normalization "yes"
         filesystem_charset   "UTF-8"
+        volume_normalization "yes"
       '';
       network.startWhenNeeded = true;
     };
@@ -414,8 +619,8 @@ in {
     pueue = {
       Unit = {
         Description = "Pueue Daemon - CLI process scheduler and manager";
-        After = [ "graphical-session-pre.target" ];
-        PartOf = [ "graphical-session.target" ];
+        After = ["graphical-session-pre.target"];
+        PartOf = ["graphical-session.target"];
       };
       Service = {
         Restart = "no";
@@ -424,15 +629,15 @@ in {
         Environment = "ASYNC_STD_THREAD_COUNT=4";
       };
       Install = {
-        WantedBy = [ "graphical-session.target" ];
+        WantedBy = ["graphical-session.target"];
       };
     };
 
     transmission = {
       Unit = {
         Description = "Transmission BitTorrent Daemon";
-        After = [ "network.target" "graphical-session-pre.target" ];
-        PartOf = [ "graphical-session.target" ];
+        After = ["network.target" "graphical-session-pre.target"];
+        PartOf = ["graphical-session.target"];
       };
       Service = {
         Type = "notify";
@@ -441,7 +646,7 @@ in {
         NoNewPrivileges = true;
       };
       Install = {
-        WantedBy = [ "graphical-session.target" ];
+        WantedBy = ["graphical-session.target"];
       };
     };
 
@@ -480,18 +685,19 @@ in {
 
       "wgetrc".text = "hsts-file=${config.xdg.cacheHome}/wget-hsts";
 
-      "yt-dlp/config".text = lib.generators.toKeyValue {
-        mkKeyValue = lib.generators.mkKeyValueDefault {} " ";
-      } {
-        "--add-metadata" = "";
-        "--ignore-errors" = "";
-        "--continue" = "";
-        "--no-playlist" = "";
-        "--embed-subs" = "";
-        "--output" = "'%(channel,uploader)s - %(upload_date)s - %(title)s.%(ext)s'";
-        "--format" = "'(bestvideo+bestaudio/best)[height<=?768][width<=?1366]/(bestvideo+bestaudio/best)[height<=?1080][width<=?1920]/bestvideo+bestaudio/best'";
-        "--compat-options" = "no-live-chat";
-      };
+      "yt-dlp/config".text =
+        lib.generators.toKeyValue {
+          mkKeyValue = lib.generators.mkKeyValueDefault {} " ";
+        } {
+          "--add-metadata" = "";
+          "--compat-options" = "no-live-chat";
+          "--continue" = "";
+          "--embed-subs" = "";
+          "--format" = "'(bestvideo+bestaudio/best)[height<=?768][width<=?1366]/(bestvideo+bestaudio/best)[height<=?1080][width<=?1920]/bestvideo+bestaudio/best'";
+          "--ignore-errors" = "";
+          "--no-playlist" = "";
+          "--output" = "'%(channel,uploader)s - %(upload_date)s - %(title)s.%(ext)s'";
+        };
     };
 
     dataFile = {
@@ -515,21 +721,23 @@ in {
       enable = true;
       associations = {
         added = {
-          "application/pdf" = [ "emacs.desktop" ];
-          "application/epub" = [ "emacs.desktop" ];
+          "application/pdf" = ["emacs.desktop"];
+          "application/epub" = ["emacs.desktop"];
         };
         removed = {};
       };
       defaultApplications = {
-        "application/pdf" = [ "emacs.desktop" ];
-        "application/epub" = [ "emacs.desktop" ];
-        "text/html" = [ "browser.desktop" ];
-        "x-scheme-handler/https" = [ "browser.desktop" ];
-        "x-scheme-handler/http" = [ "browser.desktop" ];
+        "application/pdf" = ["emacs.desktop"];
+        "application/epub" = ["emacs.desktop"];
+        "text/html" = ["browser.desktop"];
+        "x-scheme-handler/https" = ["browser.desktop"];
+        "x-scheme-handler/http" = ["browser.desktop"];
       };
     };
 
-    userDirs = let home = config.home.homeDirectory; in {
+    userDirs = let
+      home = config.home.homeDirectory;
+    in {
       enable = true;
       createDirectories = true;
       desktop = "${home}/Desktop";

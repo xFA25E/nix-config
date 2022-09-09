@@ -3,24 +3,41 @@
 This is my package.  It is nice.  You should try it.
 
 * Screenshots
-
 This screenshot shows how to frobnicate the fripulator:
 
 screenshot1.png
 
 * Installation
-** MELPA
+** Nix
+This repo is a nix flake.  You can just add ~overlays.default~ output to your
+nixpkgs overlays.
 
-If you installed from MELPA, you're done.  Just run one of the commands below.
+#+begin_src nix
+{
+  inputs.package-name.url = "github:xFA25E/package-name";
+  outputs = { self, package-name, nixpkgs }: let
+    pkgs = import nixpkgs {
+      system = "your-system";
+      overlays = [ package-name.overlays.default ];
+    };
+  in {
+    # YOUR OUTPUTS
+  };
+}
+#+end_src
+
+** Package manager
+If you've installed it with your package manager, you're done.  ~package-name~
+is autoloaded, so you can call it right away.
 
 ** Manual
-
 Install these required packages:
 
 + foo
 + bar
 
-Then put this file in your load-path, and put this in your init file:
+Put /package-name.el/ in your load-path, and put the following in your init
+file:
 
 #+BEGIN_SRC elisp
 (require 'package-name)
@@ -32,12 +49,10 @@ Run one of these commands:
 + package-name-command: Frobnicate the flange.
 
 ** Tips
-
 + You can customize settings in the package-name group.
 
 * Changelog
 ** 1.1.0
-
 Additions
 +  Add command package-name-debarnacle to de-barnacle the hull.
 
@@ -49,22 +64,17 @@ Internal
 +  Factored out anchor-weighing.
 
 ** 1.0.1
-
 Fixes
 +  Ensure anchor is secure before returning from package-name-anchor.
 
 ** 1.0.0
-
 Initial release.
 
 * Credits
-
 This package would not have been possible without the following packages: foo which showed me how to bifurcate, and bar, which takes care of flanges.
 
 * Development
-
 Bug reports, feature requests, suggestions — oh my!
 
 * License
-
 GPLv3

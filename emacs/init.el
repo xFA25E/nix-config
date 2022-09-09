@@ -1,6 +1,12 @@
 ;; -*- lexical-binding: t; -*-
 
+(define-prefix-command 'region-commands-map)
+(define-prefix-command 'load-command-map)
+(define-prefix-command 'ediff-command-map)
+
 (add-hook 'js-mode-hook 'abbrev-mode)
+
+(define-key region-commands-map "\C-a" 'align-regexp)
 
 (define-key global-map "\M-z" 'avy-goto-word-0)
 (define-key goto-map "\M-g" 'avy-goto-line)
@@ -27,9 +33,21 @@
 
 (add-hook 'rust-mode-hook 'cargo-minor-mode)
 
+(define-key mode-specific-map "c" 'comint-run)
+
 (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
 (add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
 (add-hook 'comint-output-filter-functions 'comint-osc-process-output)
+
+(define-advice comint-run (:override (name command) shell)
+  (declare (interactive-only make-comint))
+  (interactive
+   (let* ((command (read-shell-command "Command: "))
+          (name (car (split-string-shell-command command))))
+     (list name command)))
+  (switch-to-buffer
+   (make-comint name shell-file-name nil shell-command-switch command))
+  (run-hooks (intern-soft (concat "comint-" name "-hook"))))
 
 (with-eval-after-load 'compile
   (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter))
@@ -118,7 +136,13 @@
 (with-eval-after-load 'dired
   (define-key dired-mode-map "\C-c\C-t" 'dired-tags-prefix-map))
 
+(with-eval-after-load 'disass
+  (define-key emacs-lisp-mode-map "\C-c\C-d" 'disassemble)
+  (define-key lisp-interaction-mode-map "\C-c\C-d" 'disassemble))
+
 (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
+
+(define-key mode-specific-map "oe" 'ebdb)
 
 (defvar ebdb-mode-map)
 (defvar message-mode-map)
@@ -131,18 +155,58 @@
   (require 'ebdb-message)
   (define-key message-mode-map "\C-ce" 'ebdb-complete))
 
+(define-key ediff-command-map "\C-k" 'ediff-backup)
+(define-key ediff-command-map "\C-b" 'ediff-buffers)
+(define-key ediff-command-map "\C-c" 'ediff-current-file)
+(define-key ediff-command-map "\C-d" 'ediff-directories)
+(define-key ediff-command-map [?\C-\S-v] 'ediff-directory-revisions)
+(define-key ediff-command-map "\C-f" 'ediff-files)
+(define-key ediff-command-map "\C-m\C-b" 'ediff-merge-buffers)
+(define-key ediff-command-map "\C-m\C-d" 'ediff-merge-directories)
+(define-key ediff-command-map [?\C-m ?\C-\S-v] 'ediff-merge-directory-revisions)
+(define-key ediff-command-map "\C-m\C-f" 'ediff-merge-files)
+(define-key ediff-command-map "\C-m\C-v" 'ediff-merge-revisions)
+(define-key ediff-command-map "\C-p\C-b" 'ediff-patch-buffer)
+(define-key ediff-command-map "\C-p\C-f" 'ediff-patch-file)
+(define-key ediff-command-map "\C-r\C-w" 'ediff-regions-linewise)
+(define-key ediff-command-map "\C-r\C-l" 'ediff-regions-wordwise)
+(define-key ediff-command-map "\C-v" 'ediff-revision)
+(define-key ediff-command-map "\C-w\C-w" 'ediff-windows-linewise)
+(define-key ediff-command-map "\C-w\C-l" 'ediff-windows-wordwise)
+
 (define-key ctl-x-map "E" 'edit-indirect-region)
 
-(define-key emacs-lisp-mode-map "\C-cM" 'emacs-lisp-macroexpand)
-(define-key lisp-interaction-mode-map "\C-cM" 'emacs-lisp-macroexpand)
+(add-hook 'nix-mode-hook 'eldoc-mode)
+
+(define-key emacs-lisp-mode-map [?\C-c ?\C-\S-m] 'emacs-lisp-macroexpand)
+(define-key lisp-interaction-mode-map [?\C-c ?\C-\S-m] 'emacs-lisp-macroexpand)
 
 (setq completion-ignore-case t)
+(define-key ctl-x-map "\C-\M-t" 'transpose-regions)
+(define-key ctl-x-map "\C-l" 'load-command-map)
 
 (add-hook 'nxml-mode-hook 'emmet-mode)
 (add-hook 'mhtml-mode-hook 'emmet-mode)
 (add-hook 'web-mode-hook 'emmet-mode)
 
 (setenv "PAGER" "cat")
+(with-eval-after-load 'env
+  (define-key global-map [?\C-\M-$] 'getenv))
+
+(with-eval-after-load 'envrc
+  (define-key envrc-command-map "R" 'envrc-reload-all)
+  (define-key envrc-mode-map "\C-xd" 'envrc-command-map))
+
+(with-eval-after-load 'files
+  (define-key ctl-x-map "\C-r" 'region-commands-map)
+  (define-key load-command-map "\C-l" 'load-library)
+  (define-key load-command-map "\C-f" 'load-file)
+  (define-key ctl-x-map "\C-d" 'ediff-command-map))
+
+(with-eval-after-load 'files-x
+  (define-key ctl-x-x-map "ad" 'add-dir-local-variable)
+  (define-key ctl-x-x-map "aa" 'add-file-local-variable)
+  (define-key ctl-x-x-map "ap" 'add-file-local-variable-prop-line))
 
 (define-key search-map "n" 'find-name-dired)
 (define-key search-map "N" 'find-dired)
@@ -176,10 +240,18 @@
 
 (define-key help-map "\M-c" 'finder-commentary)
 
+(add-hook 'nix-mode-hook 'flymake-mode)
 (defvar flymake-mode-map)
 (with-eval-after-load 'flymake
   (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error)
   (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error))
+
+(add-hook 'nix-mode-hook 'flymake-statix-setup)
+
+(add-hook 'nix-mode-hook 'format-all-mode)
+(defvar format-all-formatters)
+(with-eval-after-load 'format-all
+  (setq-default format-all-formatters '(("Nix" alejandra))))
 
 (define-key search-map "g" 'rgrep)
 (declare-function grep-expand-template@add-cut "grep" (cmd))
@@ -187,7 +259,13 @@
   (define-advice grep-expand-template (:filter-return (cmd) add-cut)
     (concat cmd " | cut -c-500")))
 
-(define-key global-map "\C-_" 'hippie-expand)
+(define-key ctl-x-map "h" 'help-command)
+
+(with-eval-after-load 'help-fns
+  (define-key help-map "\M-f" 'describe-face)
+  (define-key help-map "\M-k" 'describe-keymap))
+
+(define-key global-map "\M-\\" 'hippie-expand)
 
 (add-hook 'csv-mode-hook 'hl-line-mode)
 (add-hook 'grep-mode-hook 'hl-line-mode)
@@ -196,6 +274,9 @@
 (add-hook 'transmission-mode-hook 'hl-line-mode)
 (add-hook 'transmission-peers-mode-hook 'hl-line-mode)
 (add-hook 'mpc-mode-hook 'hl-line-mode)
+
+(defvar ibuffer-mode-map)
+(with-eval-after-load 'ibuffer (define-key ibuffer-mode-map "\M-o" nil))
 
 (define-key lisp-interaction-mode-map "\C-j" 'ipretty-last-sexp)
 
@@ -242,11 +323,16 @@
 (define-key global-map "\M-[" 'delete-pair)
 (define-key global-map [?\C-\)] 'slurp-pair)
 
+(define-key load-command-map "\C-u" 'unload-feature)
+
 (define-key search-map "l" 'locate)
 
 (define-key project-prefix-map "m" 'magit-project-status)
 
 (define-key help-map "\M-m" 'man)
+
+(with-eval-after-load 'menu-bar
+  (define-key ctl-x-map "`" 'toggle-debug-on-error))
 
 (setq minibuffer-allow-text-properties t)
 (define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
@@ -283,7 +369,115 @@
 (define-key mode-specific-map "np" 'ping)
 (define-key mode-specific-map "nw" 'iwconfig)
 
+(with-eval-after-load 'newcomment
+  (define-key global-map [?\C-\;] 'comment-line))
+
 (define-key mode-specific-map "on" 'newsticker-show-news)
+
+(add-hook 'proced-mode-hook 'nix-prettify-mode)
+
+(with-eval-after-load 'nix-mode
+  (define-key nix-mode-map "\C-c\C-e" 'nix-edit)
+  (define-key nix-mode-map "\C-c\C-f" 'nix-flake)
+  (define-key nix-mode-map "\C-c\C-r" 'nix-repl)
+  (define-key nix-mode-map "\C-c\C-s" 'nix-search)
+  (define-key nix-mode-map "\C-c\C-p" 'nix-store-show-path))
+
+(declare-function nix-edit@flake "nix-edit")
+(with-eval-after-load 'nix-edit
+  (define-advice nix-edit (:override () flake)
+    (interactive)
+    (let ((cmd (read-shell-command "Nix edit command: " "nix edit "))
+          (process-environment (cons "EDITOR=echo" process-environment)))
+      (find-file
+       (with-temp-buffer
+         (call-process-shell-command cmd nil (list (current-buffer) nil) nil)
+         (buffer-substring-no-properties (point-min) (1- (point-max))))))))
+
+(defvar nix-flake-ref)
+(declare-function nix-flake--installable-command "nix-flake")
+(declare-function nix-flake--build-attribute-names "nix-flake")
+(declare-function nix-flake--options "nix-flake")
+(declare-function nix-flake--registry-refs@all "nix-flake")
+(declare-function nix-flake--registry-list "nix-flake")
+(with-eval-after-load 'nix-flake
+  (define-advice nix-flake--registry-refs (:override () all)
+    (cl-delete-duplicates
+     (cl-remove
+      "path:"
+      (flatten-list (mapcar #'cdr (nix-flake--registry-list)))
+      :test #'string-prefix-p)
+     :test #'string=))
+
+  (defun nix-flake-log-attribute (options flake-ref attribute)
+    "Log a derivation in the current flake.
+
+For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
+`nix-flake-run-attribute'."
+    (interactive (list (nix-flake--options)
+                       nix-flake-ref
+                       (completing-read "Nix package: "
+                                        (nix-flake--build-attribute-names))))
+    (compile (nix-flake--installable-command "log" options flake-ref attribute)))
+
+  (transient-append-suffix 'nix-flake-dispatch '(2 -1)
+    '("l" "Log attribute" nix-flake-log-attribute)))
+
+(declare-function nix-search--display@display-buffer "nix-search")
+(with-eval-after-load 'nix-search
+  (define-advice nix-search--display (:filter-args (args) display-buffer)
+    (list (car args) (get-buffer-create "*Nix-Search*") (cddr args))))
+
+(with-eval-after-load 'nix-shell
+  (define-advice nix-read-flake (:override () always-prompt)
+    (let ((default "nixpkgs"))
+      (read-string (format-prompt "Nix flake" default) nil nil default))))
+
+(autoload 'nixos-options-show "nix-options")
+
+(with-eval-after-load 'nix-mode
+  (define-key nix-mode-map "\C-c\C-o" 'nixos-options-show))
+
+(defvar nixos-options)
+(with-eval-after-load 'nix-options
+  (defun nixos-options-show (option)
+    (interactive (list (completing-read "Nixos option: " nixos-options nil t)))
+    (pcase-let (((map ("name" name)
+                      ("description" description)
+                      ("type" type)
+                      ("default" default)
+                      ("example" example)
+                      ("declarations" declarations))
+                 (cdr (assoc option nixos-options))))
+      (with-current-buffer (get-buffer-create "*Nixos option*")
+        (fundamental-mode)
+        (buffer-disable-undo)
+        (with-silent-modifications
+          (erase-buffer)
+          (insert "# `" name "`\n\n")
+          (let ((beg (point)))
+            (insert "<para>" description "</para>")
+            (call-process-region beg (point) "pandoc" t t nil
+                                 "-f" "docbook" "-t" "markdown"))
+          (insert "\n## Type\n\n" type "\n\n## Default\n\n```nix\n")
+          (let ((beg (point)))
+            (call-process
+             "nix" nil t nil "eval" "--expr"
+             (concat "builtins.fromJSON ''\n" (json-encode default) "\n''"))
+            (call-process-region beg (point) "alejandra" t '(t nil) nil))
+          (insert "```\n\n## Example\n\n```nix\n")
+          (let ((beg (point)))
+            (call-process
+             "nix" nil t nil "eval" "--expr"
+             (concat "builtins.fromJSON ''\n" (json-encode example) "\n''"))
+            (call-process-region beg (point) "alejandra" t '(t nil) nil))
+          (insert "```\n\n## Declarations\n\n")
+          (let ((path (string-trim (shell-command-to-string "nix flake metadata --json nixpkgs 2>/dev/null | jq -r .path"))))
+            (seq-doseq (d declarations)
+              (insert "- " path "/" d "\n"))))
+        (gfm-view-mode)
+        (nix-prettify-mode t)
+        (pop-to-buffer (current-buffer))))))
 
 (define-key mode-specific-map "om" 'notmuch)
 (autoload 'notmuch-mua-mail "notmuch-mua")
@@ -323,6 +517,7 @@
 (define-key mode-specific-map "Gf" 'org-roam-node-find)
 (define-key mode-specific-map "Gi" 'org-roam-node-insert)
 (define-key mode-specific-map "Gl" 'org-roam-buffer-toggle)
+(define-key mode-specific-map "Gs" 'org-roam-db-sync)
 (declare-function org-roam-db-autosync-mode "org-roam-db" (&optional arg))
 (with-eval-after-load 'org-roam (org-roam-db-autosync-mode))
 
@@ -331,8 +526,8 @@
 (declare-function pdf-loader-install "pdf-loader" (&optional no-query-p skip-dependencies-p no-error-p force-dependencies-p))
 (pdf-loader-install t t)
 
-(define-key emacs-lisp-mode-map "\C-cm" 'pp-macroexpand-last-sexp)
-(define-key lisp-interaction-mode-map "\C-cm" 'pp-macroexpand-last-sexp)
+(define-key emacs-lisp-mode-map "\C-c\C-m" 'pp-macroexpand-last-sexp)
+(define-key lisp-interaction-mode-map "\C-c\C-m" 'pp-macroexpand-last-sexp)
 
 (define-key mode-specific-map "op" 'proced)
 
@@ -343,6 +538,12 @@
 (define-key ctl-x-r-map "L" 'list-registers)
 (define-key ctl-x-r-map "p" 'prepend-to-register)
 (define-key ctl-x-r-map "a" 'append-to-register)
+
+(define-key emacs-lisp-mode-map "\C-c\C-r" 're-builder)
+(define-key lisp-interaction-mode-map "\C-c\C-r" 're-builder)
+
+(define-key region-commands-map "\C-k" 'keep-lines)
+(define-key region-commands-map "\C-f" 'flush-lines)
 
 (require 'reverse-im)
 (reverse-im-activate "cyrillic-dvorak")
@@ -382,27 +583,17 @@
   (interactive "P")
   (let ((buffer-name "*Shells-List*"))
     (ibuffer other-window-p buffer-name `((mode . shell-mode)) nil nil
-             '(("Shells" (name . "\\`\\*shell\\*"))
+             '(("Project shells" (name . "-shell\\*\\'"))
+               ("Shells" (name . "\\`\\*shell\\*"))
                ("Async shell commands" (name . "\\`\\*Async Shell Command\\*")))
              '((mark " " (name 40 50 :left :elide) " " filename-and-process)))
     (with-current-buffer buffer-name
       (setq-local ibuffer-use-header-line nil)
       (hl-line-mode t))))
 
-(defvar shell-mode-map)
-(with-eval-after-load 'shell
-  (define-key shell-mode-map "\C-c\M-d" 'shell-cd)
-
-  (defun shell-cd ()
-    "Change directory in a shell, interactively."
-    (interactive)
-    (comint-show-maximum-output)
-    (comint-delete-input)
-    (let* ((read-dir (read-directory-name "Change directory: "))
-           (dir (or (file-remote-p read-dir 'localname) read-dir)))
-      (insert (concat "cd " (shell-quote-argument (expand-file-name dir))))
-      (comint-send-input)
-      (cd dir))))
+(defun cycle-spacing-fast (&optional n)
+  (interactive "*p")
+  (cycle-spacing n nil 'fast))
 
 (defun kill-region-dwim (&optional count)
   (interactive "p")
@@ -416,6 +607,12 @@
 (define-key global-map "\M-l" 'downcase-dwim)
 (define-key global-map "\M-u" 'upcase-dwim)
 (define-key global-map "\C-w" 'kill-region-dwim)
+(define-key global-map "\M- " 'cycle-spacing-fast)
+(define-key global-map "\M-\\" 'delete-indentation)
+(define-key ctl-x-map "w" 'mark-whole-buffer)
+(define-key ctl-x-x-map "f" 'auto-fill-mode)
+(define-key ctl-x-x-map "v" 'visual-line-mode)
+(define-key ctl-x-x-map "w" 'whitespace-mode)
 (define-key mode-specific-map "oP" 'list-processes)
 
 (add-hook 'nix-mode-hook 'skempo-mode)
@@ -428,12 +625,24 @@
   (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
   (load (expand-file-name "emacs/skempo-templates.el" (xdg-config-home))))
 
+(define-key region-commands-map "\C-c" 'sort-columns)
+(define-key region-commands-map "\C-d" 'delete-duplicate-lines)
+(define-key region-commands-map "\C-f" 'sort-fields)
+(define-key region-commands-map "\C-n" 'sort-numeric-fields)
+(define-key region-commands-map "\C-r" 'reverse-region)
+(define-key region-commands-map "\C-s" 'sort-lines)
+(define-key region-commands-map "\C-x" 'sort-regexp-fields)
+
 (add-hook 'rust-mode-hook 'subword-mode)
 (add-hook 'nix-mode-hook 'subword-mode)
 (add-hook 'js-mode-hook 'subword-mode)
 
 (defvar ispell-parser)
 (add-hook 'tex-mode-hook (lambda nil (setq-local ispell-parser 'tex)))
+
+(define-key mode-specific-map "t" 'term)
+
+(define-key ctl-x-x-map "T" 'tramp-cleanup-all-buffers)
 
 (define-key mode-specific-map "or" 'transmission)
 (defvar transmission-mode-map)
@@ -474,6 +683,8 @@
 (define-key global-map [?\C-\M-\S-f] 'next-buffer)
 (define-key global-map "\M-Q" 'quit-window)
 (define-key global-map "\M-o" 'other-window)
+
+(define-key global-map [?\C-\M-&] 'with-editor-async-shell-command)
 
 (autoload 'xref-push-marker-stack "xref")
 (defun xref-push-marker-stack-ignore-args (&rest _)
