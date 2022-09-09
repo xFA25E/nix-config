@@ -5,7 +5,7 @@ colors: {
   "dmenu.selfgcolor" = colors.base05;
   "dmenu.selbgcolor" = colors.base01;
   "xterm*cursorBlink" = "false";
-  "xterm*font" = "xft:monospace:size=13";
+  "xterm*font" = "xft:monospace:size=11";
   "xterm*internalBorder" = 0;
   "xterm*saveLines" = 10240;
   "xterm*scrollTtyOutput" = "false";
