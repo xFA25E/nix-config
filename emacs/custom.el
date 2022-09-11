@@ -7,6 +7,8 @@
  '(abbrev-file-name "~/Documents/projects/nix-config/emacs/abbrev_defs")
  '(abbrev-suggest t)
  '(after-save-hook '(executable-make-buffer-file-executable-if-script-p))
+ '(amded-editable-tags
+   '("album" "artist" "genre" "track-number" "track-title" "year"))
  '(ange-ftp-netrc-filename "~/.authinfo.gpg")
  '(apropos-sort-by-scores t)
  '(async-shell-command-buffer 'new-buffer)
@@ -853,8 +855,6 @@ The document was typeset with
  '(tab-bar-show 1)
  '(tab-bar-tab-hints t)
  '(tab-width 4)
- '(taggit-editable-tags
-   '("album" "artist" "genre" "track-number" "track-title" "year"))
  '(text-mode-hook '(abbrev-mode text-mode-hook-identify))
  '(tool-bar-mode nil)
  '(tramp-completion-reread-directory-timeout nil)

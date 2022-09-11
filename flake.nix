@@ -6,6 +6,7 @@
       url = "github:ft/amded";
       flake = false;
     };
+    amded-el.url = "github:xFA25E/amded";
     base16-summerfruit-scheme = {
       url = "github:cscorley/base16-summerfruit-scheme";
       flake = false;
@@ -55,10 +56,6 @@
       url = "github:stumpwm/stumpwm/22.05";
       flake = false;
     };
-    taggit = {
-      url = "github:xFA25E/taggit";
-      flake = false;
-    };
     unflac = {
       url = "git+https://git.sr.ht/~ft/unflac";
       flake = false;
@@ -72,6 +69,7 @@
   outputs = {
     self,
     amded,
+    amded-el,
     base16-summerfruit-scheme,
     base16-gruvbox-scheme,
     cyrillic-dvorak-im,
@@ -88,7 +86,6 @@
     sdcwoc,
     skempo,
     stumpwm,
-    taggit,
     unflac,
     xattr,
   }: let
@@ -98,6 +95,7 @@
       inherit system;
       config.allowUnfree = true;
       overlays = [
+        amded-el.overlays.default
         emacs-overlay.overlay
         flymake-statix.overlays.default
         pueue.overlays.default
@@ -331,12 +329,6 @@
             src = skempo;
             pname = "skempo";
             version = "0.2.2";
-          };
-
-          taggit = makePkg {
-            src = taggit;
-            pname = "taggit";
-            version = "0.0.1";
           };
 
           xattr = makePkg {

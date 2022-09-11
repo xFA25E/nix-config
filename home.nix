@@ -324,6 +324,7 @@ in {
       enable = true;
       extraPackages = epkgs:
         with epkgs; [
+          amded
           async
           avy
           cargo
@@ -375,7 +376,6 @@ in {
           sly-quicklisp
           sql-indent
           sqlup-mode
-          taggit
           transmission
           tree-sitter
           tree-sitter-langs
