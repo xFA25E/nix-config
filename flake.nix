@@ -45,6 +45,10 @@
       url = "github:xFA25E/rx-widget";
       flake = false;
     };
+    rycee = {
+      url = "gitlab:rycee/nur-expressions";
+      flake = false;
+    };
     sdcwoc = {
       url = "github:xFA25E/sdcwoc";
       flake = false;
@@ -85,6 +89,7 @@
     notmuch,
     pueue,
     rx-widget,
+    rycee,
     sdcwoc,
     skempo,
     stumpwm,
@@ -167,14 +172,11 @@
         themes
         // {
           theme = name: let
-            json = builtins.readFile "${themes}/${name}.json";
-            theme = builtins.fromJSON json;
-            addHash = name: value:
-              if builtins.match "base.." name == null
-              then value
-              else "#" + value;
+            inherit (builtins) fromJSON match readFile;
+            inherit (final.lib.attrsets) filterAttrs;
+            theme = fromJSON (readFile "${themes}/${name}.json");
           in
-            builtins.mapAttrs addHash theme;
+            filterAttrs (name: _: match "base.." name != null) theme;
         };
 
       brave = prev.brave.overrideAttrs (old: {
@@ -347,6 +349,8 @@
             preBuild = "make";
           };
         });
+
+      materia-theme = final.callPackage "${rycee}/pkgs/materia-theme" {};
 
       mpv-youtube-quality = final.runCommand "mpv-youtube-quality" {} ''
         mkdir -p $out

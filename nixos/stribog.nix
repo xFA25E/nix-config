@@ -27,6 +27,10 @@
 
   networking = {
     firewall.allowedTCPPorts = [1337 8080 8000];
+    hosts."10.233.1.2" = [
+      "app.notifile.local"
+      "api.notifile.local"
+    ];
     hostName = "stribog";
     interfaces = {
       eno1.useDHCP = lib.mkDefault true;
@@ -35,6 +39,8 @@
   };
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
+
+  programs.dconf.enable = true;
 
   services = {
     locate = {

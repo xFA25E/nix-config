@@ -423,6 +423,7 @@
         "notmuch": "notmuch",
         "pueue": "pueue",
         "rx-widget": "rx-widget",
+        "rycee": "rycee",
         "sdcwoc": "sdcwoc",
         "skempo": "skempo",
         "stumpwm": "stumpwm",
@@ -444,6 +445,22 @@
         "owner": "xFA25E",
         "repo": "rx-widget",
         "type": "github"
+      }
+    },
+    "rycee": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1662955384,
+        "narHash": "sha256-RjFBtN9raSbF0+DcIu2r44POXIf8fZXIjvOym43rK1Y=",
+        "owner": "rycee",
+        "repo": "nur-expressions",
+        "rev": "7c5177bcc5de8601ac96329935bc174bb94c8117",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "rycee",
+        "repo": "nur-expressions",
+        "type": "gitlab"
       }
     },
     "sdcwoc": {

@@ -436,7 +436,7 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
     (let ((default "nixpkgs"))
       (read-string (format-prompt "Nix flake" default) nil nil default))))
 
-(add-hook 'nixos-options-mode 'nix-prettify-mode)
+(add-hook 'nixos-options-mode-hook 'nix-prettify-mode)
 (with-eval-after-load 'nix-mode
   (define-key nix-mode-map "\C-c\C-o" 'nixos-options))
 

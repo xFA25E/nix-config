@@ -64,6 +64,47 @@ in {
   };
 
   fonts.fontconfig.enable = true;
+
+  gtk = {
+    enable = true;
+    font = {
+      name = "Liberation Sans";
+      size = 11;
+    };
+    gtk2.configLocation = "${config.xdg.cacheHome}/gtk-2.0/gtkrc";
+    iconTheme = {
+      name = "Papirus-Dark";
+      package = pkgs.papirus-icon-theme;
+    };
+    theme = {
+      name = "Gruvbox-Light-Medium";
+      package = pkgs.materia-theme.override {
+        configBase16 = {
+          name = "Gruvbox-Light-Medium";
+          kind = "light";
+          colors = {
+            base00.hex.rgb = colors.base00;
+            base01.hex.rgb = colors.base01;
+            base02.hex.rgb = colors.base02;
+            base03.hex.rgb = colors.base03;
+            base04.hex.rgb = colors.base04;
+            base05.hex.rgb = colors.base05;
+            base06.hex.rgb = colors.base06;
+            base07.hex.rgb = colors.base07;
+            base08.hex.rgb = colors.base08;
+            base09.hex.rgb = colors.base09;
+            base0A.hex.rgb = colors.base0A;
+            base0B.hex.rgb = colors.base0B;
+            base0C.hex.rgb = colors.base0C;
+            base0D.hex.rgb = colors.base0D;
+            base0E.hex.rgb = colors.base0E;
+            base0F.hex.rgb = colors.base0F;
+          };
+        };
+      };
+    };
+  };
+
   home = {
     extraOutputsToInstall = ["man" "doc" "info" "devdoc"];
 
@@ -201,7 +242,6 @@ in {
       EDITOR = "emacs";
       GEM_HOME = "${config.xdg.cacheHome}/gem";
       GEM_SPEC_CACHE = "${config.xdg.cacheHome}/gem";
-      GTK2_RC_FILES = "${config.xdg.cacheHome}/gtk-2.0/gtkrc";
       GTK_IM_MODULE = "ibus";
       LESSHISFILE = "/dev/null";
       MAILDIR = config.accounts.email.maildirBasePath;
@@ -528,7 +568,7 @@ in {
           browser = "${pkgs.browser}/bin/browser";
           dmenu = "${pkgs.dmenu}/bin/dmenu";
           font = "monospace 15";
-          frame_color = colors.base04;
+          frame_color = "#${colors.base04}";
           frame_width = 3;
           geometry = "0x0-0+0";
           horizontal_padding = 8;
@@ -538,16 +578,16 @@ in {
           word_wrap = true;
         };
         urgency_low = {
-          background = colors.base00;
-          foreground = colors.base0D;
+          background = "#${colors.base00}";
+          foreground = "#${colors.base0D}";
         };
         urgency_normal = {
-          background = colors.base00;
-          foreground = colors.base04;
+          background = "#${colors.base00}";
+          foreground = "#${colors.base04}";
         };
         urgency_critical = {
-          background = colors.base00;
-          foreground = colors.base08;
+          background = "#${colors.base00}";
+          foreground = "#${colors.base08}";
         };
       };
     };
@@ -679,7 +719,7 @@ in {
         (stumpwm:set-border-color "${base03}")
         (stumpwm:set-focus-color "${base04}")
         (stumpwm:set-unfocus-color "${base00}")
-        (setf stumpwm:*colors* '("${base00}" "${base08}" "${base0B}" "${base0A}" "${base0D}" "${base0E}" "${base0C}" "${base05}"))
+        (setf stumpwm:*colors* '("#${base00}" "#${base08}" "#${base0B}" "#${base0A}" "#${base0D}" "#${base0E}" "#${base0C}" "#${base05}"))
         (mapc #'stumpwm:update-color-map stumpwm:*screen-list*)
       '';
 
