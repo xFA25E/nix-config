@@ -136,6 +136,23 @@
     "eldev_3": {
       "flake": false,
       "locked": {
+        "lastModified": 1662672849,
+        "narHash": "sha256-yna3SPVUb6Dzt0Wrl7EY05oNrGHSFVJL1QFhUKNb3DQ=",
+        "owner": "doublep",
+        "repo": "eldev",
+        "rev": "659f4d9c97a44cf29ded5594b3f5de8da99ec973",
+        "type": "github"
+      },
+      "original": {
+        "owner": "doublep",
+        "ref": "1.2.2",
+        "repo": "eldev",
+        "type": "github"
+      }
+    },
+    "eldev_4": {
+      "flake": false,
+      "locked": {
         "lastModified": 1660672003,
         "narHash": "sha256-RD+7MCSdQ+fb2Lwe5ts+JcaCBfzbf8OT/9oK43MBsbY=",
         "owner": "doublep",
@@ -255,6 +272,25 @@
         "type": "github"
       }
     },
+    "nixos-options": {
+      "inputs": {
+        "eldev": "eldev_3",
+        "nixpkgs": "nixpkgs_4"
+      },
+      "locked": {
+        "lastModified": 1662932348,
+        "narHash": "sha256-992hTVdbF0AYcuyhydLdDLySiDOgvFRHfgYX4AtjlAE=",
+        "owner": "xFA25E",
+        "repo": "nixos-options",
+        "rev": "55bd21871c59a9d7f10bf053ae85a19a998e33b7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "xFA25E",
+        "repo": "nixos-options",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 0,
@@ -294,6 +330,18 @@
     },
     "nixpkgs_4": {
       "locked": {
+        "lastModified": 0,
+        "narHash": "sha256-2f5NzHbi1NLSYnDg6cRu25B+XRxqngicvggg+0GgKHI=",
+        "path": "/nix/store/ps7746rfm0is1rl5mgsq6q3yd9c0qbfn-source",
+        "type": "path"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "type": "indirect"
+      }
+    },
+    "nixpkgs_5": {
+      "locked": {
         "lastModified": 1658321858,
         "narHash": "sha256-2f5NzHbi1NLSYnDg6cRu25B+XRxqngicvggg+0GgKHI=",
         "owner": "NixOS",
@@ -308,7 +356,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_5": {
+    "nixpkgs_6": {
       "locked": {
         "lastModified": 1658321858,
         "narHash": "sha256-2f5NzHbi1NLSYnDg6cRu25B+XRxqngicvggg+0GgKHI=",
@@ -340,8 +388,8 @@
     },
     "pueue": {
       "inputs": {
-        "eldev": "eldev_3",
-        "nixpkgs": "nixpkgs_5"
+        "eldev": "eldev_4",
+        "nixpkgs": "nixpkgs_6"
       },
       "locked": {
         "lastModified": 1661372175,
@@ -370,7 +418,8 @@
         "flymake-statix": "flymake-statix",
         "home-manager": "home-manager",
         "mpv-youtube-quality": "mpv-youtube-quality",
-        "nixpkgs": "nixpkgs_4",
+        "nixos-options": "nixos-options",
+        "nixpkgs": "nixpkgs_5",
         "notmuch": "notmuch",
         "pueue": "pueue",
         "rx-widget": "rx-widget",

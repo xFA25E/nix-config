@@ -517,6 +517,7 @@ The document was typeset with
  '(flymake-mode-line-format
    '(" " flymake-mode-line-exception flymake-mode-line-counters))
  '(flymake-no-changes-timeout nil)
+ '(flymake-statix-enable-fix t)
  '(flyspell-default-dictionary "russian")
  '(flyspell-dictionaries-that-consider-dash-as-word-delimiter '("francais" "deutsch8" "norsk" "russian"))
  '(format-all-mode-lighter "")

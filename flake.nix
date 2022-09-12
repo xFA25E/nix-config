@@ -34,6 +34,7 @@
       url = "github:jgreco/mpv-youtube-quality";
       flake = false;
     };
+    nixos-options.url = "github:xFA25E/nixos-options";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
     notmuch = {
       url = "git+https://git.notmuchmail.org/git/notmuch?ref=release";
@@ -79,6 +80,7 @@
     flymake-statix,
     home-manager,
     mpv-youtube-quality,
+    nixos-options,
     nixpkgs,
     notmuch,
     pueue,
@@ -98,6 +100,7 @@
         amded-el.overlays.default
         emacs-overlay.overlay
         flymake-statix.overlays.default
+        nixos-options.overlays.default
         pueue.overlays.default
         self.overlays.default
       ];
@@ -160,7 +163,8 @@
                 done
             done
           '';
-      in (themes
+      in
+        themes
         // {
           theme = name: let
             json = builtins.readFile "${themes}/${name}.json";
@@ -171,7 +175,7 @@
               else "#" + value;
           in
             builtins.mapAttrs addHash theme;
-        });
+        };
 
       brave = prev.brave.overrideAttrs (old: {
         postInstall = ''
@@ -415,7 +419,7 @@
       inherit (pkgs.lib.attrsets) filterAttrs isDerivation;
       overlayPkgs = self.overlays.default pkgs pkgs;
     in
-      filterAttrs (k: v: isDerivation v) overlayPkgs;
+      filterAttrs (k: isDerivation) overlayPkgs;
     apps.${system}.default = {
       type = "app";
       program = "${pkgs.scripts.scripts.preparehd}/bin/preparehd";

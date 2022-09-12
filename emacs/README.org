@@ -647,6 +647,9 @@ On-the-fly linter.
 *** [[https://github.com/xFA25E/flymake-statix][Flymake Statix]]
 #+begin_src elisp
 (add-hook 'nix-mode-hook 'flymake-statix-setup)
+(with-eval-after-load 'nix-mode
+  (with-eval-after-load 'flymake-statix
+    (define-key nix-mode-map "\C-c\C-x" 'flymake-statix-fix)))
 #+end_src
 
 *** [[https://github.com/lassik/emacs-format-all-the-code][Format All]]
@@ -951,53 +954,11 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
       (read-string (format-prompt "Nix flake" default) nil nil default))))
 #+end_src
 
-*** Nix Options
+*** [[https://github.com/xFA25E/nixos-options][Nixos Options]]
 #+begin_src elisp
-(autoload 'nixos-options-show "nix-options")
-
+(add-hook 'nixos-options-mode 'nix-prettify-mode)
 (with-eval-after-load 'nix-mode
-  (define-key nix-mode-map "\C-c\C-o" 'nixos-options-show))
-
-(defvar nixos-options)
-(with-eval-after-load 'nix-options
-  (defun nixos-options-show (option)
-    (interactive (list (completing-read "Nixos option: " nixos-options nil t)))
-    (pcase-let (((map ("name" name)
-                      ("description" description)
-                      ("type" type)
-                      ("default" default)
-                      ("example" example)
-                      ("declarations" declarations))
-                 (cdr (assoc option nixos-options))))
-      (with-current-buffer (get-buffer-create "*Nixos option*")
-        (fundamental-mode)
-        (buffer-disable-undo)
-        (with-silent-modifications
-          (erase-buffer)
-          (insert "# `" name "`\n\n")
-          (let ((beg (point)))
-            (insert "<para>" description "</para>")
-            (call-process-region beg (point) "pandoc" t t nil
-                                 "-f" "docbook" "-t" "markdown"))
-          (insert "\n## Type\n\n" type "\n\n## Default\n\n```nix\n")
-          (let ((beg (point)))
-            (call-process
-             "nix" nil t nil "eval" "--expr"
-             (concat "builtins.fromJSON ''\n" (json-encode default) "\n''"))
-            (call-process-region beg (point) "alejandra" t '(t nil) nil))
-          (insert "```\n\n## Example\n\n```nix\n")
-          (let ((beg (point)))
-            (call-process
-             "nix" nil t nil "eval" "--expr"
-             (concat "builtins.fromJSON ''\n" (json-encode example) "\n''"))
-            (call-process-region beg (point) "alejandra" t '(t nil) nil))
-          (insert "```\n\n## Declarations\n\n")
-          (let ((path (string-trim (shell-command-to-string "nix flake metadata --json nixpkgs 2>/dev/null | jq -r .path"))))
-            (seq-doseq (d declarations)
-              (insert "- " path "/" d "\n"))))
-        (gfm-view-mode)
-        (nix-prettify-mode t)
-        (pop-to-buffer (current-buffer))))))
+  (define-key nix-mode-map "\C-c\C-o" 'nixos-options))
 #+end_src
 
 *** [[https://notmuchmail.org/notmuch-emacs/][Notmuch]]
