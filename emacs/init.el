@@ -43,13 +43,16 @@
   (declare (interactive-only make-comint))
   (interactive
    (let* ((command (read-shell-command "Command: "))
-          (name (car (split-string-shell-command command))))
+          (name (car (split-string-shell-command command)))
+          (name (if (not current-prefix-arg) name
+                  (read-string (format-prompt "Name" name) nil nil name))))
      (list name command)))
   (switch-to-buffer
    (make-comint name shell-file-name nil shell-command-switch command))
   (run-hooks (intern-soft (concat "comint-" name "-hook"))))
 
 (with-eval-after-load 'compile
+  (define-key compilation-shell-minor-mode-map "\C-c\C-g" 'recompile)
   (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter))
 
 (defvar kmacro-keymap)
@@ -180,6 +183,8 @@
 
 (define-key emacs-lisp-mode-map [?\C-c ?\C-\S-m] 'emacs-lisp-macroexpand)
 (define-key lisp-interaction-mode-map [?\C-c ?\C-\S-m] 'emacs-lisp-macroexpand)
+(with-eval-after-load 'elisp-mode
+  (setq elisp-flymake-byte-compile-load-path (cons "./" load-path)))
 
 (setq completion-ignore-case t)
 (define-key ctl-x-map "\C-\M-t" 'transpose-regions)
@@ -252,9 +257,11 @@
     (define-key nix-mode-map "\C-c\C-x" 'flymake-statix-fix)))
 
 (add-hook 'nix-mode-hook 'format-all-mode)
+(add-hook 'js-mode-hook 'format-all-mode)
+
 (defvar format-all-formatters)
 (with-eval-after-load 'format-all
-  (setq-default format-all-formatters '(("Nix" alejandra))))
+  (setq-default format-all-formatters '(("Nix" alejandra) ("JavaScript" prettier))))
 
 (define-key search-map "g" 'rgrep)
 (declare-function grep-expand-template@add-cut "grep" (cmd))
@@ -364,7 +371,28 @@
   (define-key mpc-mode-map "M" 'mpc-select-extend)
   (define-key mpc-mode-map "\M-m" 'mpc-select)
   (define-key mpc-mode-map "\C-m" 'mpc-songs-jump-to)
-  (define-key mpc-songs-mode-map [remap mpc-select] nil))
+  (define-key mpc-songs-mode-map [remap mpc-select] nil)
+  (define-key mpc-songs-mode-map "v" 'mpc-move-forward)
+  (define-key mpc-songs-mode-map "V" 'mpc-move-backward))
+
+(declare-function mpc-move-forward "mpc")
+(declare-function mpc-songs-refresh "mpc")
+(declare-function mpc-cmd-move "mpc")
+(with-eval-after-load 'mpc
+  (defun mpc-move-forward (n)
+    (interactive "p")
+    (let ((point-max (point-max)))
+      (unless (= 1 point-max)
+        (when-let ((last-pos (get-text-property (1- point-max) 'mpc-file-pos))
+                   (cur-pos (get-text-property (point) 'mpc-file-pos)))
+          (let ((new-pos (+ cur-pos n)))
+            (when (<= 0 new-pos last-pos)
+              (mpc-cmd-move (list cur-pos) new-pos)
+              (mpc-songs-refresh)))))))
+
+  (defun mpc-move-backward (n)
+    (interactive "p")
+    (mpc-move-forward (- n))))
 
 (define-key mode-specific-map "nh" 'nslookup-host)
 (define-key mode-specific-map "ni" 'ifconfig)
@@ -403,6 +431,8 @@
 (declare-function nix-flake--options "nix-flake")
 (declare-function nix-flake--registry-refs@all "nix-flake")
 (declare-function nix-flake--registry-list "nix-flake")
+(declare-function nix-flake-run-attribute@shell "nix-flake")
+(declare-function nix-flake--run-attribute-names "nix-flake")
 (with-eval-after-load 'nix-flake
   (define-advice nix-flake--registry-refs (:override () all)
     (cl-delete-duplicates
@@ -411,6 +441,23 @@
       (flatten-list (mapcar #'cdr (nix-flake--registry-list)))
       :test #'string-prefix-p)
      :test #'string=))
+
+  (define-advice nix-flake-run-attribute
+      (:override (options flake-ref attribute command-args &optional comint)
+                 shell)
+    (interactive (list (nix-flake--options)
+                       nix-flake-ref
+                       (completing-read "Nix app/package: "
+                                        (nix-flake--run-attribute-names))
+                       nil
+                       (consp current-prefix-arg)))
+    (let ((default-directory (project-root (project-current t)))
+          (compilation-buffer-name-function
+           (or project-compilation-buffer-name-function
+               compilation-buffer-name-function)))
+      (compile (nix-flake--installable-command "run" options flake-ref attribute
+                                               command-args)
+               comint)))
 
   (defun nix-flake-log-attribute (options flake-ref attribute)
     "Log a derivation in the current flake.
@@ -435,6 +482,22 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
   (define-advice nix-read-flake (:override () always-prompt)
     (let ((default "nixpkgs"))
       (read-string (format-prompt "Nix flake" default) nil nil default))))
+
+(defun nix-compile-in-project-advice (fn &rest args)
+  (let ((default-directory (project-root (project-current t)))
+        (compilation-buffer-name-function
+         (or project-compilation-buffer-name-function
+             compilation-buffer-name-function)))
+    (apply fn args)))
+
+(dolist (fn '(nix-flake-log-attribute
+              nix-flake-run-default
+              nix-flake-build-attribute
+              nix-flake-build-default
+              nix-flake-check
+              nix-flake-lock
+              nix-flake-update))
+  (advice-add fn :around 'nix-compile-in-project-advice))
 
 (add-hook 'nixos-options-mode-hook 'nix-prettify-mode)
 (with-eval-after-load 'nix-mode
@@ -529,11 +592,13 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
 
 (define-key mode-specific-map "ot" 'sdcwoc)
 
+(defvar html-mode-map)
 (defvar sgml-mode-map)
 (with-eval-after-load 'sgml-mode
   (define-key sgml-mode-map "\C-\M-n" 'sgml-skip-tag-forward)
   (define-key sgml-mode-map "\C-\M-p" 'sgml-skip-tag-backward)
-  (define-key sgml-mode-map "\C-c\C-r" 'sgml-namify-char))
+  (define-key sgml-mode-map "\C-c\C-r" 'sgml-namify-char)
+  (define-key html-mode-map "\M-o" nil))
 
 (define-key mode-specific-map "s" 'shell)
 (define-key mode-specific-map "l" 'shell-list)
@@ -586,9 +651,9 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
   (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
   (load (expand-file-name "emacs/skempo-templates.el" (xdg-config-home))))
 
-(define-key region-commands-map "\C-c" 'sort-columns)
 (define-key region-commands-map "\C-d" 'delete-duplicate-lines)
-(define-key region-commands-map "\C-f" 'sort-fields)
+(define-key region-commands-map "\C-l" 'sort-fields)
+(define-key region-commands-map "\C-m" 'sort-columns)
 (define-key region-commands-map "\C-n" 'sort-numeric-fields)
 (define-key region-commands-map "\C-r" 'reverse-region)
 (define-key region-commands-map "\C-s" 'sort-lines)
@@ -600,6 +665,9 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
 
 (defvar ispell-parser)
 (add-hook 'tex-mode-hook (lambda nil (setq-local ispell-parser 'tex)))
+
+(autoload 'center-region "text-mode")
+(define-key region-commands-map "\C-c" 'center-region)
 
 (define-key mode-specific-map "t" 'term)
 

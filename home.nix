@@ -192,6 +192,7 @@ in {
       mkpasswd
       mpc_cli
       nload
+      nodePackages.prettier
       p7zip
       pandoc
       parted
@@ -348,10 +349,6 @@ in {
         "yt-dlp"
         "ytdl"
       ];
-      profileExtra = ''
-        pidof ssh-agent >/dev/null 2>&1 || eval "$(${pkgs.openssh}/bin/ssh-agent)"
-      '';
-      logoutExtra = ''eval "$(${pkgs.openssh}/bin/ssh-agent -k)"'';
     };
 
     direnv = {
@@ -560,6 +557,15 @@ in {
     };
   };
 
+  qt = {
+    enable = true;
+    platformTheme = "gtk";
+    style = {
+      name = "gtk2";
+      package = pkgs.libsForQt5.qtstyleplugins;
+    };
+  };
+
   services = {
     dunst = {
       enable = true;
@@ -714,11 +720,11 @@ in {
 
       "stumpwm/config".text = with colors; ''
         (swm-config:init)
-        (stumpwm:set-fg-color "${base04}")
-        (stumpwm:set-bg-color "${base00}")
-        (stumpwm:set-border-color "${base03}")
-        (stumpwm:set-focus-color "${base04}")
-        (stumpwm:set-unfocus-color "${base00}")
+        (stumpwm:set-fg-color "#${base04}")
+        (stumpwm:set-bg-color "#${base00}")
+        (stumpwm:set-border-color "#${base03}")
+        (stumpwm:set-focus-color "#${base04}")
+        (stumpwm:set-unfocus-color "#${base00}")
         (setf stumpwm:*colors* '("#${base00}" "#${base08}" "#${base0B}" "#${base0A}" "#${base0D}" "#${base0E}" "#${base0C}" "#${base05}"))
         (mapc #'stumpwm:update-color-map stumpwm:*screen-list*)
       '';
@@ -797,6 +803,10 @@ in {
       xset +fp ${pkgs.terminus_font}/share/fonts/terminus
     '';
     scriptPath = ".xinitrc";
-    windowManager.command = "${pkgs.dbus}/bin/dbus-run-session ${pkgs.stumpwm}/bin/stumpwm";
+    windowManager.command = ''
+      eval "$(${pkgs.openssh}/bin/ssh-agent)"
+      ${pkgs.dbus}/bin/dbus-run-session ${pkgs.stumpwm}/bin/stumpwm
+      ${pkgs.openssh}/bin/ssh-agent -k
+    '';
   };
 }

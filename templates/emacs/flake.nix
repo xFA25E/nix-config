@@ -6,24 +6,34 @@
   outputs = {
     self,
     nixpkgs,
+    emacs-overlay,
     eldev,
   }: let
-    name = "package-name";
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
       overlays = [self.overlays.eldev];
     };
 
-    inherit (builtins) elemAt match readFile;
+    inherit (builtins) attrNames elemAt foldl' head map match readDir readFile;
+    inherit (builtins) stringLength tail;
+    inherit (pkgs.lib.lists) filter;
+    inherit (pkgs.lib.strings) hasSuffix removeSuffix;
+    parse = pkgs.callPackage "${emacs-overlay}/parse.nix" {};
+
+    names = filter (hasSuffix ".el") (attrNames (readDir self));
+    name = removeSuffix ".el" (foldl' (acc: elm:
+      if (stringLength elm) < (stringLength acc)
+      then elm
+      else acc) (head names) (tail names));
     mainFile = readFile "${self}/${name}.el";
+
     version = elemAt (match ".*\n;; Version: ([^\n]+).*" mainFile) 0;
     url = elemAt (match ".*\n;; URL: ([^\n]+).*" mainFile) 0;
+    deps = parse.parsePackagesFromPackageRequires mainFile;
   in {
     overlays = {
-      default = self.overlays.${name};
-
-      ${name} = final: prev: {
+      default = final: prev: {
         emacsPackagesFor = emacs:
           (prev.emacsPackagesFor emacs).overrideScope' (
             efinal: eprev: {
@@ -35,7 +45,7 @@
                 recipe = final.writeText "recipe" ''
                   (${name} :fetcher git :url "${url}")
                 '';
-                packageRequires = with efinal; [];
+                packageRequires = map (dep: efinal.${dep}) deps;
               };
             }
           );

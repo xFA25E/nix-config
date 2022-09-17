@@ -1,3 +1,9 @@
+# TODOs
+# prefix emacs packages with emacs-package- and use 'em in overlays
+# extract base16 schemes from inputs based on base16-*-scheme
+# extract to packages
+# write update scrits for wallpapers, stumpwm, stardicts
+# write modules and write nixos (like in Notifile)
 {
   description = "xFA25E various nix configurations";
 
@@ -6,7 +12,7 @@
       url = "github:ft/amded";
       flake = false;
     };
-    amded-el.url = "github:xFA25E/amded";
+    emacs-amded.url = "github:xFA25E/amded";
     base16-summerfruit-scheme = {
       url = "github:cscorley/base16-summerfruit-scheme";
       flake = false;
@@ -74,7 +80,7 @@
   outputs = {
     self,
     amded,
-    amded-el,
+    emacs-amded,
     base16-summerfruit-scheme,
     base16-gruvbox-scheme,
     cyrillic-dvorak-im,
@@ -102,7 +108,7 @@
       inherit system;
       config.allowUnfree = true;
       overlays = [
-        amded-el.overlays.default
+        emacs-amded.overlays.default
         emacs-overlay.overlay
         flymake-statix.overlays.default
         nixos-options.overlays.default
@@ -205,8 +211,8 @@
 
       discord = prev.discord.overrideAttrs (old: {
         src = final.fetchurl {
-          url = "https://dl.discordapp.net/apps/linux/0.0.19/discord-0.0.19.tar.gz";
-          hash = "sha256-GfSyddbGF8WA6JmHo4tUM27cyHV5kRAyrEiZe1jbA5A=";
+          url = "https://dl.discordapp.net/apps/linux/0.0.20/discord-0.0.20.tar.gz";
+          hash = "sha256-3f7yuxigEF3e8qhCetCHKBtV4XUHsx/iYiaCCXjspYw=";
         };
       });
 
@@ -362,19 +368,6 @@
         src = notmuch;
       });
 
-      pueue = final.rustPlatform.buildRustPackage {
-        pname = "pueue";
-        version = "2.1.1";
-        src = final.fetchFromGitHub {
-          owner = "Nukesor";
-          repo = "pueue";
-          rev = "platform_specific_module_cleanup";
-          sha256 = "sha256-W+bHd1hvN9rTTQrqCj/J3+dSit5tuGc1P45Tsf56C+0=";
-        };
-        cargoSha256 = "sha256-jifRalBdJmxszomlAIHC9Vxtg50atTURwTW7Hz2N5Pw=";
-        doCheck = false;
-      };
-
       scripts = import ./scripts/default.nix final;
 
       stardicts =
@@ -424,9 +417,18 @@
       overlayPkgs = self.overlays.default pkgs pkgs;
     in
       filterAttrs (k: isDerivation) overlayPkgs;
-    apps.${system}.default = {
-      type = "app";
-      program = "${pkgs.scripts.scripts.preparehd}/bin/preparehd";
+
+    apps.${system} = {
+      default = {
+        type = "app";
+        program = "${pkgs.scripts.scripts.preparehd}/bin/preparehd";
+      };
+      switch = {
+        type = "app";
+        program = toString (pkgs.writeShellScript "switch" ''
+          sudo -A nixos-rebuild switch --print-build-logs --flake .
+        '');
+      };
     };
 
     templates = import ./templates/default.nix;

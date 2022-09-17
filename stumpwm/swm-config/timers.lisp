@@ -54,7 +54,7 @@
   (when-let ((timer (existsp name)))
     (throw 'error (format nil "Timer \"~A\" already exists!" (make-instance 'timer :timer timer))))
 
-  (if-let ((timestamp (chronicity:parse when)))
+  (if-let ((timestamp (chronicity:parse (string-trim '(#\Space #\Tab #\Newline) when))))
     (launch name (local-time:timestamp-to-universal timestamp))
     (throw 'error (format nil "\"~A\" is an invalid time specification!" when))))
 

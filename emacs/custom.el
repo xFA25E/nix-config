@@ -408,7 +408,7 @@ The document was typeset with
  '(completion-category-overrides '((bookmark (styles basic))))
  '(completion-cycle-threshold 2)
  '(completion-ignored-extensions
-   '(".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" "flake.lock" ".gitignore" ".eldev/" ".direnv/" ".envrc" "Eldev" "LICENSE" ".dir-locals.el"))
+   '(".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" "flake.lock" ".gitignore" ".eldev/" ".direnv/" ".envrc" "Eldev" "LICENSE" ".dir-locals.el" ".prettierignore"))
  '(completion-show-help nil)
  '(completion-styles '(partial-completion flex))
  '(completions-detailed t)
@@ -634,6 +634,7 @@ The document was typeset with
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
    '(("thuletide" "https://thuletide.wordpress.com/feed/" nil nil nil)
+     ("Illuminat. Студия перевода" "https://www.youtube.com/feeds/videos.xml?channel_id=UCFAEAzg28fs6mJWbVYUlg8g" nil nil nil)
      ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg" nil nil nil)
      ("Просто Глеб" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8whgZ18JO0Hr4g0053LuGQ" nil nil nil)
      ("Простая Академия Сайт" "https://prosto.academy/feed/" nil nil nil)
