@@ -171,13 +171,42 @@
 (define-key ediff-command-map "\C-m\C-v" 'ediff-merge-revisions)
 (define-key ediff-command-map "\C-p\C-b" 'ediff-patch-buffer)
 (define-key ediff-command-map "\C-p\C-f" 'ediff-patch-file)
-(define-key ediff-command-map "\C-r\C-w" 'ediff-regions-linewise)
-(define-key ediff-command-map "\C-r\C-l" 'ediff-regions-wordwise)
+(define-key ediff-command-map "\C-r\C-l" 'ediff-regions-linewise)
+(define-key ediff-command-map "\C-r\C-w" 'ediff-regions-wordwise)
 (define-key ediff-command-map "\C-v" 'ediff-revision)
-(define-key ediff-command-map "\C-w\C-w" 'ediff-windows-linewise)
-(define-key ediff-command-map "\C-w\C-l" 'ediff-windows-wordwise)
+(define-key ediff-command-map "\C-w\C-l" 'ediff-windows-linewise)
+(define-key ediff-command-map "\C-w\C-w" 'ediff-windows-wordwise)
 
 (define-key ctl-x-map "E" 'edit-indirect-region)
+
+(defvar eglot-mode-map)
+(defvar eglot-server-programs)
+(with-eval-after-load 'eglot
+  (define-key eglot-mode-map "\C-c\C-l" 'eglot-code-actions)
+  (setf (alist-get '(js-mode typescript-mode) eglot-server-programs nil nil 'equal)
+        '("typescript-language-server" "--tsserver-path" "tsserver" "--stdio"))
+
+  (advice-add 'eglot-xref-backend :override 'xref-eglot+dumb-backend)
+
+  (defun xref-eglot+dumb-backend () 'eglot+dumb)
+
+  (cl-defmethod xref-backend-identifier-at-point ((_backend (eql eglot+dumb)))
+    (cons (xref-backend-identifier-at-point 'eglot)
+          (xref-backend-identifier-at-point 'dumb-jump)))
+
+  (cl-defmethod xref-backend-identifier-completion-table ((_backend (eql eglot+dumb)))
+    (xref-backend-identifier-completion-table 'eglot))
+
+  (cl-defmethod xref-backend-definitions ((_backend (eql eglot+dumb)) identifier)
+    (or (xref-backend-definitions 'eglot (car identifier))
+        (xref-backend-definitions 'dumb-jump (cdr identifier))))
+
+  (cl-defmethod xref-backend-references ((_backend (eql eglot+dumb)) identifier)
+    (or (xref-backend-references 'eglot (car identifier))
+        (xref-backend-references 'dumb-jump (cdr identifier))))
+
+  (cl-defmethod xref-backend-apropos ((_backend (eql eglot+dumb)) pattern)
+    (xref-backend-apropos 'eglot pattern)))
 
 (add-hook 'nix-mode-hook 'eldoc-mode)
 
@@ -251,6 +280,8 @@
   (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error)
   (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error))
 
+(add-hook 'js-mode-hook 'flymake-eslint-enable)
+
 (add-hook 'nix-mode-hook 'flymake-statix-setup)
 (with-eval-after-load 'nix-mode
   (with-eval-after-load 'flymake-statix
@@ -258,10 +289,6 @@
 
 (add-hook 'nix-mode-hook 'format-all-mode)
 (add-hook 'js-mode-hook 'format-all-mode)
-
-(defvar format-all-formatters)
-(with-eval-after-load 'format-all
-  (setq-default format-all-formatters '(("Nix" alejandra) ("JavaScript" prettier))))
 
 (define-key search-map "g" 'rgrep)
 (declare-function grep-expand-template@add-cut "grep" (cmd))
@@ -292,6 +319,10 @@
 
 (define-key isearch-mode-map "\C-h" 'isearch-delete-char)
 (define-key isearch-mode-map "\C-?" isearch-help-map)
+
+(defvar js-mode-map)
+(with-eval-after-load 'js
+  (define-key js-mode-map "\M-." nil))
 
 (defvar ledger-amount-regex)
 (defvar ledger-commodity-regexp)

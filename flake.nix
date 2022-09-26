@@ -432,5 +432,9 @@
     };
 
     templates = import ./templates/default.nix;
+
+    devShells.${system}.default = pkgs.mkShell {
+      buildInputs = [pkgs.alejandra pkgs.statix];
+    };
   };
 }

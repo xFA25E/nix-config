@@ -514,9 +514,9 @@ The document was typeset with
  '(fill-column 80)
  '(find-ls-option
    '("-print0 | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
+ '(flymake-eslint-defer-binary-check t)
  '(flymake-mode-line-format
    '(" " flymake-mode-line-exception flymake-mode-line-counters))
- '(flymake-no-changes-timeout nil)
  '(flymake-statix-enable-fix t)
  '(flyspell-default-dictionary "russian")
  '(flyspell-dictionaries-that-consider-dash-as-word-delimiter '("francais" "deutsch8" "norsk" "russian"))
@@ -633,7 +633,8 @@ The document was typeset with
  '(newsticker-treeview-listwindow-height 6)
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
-   '(("thuletide" "https://thuletide.wordpress.com/feed/" nil nil nil)
+   '(("Motion Philosophy" "https://www.youtube.com/feeds/videos.xml?channel_id=UCpi0JLkVK0RrAHkfpB3B2Aw" nil nil nil)
+     ("thuletide" "https://thuletide.wordpress.com/feed/" nil nil nil)
      ("Illuminat. Студия перевода" "https://www.youtube.com/feeds/videos.xml?channel_id=UCFAEAzg28fs6mJWbVYUlg8g" nil nil nil)
      ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg" nil nil nil)
      ("Просто Глеб" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8whgZ18JO0Hr4g0053LuGQ" nil nil nil)
@@ -802,6 +803,9 @@ The document was typeset with
                  (byte-recompile-directory
                   (expand-file-name "./")))
                nil t)))
+ '(safe-local-variable-values
+   '((eval add-hook 'nix-mode-hook 'format-all-mode nil t)
+     (eval add-hook 'js-mode-hook 'format-all-mode nil t)))
  '(save-interprogram-paste-before-kill t)
  '(save-place-abbreviate-file-names t)
  '(save-place-file (expand-file-name "emacs/saveplace" (xdg-cache-home)))

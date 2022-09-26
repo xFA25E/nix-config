@@ -154,7 +154,6 @@ in {
 
     packages = with pkgs; [
       acpi
-      alejandra
       alsaUtils
       amded
       ascii
@@ -192,7 +191,6 @@ in {
       mkpasswd
       mpc_cli
       nload
-      nodePackages.prettier
       p7zip
       pandoc
       parted
@@ -213,7 +211,6 @@ in {
       simplescreenrecorder
       speedtest-cli
       stalonetray
-      statix
       stumpwm
       sxiv
       teams
@@ -377,6 +374,7 @@ in {
           emmet-mode
           envrc
           enwc
+          flymake-eslint
           flymake-shellcheck
           flymake-statix
           format-all
