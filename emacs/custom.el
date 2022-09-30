@@ -633,7 +633,8 @@ The document was typeset with
  '(newsticker-treeview-listwindow-height 6)
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
-   '(("Motion Philosophy" "https://www.youtube.com/feeds/videos.xml?channel_id=UCpi0JLkVK0RrAHkfpB3B2Aw" nil nil nil)
+   '(("Заяц" "https://www.youtube.com/feeds/videos.xml?channel_id=UCxgTNtX8LuhMxHQ56naTBfw" nil nil nil)
+     ("Motion Philosophy" "https://www.youtube.com/feeds/videos.xml?channel_id=UCpi0JLkVK0RrAHkfpB3B2Aw" nil nil nil)
      ("thuletide" "https://thuletide.wordpress.com/feed/" nil nil nil)
      ("Illuminat. Студия перевода" "https://www.youtube.com/feeds/videos.xml?channel_id=UCFAEAzg28fs6mJWbVYUlg8g" nil nil nil)
      ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg" nil nil nil)
@@ -804,7 +805,9 @@ The document was typeset with
                   (expand-file-name "./")))
                nil t)))
  '(safe-local-variable-values
-   '((eval add-hook 'nix-mode-hook 'format-all-mode nil t)
+   '((diff-add-log-use-relative-names . t)
+     (vc-git-annotate-switches . "-w")
+     (eval add-hook 'nix-mode-hook 'format-all-mode nil t)
      (eval add-hook 'js-mode-hook 'format-all-mode nil t)))
  '(save-interprogram-paste-before-kill t)
  '(save-place-abbreviate-file-names t)

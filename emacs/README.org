@@ -73,7 +73,6 @@ Here is the juicy part of my *GNU/Emacs* config.  We start by writing a header.
 
 #+begin_src elisp
 ;; -*- lexical-binding: t; -*-
-
 (define-prefix-command 'region-commands-map)
 (define-prefix-command 'load-command-map)
 (define-prefix-command 'ediff-command-map)
@@ -332,8 +331,37 @@ completion-framework-agnostic replacement for [[https://github.com/abo-abo/swipe
 (define-key goto-map "F" 'consult-flymake)
 (define-key project-prefix-map "i" 'consult-project-imenu)
 (define-key kmacro-keymap "c" 'consult-kmacro)
+
+(declare-function consult--read "consult")
+(declare-function consult--current-history "consult")
+(eval-when-compile (require 'consult))
 (with-eval-after-load 'consult
-  (add-hook 'completion-list-mode-hook 'consult-preview-at-point-mode))
+  (add-hook 'completion-list-mode-hook 'consult-preview-at-point-mode)
+
+  (advice-add 'consult-history :override 'consult-history-require-match)
+  (defun consult-history-require-match (&optional history)
+    (interactive)
+    (let ((str (consult--local-let ((enable-recursive-minibuffers t))
+                 (consult--read
+                  (or (consult--current-history history)
+                      (user-error "History is empty"))
+                  :prompt "History: "
+                  :history t ;; disable history
+                  :category  ;; Report category depending on history variable
+                  (and (minibufferp)
+                       (pcase minibuffer-history-variable
+                         ('extended-command-history 'command)
+                         ('buffer-name-history 'buffer)
+                         ('face-name-history 'face)
+                         ('read-envvar-name-history 'environment-variable)
+                         ('bookmark-history 'bookmark)
+                         ('file-name-history 'file)))
+                  :sort nil
+                  :state (consult--insertion-preview (point) (point))
+                  :require-match t))))
+      (when (minibufferp)
+        (delete-minibuffer-contents))
+      (insert (substring-no-properties str)))))
 #+end_src
 
 *** Css Mode
@@ -373,6 +401,13 @@ use for this package.
 
 #+begin_src elisp
 (define-key mode-specific-map "oT" 'dictionary-search)
+#+end_src
+
+*** Diff
+#+begin_src elisp
+(defvar diff-mode-map)
+(with-eval-after-load 'diff-mode
+  (define-key diff-mode-map "\M-o" nil))
 #+end_src
 
 *** Dired
@@ -893,26 +928,27 @@ Yeah, it does not have default bindings at all!
 (defvar mpc-mode-map)
 (defvar mpc-songs-mode-map)
 (with-eval-after-load 'mpc
-  (define-key mpc-mode-map "p" 'mpc-playlist)
-  (define-key mpc-mode-map "u" 'mpc-update)
-  (define-key mpc-mode-map "a" 'mpc-playlist-add)
-  (define-key mpc-mode-map "c" 'mpc-toggle-consume)
-  (define-key mpc-mode-map "r" 'mpc-toggle-repeat)
   (define-key mpc-mode-map "." 'mpc-toggle-single)
-  (define-key mpc-mode-map "z" 'mpc-toggle-shuffle)
-  (define-key mpc-mode-map "t" 'mpc-toggle-play)
-  (define-key mpc-mode-map "s" 'mpc-songs-search)
-  (define-key mpc-mode-map "k" 'mpc-songs-kill-search)
-  (define-key mpc-mode-map "f" 'mpc-ffwd)
-  (define-key mpc-mode-map "b" 'mpc-rewind)
   (define-key mpc-mode-map "D" 'mpc-playlist-delete)
-  (define-key mpc-mode-map "m" 'mpc-select-toggle)
   (define-key mpc-mode-map "M" 'mpc-select-extend)
-  (define-key mpc-mode-map "\M-m" 'mpc-select)
   (define-key mpc-mode-map "\C-m" 'mpc-songs-jump-to)
-  (define-key mpc-songs-mode-map [remap mpc-select] nil)
+  (define-key mpc-mode-map "\M-m" 'mpc-select)
+  (define-key mpc-mode-map "a" 'mpc-playlist-add)
+  (define-key mpc-mode-map "b" 'mpc-rewind)
+  (define-key mpc-mode-map "c" 'mpc-toggle-consume)
+  (define-key mpc-mode-map "f" 'mpc-ffwd)
+  (define-key mpc-mode-map "j" 'mpc-dired-jump)
+  (define-key mpc-mode-map "k" 'mpc-songs-kill-search)
+  (define-key mpc-mode-map "m" 'mpc-select-toggle)
+  (define-key mpc-mode-map "p" 'mpc-playlist)
+  (define-key mpc-mode-map "r" 'mpc-toggle-repeat)
+  (define-key mpc-mode-map "s" 'mpc-songs-search)
+  (define-key mpc-mode-map "t" 'mpc-toggle-play)
+  (define-key mpc-mode-map "u" 'mpc-update)
+  (define-key mpc-mode-map "z" 'mpc-toggle-shuffle)
+  (define-key mpc-songs-mode-map "V" 'mpc-move-backward)
   (define-key mpc-songs-mode-map "v" 'mpc-move-forward)
-  (define-key mpc-songs-mode-map "V" 'mpc-move-backward))
+  (define-key mpc-songs-mode-map [remap mpc-select] nil))
 #+end_src
 
 **** Mpc Extensions
@@ -920,10 +956,24 @@ Mpc is mouse-oriented by default.  To move songs in a playlist you have to use
 drag-n-drop.
 
 #+begin_src elisp
+(defvar mpc-mpd-music-directory)
+(declare-function mpc-cmd-move "mpc")
 (declare-function mpc-move-forward "mpc")
 (declare-function mpc-songs-refresh "mpc")
-(declare-function mpc-cmd-move "mpc")
+(declare-function mpc-tagbrowser-all-p "mpc")
 (with-eval-after-load 'mpc
+  (defun mpc-dired-jump ()
+    (interactive)
+    (when-let ((file (or (get-text-property (point) 'mpc-file)
+                         (unless (mpc-tagbrowser-all-p)
+                           (let ((file (buffer-substring-no-properties
+                                        (line-beginning-position)
+                                        (1- (line-beginning-position 2)))))
+                             (unless (or (string-empty-p file)
+                                         (string= "\n" file))
+                               file))))))
+      (dired-jump nil (expand-file-name file mpc-mpd-music-directory))))
+
   (defun mpc-move-forward (n)
     (interactive "p")
     (let ((point-max (point-max)))
@@ -937,7 +987,145 @@ drag-n-drop.
 
   (defun mpc-move-backward (n)
     (interactive "p")
-    (mpc-move-forward (- n))))
+    (mpc-move-forward (- n)))
+
+  (advice-add 'mpc-format :override 'mpc-format-cache-hash)
+  (defun mpc-format-cache-hash (format-spec info &optional hscroll)
+    (let* ((pos 0)
+           (start (point))
+           (col (if hscroll (- hscroll) 0))
+           (insert (lambda (str)
+                     (cond
+                      ((>= col 0) (insert str))
+                      (t (insert (substring str (min (length str) (- col))))))))
+           (pred #'always))
+      (while (string-match "%\\(?:%\\|\\(-\\)?\\([0-9]+\\)?{\\([[:alpha:]][[:alnum:]]*\\)\\(?:-\\([^}]+\\)\\)?}\\)" format-spec pos)
+        (let ((pre-text (substring format-spec pos (match-beginning 0))))
+          (funcall insert pre-text)
+          (setq col (+ col (string-width pre-text))))
+        (setq pos (match-end 0))
+        (if (null (match-end 3))
+            (progn
+              (funcall insert "%")
+              (setq col (+ col 1)))
+          (let* ((size (match-string 2 format-spec))
+                 (tag (intern (match-string 3 format-spec)))
+                 (post (match-string 4 format-spec))
+                 (right-align (match-end 1))
+                 (text
+                  (if (eq info 'self) (symbol-name tag)
+                    (pcase tag
+                      ((or 'Time 'Duration)
+                       (let ((time (cdr (or (assq 'time info) (assq 'Time info)))))
+                         (setq pred #'ignore) ;Just assume it's never eq.
+                         (when time
+                           (mpc-secs-to-time (if (and (eq tag 'Duration)
+                                                      (string-match ":" time))
+                                                 (substring time (match-end 0))
+                                               time)))))
+                      ('Cover
+                       (let ((dir (file-name-directory (cdr (assq 'file info)))))
+                         ;; (debug)
+                         (setq pred
+                               ;; We want the closure to capture the current
+                               ;; value of `pred' and not a reference to the
+                               ;; variable itself.
+                               (let ((oldpred pred))
+                                 (lambda (info)
+                                   (and (funcall oldpred info)
+                                        (equal dir (file-name-directory
+                                                    (cdr (assq 'file info))))))))
+                         (if-let* ((covers '(".folder.png" "folder.png" "cover.jpg" "folder.jpg"))
+                                   (cover (cl-loop for file in (directory-files (mpc-file-local-copy dir))
+                                                   if (or (member (downcase file) covers)
+                                                          (and mpc-cover-image-re
+                                                               (string-match mpc-cover-image-re file)))
+                                                   return (concat dir file)))
+                                   (file (with-demoted-errors "MPC: %s"
+                                           (mpc-file-local-copy cover))))
+                             (let (image)
+                               (if (null size)
+                                   (setq image (create-image file))
+                                 (let* ((hash (with-temp-buffer
+                                                (insert-file-contents-literally file)
+                                                (md5 (current-buffer))))
+                                        (dir (expand-file-name "emacs/mpc" (xdg-cache-home)))
+                                        (scaled-file (expand-file-name (concat hash ".jpg") dir)))
+                                   (unless (file-exists-p scaled-file)
+                                     (make-directory dir t)
+                                     ;; FIXME: Use native image scaling instead.
+                                     (call-process "convert" nil nil nil
+                                                   "-scale" size file scaled-file))
+                                   (setq image (create-image scaled-file))
+                                   (mpc-tempfiles-add image scaled-file)))
+                               (setq size nil)
+                               (propertize dir 'display image))
+                           ;; Make sure we return something on which we can
+                           ;; place the `mpc--uptodate-p' property, as
+                           ;; a negative-cache.  We could also use
+                           ;; a default cover.
+                           (progn (setq size nil) " "))))
+                      (_ (let ((val (cdr (assq tag info))))
+                           ;; For Streaming URLs, there's no other info
+                           ;; than the URL in `file'.  Pretend it's in `Title'.
+                           (when (and (null val) (eq tag 'Title))
+                             (setq val (cdr (assq 'file info))))
+                           (setq pred
+                                 ;; We want the closure to capture the current
+                                 ;; value of `pred' and not a reference to the
+                                 ;; variable itself.
+                                 (let ((oldpred pred))
+                                   (lambda (info)
+                                     (and (funcall oldpred info)
+                                          (equal val (cdr (assq tag info)))))))
+                           (cond
+                            ((not (and (eq tag 'Date) (stringp val))) val)
+                            ;; For "date", only keep the year!
+                            ((string-match "[0-9]\\{4\\}" val)
+                             (match-string 0 val))
+                            (t val)))))))
+                 (space (when size
+                          (setq size (string-to-number size))
+                          (propertize " " 'display
+                                      (list 'space :align-to (+ col size)))))
+                 (textwidth (if text (string-width text) 0))
+                 (postwidth (if post (string-width post) 0)))
+            (when text
+              (let ((display
+                     (if (and size
+                              (> (+ postwidth textwidth) size))
+                         (propertize
+                          (truncate-string-to-width text size nil nil "…")
+                          'help-echo text)
+                       text)))
+                (when (memq tag '(Artist Album Composer)) ;FIXME: wrong list.
+                  (setq display
+                        (propertize display
+                                    'mouse-face 'highlight
+                                    'follow-link t
+                                    'keymap `(keymap
+                                              (mouse-2
+                                               . ,(lambda ()
+                                                    (interactive)
+                                                    (mpc-constraints-push 'noerror)
+                                                    (mpc-constraints-restore
+                                                     ',(list (list tag text)))))))))
+                (funcall insert
+                         (concat (when size
+                                   (propertize " " 'display
+                                               (list 'space :align-to
+                                                     (+ col
+                                                        (if (and size right-align)
+                                                            (- size postwidth textwidth)
+                                                          0)))))
+                                 display post))))
+            (if (null size) (setq col (+ col textwidth postwidth))
+              (insert space)
+              (setq col (+ col size))))))
+      ;; Print the rest of format-spec, in case there is text after the
+      ;; last actual format specifier.
+      (insert (substring format-spec pos))
+      (put-text-property start (point) 'mpc--uptodate-p pred))))
 #+end_src
 
 *** Net Utils

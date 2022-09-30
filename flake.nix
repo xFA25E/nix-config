@@ -32,6 +32,10 @@
     emacs-overlay.url = "github:nix-community/emacs-overlay";
     flake-utils.url = "github:numtide/flake-utils";
     flymake-statix.url = "github:xFA25E/flymake-statix";
+    flymake-eslint = {
+      flake = false;
+      url = "github:xFA25E/flymake-eslint?ref=cleanup";
+    };
     home-manager = {
       url = "github:nix-community/home-manager/release-22.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -42,6 +46,7 @@
     };
     nixos-options.url = "github:xFA25E/nixos-options";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
+    nur.url = "github:nix-community/NUR";
     notmuch = {
       url = "git+https://git.notmuchmail.org/git/notmuch?ref=release";
       flake = false;
@@ -49,10 +54,6 @@
     pueue.url = "github:xFA25E/pueue";
     rx-widget = {
       url = "github:xFA25E/rx-widget";
-      flake = false;
-    };
-    rycee = {
-      url = "gitlab:rycee/nur-expressions";
       flake = false;
     };
     sdcwoc = {
@@ -88,14 +89,15 @@
     emacs-overlay,
     flake-utils,
     flymake-statix,
+    flymake-eslint,
     home-manager,
     mpv-youtube-quality,
     nixos-options,
     nixpkgs,
+    nur,
     notmuch,
     pueue,
     rx-widget,
-    rycee,
     sdcwoc,
     skempo,
     stumpwm,
@@ -112,6 +114,7 @@
         emacs-overlay.overlay
         flymake-statix.overlays.default
         nixos-options.overlays.default
+        nur.overlay
         pueue.overlays.default
         self.overlays.default
       ];
@@ -311,6 +314,12 @@
               ];
           });
 
+          flymake-eslint = makePkg {
+            src = flymake-eslint;
+            pname = "flymake-eslint";
+            version = "1.6.0";
+          };
+
           cyrillic-dvorak-im = makePkg {
             src = cyrillic-dvorak-im;
             pname = "cyrillic-dvorak-im";
@@ -355,8 +364,6 @@
             preBuild = "make";
           };
         });
-
-      materia-theme = final.callPackage "${rycee}/pkgs/materia-theme" {};
 
       mpv-youtube-quality = final.runCommand "mpv-youtube-quality" {} ''
         mkdir -p $out

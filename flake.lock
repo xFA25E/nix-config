@@ -349,6 +349,23 @@
         "type": "github"
       }
     },
+    "flymake-eslint": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1664211198,
+        "narHash": "sha256-2Aay8mpWYiKQwaFj2h6djaeCNTx/zaxR2IiigKLjrmI=",
+        "owner": "xFA25E",
+        "repo": "flymake-eslint",
+        "rev": "e8bcca26d100f9ae9bd4d697464f76d13376193f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "xFA25E",
+        "ref": "cleanup",
+        "repo": "flymake-eslint",
+        "type": "github"
+      }
+    },
     "flymake-statix": {
       "inputs": {
         "eldev": "eldev_2",
@@ -568,6 +585,21 @@
         "url": "https://git.notmuchmail.org/git/notmuch"
       }
     },
+    "nur": {
+      "locked": {
+        "lastModified": 1664526811,
+        "narHash": "sha256-rnHFFVoVK71MhtxCuAKv/eA7YAF8KovlBCGnjHLGLeE=",
+        "owner": "nix-community",
+        "repo": "NUR",
+        "rev": "09abb32275d4418c72314216a58441dcdde6c220",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "NUR",
+        "type": "github"
+      }
+    },
     "pueue": {
       "inputs": {
         "eldev": "eldev_4",
@@ -598,15 +630,16 @@
         "emacs-amded": "emacs-amded",
         "emacs-overlay": "emacs-overlay_2",
         "flake-utils": "flake-utils_3",
+        "flymake-eslint": "flymake-eslint",
         "flymake-statix": "flymake-statix",
         "home-manager": "home-manager",
         "mpv-youtube-quality": "mpv-youtube-quality",
         "nixos-options": "nixos-options",
         "nixpkgs": "nixpkgs_8",
         "notmuch": "notmuch",
+        "nur": "nur",
         "pueue": "pueue",
         "rx-widget": "rx-widget",
-        "rycee": "rycee",
         "sdcwoc": "sdcwoc",
         "skempo": "skempo",
         "stumpwm": "stumpwm",
@@ -628,22 +661,6 @@
         "owner": "xFA25E",
         "repo": "rx-widget",
         "type": "github"
-      }
-    },
-    "rycee": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1663387357,
-        "narHash": "sha256-cmbBoKPjbuRCwbrqa4f+msU33olRwgv1R9aMulDjMiQ=",
-        "owner": "rycee",
-        "repo": "nur-expressions",
-        "rev": "f3cd885477a561a8bdfd5814439e31c4882ab72d",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "rycee",
-        "repo": "nur-expressions",
-        "type": "gitlab"
       }
     },
     "sdcwoc": {
