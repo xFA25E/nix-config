@@ -8,10 +8,6 @@
     sha256 = "0vfpp1ynii8bmzpckdy39f3dk7bw5rscc86igq1n9vvpvvwihgw2";
   }
   {
-    url = "https://w.wallhaven.cc/full/4d/wallhaven-4dy2jm.jpg";
-    sha256 = "1q7ckxjd1vhch24jb6c4aiwws6wjpyw4h2c6w5nfn5kf19zwp7yd";
-  }
-  {
     url = "https://w.wallhaven.cc/full/ne/wallhaven-nelq58.jpg";
     sha256 = "04045bjpzpf65k1rsmw7bqkjbwn61q6xjp9rvxbixyzzx9347n5x";
   }
@@ -20,16 +16,8 @@
     sha256 = "0pc307hr0x95p5x5rbv601ym2qa5hls1xag8bs5vh3yq7g3j13mr";
   }
   {
-    url = "https://w.wallhaven.cc/full/43/wallhaven-43jgvv.jpg";
-    sha256 = "1w0yj0z0hyfiff8x279016d0d0dmbsx4vbaskqk43b2942y3wqzv";
-  }
-  {
     url = "https://w.wallhaven.cc/full/nk/wallhaven-nkrqm1.jpg";
     sha256 = "111ddrhq3v5j3ndzb68kcn0mwg4wiycmsillqwi38j0scldvyaz3";
-  }
-  {
-    url = "https://w.wallhaven.cc/full/ne/wallhaven-nelelw.jpg";
-    sha256 = "1iynysbkqwx891vgmn4w6jfy0nbxzsnddrgj5qfxsriq0vchglp1";
   }
   {
     url = "https://w.wallhaven.cc/full/0q/wallhaven-0qy3dn.jpg";
@@ -50,10 +38,6 @@
   {
     url = "https://w.wallhaven.cc/full/nm/wallhaven-nmer59.jpg";
     sha256 = "0ambwgsi1x18wd9qf3cl6ai61dakm6dw4jxji1mi55vnafq1kly6";
-  }
-  {
-    url = "https://w.wallhaven.cc/full/48/wallhaven-48mpzj.jpg";
-    sha256 = "0096if6ff2qy27pf114wgqp8qmzk9j1sfv9n3bm8xdsiyl503875";
   }
   {
     url = "https://w.wallhaven.cc/full/n6/wallhaven-n6z6jq.jpg";
