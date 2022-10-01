@@ -109,71 +109,76 @@ in {
     extraOutputsToInstall = ["man" "doc" "info" "devdoc"];
 
     file = {
-      ".mozilla/firefox/default/search.json.mozlz4".source = pkgs.runCommand "search.json.mozlz4" {
-        nativeBuildInputs = [pkgs.mozlz4a];
-        src = pkgs.writeText "search.json" ''
-          {
-            "engines" : [
-              {
-                "_definedAliases" : [":yt"],
-                "_metaData" : {},
-                "_name" : "youtube",
-                "_urls" : [{
-                  "params" : [],
-                  "rels" : [],
-                  "template" : "https://www.youtube.com/results?search_query={searchTerms}"
-                }]
-              },
-              {
-                "_definedAliases" : [":gh"],
-                "_metaData" : {},
-                "_name" : "github",
-                "_urls" : [{
-                  "params" : [],
-                  "rels" : [],
-                  "template" : "https://github.com/search?q={searchTerms}"
-                }]
-              },
-              {
-                "_definedAliases" : [":sx"],
-                "_metaData" : {},
-                "_name" : "searx",
-                "_urls" : [{
-                  "params" : [],
-                  "rels" : [],
-                  "template" : "https://searx.be/?preferences=eJxtVcuO2zoM_ZrrjTFFH4uuvChaXNwBCkzRpN0KtEQrrCXRleRk3K8vnUSOMncWMSKaOjw8fFhDRsuRMHUWA0ZwjYNgZ7DYYXj4sWsca3DroYE5s2Y_OczYWWbrsCEvnmqK_Lx0-zhj4zEf2HTfnnb7JsGACSHqQ_e2yQf02HHSEJuIaXY5KQ4q4Ell6Lt_wSVsDJOSl-yOGDsGOb7haJvzrYeUFyHi2JJmg8fGUILeoVEYLAXJ4N2HDx-flTqSQU7_vP88kh4hJaX8nEiL4ciQlUqsCVzr0RCIcYFgUK5d8xeLJSvAkHJt1Fo_5GOFbik76JWiLIeIxpD4n_VY3yZEMyFGpQZyZ4ujPkJc2hUyUaqxBydM46u3t3A95X7WI-ZrxEsB2snB0no-SgUrZ7949CzBcoSQnBTZ1PES_gng7y1rmVZd2_VxjREWgJt6oG3iuYqSeVw4czrwCOHm57hPGd_EVFAmf_2XMsQ8rR1ThV7gwFwbeMIQceJ0007KTRDW25VIJxrJQIb67oXxxnCIiG3iIZ8gYmsoos4iy2sSruRvOWDkE91pNpjIq6VQOoCUc31cwYo6G70-G7L2dmGI4GFtgqLu75OkVIcoEIVEQdhI5cVzcNLrd8QihZFAV6FfFKYwmEOSXNOh8rzoVRy2gdkENMa2BgcKlInDXdPW6sE0pVdgttQhriWWWT9jzgbDXd7T2HqKkYuWL_jf2JDOf_g-fc-_EMfa0lOw9bnM5jX8u-f_5b8dKdTdg5nZpdcqVBIr0FXwa802kNsolzKWSy_20DqAdMT2fjVYSS6TxzJMVynLssZwvwKNrIj1ZyufbU9Obhav1P0k_-BoRHXgPOKysnySmVOftEYp25enR1nCp0gZ5c1jOFcfVdKRnSu-lxWupBnHbY_3MjRJMpV9njZmJejuvGFWV3355iwqoZN5FMQdukFJII4ezn0mtv_2-2-7isc-gmy_qH58_ypW2XgYG-kTFOi_m0eMQg==&q={searchTerms}"
-                }]
-              },
-              {
-                "_definedAliases" : [":d"],
-                "_metaData" : {},
-                "_name" : "ddg",
-                "_urls" : [{
-                  "params" : [],
-                  "rels" : [],
-                  "template" : "https://duckduckgo.com/?kk=-1&kah=it-it&kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&kak=-1&kax=-1&km=l&q={searchTerms}"
-                }]
-              },
-              {
-                "_definedAliases" : [":sp"],
-                "_metaData" : {},
-                "_name" : "startpage",
-                "_urls" : [{
-                  "params" : [],
-                  "rels" : [],
-                  "template" : "https://startpage.com/sp/search?query={searchTerms}&prfe=a715a36c09c1472e9d5d804b0ba9312716a96d474575edbfa5e7cb0c646b34216e65fa4ae420b5df58e6c8d3e420eb1771f23caa2663bb5435b01ebb741af66083a80b0bb3682e008b0e7e1126"
-                }]
-              }
-            ],
-            "metaData" : {
-              "appDefaultEngine" : "startpage",
-              "current" : "startpage",
-              "hash" : "wY9ZGT+vGpkZYQapRr7M4b0KjzBiyWf7TZuI+Rb7nxA="
-            },
-            "version" : 6
-          }
+      ".mozilla/firefox/default/search.json.mozlz4_" = {
+        onChange = ''
+          cat ~/.mozilla/firefox/default/search.json.mozlz4_ > ~/.mozilla/firefox/default/search.json.mozlz4
         '';
-      } "mozlz4a $src $out";
+        source = pkgs.runCommand "search.json.mozlz4" {
+          nativeBuildInputs = [pkgs.mozlz4a];
+          src = pkgs.writeText "search.json" ''
+            {
+              "engines" : [
+                {
+                  "_definedAliases" : [":yt"],
+                  "_metaData" : {},
+                  "_name" : "youtube",
+                  "_urls" : [{
+                    "params" : [],
+                    "rels" : [],
+                    "template" : "https://www.youtube.com/results?search_query={searchTerms}"
+                  }]
+                },
+                {
+                  "_definedAliases" : [":gh"],
+                  "_metaData" : {},
+                  "_name" : "github",
+                  "_urls" : [{
+                    "params" : [],
+                    "rels" : [],
+                    "template" : "https://github.com/search?q={searchTerms}"
+                  }]
+                },
+                {
+                  "_definedAliases" : [":sx"],
+                  "_metaData" : {},
+                  "_name" : "searx",
+                  "_urls" : [{
+                    "params" : [],
+                    "rels" : [],
+                    "template" : "https://searx.be/?preferences=eJxtVcuO2zoM_ZrrjTFFH4uuvChaXNwBCkzRpN0KtEQrrCXRleRk3K8vnUSOMncWMSKaOjw8fFhDRsuRMHUWA0ZwjYNgZ7DYYXj4sWsca3DroYE5s2Y_OczYWWbrsCEvnmqK_Lx0-zhj4zEf2HTfnnb7JsGACSHqQ_e2yQf02HHSEJuIaXY5KQ4q4Ell6Lt_wSVsDJOSl-yOGDsGOb7haJvzrYeUFyHi2JJmg8fGUILeoVEYLAXJ4N2HDx-flTqSQU7_vP88kh4hJaX8nEiL4ciQlUqsCVzr0RCIcYFgUK5d8xeLJSvAkHJt1Fo_5GOFbik76JWiLIeIxpD4n_VY3yZEMyFGpQZyZ4ujPkJc2hUyUaqxBydM46u3t3A95X7WI-ZrxEsB2snB0no-SgUrZ7949CzBcoSQnBTZ1PES_gng7y1rmVZd2_VxjREWgJt6oG3iuYqSeVw4czrwCOHm57hPGd_EVFAmf_2XMsQ8rR1ThV7gwFwbeMIQceJ0007KTRDW25VIJxrJQIb67oXxxnCIiG3iIZ8gYmsoos4iy2sSruRvOWDkE91pNpjIq6VQOoCUc31cwYo6G70-G7L2dmGI4GFtgqLu75OkVIcoEIVEQdhI5cVzcNLrd8QihZFAV6FfFKYwmEOSXNOh8rzoVRy2gdkENMa2BgcKlInDXdPW6sE0pVdgttQhriWWWT9jzgbDXd7T2HqKkYuWL_jf2JDOf_g-fc-_EMfa0lOw9bnM5jX8u-f_5b8dKdTdg5nZpdcqVBIr0FXwa802kNsolzKWSy_20DqAdMT2fjVYSS6TxzJMVynLssZwvwKNrIj1ZyufbU9Obhav1P0k_-BoRHXgPOKysnySmVOftEYp25enR1nCp0gZ5c1jOFcfVdKRnSu-lxWupBnHbY_3MjRJMpV9njZmJejuvGFWV3355iwqoZN5FMQdukFJII4ezn0mtv_2-2-7isc-gmy_qH58_ypW2XgYG-kTFOi_m0eMQg==&q={searchTerms}"
+                  }]
+                },
+                {
+                  "_definedAliases" : [":d"],
+                  "_metaData" : {},
+                  "_name" : "ddg",
+                  "_urls" : [{
+                    "params" : [],
+                    "rels" : [],
+                    "template" : "https://duckduckgo.com/?kk=-1&kah=it-it&kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&kak=-1&kax=-1&km=l&q={searchTerms}"
+                  }]
+                },
+                {
+                  "_definedAliases" : [":sp"],
+                  "_metaData" : {},
+                  "_name" : "startpage",
+                  "_urls" : [{
+                    "params" : [],
+                    "rels" : [],
+                    "template" : "https://startpage.com/sp/search?query={searchTerms}&prfe=a715a36c09c1472e9d5d804b0ba9312716a96d474575edbfa5e7cb0c646b34216e65fa4ae420b5df58e6c8d3e420eb1771f23caa2663bb5435b01ebb741af66083a80b0bb3682e008b0e7e1126"
+                  }]
+                }
+              ],
+              "metaData" : {
+                "appDefaultEngine" : "startpage",
+                "current" : "startpage",
+                "hash" : "wY9ZGT+vGpkZYQapRr7M4b0KjzBiyWf7TZuI+Rb7nxA="
+              },
+              "version" : 6
+            }
+          '';
+        } "mozlz4a $src $out";
+      };
 
       ".stalonetrayrc".text =
         lib.generators.toKeyValue {
@@ -509,9 +514,12 @@ in {
       profiles = {
         default = {
           settings = {
+            "accessibility.typeaheadfind" = false;
             "accessibility.typeaheadfind.flashBar" = 0;
             "app.normandy.first_run" = false;
             "app.shield.optoutstudies.enabled" = false;
+            "app.update.auto" = false;
+            "breakpad.reportURL" = "";
             "browser.bookmarks.restore_default_bookmarks" = false;
             "browser.discovery.enabled" = false;
             "browser.download.always_ask_before_handling_new_types" = true;
@@ -539,15 +547,16 @@ in {
             "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
             "browser.newtabpage.enabled" = false;
             "browser.newtabpage.pinned" = "[]";
-            "browser.privatebrowsing.autostart" = true;
             "browser.safebrowsing.downloads.enabled" = false;
             "browser.safebrowsing.malware.enabled" = false;
             "browser.safebrowsing.phishing.enabled" = false;
-            "browser.search.hiddenOneOffs" = "Google,Amazon.it,Bing,DuckDuckGo,Wikipedia (en)";
+            "browser.search.hiddenOneOffs" = "Google,Amazon.com,Bing,DuckDuckGo,eBay,Wikipedia (en)";
             "browser.search.region" = "US";
             "browser.search.suggest.enabled" = false;
             "browser.shell.checkDefaultBrowser" = false;
             "browser.startup.homepage" = "about:blank";
+            "browser.startup.homepage_override.mstone" = "ignore";
+            "browser.tabs.crashReporting.sendReport" = false;
             "browser.toolbars.bookmarks.visibility" = "never";
             "browser.uiCustomization.state" = "{\"placements\":{\"widget-overflow-fixed-list\":[],\"nav-bar\":[\"back-button\",\"forward-button\",\"stop-reload-button\",\"urlbar-container\",\"downloads-button\",\"jid1-kkzogwgsw3ao4q_jetpack-browser-action\",\"ublock0_raymondhill_net-browser-action\",\"myallychou_gmail_com-browser-action\"],\"toolbar-menubar\":[\"menubar-items\"],\"TabsToolbar\":[\"tabbrowser-tabs\",\"new-tab-button\",\"alltabs-button\"],\"PersonalToolbar\":[\"import-button\",\"personal-bookmarks\"]},\"seen\":[\"save-to-pocket-button\",\"developer-button\",\"jid1-kkzogwgsw3ao4q_jetpack-browser-action\",\"ublock0_raymondhill_net-browser-action\",\"myallychou_gmail_com-browser-action\"],\"dirtyAreaCache\":[\"nav-bar\",\"PersonalToolbar\",\"toolbar-menubar\",\"TabsToolbar\"],\"currentVersion\":17,\"newElementCount\":3}";
             "browser.urlbar.placeholderName.private" = "";
@@ -565,15 +574,21 @@ in {
             "browser.urlbar.suggest.quicksuggest.sponsored" = false;
             "browser.urlbar.suggest.searches" = false;
             "browser.urlbar.suggest.topsites" = false;
+            "datareporting.healthreport.documentServerURI" = "";
+            "datareporting.healthreport.service.enabled" = false;
             "datareporting.healthreport.uploadEnabled" = false;
+            "datareporting.policy.dataSubmissionEnabled" = false;
             "doh-rollout.skipHeuristicsCheck" = true;
             "dom.battery.enabled" = false;
             "dom.event.clipboardevents.enabled" = false;
             "dom.forms.autocomplete.formautofill" = false;
+            "dom.ipc.plugins.flash.subprocess.crashreporter.enabled" = false;
+            "dom.ipc.plugins.reportCrashURL" = false;
             "extensions.formautofill.addresses.enabled" = false;
             "extensions.formautofill.creditCards.enabled" = false;
             "extensions.pictureinpicture.enable_picture_in_picture_overrides" = false;
             "extensions.pocket.enabled" = false;
+            "extensions.screenshots.disabled" = true;
             "extensions.ui.dictionary.hidden" = true;
             "extensions.ui.locale.hidden" = true;
             "extensions.ui.sitepermission.hidden" = true;
@@ -583,8 +598,16 @@ in {
             "general.platform.override" = "Win32";
             "general.useragent.override" = "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0";
             "geo.enabled" = false;
+            "geo.wifi.logging.enabled" = false;
+            "geo.wifi.uri" = "";
+            "identity.fxaccounts.auth.uri" = "";
+            "identity.fxaccounts.remote.force_auth.uri" = "";
+            "identity.fxaccounts.remote.signin.uri" = "";
+            "identity.fxaccounts.remote.signup.uri" = "";
+            "identity.fxaccounts.settings.uri" = "";
             "layout.css.prefers-color-scheme.content-override" = 2;
             "layout.spellcheckDefault" = 0;
+            "loop.enabled" = false;
             "media.autoplay.default" = 5;
             "media.hardwaremediakeys.enabled" = false;
             "media.navigator.enabled" = false;
@@ -600,32 +623,57 @@ in {
             "permissions.default.xr" = 2;
             "places.history.enabled" = false;
             "pref.downloads.disable_button.edit_actions" = false;
-            "privacy.clearOnShutdown.downloads" = false;
-            "privacy.clearOnShutdown.formdata" = false;
-            "privacy.clearOnShutdown.history" = false;
+            "privacy.clearOnShutdown.cache" = true;
+            "privacy.clearOnShutdown.cookies" = true;
+            "privacy.clearOnShutdown.downloads" = true;
+            "privacy.clearOnShutdown.formdata" = true;
+            "privacy.clearOnShutdown.history" = true;
             "privacy.clearOnShutdown.offlineApps" = true;
-            "privacy.clearOnShutdown.sessions" = false;
+            "privacy.clearOnShutdown.openWindows" = true;
+            "privacy.clearOnShutdown.passwords" = true;
+            "privacy.clearOnShutdown.sessions" = true;
+            "privacy.clearOnShutdown.siteSettings" = true;
             "privacy.donottrackheader.enabled" = true;
+            "privacy.donottrackheader.value" = 1;
             "privacy.firstparty.isolate" = true;
             "privacy.history.custom" = true;
             "privacy.resistFingerprinting" = true; # might brake
-            "privacy.sanitize.pending" = "[{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"cookies\",\"offlineApps\"],\"options\":{}},{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}}]";
+            "privacy.sanitize.pending" = "[{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}},{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"cookies\",\"offlineApps\",\"history\",\"formdata\",\"downloads\",\"sessions\",\"siteSettings\"],\"options\":{}}]";
             "privacy.sanitize.sanitizeOnShutdown" = true;
             "privacy.trackingprotection.enabled" = true;
+            "services.sync.autoconnect" = false;
             "services.sync.clients.lastSync" = "0";
             "services.sync.declinedEngines" = "";
+            "services.sync.engine.addons" = false;
             "services.sync.engine.addresses.available" = false;
+            "services.sync.engine.bookmarks" = false;
+            "services.sync.engine.history" = false;
+            "services.sync.engine.passwords" = false;
+            "services.sync.engine.prefs" = false;
+            "services.sync.engine.tabs" = false;
             "services.sync.globalScore" = 0;
             "services.sync.nextSync" = 0;
+            "services.sync.serverURL" = "";
             "services.sync.tabs.lastSync" = "0";
             "signon.autofillForms" = false;
             "signon.generation.enabled" = false;
             "signon.management.page.breach-alerts.enabled" = false;
             "signon.rememberSignons" = false;
+            "toolkit.telemetry.archive.enabled" = false;
+            "toolkit.telemetry.cachedClientID" = "";
+            "toolkit.telemetry.enabled" = false;
+            "toolkit.telemetry.optoutSample" = false;
             "toolkit.telemetry.pioneer-new-studies-available" = false;
+            "toolkit.telemetry.prompted" = 2;
+            "toolkit.telemetry.rejected" = true;
             "toolkit.telemetry.reportingpolicy.firstRun" = false;
+            "toolkit.telemetry.server" = "";
+            "toolkit.telemetry.unified" = false;
+            "toolkit.telemetry.unifiedIsOptIn" = true;
             "webgl.disabled" = true;
+            # "browser.privatebrowsing.autostart" = true;
             # "browser.uiCustomization.state" = "{\"placements\":{\"widget-overflow-fixed-list\":[],\"nav-bar\":[\"back-button\",\"forward-button\",\"stop-reload-button\",\"urlbar-container\",\"downloads-button\",\"jid1-kkzogwgsw3ao4q_jetpack-browser-action\",\"ublock0_raymondhill_net-browser-action\"],\"toolbar-menubar\":[\"menubar-items\"],\"TabsToolbar\":[\"tabbrowser-tabs\",\"new-tab-button\",\"alltabs-button\"],\"PersonalToolbar\":[\"import-button\",\"personal-bookmarks\"]},\"seen\":[\"save-to-pocket-button\",\"developer-button\",\"jid1-kkzogwgsw3ao4q_jetpack-browser-action\",\"ublock0_raymondhill_net-browser-action\"],\"dirtyAreaCache\":[\"nav-bar\",\"PersonalToolbar\",\"toolbar-menubar\",\"TabsToolbar\"],\"currentVersion\":17,\"newElementCount\":3}";
+            # "privacy.sanitize.pending" = "[{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"cookies\",\"offlineApps\"],\"options\":{}},{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}}]";
           };
           userChrome = "";
           userContent = "";
