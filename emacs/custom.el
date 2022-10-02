@@ -761,8 +761,6 @@ The document was typeset with
  '(org-roam-directory "~/roam/")
  '(org-startup-folded t)
  '(org-tags-column 0)
- '(outline-minor-mode-cycle t)
- '(outline-minor-mode-highlight 'append)
  '(package-archives nil)
  '(php-mode-coding-style 'php)
  '(php-mode-hook '(skempo-mode subword-mode tree-sitter-mode))

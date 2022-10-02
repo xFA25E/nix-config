@@ -625,8 +625,7 @@ See its documentiation for N."
 (declare-function mpc-file-local-copy "mpc")
 (declare-function mpc-secs-to-time "mpc")
 (declare-function mpc-tempfiles-add "mpc")
-(define-advice mpc-format
-    (:override (format-spec info &optional hscroll) cache-hash)
+(define-advice mpc-format (:override (format-spec info &optional hscroll) hash)
   (let* ((pos 0)
          (start (point))
          (col (if hscroll (- hscroll) 0))
@@ -1197,3 +1196,7 @@ Used as an advice in goto functions."
 ;;; Footer
 
 (load (expand-file-name "emacs/custom.el" (xdg-config-home)) nil nil t)
+
+;; Local Variables:
+;; outline-regexp: ";;;\\(;*\\)"
+;; End:

@@ -7,14 +7,17 @@
 (defun tempo-emacs-lisp-user-elements (arg)
   (pcase arg
     (:elisp-group
-     (string-trim-right (or (buffer-file-name) (buffer-name))
+     (string-trim-right (or (file-name-nondirectory (buffer-file-name))
+                            (buffer-name))
                         (rx (? "-mode") ".el" eos)))
     (:elisp-namespace
      (string-trim
       (replace-regexp-in-string
        (rx (+ (not (any "a-z")))) "-"
-       (string-trim-right (downcase (or (buffer-file-name) (buffer-name)))
-                          (rx ".el" eos)))
+       (string-trim-right
+        (downcase (or (file-name-nondirectory (buffer-file-name))
+                      (buffer-name)))
+        (rx ".el" eos)))
       "-" "-"))
     (`(:elisp-with-parens . ,body)
      (if (or (not (eql (char-before) ?\()) (use-region-p))
