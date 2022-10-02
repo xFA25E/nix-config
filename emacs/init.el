@@ -1,30 +1,32 @@
-;; -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; outline-regexp: ";;;\\(;*\\)"; -*-
 
-;;; Header
+(add-hook
+ 'after-init-hook
+ (lambda ()
+   (load (expand-file-name "emacs/custom.el" (xdg-config-home)) nil nil t)))
 
 (require 'xdg)
 
-(define-prefix-command 'cus-edit-map)
-(define-prefix-command 'ediff-command-map)
 (define-prefix-command 'load-command-map)
+(define-key ctl-x-map "\C-l" 'load-command-map)
+
 (define-prefix-command 'region-commands-map)
+(define-key ctl-x-map "\C-r" 'region-commands-map)
 
-;;; Packages
-
-;;;; Abbrev
+;;; Abbrev
 
 (add-hook 'js-mode-hook 'abbrev-mode)
 
-;;;; Align
+;;; Align
 
 (define-key 'region-commands-map "\C-a" 'align-regexp)
 
-;;;; Avy
+;;; Avy
 
 (define-key global-map "\M-z" 'avy-goto-word-0)
 (define-key goto-map "\M-g" 'avy-goto-line)
 
-;;;; Browse Url
+;;; Browse Url
 
 (define-key ctl-x-map "B" 'browse-url)
 
@@ -44,16 +46,16 @@ See `browse-url' for URL and ARGS."
          (answer (read-answer (concat url " ") answers)))
     (apply (nth 3 (assoc answer answers)) url args)))
 
-;;;; Bytecomp Async
+;;; Bytecomp Async
 
 (declare-function async-bytecomp-package-mode "async-bytecomp")
 (with-eval-after-load 'bytecomp (async-bytecomp-package-mode))
 
-;;;; Cargo
+;;; Cargo
 
 (add-hook 'rust-mode-hook 'cargo-minor-mode)
 
-;;;; Comint
+;;; Comint
 
 (define-key mode-specific-map "c" 'comint-run)
 
@@ -73,14 +75,15 @@ See `browse-url' for URL and ARGS."
    (make-comint name shell-file-name nil shell-command-switch command))
   (run-hooks (intern-soft (concat "comint-" name "-hook"))))
 
-;;;; Compile
+;;; Compile
+
+(add-hook 'compilation-filter-hook 'ansi-color-compilation-filter)
 
 (defvar compilation-shell-minor-mode-map)
 (with-eval-after-load 'compile
-  (define-key compilation-shell-minor-mode-map "\C-c\C-g" 'recompile)
-  (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter))
+  (define-key compilation-shell-minor-mode-map "\C-c\C-g" 'recompile))
 
-;;;; Consult
+;;; Consult
 
 (defvar kmacro-keymap)
 (define-key global-map "\M-H" 'consult-history)
@@ -122,36 +125,38 @@ See `browse-url' for URL and ARGS."
       (delete-minibuffer-contents))
     (insert (substring-no-properties str))))
 
-;;;; Css Mode
+;;; Css Mode
 
 (defvar css-mode-map)
 (with-eval-after-load 'css-mode
   (define-key css-mode-map "\C-cm" 'css-lookup-symbol))
 
-;;;; Custom
+;;; Custom
+
+(define-prefix-command 'cus-edit-map)
+(define-key ctl-x-map "c" 'cus-edit-map)
 
 (define-key 'cus-edit-map "v" 'customize-option)
 (define-key 'cus-edit-map "g" 'customize-group)
 (define-key 'cus-edit-map "f" 'customize-face)
 (define-key 'cus-edit-map "s" 'customize-saved)
 (define-key 'cus-edit-map "u" 'customize-unsaved)
-(define-key ctl-x-map "c" 'cus-edit-map)
 
-;;;; Cyrillic Dvorak Im
+;;; Cyrillic Dvorak Im
 
 (require 'cyrillic-dvorak-im)
 
-;;;; Dictionary
+;;; Dictionary
 
 (define-key mode-specific-map "oT" 'dictionary-search)
 
-;;;; Diff
+;;; Diff
 
 (defvar diff-mode-map)
 (with-eval-after-load 'diff-mode
   (define-key diff-mode-map "\M-o" nil))
 
-;;;; Dired
+;;; Dired
 
 (defvar dired-mode-map)
 (with-eval-after-load 'dired
@@ -216,22 +221,21 @@ See the original function for ARG."
                    (kill-buffer (process-buffer process)))))))
         (set-process-sentinel proc sentinel))))))
 
-;;;; Dired Tags
+;;; Dired Tags
 
 (with-eval-after-load 'dired
   (define-key dired-mode-map "\C-c\C-t" 'dired-tags-prefix-map))
 
-;;;; Disass
+;;; Disass
 
-(with-eval-after-load 'disass
-  (define-key emacs-lisp-mode-map "\C-c\C-d" 'disassemble)
-  (define-key lisp-interaction-mode-map "\C-c\C-d" 'disassemble))
+(define-key emacs-lisp-mode-map "\C-c\C-d" 'disassemble)
+(define-key lisp-interaction-mode-map "\C-c\C-d" 'disassemble)
 
-;;;; Dumb Jump
+;;; Dumb Jump
 
 (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
 
-;;;; Ebdb
+;;; Ebdb
 
 (define-key mode-specific-map "oe" 'ebdb)
 
@@ -245,39 +249,40 @@ See the original function for ARG."
   (require 'ebdb-message)
   (define-key message-mode-map "\C-ce" 'ebdb-complete))
 
-;;;; Ediff
+;;; Ediff
 
-(defvar ediff-command-map)
-(define-key ediff-command-map "\C-b" 'ediff-buffers)
-(define-key ediff-command-map "\C-c" 'ediff-current-file)
-(define-key ediff-command-map "\C-d" 'ediff-directories)
-(define-key ediff-command-map "\C-f" 'ediff-files)
-(define-key ediff-command-map "\C-k" 'ediff-backup)
-(define-key ediff-command-map "\C-m\C-b" 'ediff-merge-buffers)
-(define-key ediff-command-map "\C-m\C-d" 'ediff-merge-directories)
-(define-key ediff-command-map "\C-m\C-f" 'ediff-merge-files)
-(define-key ediff-command-map "\C-m\C-v" 'ediff-merge-revisions)
-(define-key ediff-command-map "\C-p\C-b" 'ediff-patch-buffer)
-(define-key ediff-command-map "\C-p\C-f" 'ediff-patch-file)
-(define-key ediff-command-map "\C-r\C-l" 'ediff-regions-linewise)
-(define-key ediff-command-map "\C-r\C-w" 'ediff-regions-wordwise)
-(define-key ediff-command-map "\C-v" 'ediff-revision)
-(define-key ediff-command-map "\C-w\C-l" 'ediff-windows-linewise)
-(define-key ediff-command-map "\C-w\C-w" 'ediff-windows-wordwise)
-(define-key ediff-command-map [?\C-\S-v] 'ediff-directory-revisions)
-(define-key ediff-command-map [?\C-m ?\C-\S-v] 'ediff-merge-directory-revisions)
+(define-prefix-command 'ediff-command-map)
+(define-key ctl-x-map "\C-d" 'ediff-command-map)
+(define-key 'ediff-command-map "\C-b" 'ediff-buffers)
+(define-key 'ediff-command-map "\C-c" 'ediff-current-file)
+(define-key 'ediff-command-map "\C-d" 'ediff-directories)
+(define-key 'ediff-command-map "\C-f" 'ediff-files)
+(define-key 'ediff-command-map "\C-k" 'ediff-backup)
+(define-key 'ediff-command-map "\C-m\C-b" 'ediff-merge-buffers)
+(define-key 'ediff-command-map "\C-m\C-d" 'ediff-merge-directories)
+(define-key 'ediff-command-map "\C-m\C-f" 'ediff-merge-files)
+(define-key 'ediff-command-map "\C-m\C-v" 'ediff-merge-revisions)
+(define-key 'ediff-command-map "\C-p\C-b" 'ediff-patch-buffer)
+(define-key 'ediff-command-map "\C-p\C-f" 'ediff-patch-file)
+(define-key 'ediff-command-map "\C-r\C-l" 'ediff-regions-linewise)
+(define-key 'ediff-command-map "\C-r\C-w" 'ediff-regions-wordwise)
+(define-key 'ediff-command-map "\C-v" 'ediff-revision)
+(define-key 'ediff-command-map "\C-w\C-l" 'ediff-windows-linewise)
+(define-key 'ediff-command-map "\C-w\C-w" 'ediff-windows-wordwise)
+(define-key 'ediff-command-map [?\C-\S-v] 'ediff-directory-revisions)
+(define-key 'ediff-command-map [?\C-m ?\C-\S-v] 'ediff-merge-directory-revisions)
 
-;;;; Edit Indirect
+;;; Edit Indirect
 
 (define-key ctl-x-map "E" 'edit-indirect-region)
 
-;;;; Eglot
+;;; Eglot
 
 (defvar eglot-mode-map)
 (defvar eglot-server-programs)
 (with-eval-after-load 'eglot
   (define-key eglot-mode-map "\C-c\C-l" 'eglot-code-actions)
-  (setf (alist-get '(js-mode typescript-mode) eglot-server-programs nil nil 'equal)
+  (setf (cdr (assoc '(js-mode typescript-mode) eglot-server-programs))
         '("typescript-language-server" "--tsserver-path" "tsserver" "--stdio")))
 
 (define-advice eglot-xref-backend (:override () dumb) 'eglot+dumb)
@@ -308,57 +313,51 @@ See `xref-backend-references' docs for IDENTIFIER."
 See `xref-backend-apropos' docs for PATTERN."
   (xref-backend-apropos 'eglot pattern))
 
-;;;; Eldoc
+;;; Eldoc
 
 (add-hook 'nix-mode-hook 'eldoc-mode)
 
-;;;; Elisp Mode
+;;; Elisp Mode
 
 (define-key emacs-lisp-mode-map [?\C-c ?\C-\S-m] 'emacs-lisp-macroexpand)
 (define-key lisp-interaction-mode-map [?\C-c ?\C-\S-m] 'emacs-lisp-macroexpand)
-(with-eval-after-load 'elisp-mode
-  (setq elisp-flymake-byte-compile-load-path (cons "./" load-path)))
+(setq elisp-flymake-byte-compile-load-path (cons "./" load-path))
 
-;;;; Emacs
+;;; Emacs
 
 (setq completion-ignore-case t)
 (define-key ctl-x-map "\C-\M-t" 'transpose-regions)
-(define-key ctl-x-map "\C-l" 'load-command-map)
 
-;;;; Emmet Mode
+;;; Emmet Mode
 
 (add-hook 'mhtml-mode-hook 'emmet-mode)
 (add-hook 'nxml-mode-hook 'emmet-mode)
 (add-hook 'web-mode-hook 'emmet-mode)
 
-;;;; Env
+;;; Env
 
 (setenv "PAGER" "cat")
-(with-eval-after-load 'env
-  (define-key global-map [?\C-\M-$] 'getenv))
+(define-key global-map [?\C-\M-$] 'getenv)
 
-;;;; Envrc
+;;; Envrc
 
 (defvar envrc-mode-map)
 (with-eval-after-load 'envrc
-  (define-key 'envrc-command-map "R" 'envrc-reload-all)
-  (define-key envrc-mode-map "\C-xd" 'envrc-command-map))
+  (define-key envrc-mode-map "\C-xd" 'envrc-command-map)
+  (define-key 'envrc-command-map "R" 'envrc-reload-all))
 
-;;;; Files
+;;; Files
 
-(with-eval-after-load 'files
-  (define-key ctl-x-map "\C-d" 'ediff-command-map)
-  (define-key ctl-x-map "\C-r" 'region-commands-map)
-  (define-key 'load-command-map "\C-f" 'load-file)
-  (define-key 'load-command-map "\C-l" 'load-library))
+(define-key 'load-command-map "\C-f" 'load-file)
+(define-key 'load-command-map "\C-l" 'load-library)
 
-;;;; Files X
+;;; Files X
 
 (define-key ctl-x-x-map "ad" 'add-dir-local-variable)
 (define-key ctl-x-x-map "aa" 'add-file-local-variable)
 (define-key ctl-x-x-map "ap" 'add-file-local-variable-prop-line)
 
-;;;; Find Dired
+;;; Find Dired
 
 (define-key search-map "N" 'find-dired)
 (define-key search-map "n" 'find-name-dired)
@@ -382,7 +381,7 @@ See `xref-backend-apropos' docs for PATTERN."
                    (call-process "video_seconds" nil '(t nil) nil file-name)
                    (string-to-number (buffer-string)))))))
 
-;;;; Find Func
+;;; Find Func
 
 (define-key ctl-x-map "F" 'find-function)
 (define-key ctl-x-map "K" 'find-function-on-key)
@@ -392,11 +391,11 @@ See `xref-backend-apropos' docs for PATTERN."
 (dolist (fn '(find-library find-function find-function-on-key find-variable))
   (advice-add fn :before 'xref-push-marker-stack-ignore-args))
 
-;;;; Finder
+;;; Finder
 
 (define-key help-map "\M-c" 'finder-commentary)
 
-;;;; Flymake
+;;; Flymake
 
 (add-hook 'nix-mode-hook 'flymake-mode)
 
@@ -405,46 +404,45 @@ See `xref-backend-apropos' docs for PATTERN."
   (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error)
   (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error))
 
-;;;; Flymake Eslint
+;;; Flymake Eslint
 
 (add-hook 'js-mode-hook 'flymake-eslint-enable)
 
-;;;; Flymake Statix
+;;; Flymake Statix
 
 (add-hook 'nix-mode-hook 'flymake-statix-setup)
 
 (defvar nix-mode-map)
-(with-eval-after-load 'flymake-statix
-  (with-eval-after-load 'nix-mode
+(with-eval-after-load 'nix-mode
+  (with-eval-after-load 'flymake-statix
     (define-key nix-mode-map "\C-c\C-x" 'flymake-statix-fix)))
 
-;;;; Format All
+;;; Format All
 
 (add-hook 'js-mode-hook 'format-all-mode)
 (add-hook 'nix-mode-hook 'format-all-mode)
 
-;;;; Grep
+;;; Grep
 
 (define-key search-map "g" 'rgrep)
 
 (define-advice grep-expand-template (:filter-return (cmd) cut)
   (concat cmd " | cut -c-500"))
 
-;;;; Help
+;;; Help
 
 (define-key ctl-x-map "h" 'help-command)
 
-;;;; Help Fns
+;;; Help Fns
 
-(with-eval-after-load 'help-fns
-  (define-key help-map "\M-f" 'describe-face)
-  (define-key help-map "\M-k" 'describe-keymap))
+(define-key help-map "\M-f" 'describe-face)
+(define-key help-map "\M-k" 'describe-keymap)
 
-;;;; Hippie Exp
+;;; Hippie Exp
 
 (define-key ctl-x-map [?\C-\;] 'hippie-expand)
 
-;;;; Hl Line
+;;; Hl Line
 
 (define-key ctl-x-x-map "h" 'hl-line-mode)
 
@@ -456,29 +454,29 @@ See `xref-backend-apropos' docs for PATTERN."
 (add-hook 'transmission-mode-hook 'hl-line-mode)
 (add-hook 'transmission-peers-mode-hook 'hl-line-mode)
 
-;;;; Ibuffer
+;;; Ibuffer
 
 (defvar ibuffer-mode-map)
 (with-eval-after-load 'ibuffer
   (define-key ibuffer-mode-map "\M-o" nil))
 
-;;;; Ipretty
+;;; Ipretty
 
 (define-key lisp-interaction-mode-map "\C-j" 'ipretty-last-sexp)
 
-;;;; Isearch
+;;; Isearch
 
 (fset 'isearch-help-map isearch-help-map)
 (define-key isearch-mode-map (kbd "C-?") 'isearch-help-map)
 (define-key isearch-mode-map "\C-h" 'isearch-delete-char)
 
-;;;; Js
+;;; Js
 
 (defvar js-mode-map)
 (with-eval-after-load 'js
   (define-key js-mode-map "\M-." nil))
 
-;;;; Ledger
+;;; Ledger
 
 (defvar ledger-amount-regex)
 (defvar ledger-commodity-regexp)
@@ -492,14 +490,14 @@ See `xref-backend-apropos' docs for PATTERN."
                 "\\([ \t]*[@={]@?[^\n;]+?\\)?"
                 "\\([ \t]+;.+?\\|[ \t]*\\)?$")))
 
-;;;; Link Hint
+;;; Link Hint
 
 (define-key goto-map "\M-l" 'link-hint-open-link)
 (define-key goto-map "\M-L" 'link-hint-copy-link)
 (with-eval-after-load 'link-hint
   (cl-pushnew 'rg-mode (get 'link-hint-compilation-link :vars)))
 
-;;;; Lisp
+;;; Lisp
 
 (define-key global-map "\M-[" 'delete-pair)
 (define-key global-map "\M-]" 'change-pair)
@@ -526,28 +524,27 @@ See `xref-backend-apropos' docs for PATTERN."
          (delete-pair))))
     (indent-sexp)))
 
-;;;; Loadhist
+;;; Loadhist
 
 (define-key 'load-command-map "\C-u" 'unload-feature)
 
-;;;; Locate
+;;; Locate
 
 (define-key search-map "l" 'locate)
 
-;;;; Magit
+;;; Magit
 
 (define-key project-prefix-map "m" 'magit-project-status)
 
-;;;; Man
+;;; Man
 
 (define-key help-map "\M-m" 'man)
 
-;;;; Menu Bar
+;;; Menu Bar
 
-(with-eval-after-load 'menu-bar
-  (define-key ctl-x-map "`" 'toggle-debug-on-error))
+(define-key ctl-x-map "`" 'toggle-debug-on-error)
 
-;;;; Minibuffer
+;;; Minibuffer
 
 (setq minibuffer-allow-text-properties t)
 
@@ -555,7 +552,7 @@ See `xref-backend-apropos' docs for PATTERN."
 (define-key minibuffer-local-completion-map " " nil)
 (define-key minibuffer-local-must-match-map "\C-j" 'minibuffer-force-complete-and-exit)
 
-;;;; Mpc
+;;; Mpc
 
 (define-key mode-specific-map "os" 'mpc)
 
@@ -762,7 +759,7 @@ See its documentiation for N."
     (insert (substring format-spec pos))
     (put-text-property start (point) 'mpc--uptodate-p pred)))
 
-;;;; Net Utils
+;;; Net Utils
 
 (define-key mode-specific-map "nh" 'nslookup-host)
 (define-key mode-specific-map "ni" 'ifconfig)
@@ -770,16 +767,15 @@ See its documentiation for N."
 (define-key mode-specific-map "np" 'ping)
 (define-key mode-specific-map "nw" 'iwconfig)
 
-;;;; Newcomment
+;;; Newcomment
 
-(with-eval-after-load 'newcomment
-  (define-key global-map [?\C-\;] 'comment-line))
+(define-key global-map [?\C-\;] 'comment-line)
 
-;;;; Newsticker
+;;; Newsticker
 
 (define-key mode-specific-map "on" 'newsticker-show-news)
 
-;;;; Nix Mode
+;;; Nix Mode
 
 (add-hook 'proced-mode-hook 'nix-prettify-mode)
 
@@ -874,13 +870,13 @@ Used as an advice."
               nix-flake-update))
   (advice-add fn :around 'nix-compile-in-project-advice))
 
-;;;; Nixos Options
+;;; Nixos Options
 
 (add-hook 'nixos-options-mode-hook 'nix-prettify-mode)
 (with-eval-after-load 'nix-mode
   (define-key nix-mode-map "\C-c\C-o" 'nixos-options))
 
-;;;; Notmuch
+;;; Notmuch
 
 (define-key mode-specific-map "om" 'notmuch)
 
@@ -891,15 +887,15 @@ Used as an advice."
   'notmuch-mua-kill-buffer
   'notmuch-mua-send-hook)
 
-;;;; Nov
+;;; Nov
 
 (add-to-list 'auto-mode-alist (cons (rx ".epub" eos) 'nov-mode))
 
-;;;; Novice
+;;; Novice
 
 (setq disabled-command-function nil)
 
-;;;; Ob Http
+;;; Ob Http
 
 (with-eval-after-load 'org
   (cl-pushnew
@@ -907,7 +903,7 @@ Used as an advice."
    (cdadr (memq :key-type (get 'org-babel-load-languages 'custom-type)))
    :test 'equal))
 
-;;;; Org
+;;; Org
 
 (defvar org-mode-map)
 (with-eval-after-load 'org
@@ -924,7 +920,7 @@ Used as an advice."
 
 (define-key mode-specific-map "Gc" 'org-capture)
 
-;;;; Org Mime
+;;; Org Mime
 
 (autoload 'org-mime-edit-mail-in-org-mode "org-mime" nil t)
 (autoload 'org-mime-revert-to-plain-text-mail "org-mime" nil t)
@@ -933,7 +929,7 @@ Used as an advice."
   (define-key message-mode-map "\C-c\M-e" 'org-mime-edit-mail-in-org-mode)
   (define-key message-mode-map "\C-c\M-t" 'org-mime-revert-to-plain-text-mail))
 
-;;;; Org Roam
+;;; Org Roam
 
 (define-key mode-specific-map "Gf" 'org-roam-node-find)
 (define-key mode-specific-map "Gi" 'org-roam-node-insert)
@@ -944,62 +940,62 @@ Used as an advice."
 (with-eval-after-load 'org-roam
   (org-roam-db-autosync-mode))
 
-;;;; Paragraphs
+;;; Paragraphs
 
 (define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
 
-;;;; Pdf Tools
+;;; Pdf Tools
 
 (declare-function pdf-loader-install "pdf-loader")
 (pdf-loader-install t t)
 
-;;;; Pp
+;;; Pp
 
 (define-key emacs-lisp-mode-map "\C-c\C-m" 'pp-macroexpand-last-sexp)
 (define-key lisp-interaction-mode-map "\C-c\C-m" 'pp-macroexpand-last-sexp)
 
-;;;; Proced
+;;; Proced
 
 (define-key mode-specific-map "op" 'proced)
 
-;;;; Pueue
+;;; Pueue
 
 (define-key mode-specific-map "ou" 'pueue)
 (add-hook 'pueue-mode-hook 'hl-line-mode)
 
-;;;; Register
+;;; Register
 
 (define-key ctl-x-r-map "L" 'list-registers)
 (define-key ctl-x-r-map "a" 'append-to-register)
 (define-key ctl-x-r-map "p" 'prepend-to-register)
 (define-key ctl-x-r-map "v" 'view-register)
 
-;;;; Re Builder
+;;; Re Builder
 
 (define-key emacs-lisp-mode-map "\C-c\C-r" 're-builder)
 (define-key lisp-interaction-mode-map "\C-c\C-r" 're-builder)
 
-;;;; Replace
+;;; Replace
 
 (define-key 'region-commands-map "\C-k" 'keep-lines)
 (define-key 'region-commands-map "\C-f" 'flush-lines)
 
-;;;; Reverse Im
+;;; Reverse Im
 
 (require 'reverse-im)
 (reverse-im-activate "cyrillic-dvorak")
 
-;;;; Rg
+;;; Rg
 
 (define-key search-map "r" 'rg-menu)
 
-;;;; Rx Widget
+;;; Rx Widget
 
 (with-eval-after-load 'wid-edit
   (require 'rx-widget)
   (define-widget 'regexp 'rx-widget "A regular expression in rx form."))
 
-;;;; Savehist
+;;; Savehist
 
 (defvar savehist-minibuffer-history-variables)
 (declare-function cl-delete-if-not "cl-lib")
@@ -1013,11 +1009,11 @@ Remove duplicates.  Remove inexistent files from
       (set sym (cl-delete-duplicates (symbol-value sym) :test #'equal))))
   (setq file-name-history (cl-delete-if-not #'file-exists-p file-name-history)))
 
-;;;; Sdcwoc
+;;; Sdcwoc
 
 (define-key mode-specific-map "ot" 'sdcwoc)
 
-;;;; Sgml mode
+;;; Sgml mode
 
 (defvar html-mode-map)
 (defvar sgml-mode-map)
@@ -1027,7 +1023,7 @@ Remove duplicates.  Remove inexistent files from
   (define-key sgml-mode-map "\C-\M-p" 'sgml-skip-tag-backward)
   (define-key sgml-mode-map "\C-c\C-r" 'sgml-namify-char))
 
-;;;; Shell
+;;; Shell
 
 (define-key mode-specific-map "s" 'shell)
 (define-key mode-specific-map "l" 'shell-list)
@@ -1046,7 +1042,7 @@ Remove duplicates.  Remove inexistent files from
       (setq-local ibuffer-use-header-line nil)
       (hl-line-mode t))))
 
-;;;; Simple
+;;; Simple
 
 (define-key ctl-x-map "w" 'mark-whole-buffer)
 (define-key ctl-x-x-map "f" 'auto-fill-mode)
@@ -1076,7 +1072,7 @@ See `backward-kill-word' for COUNT."
       (kill-region (region-beginning) (region-end))
     (backward-kill-word count)))
 
-;;;; Skempo
+;;; Skempo
 
 (add-hook 'nix-mode-hook 'skempo-mode)
 (add-hook 'js-mode-hook 'skempo-mode)
@@ -1096,7 +1092,7 @@ See `backward-kill-word' for COUNT."
   (with-eval-after-load 'nix
     (load (expand-file-name "emacs/skempo/nix.el" (xdg-config-home)))))
 
-;;;; Sort
+;;; Sort
 
 (define-key 'region-commands-map "\C-d" 'delete-duplicate-lines)
 (define-key 'region-commands-map "\C-l" 'sort-fields)
@@ -1106,31 +1102,31 @@ See `backward-kill-word' for COUNT."
 (define-key 'region-commands-map "\C-s" 'sort-lines)
 (define-key 'region-commands-map "\C-x" 'sort-regexp-fields)
 
-;;;; Subword
+;;; Subword
 
 (add-hook 'js-mode-hook 'subword-mode)
 (add-hook 'nix-mode-hook 'subword-mode)
 (add-hook 'rust-mode-hook 'subword-mode)
 
-;;;; Tex Mode
+;;; Tex Mode
 
 (defvar ispell-parser)
 (add-hook 'tex-mode-hook (lambda nil (setq-local ispell-parser 'tex)))
 
-;;;; Text Mode
+;;; Text Mode
 
 (autoload 'center-region "text-mode")
 (define-key 'region-commands-map "\C-c" 'center-region)
 
-;;;; Term
+;;; Term
 
 (define-key mode-specific-map "t" 'term)
 
-;;;; Tramp
+;;; Tramp
 
 (define-key ctl-x-x-map "T" 'tramp-cleanup-all-buffers)
 
-;;;; Transmission
+;;; Transmission
 
 (define-key mode-specific-map "or" 'transmission)
 
@@ -1146,7 +1142,7 @@ See `backward-kill-word' for COUNT."
          (torrent (aref (transmission-torrents response) 0)))
     (insert "\nComment: " (or (cdr (assq 'comment torrent)) ""))))
 
-;;;; Tree Sitter
+;;; Tree Sitter
 
 (add-hook 'css-mode-hook 'tree-sitter-mode)
 (add-hook 'js-mode-hook 'tree-sitter-mode)
@@ -1155,16 +1151,16 @@ See `backward-kill-word' for COUNT."
 (add-hook 'python-mode-hook 'tree-sitter-mode)
 (add-hook 'rust-mode-hook 'tree-sitter-mode)
 
-;;;; Url Parse
+;;; Url Parse
 
 (define-advice url-generic-parse-url (:around (fn &rest args) save-match-data)
   (save-match-data (apply fn args)))
 
-;;;; Web Mode
+;;; Web Mode
 
 (add-to-list 'auto-mode-alist (cons (rx ".twig" eos) 'web-mode))
 
-;;;; Widget
+;;; Widget
 
 (defvar widget-field-keymap)
 (defvar widget-text-keymap)
@@ -1172,7 +1168,7 @@ See `backward-kill-word' for COUNT."
   (define-key widget-field-keymap "\C-xnf" 'widget-narrow-to-field)
   (define-key widget-text-keymap "\C-xnf" 'widget-narrow-to-field))
 
-;;;; Window
+;;; Window
 
 (define-key global-map "\M-Q" 'quit-window)
 (define-key global-map "\M-V" 'scroll-down-line)
@@ -1181,22 +1177,14 @@ See `backward-kill-word' for COUNT."
 (define-key global-map [?\C-\M-\S-f] 'next-buffer)
 (define-key global-map [?\C-\S-v] 'scroll-up-line)
 
-;;;; With Editor
+;;; With Editor
 
 (define-key global-map [?\C-\M-&] 'with-editor-async-shell-command)
 
-;;;; Xref
+;;; Xref
 
 (autoload 'xref-push-marker-stack "xref")
 (defun xref-push-marker-stack-ignore-args (&rest _)
   "Like `xref-push-marker-stack', but ignore arguments.
 Used as an advice in goto functions."
   (xref-push-marker-stack))
-
-;;; Footer
-
-(load (expand-file-name "emacs/custom.el" (xdg-config-home)) nil nil t)
-
-;; Local Variables:
-;; outline-regexp: ";;;\\(;*\\)"
-;; End:
