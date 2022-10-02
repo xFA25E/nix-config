@@ -354,10 +354,9 @@ See `xref-backend-apropos' docs for PATTERN."
 
 ;;;; Files X
 
-(with-eval-after-load 'files-x
-  (define-key ctl-x-x-map "ad" 'add-dir-local-variable)
-  (define-key ctl-x-x-map "aa" 'add-file-local-variable)
-  (define-key ctl-x-x-map "ap" 'add-file-local-variable-prop-line))
+(define-key ctl-x-x-map "ad" 'add-dir-local-variable)
+(define-key ctl-x-x-map "aa" 'add-file-local-variable)
+(define-key ctl-x-x-map "ap" 'add-file-local-variable-prop-line)
 
 ;;;; Find Dired
 
