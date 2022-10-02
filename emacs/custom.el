@@ -808,7 +808,6 @@ The document was typeset with
    "\\`\\(?:http\\|/\\(?:cdrom\\|floppy\\|mnt\\|\\(?:[^/:@]*@\\)?[^/:@]*[^./:@]:\\)\\)")
  '(savehist-file (expand-file-name "emacs/savehist" (xdg-cache-home)))
  '(savehist-mode t)
- '(savehist-save-hook '(savehist-filter-file-name-history))
  '(scheme-program-name "guile")
  '(scroll-bar-mode nil)
  '(scroll-conservatively 10000)

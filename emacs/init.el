@@ -1003,14 +1003,17 @@ Used as an advice."
 
 ;;;; Savehist
 
+(defvar savehist-minibuffer-history-variables)
 (declare-function cl-delete-if-not "cl-lib")
-(defun savehist-filter-file-name-history ()
-  "Remove inexistent files from `file-name-history'.
-Don't check for remote files, since it's slow."
-  (cl-flet ((existsp (file) (or (file-remote-p file)
-                                (string-match-p "\\`http" file)
-                                (file-exists-p file))))
-    (setq file-name-history (cl-delete-if-not #'existsp file-name-history))))
+(defun savehist-cleanup-histories ()
+  "Cleanup savehist histories.
+Remove duplicates.  Remove inexistent files from
+`file-name-history'."
+  (interactive)
+  (dolist (sym savehist-minibuffer-history-variables)
+    (when (boundp sym)
+      (set sym (cl-delete-duplicates (symbol-value sym) :test #'equal))))
+  (setq file-name-history (cl-delete-if-not #'file-exists-p file-name-history)))
 
 ;;;; Sdcwoc
 
