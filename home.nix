@@ -976,9 +976,21 @@ in {
         onChange = ebc "emacs/early-init.el";
         source = ./emacs/early-init.el;
       };
-      "emacs/skempo-templates.el" = {
-        onChange = ebc "emacs/skempo-templates.el";
-        source = ./emacs/skempo-templates.el;
+      "emacs/skempo/emacs-lisp.el" = {
+        onChange = ebc "emacs/skempo/emacs-lisp.el";
+        source = ./emacs/skempo/emacs-lisp.el;
+      };
+      "emacs/skempo/lisp.el" = {
+        onChange = ebc "emacs/skempo/lisp.el";
+        source = ./emacs/skempo/lisp.el;
+      };
+      "emacs/skempo/js.el" = {
+        onChange = ebc "emacs/skempo/js.el";
+        source = ./emacs/skempo/js.el;
+      };
+      "emacs/skempo/nix.el" = {
+        onChange = ebc "emacs/skempo/nix.el";
+        source = ./emacs/skempo/nix.el;
       };
 
       "mpv/scripts/youtube-quality.lua".source = "${pkgs.mpv-youtube-quality}/youtube-quality.lua";

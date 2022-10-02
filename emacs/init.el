@@ -1,36 +1,59 @@
 ;; -*- lexical-binding: t; -*-
-(define-prefix-command 'region-commands-map)
-(define-prefix-command 'load-command-map)
+
+;;; Header
+
+(require 'xdg)
+
+(define-prefix-command 'cus-edit-map)
 (define-prefix-command 'ediff-command-map)
+(define-prefix-command 'load-command-map)
+(define-prefix-command 'region-commands-map)
+
+;;; Packages
+
+;;;; Abbrev
 
 (add-hook 'js-mode-hook 'abbrev-mode)
 
-(define-key region-commands-map "\C-a" 'align-regexp)
+;;;; Align
+
+(define-key 'region-commands-map "\C-a" 'align-regexp)
+
+;;;; Avy
 
 (define-key global-map "\M-z" 'avy-goto-word-0)
 (define-key goto-map "\M-g" 'avy-goto-line)
 
+;;;; Browse Url
+
 (define-key ctl-x-map "B" 'browse-url)
 
-(with-eval-after-load 'browse-url
-  (defun browse-url-choices (url &rest args)
-    (let* ((answers '(("firefox" ?f "Open in firefox" browse-url-firefox)
-                      ("eww" ?e "Open in eww" eww-browse-url)
-                      ("brave" ?b "Open in brave" browse-url-generic)
-                      ("ytdli" ?y "Download with ytdli"
-                       (lambda (url &rest _args)
-                         (call-process "ytdli" nil 0 nil url)))
-                      ("mpvi" ?m "Open in mpvi"
-                       (lambda (url &rest _args)
-                         (call-process "setsid" nil 0 nil "-f" "mpvi" url)))))
-           (read-answer-short t)
-           (answer (read-answer (concat url " ") answers)))
-      (apply (nth 3 (assoc answer answers)) url args))))
+(defun browse-url-choices (url &rest args)
+  "Function to browse urls that provides a choices menu.
+See `browse-url' for URL and ARGS."
+  (let* ((browse-url-ytdli (lambda (url &rest _)
+                             (call-process "ytdli" nil 0 nil url)))
+         (browse-url-mpvi (lambda (url &rest _)
+                            (call-process "setsid" nil 0 nil "-f" "mpvi" url)))
+         (answers `(("firefox" ?f "Open in firefox" browse-url-firefox)
+                    ("eww" ?e "Open in eww" eww-browse-url)
+                    ("brave" ?b "Open in brave" browse-url-generic)
+                    ("ytdli" ?y "Download with ytdli" ,browse-url-ytdli)
+                    ("mpvi" ?m "Open in mpvi" ,browse-url-mpvi)))
+         (read-answer-short t)
+         (answer (read-answer (concat url " ") answers)))
+    (apply (nth 3 (assoc answer answers)) url args)))
 
-(declare-function async-bytecomp-package-mode "async-bytecomp" (&optional arg))
+;;;; Bytecomp Async
+
+(declare-function async-bytecomp-package-mode "async-bytecomp")
 (with-eval-after-load 'bytecomp (async-bytecomp-package-mode))
 
+;;;; Cargo
+
 (add-hook 'rust-mode-hook 'cargo-minor-mode)
+
+;;;; Comint
 
 (define-key mode-specific-map "c" 'comint-run)
 
@@ -50,155 +73,188 @@
    (make-comint name shell-file-name nil shell-command-switch command))
   (run-hooks (intern-soft (concat "comint-" name "-hook"))))
 
+;;;; Compile
+
+(defvar compilation-shell-minor-mode-map)
 (with-eval-after-load 'compile
   (define-key compilation-shell-minor-mode-map "\C-c\C-g" 'recompile)
   (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter))
 
+;;;; Consult
+
 (defvar kmacro-keymap)
 (define-key global-map "\M-H" 'consult-history)
-(define-key goto-map "o" 'consult-outline)
-(define-key goto-map "i" 'consult-imenu)
 (define-key goto-map "E" 'consult-compile-error)
 (define-key goto-map "F" 'consult-flymake)
-(define-key project-prefix-map "i" 'consult-project-imenu)
+(define-key goto-map "i" 'consult-imenu)
+(define-key goto-map "o" 'consult-outline)
 (define-key kmacro-keymap "c" 'consult-kmacro)
+(define-key project-prefix-map "i" 'consult-project-imenu)
 
+(with-eval-after-load 'consult
+  (add-hook 'completion-list-mode-hook 'consult-preview-at-point-mode))
+
+(eval-when-compile (require 'consult))
 (declare-function consult--read "consult")
 (declare-function consult--current-history "consult")
-(eval-when-compile (require 'consult))
-(with-eval-after-load 'consult
-  (add-hook 'completion-list-mode-hook 'consult-preview-at-point-mode)
+(declare-function consult--insertion-preview "consult")
+(define-advice consult-history (:override (&optional history) require-match)
+  (interactive)
+  (let ((str (consult--local-let ((enable-recursive-minibuffers t))
+               (consult--read
+                (or (consult--current-history history)
+                    (user-error "History is empty"))
+                :prompt "History: "
+                :history t ;; disable history
+                :category  ;; Report category depending on history variable
+                (and (minibufferp)
+                     (pcase minibuffer-history-variable
+                       ('extended-command-history 'command)
+                       ('buffer-name-history 'buffer)
+                       ('face-name-history 'face)
+                       ('read-envvar-name-history 'environment-variable)
+                       ('bookmark-history 'bookmark)
+                       ('file-name-history 'file)))
+                :sort nil
+                :state (consult--insertion-preview (point) (point))
+                :require-match t))))
+    (when (minibufferp)
+      (delete-minibuffer-contents))
+    (insert (substring-no-properties str))))
 
-  (advice-add 'consult-history :override 'consult-history-require-match)
-  (defun consult-history-require-match (&optional history)
-    (interactive)
-    (let ((str (consult--local-let ((enable-recursive-minibuffers t))
-                 (consult--read
-                  (or (consult--current-history history)
-                      (user-error "History is empty"))
-                  :prompt "History: "
-                  :history t ;; disable history
-                  :category  ;; Report category depending on history variable
-                  (and (minibufferp)
-                       (pcase minibuffer-history-variable
-                         ('extended-command-history 'command)
-                         ('buffer-name-history 'buffer)
-                         ('face-name-history 'face)
-                         ('read-envvar-name-history 'environment-variable)
-                         ('bookmark-history 'bookmark)
-                         ('file-name-history 'file)))
-                  :sort nil
-                  :state (consult--insertion-preview (point) (point))
-                  :require-match t))))
-      (when (minibufferp)
-        (delete-minibuffer-contents))
-      (insert (substring-no-properties str)))))
+;;;; Css Mode
 
 (defvar css-mode-map)
-(with-eval-after-load 'css-mode (define-key css-mode-map "\C-cm" 'css-lookup-symbol))
+(with-eval-after-load 'css-mode
+  (define-key css-mode-map "\C-cm" 'css-lookup-symbol))
 
-(defvar cus-edit-map (make-sparse-keymap))
-(define-key cus-edit-map "v" 'customize-option)
-(define-key cus-edit-map "g" 'customize-group)
-(define-key cus-edit-map "f" 'customize-face)
-(define-key cus-edit-map "s" 'customize-saved)
-(define-key cus-edit-map "u" 'customize-unsaved)
-(define-key ctl-x-map "c" cus-edit-map)
+;;;; Custom
+
+(define-key 'cus-edit-map "v" 'customize-option)
+(define-key 'cus-edit-map "g" 'customize-group)
+(define-key 'cus-edit-map "f" 'customize-face)
+(define-key 'cus-edit-map "s" 'customize-saved)
+(define-key 'cus-edit-map "u" 'customize-unsaved)
+(define-key ctl-x-map "c" 'cus-edit-map)
+
+;;;; Cyrillic Dvorak Im
 
 (require 'cyrillic-dvorak-im)
 
+;;;; Dictionary
+
 (define-key mode-specific-map "oT" 'dictionary-search)
+
+;;;; Diff
 
 (defvar diff-mode-map)
 (with-eval-after-load 'diff-mode
   (define-key diff-mode-map "\M-o" nil))
 
+;;;; Dired
+
 (defvar dired-mode-map)
+(with-eval-after-load 'dired
+  (require 'dired-x)
+  (define-key dired-mode-map "\M-+" 'dired-create-empty-file))
+
 (defvar dired-compress-file-suffixes)
+(with-eval-after-load 'dired-aux
+  (add-to-list 'dired-compress-file-suffixes
+               (list (rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -")))
+
 (defvar dired-compress-files-alist)
 (defvar dired-log-buffer)
-(declare-function dired-log "dired" (log &rest args))
-(declare-function dired-get-marked-files "dired" (&optional localp arg filter distinguish-one-marked error))
+(declare-function cl-find-if "cl-lib")
+(declare-function dired-get-marked-files "dired")
+(declare-function dired-log "dired")
+(declare-function dired-relist-file "dired-aux")
+(defun dired-do-compress-to@async (&optional arg)
+  "Like `dired-do-compress-to', but asynchronous.
+See the original function for ARG."
+  (interactive "P")
+  (require 'format-spec)
+  (let* ((in-files (dired-get-marked-files nil arg nil nil t))
+         (out-file (expand-file-name (read-file-name "Compress to: ")))
+         (rule (cl-find-if (lambda (x) (string-match-p (car x) out-file))
+                           dired-compress-files-alist)))
+    (cond
+     ((not rule)
+      (error
+       "No compression rule found for %s, see `dired-compress-files-alist'"
+       out-file))
+     ((and (file-exists-p out-file)
+           (not (y-or-n-p (format "%s exists, overwrite?"
+                                  (abbreviate-file-name out-file)))))
+      (message "Compression aborted"))
+     (t
+      (let* ((in-count 0)
+             (proc-name (concat "compress " out-file))
+             (qout-file (shell-quote-argument out-file))
+             (qin-files (mapconcat
+                         (lambda (file) (cl-incf in-count)
+                           (shell-quote-argument (file-name-nondirectory file)))
+                         in-files " "))
+             (cmd (format-spec (cdr rule) `((?\o . ,qout-file)
+                                            (?\i . ,qin-files))))
+             (buffer (generate-new-buffer "*dired-async-do-compress-to*"))
+             (proc (start-file-process-shell-command proc-name buffer cmd))
+             (sentinel
+              (lambda (process event)
+                (pcase event
+                  ("finished\n"
+                   (message "Compressed %d file%s to %s" in-count
+                            (ngettext "" "s" in-count)
+                            (file-name-nondirectory out-file))
+                   (kill-buffer (process-buffer process))
+                   (dired-relist-file out-file))
+                  ((rx bos "exited abnormally with code")
+                   (dired-log (process-buffer process))
+                   (dired-log t)
+                   (message "Compress %s %s\nInspect %s buffer"
+                            out-file event dired-log-buffer)
+                   (kill-buffer (process-buffer process)))))))
+        (set-process-sentinel proc sentinel))))))
 
-(with-eval-after-load 'dired (require 'dired-x))
-
-(declare-function dired-do-compress-to@async "dired-aux" (&optional arg))
-(declare-function dired-relist-file "dired-aux" (file))
-(with-eval-after-load 'dired-aux
-  (define-key dired-mode-map "\M-+" 'dired-create-empty-file)
-  (add-to-list 'dired-compress-file-suffixes
-               (list (rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -"))
-
-  (defun dired-do-compress-to@async (&optional arg)
-    (interactive "P")
-    (require 'format-spec)
-    (let* ((in-files (dired-get-marked-files nil arg nil nil t))
-           (out-file (expand-file-name (read-file-name "Compress to: ")))
-           (rule (cl-find-if (lambda (x) (string-match-p (car x) out-file))
-                             dired-compress-files-alist)))
-      (cond
-       ((not rule)
-        (error "No compression rule found for %s, see `dired-compress-files-alist'" out-file))
-       ((and (file-exists-p out-file)
-             (not (y-or-n-p (format "%s exists, overwrite?" (abbreviate-file-name out-file)))))
-        (message "Compression aborted"))
-       (t
-        (let* ((in-count 0)
-               (proc-name (concat "compress " out-file))
-               (qout-file (shell-quote-argument out-file))
-               (qin-files (mapconcat (lambda (file) (cl-incf in-count)
-                                       (shell-quote-argument (file-name-nondirectory file)))
-                                     in-files " "))
-               (cmd (format-spec (cdr rule) `((?\o . ,qout-file) (?\i . ,qin-files))))
-               (buffer (generate-new-buffer "*dired-async-do-compress-to*"))
-               (proc (start-file-process-shell-command proc-name buffer cmd))
-               (sentinel
-                (lambda (process event)
-                  (pcase event
-                    ("finished\n"
-                     (message "Compressed %d file%s to %s" in-count
-                              (ngettext "" "s" in-count)
-                              (file-name-nondirectory out-file))
-                     (kill-buffer (process-buffer process))
-                     (dired-relist-file out-file))
-                    ((rx bos "exited abnormally with code")
-                     (dired-log (process-buffer process))
-                     (dired-log t)
-                     (message "Compress %s %s\nInspect %s buffer" out-file event dired-log-buffer)
-                     (kill-buffer (process-buffer process)))))))
-          (set-process-sentinel proc sentinel)))))))
+;;;; Dired Tags
 
 (with-eval-after-load 'dired
   (define-key dired-mode-map "\C-c\C-t" 'dired-tags-prefix-map))
+
+;;;; Disass
 
 (with-eval-after-load 'disass
   (define-key emacs-lisp-mode-map "\C-c\C-d" 'disassemble)
   (define-key lisp-interaction-mode-map "\C-c\C-d" 'disassemble))
 
+;;;; Dumb Jump
+
 (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
+
+;;;; Ebdb
 
 (define-key mode-specific-map "oe" 'ebdb)
 
 (defvar ebdb-mode-map)
-(defvar message-mode-map)
-
 (with-eval-after-load 'ebdb-com
   (define-key ebdb-mode-map "\C-cm" 'ebdb-complete-push-mail-and-quit-window)
   (define-key ebdb-mode-map "\C-cM" 'ebdb-complete-push-mail))
 
+(defvar message-mode-map)
 (with-eval-after-load 'message
   (require 'ebdb-message)
   (define-key message-mode-map "\C-ce" 'ebdb-complete))
 
-(define-key ediff-command-map "\C-k" 'ediff-backup)
+;;;; Ediff
+
+(defvar ediff-command-map)
 (define-key ediff-command-map "\C-b" 'ediff-buffers)
 (define-key ediff-command-map "\C-c" 'ediff-current-file)
 (define-key ediff-command-map "\C-d" 'ediff-directories)
-(define-key ediff-command-map [?\C-\S-v] 'ediff-directory-revisions)
 (define-key ediff-command-map "\C-f" 'ediff-files)
+(define-key ediff-command-map "\C-k" 'ediff-backup)
 (define-key ediff-command-map "\C-m\C-b" 'ediff-merge-buffers)
 (define-key ediff-command-map "\C-m\C-d" 'ediff-merge-directories)
-(define-key ediff-command-map [?\C-m ?\C-\S-v] 'ediff-merge-directory-revisions)
 (define-key ediff-command-map "\C-m\C-f" 'ediff-merge-files)
 (define-key ediff-command-map "\C-m\C-v" 'ediff-merge-revisions)
 (define-key ediff-command-map "\C-p\C-b" 'ediff-patch-buffer)
@@ -208,153 +264,222 @@
 (define-key ediff-command-map "\C-v" 'ediff-revision)
 (define-key ediff-command-map "\C-w\C-l" 'ediff-windows-linewise)
 (define-key ediff-command-map "\C-w\C-w" 'ediff-windows-wordwise)
+(define-key ediff-command-map [?\C-\S-v] 'ediff-directory-revisions)
+(define-key ediff-command-map [?\C-m ?\C-\S-v] 'ediff-merge-directory-revisions)
+
+;;;; Edit Indirect
 
 (define-key ctl-x-map "E" 'edit-indirect-region)
+
+;;;; Eglot
 
 (defvar eglot-mode-map)
 (defvar eglot-server-programs)
 (with-eval-after-load 'eglot
   (define-key eglot-mode-map "\C-c\C-l" 'eglot-code-actions)
   (setf (alist-get '(js-mode typescript-mode) eglot-server-programs nil nil 'equal)
-        '("typescript-language-server" "--tsserver-path" "tsserver" "--stdio"))
+        '("typescript-language-server" "--tsserver-path" "tsserver" "--stdio")))
 
-  (advice-add 'eglot-xref-backend :override 'xref-eglot+dumb-backend)
+(define-advice eglot-xref-backend (:override () dumb) 'eglot+dumb)
 
-  (defun xref-eglot+dumb-backend () 'eglot+dumb)
+(cl-defmethod xref-backend-identifier-at-point ((_backend (eql eglot+dumb)))
+  "Xref backend that combines eglot and dumb-jump."
+  (cons (xref-backend-identifier-at-point 'eglot)
+        (xref-backend-identifier-at-point 'dumb-jump)))
 
-  (cl-defmethod xref-backend-identifier-at-point ((_backend (eql eglot+dumb)))
-    (cons (xref-backend-identifier-at-point 'eglot)
-          (xref-backend-identifier-at-point 'dumb-jump)))
+(cl-defmethod xref-backend-identifier-completion-table ((_backend (eql eglot+dumb)))
+  "Xref backend that combines eglot and dumb-jump."
+  (xref-backend-identifier-completion-table 'eglot))
 
-  (cl-defmethod xref-backend-identifier-completion-table ((_backend (eql eglot+dumb)))
-    (xref-backend-identifier-completion-table 'eglot))
+(cl-defmethod xref-backend-definitions ((_backend (eql eglot+dumb)) identifier)
+  "Xref backend that combines eglot and dumb-jump.
+See `xref-backend-definitions' docs for IDENTIFIER."
+  (or (xref-backend-definitions 'eglot (car identifier))
+      (xref-backend-definitions 'dumb-jump (cdr identifier))))
 
-  (cl-defmethod xref-backend-definitions ((_backend (eql eglot+dumb)) identifier)
-    (or (xref-backend-definitions 'eglot (car identifier))
-        (xref-backend-definitions 'dumb-jump (cdr identifier))))
+(cl-defmethod xref-backend-references ((_backend (eql eglot+dumb)) identifier)
+  "Xref backend that combines eglot and dumb-jump.
+See `xref-backend-references' docs for IDENTIFIER."
+  (or (xref-backend-references 'eglot (car identifier))
+      (xref-backend-references 'dumb-jump (cdr identifier))))
 
-  (cl-defmethod xref-backend-references ((_backend (eql eglot+dumb)) identifier)
-    (or (xref-backend-references 'eglot (car identifier))
-        (xref-backend-references 'dumb-jump (cdr identifier))))
+(cl-defmethod xref-backend-apropos ((_backend (eql eglot+dumb)) pattern)
+  "Xref backend that combines eglot and dumb-jump.
+See `xref-backend-apropos' docs for PATTERN."
+  (xref-backend-apropos 'eglot pattern))
 
-  (cl-defmethod xref-backend-apropos ((_backend (eql eglot+dumb)) pattern)
-    (xref-backend-apropos 'eglot pattern)))
+;;;; Eldoc
 
 (add-hook 'nix-mode-hook 'eldoc-mode)
+
+;;;; Elisp Mode
 
 (define-key emacs-lisp-mode-map [?\C-c ?\C-\S-m] 'emacs-lisp-macroexpand)
 (define-key lisp-interaction-mode-map [?\C-c ?\C-\S-m] 'emacs-lisp-macroexpand)
 (with-eval-after-load 'elisp-mode
   (setq elisp-flymake-byte-compile-load-path (cons "./" load-path)))
 
+;;;; Emacs
+
 (setq completion-ignore-case t)
 (define-key ctl-x-map "\C-\M-t" 'transpose-regions)
 (define-key ctl-x-map "\C-l" 'load-command-map)
 
-(add-hook 'nxml-mode-hook 'emmet-mode)
+;;;; Emmet Mode
+
 (add-hook 'mhtml-mode-hook 'emmet-mode)
+(add-hook 'nxml-mode-hook 'emmet-mode)
 (add-hook 'web-mode-hook 'emmet-mode)
+
+;;;; Env
 
 (setenv "PAGER" "cat")
 (with-eval-after-load 'env
   (define-key global-map [?\C-\M-$] 'getenv))
 
+;;;; Envrc
+
+(defvar envrc-mode-map)
 (with-eval-after-load 'envrc
-  (define-key envrc-command-map "R" 'envrc-reload-all)
+  (define-key 'envrc-command-map "R" 'envrc-reload-all)
   (define-key envrc-mode-map "\C-xd" 'envrc-command-map))
 
+;;;; Files
+
 (with-eval-after-load 'files
+  (define-key ctl-x-map "\C-d" 'ediff-command-map)
   (define-key ctl-x-map "\C-r" 'region-commands-map)
-  (define-key load-command-map "\C-l" 'load-library)
-  (define-key load-command-map "\C-f" 'load-file)
-  (define-key ctl-x-map "\C-d" 'ediff-command-map))
+  (define-key 'load-command-map "\C-f" 'load-file)
+  (define-key 'load-command-map "\C-l" 'load-library))
+
+;;;; Files X
 
 (with-eval-after-load 'files-x
   (define-key ctl-x-x-map "ad" 'add-dir-local-variable)
   (define-key ctl-x-x-map "aa" 'add-file-local-variable)
   (define-key ctl-x-x-map "ap" 'add-file-local-variable-prop-line))
 
-(define-key search-map "n" 'find-name-dired)
+;;;; Find Dired
+
 (define-key search-map "N" 'find-dired)
+(define-key search-map "n" 'find-name-dired)
 
 (with-eval-after-load 'find-dired
-  (let ((type '(const :tag "Sort file names by video duration" find-dired-sort-by-video-duration))
-        (choices (cdr (get 'find-dired-refine-function 'custom-type))))
-    (cl-pushnew type choices :test #'equal)
-    (put 'find-dired-refine-function 'custom-type (cons 'choice choices)))
+  (cl-pushnew '(const :tag "Sort file names by video duration"
+                      find-dired-sort-by-video-duration)
+              (cdr (get 'find-dired-refine-function 'custom-type))
+              :test #'equal))
 
-  (defun find-dired-sort-by-video-duration ()
-    "Sort entries in *Find* buffer by video duration."
-    (sort-subr nil 'forward-line 'end-of-line
-               (lambda ()
-                 (let ((file-name
-                        (buffer-substring-no-properties
-                         (next-single-property-change
-                          (point) 'dired-filename)
-                         (line-end-position))))
-                   (with-temp-buffer
-                     (call-process "video_seconds" nil '(t nil) nil file-name)
-                     (string-to-number (buffer-string))))))))
+(defun find-dired-sort-by-video-duration ()
+  "Sort entries in *Find* buffer by video duration."
+  (sort-subr nil 'forward-line 'end-of-line
+             (lambda ()
+               (let ((file-name
+                      (buffer-substring-no-properties
+                       (next-single-property-change
+                        (point) 'dired-filename)
+                       (line-end-position))))
+                 (with-temp-buffer
+                   (call-process "video_seconds" nil '(t nil) nil file-name)
+                   (string-to-number (buffer-string)))))))
 
-(define-key ctl-x-map "L" 'find-library)
+;;;; Find Func
+
 (define-key ctl-x-map "F" 'find-function)
 (define-key ctl-x-map "K" 'find-function-on-key)
+(define-key ctl-x-map "L" 'find-library)
 (define-key ctl-x-map "V" 'find-variable)
 
 (dolist (fn '(find-library find-function find-function-on-key find-variable))
   (advice-add fn :before 'xref-push-marker-stack-ignore-args))
 
+;;;; Finder
+
 (define-key help-map "\M-c" 'finder-commentary)
 
+;;;; Flymake
+
 (add-hook 'nix-mode-hook 'flymake-mode)
+
 (defvar flymake-mode-map)
 (with-eval-after-load 'flymake
-  (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error)
-  (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error))
+  (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error)
+  (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error))
+
+;;;; Flymake Eslint
 
 (add-hook 'js-mode-hook 'flymake-eslint-enable)
 
+;;;; Flymake Statix
+
 (add-hook 'nix-mode-hook 'flymake-statix-setup)
-(with-eval-after-load 'nix-mode
-  (with-eval-after-load 'flymake-statix
+
+(defvar nix-mode-map)
+(with-eval-after-load 'flymake-statix
+  (with-eval-after-load 'nix-mode
     (define-key nix-mode-map "\C-c\C-x" 'flymake-statix-fix)))
 
-(add-hook 'nix-mode-hook 'format-all-mode)
+;;;; Format All
+
 (add-hook 'js-mode-hook 'format-all-mode)
+(add-hook 'nix-mode-hook 'format-all-mode)
+
+;;;; Grep
 
 (define-key search-map "g" 'rgrep)
-(declare-function grep-expand-template@add-cut "grep" (cmd))
-(with-eval-after-load 'grep
-  (define-advice grep-expand-template (:filter-return (cmd) add-cut)
-    (concat cmd " | cut -c-500")))
+
+(define-advice grep-expand-template (:filter-return (cmd) cut)
+  (concat cmd " | cut -c-500"))
+
+;;;; Help
 
 (define-key ctl-x-map "h" 'help-command)
+
+;;;; Help Fns
 
 (with-eval-after-load 'help-fns
   (define-key help-map "\M-f" 'describe-face)
   (define-key help-map "\M-k" 'describe-keymap))
 
-(define-key global-map "\M-\\" 'hippie-expand)
+;;;; Hippie Exp
+
+(define-key ctl-x-map [?\C-\;] 'hippie-expand)
+
+;;;; Hl Line
+
+(define-key ctl-x-x-map "h" 'hl-line-mode)
 
 (add-hook 'csv-mode-hook 'hl-line-mode)
 (add-hook 'grep-mode-hook 'hl-line-mode)
+(add-hook 'mpc-mode-hook 'hl-line-mode)
 (add-hook 'tar-mode-hook 'hl-line-mode)
 (add-hook 'transmission-files-mode-hook 'hl-line-mode)
 (add-hook 'transmission-mode-hook 'hl-line-mode)
 (add-hook 'transmission-peers-mode-hook 'hl-line-mode)
-(add-hook 'mpc-mode-hook 'hl-line-mode)
+
+;;;; Ibuffer
 
 (defvar ibuffer-mode-map)
-(with-eval-after-load 'ibuffer (define-key ibuffer-mode-map "\M-o" nil))
+(with-eval-after-load 'ibuffer
+  (define-key ibuffer-mode-map "\M-o" nil))
+
+;;;; Ipretty
 
 (define-key lisp-interaction-mode-map "\C-j" 'ipretty-last-sexp)
 
+;;;; Isearch
+
+(fset 'isearch-help-map isearch-help-map)
+(define-key isearch-mode-map (kbd "C-?") 'isearch-help-map)
 (define-key isearch-mode-map "\C-h" 'isearch-delete-char)
-(define-key isearch-mode-map "\C-?" isearch-help-map)
+
+;;;; Js
 
 (defvar js-mode-map)
 (with-eval-after-load 'js
   (define-key js-mode-map "\M-." nil))
+
+;;;; Ledger
 
 (defvar ledger-amount-regex)
 (defvar ledger-commodity-regexp)
@@ -368,12 +493,21 @@
                 "\\([ \t]*[@={]@?[^\n;]+?\\)?"
                 "\\([ \t]+;.+?\\|[ \t]*\\)?$")))
 
+;;;; Link Hint
+
 (define-key goto-map "\M-l" 'link-hint-open-link)
 (define-key goto-map "\M-L" 'link-hint-copy-link)
 (with-eval-after-load 'link-hint
   (cl-pushnew 'rg-mode (get 'link-hint-compilation-link :vars)))
 
+;;;; Lisp
+
+(define-key global-map "\M-[" 'delete-pair)
+(define-key global-map "\M-]" 'change-pair)
+(define-key global-map [?\C-\)] 'slurp-pair)
+
 (defun change-pair (change-to)
+  "Change pair at point to CHANGE-TO."
   (interactive "cChange to:")
   (pcase (assq change-to insert-pair-alist)
     ((or `(,open ,close) `(,_ ,open ,close))
@@ -382,6 +516,7 @@
        (delete-pair)))))
 
 (defun slurp-pair ()
+  "Slurp the next pair into the current one."
   (interactive)
   (save-excursion
     (backward-up-list)
@@ -392,25 +527,36 @@
          (delete-pair))))
     (indent-sexp)))
 
-(define-key global-map "\M-]" 'change-pair)
-(define-key global-map "\M-[" 'delete-pair)
-(define-key global-map [?\C-\)] 'slurp-pair)
+;;;; Loadhist
 
-(define-key load-command-map "\C-u" 'unload-feature)
+(define-key 'load-command-map "\C-u" 'unload-feature)
+
+;;;; Locate
 
 (define-key search-map "l" 'locate)
 
+;;;; Magit
+
 (define-key project-prefix-map "m" 'magit-project-status)
 
+;;;; Man
+
 (define-key help-map "\M-m" 'man)
+
+;;;; Menu Bar
 
 (with-eval-after-load 'menu-bar
   (define-key ctl-x-map "`" 'toggle-debug-on-error))
 
+;;;; Minibuffer
+
 (setq minibuffer-allow-text-properties t)
+
 (define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
 (define-key minibuffer-local-completion-map " " nil)
 (define-key minibuffer-local-must-match-map "\C-j" 'minibuffer-force-complete-and-exit)
+
+;;;; Mpc
 
 (define-key mode-specific-map "os" 'mpc)
 
@@ -440,75 +586,127 @@
   (define-key mpc-songs-mode-map [remap mpc-select] nil))
 
 (defvar mpc-mpd-music-directory)
-(declare-function mpc-cmd-move "mpc")
-(declare-function mpc-move-forward "mpc")
-(declare-function mpc-songs-refresh "mpc")
 (declare-function mpc-tagbrowser-all-p "mpc")
-(with-eval-after-load 'mpc
-  (defun mpc-dired-jump ()
-    (interactive)
-    (when-let ((file (or (get-text-property (point) 'mpc-file)
-                         (unless (mpc-tagbrowser-all-p)
-                           (let ((file (buffer-substring-no-properties
-                                        (line-beginning-position)
-                                        (1- (line-beginning-position 2)))))
-                             (unless (or (string-empty-p file)
-                                         (string= "\n" file))
-                               file))))))
-      (dired-jump nil (expand-file-name file mpc-mpd-music-directory))))
+(defun mpc-dired-jump ()
+  "Call `dired-jump' on the sond at point."
+  (interactive)
+  (when-let ((file (or (get-text-property (point) 'mpc-file)
+                       (unless (mpc-tagbrowser-all-p)
+                         (let ((file (buffer-substring-no-properties
+                                      (line-beginning-position)
+                                      (1- (line-beginning-position 2)))))
+                           (unless (or (string-empty-p file)
+                                       (string= "\n" file))
+                             file))))))
+    (dired-jump nil (expand-file-name file mpc-mpd-music-directory))))
 
-  (defun mpc-move-forward (n)
-    (interactive "p")
-    (let ((point-max (point-max)))
-      (unless (= 1 point-max)
-        (when-let ((last-pos (get-text-property (1- point-max) 'mpc-file-pos))
-                   (cur-pos (get-text-property (point) 'mpc-file-pos)))
-          (let ((new-pos (+ cur-pos n)))
-            (when (<= 0 new-pos last-pos)
-              (mpc-cmd-move (list cur-pos) new-pos)
-              (mpc-songs-refresh)))))))
+(declare-function mpc-cmd-move "mpc")
+(declare-function mpc-songs-refresh "mpc")
+(defun mpc-move-forward (n)
+  "Move song at point to the N's relative position."
+  (interactive "p")
+  (let ((point-max (point-max)))
+    (unless (= 1 point-max)
+      (when-let ((last-pos (get-text-property (1- point-max) 'mpc-file-pos))
+                 (cur-pos (get-text-property (point) 'mpc-file-pos)))
+        (let ((new-pos (+ cur-pos n)))
+          (when (<= 0 new-pos last-pos)
+            (mpc-cmd-move (list cur-pos) new-pos)
+            (mpc-songs-refresh)))))))
 
-  (defun mpc-move-backward (n)
-    (interactive "p")
-    (mpc-move-forward (- n)))
+(defun mpc-move-backward (n)
+  "Like `mpc-move-forward' but backwards.
+See its documentiation for N."
+  (interactive "p")
+  (mpc-move-forward (- n)))
 
-  (advice-add 'mpc-format :override 'mpc-format-cache-hash)
-  (defun mpc-format-cache-hash (format-spec info &optional hscroll)
-    (let* ((pos 0)
-           (start (point))
-           (col (if hscroll (- hscroll) 0))
-           (insert (lambda (str)
-                     (cond
-                      ((>= col 0) (insert str))
-                      (t (insert (substring str (min (length str) (- col))))))))
-           (pred #'always))
-      (while (string-match "%\\(?:%\\|\\(-\\)?\\([0-9]+\\)?{\\([[:alpha:]][[:alnum:]]*\\)\\(?:-\\([^}]+\\)\\)?}\\)" format-spec pos)
-        (let ((pre-text (substring format-spec pos (match-beginning 0))))
-          (funcall insert pre-text)
-          (setq col (+ col (string-width pre-text))))
-        (setq pos (match-end 0))
-        (if (null (match-end 3))
-            (progn
-              (funcall insert "%")
-              (setq col (+ col 1)))
-          (let* ((size (match-string 2 format-spec))
-                 (tag (intern (match-string 3 format-spec)))
-                 (post (match-string 4 format-spec))
-                 (right-align (match-end 1))
-                 (text
-                  (if (eq info 'self) (symbol-name tag)
-                    (pcase tag
-                      ((or 'Time 'Duration)
-                       (let ((time (cdr (or (assq 'time info) (assq 'Time info)))))
-                         (setq pred #'ignore) ;Just assume it's never eq.
-                         (when time
-                           (mpc-secs-to-time (if (and (eq tag 'Duration)
-                                                      (string-match ":" time))
-                                                 (substring time (match-end 0))
-                                               time)))))
-                      ('Cover
-                       (let ((dir (file-name-directory (cdr (assq 'file info)))))
-                         ;; (debug)
+(defvar mpc-cover-image-re)
+(declare-function mpc-constraints-push "mpc")
+(declare-function mpc-constraints-restore "mpc")
+(declare-function mpc-file-local-copy "mpc")
+(declare-function mpc-secs-to-time "mpc")
+(declare-function mpc-tempfiles-add "mpc")
+(define-advice mpc-format
+    (:override (format-spec info &optional hscroll) cache-hash)
+  (let* ((pos 0)
+         (start (point))
+         (col (if hscroll (- hscroll) 0))
+         (insert (lambda (str)
+                   (cond
+                    ((>= col 0) (insert str))
+                    (t (insert (substring str (min (length str) (- col))))))))
+         (pred #'always))
+    (while (string-match "%\\(?:%\\|\\(-\\)?\\([0-9]+\\)?{\\([[:alpha:]][[:alnum:]]*\\)\\(?:-\\([^}]+\\)\\)?}\\)" format-spec pos)
+      (let ((pre-text (substring format-spec pos (match-beginning 0))))
+        (funcall insert pre-text)
+        (setq col (+ col (string-width pre-text))))
+      (setq pos (match-end 0))
+      (if (null (match-end 3))
+          (progn
+            (funcall insert "%")
+            (setq col (+ col 1)))
+        (let* ((size (match-string 2 format-spec))
+               (tag (intern (match-string 3 format-spec)))
+               (post (match-string 4 format-spec))
+               (right-align (match-end 1))
+               (text
+                (if (eq info 'self) (symbol-name tag)
+                  (pcase tag
+                    ((or 'Time 'Duration)
+                     (let ((time (cdr (or (assq 'time info) (assq 'Time info)))))
+                       (setq pred #'ignore) ;Just assume it's never eq.
+                       (when time
+                         (mpc-secs-to-time (if (and (eq tag 'Duration)
+                                                    (string-match ":" time))
+                                               (substring time (match-end 0))
+                                             time)))))
+                    ('Cover
+                     (let ((dir (file-name-directory (cdr (assq 'file info)))))
+                       ;; (debug)
+                       (setq pred
+                             ;; We want the closure to capture the current
+                             ;; value of `pred' and not a reference to the
+                             ;; variable itself.
+                             (let ((oldpred pred))
+                               (lambda (info)
+                                 (and (funcall oldpred info)
+                                      (equal dir (file-name-directory
+                                                  (cdr (assq 'file info))))))))
+                       (if-let* ((covers '(".folder.png" "folder.png" "cover.jpg" "folder.jpg"))
+                                 (cover (cl-loop for file in (directory-files (mpc-file-local-copy dir))
+                                                 if (or (member (downcase file) covers)
+                                                        (and mpc-cover-image-re
+                                                             (string-match mpc-cover-image-re file)))
+                                                 return (concat dir file)))
+                                 (file (with-demoted-errors "MPC: %s"
+                                         (mpc-file-local-copy cover))))
+                           (let (image)
+                             (if (null size)
+                                 (setq image (create-image file))
+                               (let* ((hash (with-temp-buffer
+                                              (insert-file-contents-literally file)
+                                              (md5 (current-buffer))))
+                                      (dir (expand-file-name "emacs/mpc" (xdg-cache-home)))
+                                      (scaled-file (expand-file-name (concat hash ".jpg") dir)))
+                                 (unless (file-exists-p scaled-file)
+                                   (make-directory dir t)
+                                   ;; FIXME: Use native image scaling instead.
+                                   (call-process "convert" nil nil nil
+                                                 "-scale" size file scaled-file))
+                                 (setq image (create-image scaled-file))
+                                 (mpc-tempfiles-add image scaled-file)))
+                             (setq size nil)
+                             (propertize dir 'display image))
+                         ;; Make sure we return something on which we can
+                         ;; place the `mpc--uptodate-p' property, as
+                         ;; a negative-cache.  We could also use
+                         ;; a default cover.
+                         (progn (setq size nil) " "))))
+                    (_ (let ((val (cdr (assq tag info))))
+                         ;; For Streaming URLs, there's no other info
+                         ;; than the URL in `file'.  Pretend it's in `Title'.
+                         (when (and (null val) (eq tag 'Title))
+                           (setq val (cdr (assq 'file info))))
                          (setq pred
                                ;; We want the closure to capture the current
                                ;; value of `pred' and not a reference to the
@@ -516,99 +714,57 @@
                                (let ((oldpred pred))
                                  (lambda (info)
                                    (and (funcall oldpred info)
-                                        (equal dir (file-name-directory
-                                                    (cdr (assq 'file info))))))))
-                         (if-let* ((covers '(".folder.png" "folder.png" "cover.jpg" "folder.jpg"))
-                                   (cover (cl-loop for file in (directory-files (mpc-file-local-copy dir))
-                                                   if (or (member (downcase file) covers)
-                                                          (and mpc-cover-image-re
-                                                               (string-match mpc-cover-image-re file)))
-                                                   return (concat dir file)))
-                                   (file (with-demoted-errors "MPC: %s"
-                                           (mpc-file-local-copy cover))))
-                             (let (image)
-                               (if (null size)
-                                   (setq image (create-image file))
-                                 (let* ((hash (with-temp-buffer
-                                                (insert-file-contents-literally file)
-                                                (md5 (current-buffer))))
-                                        (dir (expand-file-name "emacs/mpc" (xdg-cache-home)))
-                                        (scaled-file (expand-file-name (concat hash ".jpg") dir)))
-                                   (unless (file-exists-p scaled-file)
-                                     (make-directory dir t)
-                                     ;; FIXME: Use native image scaling instead.
-                                     (call-process "convert" nil nil nil
-                                                   "-scale" size file scaled-file))
-                                   (setq image (create-image scaled-file))
-                                   (mpc-tempfiles-add image scaled-file)))
-                               (setq size nil)
-                               (propertize dir 'display image))
-                           ;; Make sure we return something on which we can
-                           ;; place the `mpc--uptodate-p' property, as
-                           ;; a negative-cache.  We could also use
-                           ;; a default cover.
-                           (progn (setq size nil) " "))))
-                      (_ (let ((val (cdr (assq tag info))))
-                           ;; For Streaming URLs, there's no other info
-                           ;; than the URL in `file'.  Pretend it's in `Title'.
-                           (when (and (null val) (eq tag 'Title))
-                             (setq val (cdr (assq 'file info))))
-                           (setq pred
-                                 ;; We want the closure to capture the current
-                                 ;; value of `pred' and not a reference to the
-                                 ;; variable itself.
-                                 (let ((oldpred pred))
-                                   (lambda (info)
-                                     (and (funcall oldpred info)
-                                          (equal val (cdr (assq tag info)))))))
-                           (cond
-                            ((not (and (eq tag 'Date) (stringp val))) val)
-                            ;; For "date", only keep the year!
-                            ((string-match "[0-9]\\{4\\}" val)
-                             (match-string 0 val))
-                            (t val)))))))
-                 (space (when size
-                          (setq size (string-to-number size))
-                          (propertize " " 'display
-                                      (list 'space :align-to (+ col size)))))
-                 (textwidth (if text (string-width text) 0))
-                 (postwidth (if post (string-width post) 0)))
-            (when text
-              (let ((display
-                     (if (and size
-                              (> (+ postwidth textwidth) size))
-                         (propertize
-                          (truncate-string-to-width text size nil nil "…")
-                          'help-echo text)
-                       text)))
-                (when (memq tag '(Artist Album Composer)) ;FIXME: wrong list.
-                  (setq display
-                        (propertize display
-                                    'mouse-face 'highlight
-                                    'follow-link t
-                                    'keymap `(keymap
-                                              (mouse-2
-                                               . ,(lambda ()
-                                                    (interactive)
-                                                    (mpc-constraints-push 'noerror)
-                                                    (mpc-constraints-restore
-                                                     ',(list (list tag text)))))))))
-                (funcall insert
-                         (concat (when size
-                                   (propertize " " 'display
-                                               (list 'space :align-to
-                                                     (+ col
-                                                        (if (and size right-align)
-                                                            (- size postwidth textwidth)
-                                                          0)))))
-                                 display post))))
-            (if (null size) (setq col (+ col textwidth postwidth))
-              (insert space)
-              (setq col (+ col size))))))
-      ;; Print the rest of format-spec, in case there is text after the
-      ;; last actual format specifier.
-      (insert (substring format-spec pos))
-      (put-text-property start (point) 'mpc--uptodate-p pred))))
+                                        (equal val (cdr (assq tag info)))))))
+                         (cond
+                          ((not (and (eq tag 'Date) (stringp val))) val)
+                          ;; For "date", only keep the year!
+                          ((string-match "[0-9]\\{4\\}" val)
+                           (match-string 0 val))
+                          (t val)))))))
+               (space (when size
+                        (setq size (string-to-number size))
+                        (propertize " " 'display
+                                    (list 'space :align-to (+ col size)))))
+               (textwidth (if text (string-width text) 0))
+               (postwidth (if post (string-width post) 0)))
+          (when text
+            (let ((display
+                   (if (and size
+                            (> (+ postwidth textwidth) size))
+                       (propertize
+                        (truncate-string-to-width text size nil nil "…")
+                        'help-echo text)
+                     text)))
+              (when (memq tag '(Artist Album Composer)) ;FIXME: wrong list.
+                (setq display
+                      (propertize display
+                                  'mouse-face 'highlight
+                                  'follow-link t
+                                  'keymap `(keymap
+                                            (mouse-2
+                                             . ,(lambda ()
+                                                  (interactive)
+                                                  (mpc-constraints-push 'noerror)
+                                                  (mpc-constraints-restore
+                                                   ',(list (list tag text)))))))))
+              (funcall insert
+                       (concat (when size
+                                 (propertize " " 'display
+                                             (list 'space :align-to
+                                                   (+ col
+                                                      (if (and size right-align)
+                                                          (- size postwidth textwidth)
+                                                        0)))))
+                               display post))))
+          (if (null size) (setq col (+ col textwidth postwidth))
+            (insert space)
+            (setq col (+ col size))))))
+    ;; Print the rest of format-spec, in case there is text after the
+    ;; last actual format specifier.
+    (insert (substring format-spec pos))
+    (put-text-property start (point) 'mpc--uptodate-p pred)))
+
+;;;; Net Utils
 
 (define-key mode-specific-map "nh" 'nslookup-host)
 (define-key mode-specific-map "ni" 'ifconfig)
@@ -616,10 +772,16 @@
 (define-key mode-specific-map "np" 'ping)
 (define-key mode-specific-map "nw" 'iwconfig)
 
+;;;; Newcomment
+
 (with-eval-after-load 'newcomment
   (define-key global-map [?\C-\;] 'comment-line))
 
+;;;; Newsticker
+
 (define-key mode-specific-map "on" 'newsticker-show-news)
+
+;;;; Nix Mode
 
 (add-hook 'proced-mode-hook 'nix-prettify-mode)
 
@@ -630,76 +792,75 @@
   (define-key nix-mode-map "\C-c\C-s" 'nix-search)
   (define-key nix-mode-map "\C-c\C-p" 'nix-store-show-path))
 
-(declare-function nix-edit@flake "nix-edit")
-(with-eval-after-load 'nix-edit
-  (define-advice nix-edit (:override () flake)
-    (interactive)
-    (let ((cmd (read-shell-command "Nix edit command: " "nix edit "))
-          (process-environment (cons "EDITOR=echo" process-environment)))
-      (find-file
-       (with-temp-buffer
-         (call-process-shell-command cmd nil (list (current-buffer) nil) nil)
-         (buffer-substring-no-properties (point-min) (1- (point-max))))))))
+(define-advice nix-edit (:override () flake)
+  (interactive)
+  (let ((cmd (read-shell-command "Nix edit command: " "nix edit "))
+        (process-environment (cons "EDITOR=echo" process-environment)))
+    (find-file
+     (with-temp-buffer
+       (call-process-shell-command cmd nil (list (current-buffer) nil) nil)
+       (buffer-substring-no-properties (point-min) (1- (point-max)))))))
+
+(declare-function cl-delete-duplicates "cl-lib")
+(declare-function cl-remove "cl-lib")
+(declare-function nix-flake--registry-list "nix-flake")
+(define-advice nix-flake--registry-refs (:override () all)
+  (cl-delete-duplicates
+   (cl-remove
+    "path:"
+    (flatten-list (mapcar #'cdr (nix-flake--registry-list)))
+    :test #'string-prefix-p)
+   :test #'string=))
 
 (defvar nix-flake-ref)
+(defvar project-compilation-buffer-name-function)
 (declare-function nix-flake--installable-command "nix-flake")
-(declare-function nix-flake--build-attribute-names "nix-flake")
 (declare-function nix-flake--options "nix-flake")
-(declare-function nix-flake--registry-refs@all "nix-flake")
-(declare-function nix-flake--registry-list "nix-flake")
-(declare-function nix-flake-run-attribute@shell "nix-flake")
 (declare-function nix-flake--run-attribute-names "nix-flake")
-(with-eval-after-load 'nix-flake
-  (define-advice nix-flake--registry-refs (:override () all)
-    (cl-delete-duplicates
-     (cl-remove
-      "path:"
-      (flatten-list (mapcar #'cdr (nix-flake--registry-list)))
-      :test #'string-prefix-p)
-     :test #'string=))
+(declare-function project-root "project")
+(define-advice nix-flake-run-attribute
+    (:override (options flake-ref attribute command-args &optional comint)
+               shell)
+  (interactive (list (nix-flake--options)
+                     nix-flake-ref
+                     (completing-read "Nix app/package: "
+                                      (nix-flake--run-attribute-names))
+                     nil
+                     (consp current-prefix-arg)))
+  (let ((default-directory (project-root (project-current t)))
+        (compilation-buffer-name-function
+         (or project-compilation-buffer-name-function
+             compilation-buffer-name-function)))
+    (compile (nix-flake--installable-command "run" options flake-ref attribute
+                                             command-args)
+             comint)))
 
-  (define-advice nix-flake-run-attribute
-      (:override (options flake-ref attribute command-args &optional comint)
-                 shell)
-    (interactive (list (nix-flake--options)
-                       nix-flake-ref
-                       (completing-read "Nix app/package: "
-                                        (nix-flake--run-attribute-names))
-                       nil
-                       (consp current-prefix-arg)))
-    (let ((default-directory (project-root (project-current t)))
-          (compilation-buffer-name-function
-           (or project-compilation-buffer-name-function
-               compilation-buffer-name-function)))
-      (compile (nix-flake--installable-command "run" options flake-ref attribute
-                                               command-args)
-               comint)))
-
-  (defun nix-flake-log-attribute (options flake-ref attribute)
-    "Log a derivation in the current flake.
+(declare-function nix-flake--build-attribute-names "nix-flake")
+(defun nix-flake-log-attribute (options flake-ref attribute)
+  "Log a derivation in the current flake.
 
 For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
 `nix-flake-run-attribute'."
-    (interactive (list (nix-flake--options)
-                       nix-flake-ref
-                       (completing-read "Nix package: "
-                                        (nix-flake--build-attribute-names))))
-    (compile (nix-flake--installable-command "log" options flake-ref attribute)))
+  (interactive (list (nix-flake--options)
+                     nix-flake-ref
+                     (completing-read "Nix package: "
+                                      (nix-flake--build-attribute-names))))
+  (compile (nix-flake--installable-command "log" options flake-ref attribute)))
 
+(with-eval-after-load 'nix-flake
   (transient-append-suffix 'nix-flake-dispatch '(2 -1)
     '("l" "Log attribute" nix-flake-log-attribute)))
 
-(declare-function nix-search--display@display-buffer "nix-search")
-(with-eval-after-load 'nix-search
-  (define-advice nix-search--display (:filter-args (args) display-buffer)
-    (list (car args) (get-buffer-create "*Nix-Search*") (cddr args))))
+(define-advice nix-search--display (:filter-args (args) display-buffer)
+  (list (car args) (get-buffer-create "*Nix-Search*") (cddr args)))
 
-(with-eval-after-load 'nix-shell
-  (define-advice nix-read-flake (:override () always-prompt)
-    (let ((default "nixpkgs"))
-      (read-string (format-prompt "Nix flake" default) nil nil default))))
+(define-advice nix-read-flake (:override () always-prompt)
+  (let ((default "nixpkgs"))
+    (read-string (format-prompt "Nix flake" default) nil nil default)))
 
 (defun nix-compile-in-project-advice (fn &rest args)
+  "Change compilation buffer name in FN with ARGS.
+Used as an advice."
   (let ((default-directory (project-root (project-current t)))
         (compilation-buffer-name-function
          (or project-compilation-buffer-name-function
@@ -715,23 +876,40 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
               nix-flake-update))
   (advice-add fn :around 'nix-compile-in-project-advice))
 
+;;;; Nixos Options
+
 (add-hook 'nixos-options-mode-hook 'nix-prettify-mode)
 (with-eval-after-load 'nix-mode
   (define-key nix-mode-map "\C-c\C-o" 'nixos-options))
 
+;;;; Notmuch
+
 (define-key mode-specific-map "om" 'notmuch)
+
 (autoload 'notmuch-mua-mail "notmuch-mua")
-(define-mail-user-agent 'notmuch-user-agent 'notmuch-mua-mail 'notmuch-mua-send-and-exit 'notmuch-mua-kill-buffer 'notmuch-mua-send-hook)
+(define-mail-user-agent 'notmuch-user-agent
+  'notmuch-mua-mail
+  'notmuch-mua-send-and-exit
+  'notmuch-mua-kill-buffer
+  'notmuch-mua-send-hook)
+
+;;;; Nov
 
 (add-to-list 'auto-mode-alist (cons (rx ".epub" eos) 'nov-mode))
 
+;;;; Novice
+
 (setq disabled-command-function nil)
+
+;;;; Ob Http
 
 (with-eval-after-load 'org
   (cl-pushnew
    '(const :tag "Http" http)
    (cdadr (memq :key-type (get 'org-babel-load-languages 'custom-type)))
    :test 'equal))
+
+;;;; Org
 
 (defvar org-mode-map)
 (with-eval-after-load 'org
@@ -741,11 +919,14 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
   (call-process "notify_bruh" nil 0 nil))
 
 (define-key mode-specific-map "Ga" 'org-agenda)
+
 (defvar org-agenda-mode-map)
 (with-eval-after-load 'org-agenda
   (define-key org-agenda-mode-map "T" 'org-agenda-todo-yesterday))
 
 (define-key mode-specific-map "Gc" 'org-capture)
+
+;;;; Org Mime
 
 (autoload 'org-mime-edit-mail-in-org-mode "org-mime" nil t)
 (autoload 'org-mime-revert-to-plain-text-mail "org-mime" nil t)
@@ -754,67 +935,98 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
   (define-key message-mode-map "\C-c\M-e" 'org-mime-edit-mail-in-org-mode)
   (define-key message-mode-map "\C-c\M-t" 'org-mime-revert-to-plain-text-mail))
 
+;;;; Org Roam
+
 (define-key mode-specific-map "Gf" 'org-roam-node-find)
 (define-key mode-specific-map "Gi" 'org-roam-node-insert)
 (define-key mode-specific-map "Gl" 'org-roam-buffer-toggle)
 (define-key mode-specific-map "Gs" 'org-roam-db-sync)
-(declare-function org-roam-db-autosync-mode "org-roam-db" (&optional arg))
-(with-eval-after-load 'org-roam (org-roam-db-autosync-mode))
+
+(declare-function org-roam-db-autosync-mode "org-roam-db")
+(with-eval-after-load 'org-roam
+  (org-roam-db-autosync-mode))
+
+;;;; Paragraphs
 
 (define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
 
-(declare-function pdf-loader-install "pdf-loader" (&optional no-query-p skip-dependencies-p no-error-p force-dependencies-p))
+;;;; Pdf Tools
+
+(declare-function pdf-loader-install "pdf-loader")
 (pdf-loader-install t t)
+
+;;;; Pp
 
 (define-key emacs-lisp-mode-map "\C-c\C-m" 'pp-macroexpand-last-sexp)
 (define-key lisp-interaction-mode-map "\C-c\C-m" 'pp-macroexpand-last-sexp)
 
+;;;; Proced
+
 (define-key mode-specific-map "op" 'proced)
+
+;;;; Pueue
 
 (define-key mode-specific-map "ou" 'pueue)
 (add-hook 'pueue-mode-hook 'hl-line-mode)
 
-(define-key ctl-x-r-map "v" 'view-register)
+;;;; Register
+
 (define-key ctl-x-r-map "L" 'list-registers)
-(define-key ctl-x-r-map "p" 'prepend-to-register)
 (define-key ctl-x-r-map "a" 'append-to-register)
+(define-key ctl-x-r-map "p" 'prepend-to-register)
+(define-key ctl-x-r-map "v" 'view-register)
+
+;;;; Re Builder
 
 (define-key emacs-lisp-mode-map "\C-c\C-r" 're-builder)
 (define-key lisp-interaction-mode-map "\C-c\C-r" 're-builder)
 
-(define-key region-commands-map "\C-k" 'keep-lines)
-(define-key region-commands-map "\C-f" 'flush-lines)
+;;;; Replace
+
+(define-key 'region-commands-map "\C-k" 'keep-lines)
+(define-key 'region-commands-map "\C-f" 'flush-lines)
+
+;;;; Reverse Im
 
 (require 'reverse-im)
 (reverse-im-activate "cyrillic-dvorak")
 
+;;;; Rg
+
 (define-key search-map "r" 'rg-menu)
+
+;;;; Rx Widget
 
 (with-eval-after-load 'wid-edit
   (require 'rx-widget)
   (define-widget 'regexp 'rx-widget "A regular expression in rx form."))
 
-(with-eval-after-load 'savehist
-  (defun savehist-filter-file-name-history ()
-    (let (result)
-      (dolist (file-name file-name-history)
-        (let ((f (string-trim-right (expand-file-name file-name) "/+")))
-          (unless (string-empty-p f)
-            (when (or (file-remote-p f)
-                      (string-match-p "\\`http" f)
-                      (file-exists-p f))
-              (cl-pushnew f result :test #'string-equal)))))
-      (setq file-name-history result))))
+;;;; Savehist
+
+(declare-function cl-delete-if-not "cl-lib")
+(defun savehist-filter-file-name-history ()
+  "Remove inexistent files from `file-name-history'.
+Don't check for remote files, since it's slow."
+  (cl-flet ((existsp (file) (or (file-remote-p file)
+                                (string-match-p "\\`http" file)
+                                (file-exists-p file))))
+    (setq file-name-history (cl-delete-if-not #'existsp file-name-history))))
+
+;;;; Sdcwoc
 
 (define-key mode-specific-map "ot" 'sdcwoc)
+
+;;;; Sgml mode
 
 (defvar html-mode-map)
 (defvar sgml-mode-map)
 (with-eval-after-load 'sgml-mode
+  (define-key html-mode-map "\M-o" nil)
   (define-key sgml-mode-map "\C-\M-n" 'sgml-skip-tag-forward)
   (define-key sgml-mode-map "\C-\M-p" 'sgml-skip-tag-backward)
-  (define-key sgml-mode-map "\C-c\C-r" 'sgml-namify-char)
-  (define-key html-mode-map "\M-o" nil))
+  (define-key sgml-mode-map "\C-c\C-r" 'sgml-namify-char))
+
+;;;; Shell
 
 (define-key mode-specific-map "s" 'shell)
 (define-key mode-specific-map "l" 'shell-list)
@@ -833,29 +1045,37 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
       (setq-local ibuffer-use-header-line nil)
       (hl-line-mode t))))
 
+;;;; Simple
+
+(define-key ctl-x-map "w" 'mark-whole-buffer)
+(define-key ctl-x-x-map "f" 'auto-fill-mode)
+(define-key ctl-x-x-map "v" 'visual-line-mode)
+(define-key ctl-x-x-map "w" 'whitespace-mode)
+(define-key global-map "\C-h" 'backward-delete-char-untabify)
+(define-key global-map "\C-w" 'kill-region-dwim)
+(define-key global-map "\M- " 'cycle-spacing-fast)
+(define-key global-map "\M-K" 'kill-whole-line)
+(define-key global-map "\M-\\" 'delete-indentation)
+(define-key global-map "\M-c" 'capitalize-dwim)
+(define-key global-map "\M-l" 'downcase-dwim)
+(define-key global-map "\M-u" 'upcase-dwim)
+(define-key mode-specific-map "oP" 'list-processes)
+
 (defun cycle-spacing-fast (&optional n)
+  "Like `cycle-spacing' but with fast mode.
+See its documentation for N."
   (interactive "*p")
   (cycle-spacing n nil 'fast))
 
 (defun kill-region-dwim (&optional count)
+  "Kill word or kill region if it's active.
+See `backward-kill-word' for COUNT."
   (interactive "p")
   (if (use-region-p)
       (kill-region (region-beginning) (region-end))
     (backward-kill-word count)))
 
-(define-key global-map "\C-h" 'backward-delete-char-untabify)
-(define-key global-map "\M-K" 'kill-whole-line)
-(define-key global-map "\M-c" 'capitalize-dwim)
-(define-key global-map "\M-l" 'downcase-dwim)
-(define-key global-map "\M-u" 'upcase-dwim)
-(define-key global-map "\C-w" 'kill-region-dwim)
-(define-key global-map "\M- " 'cycle-spacing-fast)
-(define-key global-map "\M-\\" 'delete-indentation)
-(define-key ctl-x-map "w" 'mark-whole-buffer)
-(define-key ctl-x-x-map "f" 'auto-fill-mode)
-(define-key ctl-x-x-map "v" 'visual-line-mode)
-(define-key ctl-x-x-map "w" 'whitespace-mode)
-(define-key mode-specific-map "oP" 'list-processes)
+;;;; Skempo
 
 (add-hook 'nix-mode-hook 'skempo-mode)
 (add-hook 'js-mode-hook 'skempo-mode)
@@ -865,42 +1085,67 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
   (define-key skempo-mode-map "\C-z" 'skempo-complete-tag-or-call-on-region)
   (define-key skempo-mode-map "\M-g\M-e" 'skempo-forward-mark)
   (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
-  (load (expand-file-name "emacs/skempo-templates.el" (xdg-config-home))))
 
-(define-key region-commands-map "\C-d" 'delete-duplicate-lines)
-(define-key region-commands-map "\C-l" 'sort-fields)
-(define-key region-commands-map "\C-m" 'sort-columns)
-(define-key region-commands-map "\C-n" 'sort-numeric-fields)
-(define-key region-commands-map "\C-r" 'reverse-region)
-(define-key region-commands-map "\C-s" 'sort-lines)
-(define-key region-commands-map "\C-x" 'sort-regexp-fields)
+  (with-eval-after-load 'elisp-mode
+    (load (expand-file-name "emacs/skempo/emacs-lisp.el" (xdg-config-home))))
+  (with-eval-after-load 'lisp
+    (load (expand-file-name "emacs/skempo/lisp.el" (xdg-config-home))))
+  (with-eval-after-load 'js
+    (load (expand-file-name "emacs/skempo/js.el" (xdg-config-home))))
+  (with-eval-after-load 'nix
+    (load (expand-file-name "emacs/skempo/nix.el" (xdg-config-home)))))
 
-(add-hook 'rust-mode-hook 'subword-mode)
-(add-hook 'nix-mode-hook 'subword-mode)
+;;;; Sort
+
+(define-key 'region-commands-map "\C-d" 'delete-duplicate-lines)
+(define-key 'region-commands-map "\C-l" 'sort-fields)
+(define-key 'region-commands-map "\C-m" 'sort-columns)
+(define-key 'region-commands-map "\C-n" 'sort-numeric-fields)
+(define-key 'region-commands-map "\C-r" 'reverse-region)
+(define-key 'region-commands-map "\C-s" 'sort-lines)
+(define-key 'region-commands-map "\C-x" 'sort-regexp-fields)
+
+;;;; Subword
+
 (add-hook 'js-mode-hook 'subword-mode)
+(add-hook 'nix-mode-hook 'subword-mode)
+(add-hook 'rust-mode-hook 'subword-mode)
+
+;;;; Tex Mode
 
 (defvar ispell-parser)
 (add-hook 'tex-mode-hook (lambda nil (setq-local ispell-parser 'tex)))
 
+;;;; Text Mode
+
 (autoload 'center-region "text-mode")
-(define-key region-commands-map "\C-c" 'center-region)
+(define-key 'region-commands-map "\C-c" 'center-region)
+
+;;;; Term
 
 (define-key mode-specific-map "t" 'term)
 
+;;;; Tramp
+
 (define-key ctl-x-x-map "T" 'tramp-cleanup-all-buffers)
 
+;;;; Transmission
+
 (define-key mode-specific-map "or" 'transmission)
+
 (defvar transmission-mode-map)
-(declare-function transmission-request "transmission" (method &optional arguments tag))
-(declare-function transmission-torrents "transmission" (response))
-(declare-function transmission-draw-info@comment "transmission" (id))
 (with-eval-after-load 'transmission
-  (define-key transmission-mode-map "M" 'transmission-move)
-  (define-advice transmission-draw-info (:after (id) comment)
-    (let* ((arguments `(:ids ,id :fields ["comment"]))
-           (response (transmission-request "torrent-get" arguments))
-           (torrent (aref (transmission-torrents response) 0)))
-      (insert "\nComment: " (or (cdr (assq 'comment torrent)) "")))))
+  (define-key transmission-mode-map "M" 'transmission-move))
+
+(declare-function transmission-request "transmission")
+(declare-function transmission-torrents "transmission")
+(define-advice transmission-draw-info (:after (id) comment)
+  (let* ((arguments `(:ids ,id :fields ["comment"]))
+         (response (transmission-request "torrent-get" arguments))
+         (torrent (aref (transmission-torrents response) 0)))
+    (insert "\nComment: " (or (cdr (assq 'comment torrent)) ""))))
+
+;;;; Tree Sitter
 
 (add-hook 'css-mode-hook 'tree-sitter-mode)
 (add-hook 'js-mode-hook 'tree-sitter-mode)
@@ -909,12 +1154,16 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
 (add-hook 'python-mode-hook 'tree-sitter-mode)
 (add-hook 'rust-mode-hook 'tree-sitter-mode)
 
-(declare-function url-generic-parse-url@save-match-data "url-parse" (fn &rest args))
-(with-eval-after-load 'url-parse
-  (define-advice url-generic-parse-url (:around (fn &rest args) save-match-data)
-    (save-match-data (apply fn args))))
+;;;; Url Parse
+
+(define-advice url-generic-parse-url (:around (fn &rest args) save-match-data)
+  (save-match-data (apply fn args)))
+
+;;;; Web Mode
 
 (add-to-list 'auto-mode-alist (cons (rx ".twig" eos) 'web-mode))
+
+;;;; Widget
 
 (defvar widget-field-keymap)
 (defvar widget-text-keymap)
@@ -922,18 +1171,27 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
   (define-key widget-field-keymap "\C-xnf" 'widget-narrow-to-field)
   (define-key widget-text-keymap "\C-xnf" 'widget-narrow-to-field))
 
+;;;; Window
+
+(define-key global-map "\M-Q" 'quit-window)
 (define-key global-map "\M-V" 'scroll-down-line)
-(define-key global-map [?\C-\S-v] 'scroll-up-line)
+(define-key global-map "\M-o" 'other-window)
 (define-key global-map [?\C-\M-\S-b] 'previous-buffer)
 (define-key global-map [?\C-\M-\S-f] 'next-buffer)
-(define-key global-map "\M-Q" 'quit-window)
-(define-key global-map "\M-o" 'other-window)
+(define-key global-map [?\C-\S-v] 'scroll-up-line)
+
+;;;; With Editor
 
 (define-key global-map [?\C-\M-&] 'with-editor-async-shell-command)
 
+;;;; Xref
+
 (autoload 'xref-push-marker-stack "xref")
 (defun xref-push-marker-stack-ignore-args (&rest _)
+  "Like `xref-push-marker-stack', but ignore arguments.
+Used as an advice in goto functions."
   (xref-push-marker-stack))
 
-(declare-function xdg-config-home "xdg" ())
+;;; Footer
+
 (load (expand-file-name "emacs/custom.el" (xdg-config-home)) nil nil t)
