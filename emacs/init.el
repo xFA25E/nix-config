@@ -1,11 +1,11 @@
 ;; -*- lexical-binding: t; outline-regexp: ";;;\\(;*\\)"; -*-
 
+(require 'xdg)
+
 (add-hook
  'after-init-hook
  (lambda ()
    (load (expand-file-name "emacs/custom.el" (xdg-config-home)) nil nil t)))
-
-(require 'xdg)
 
 (define-prefix-command 'load-command-map)
 (define-key ctl-x-map "\C-l" 'load-command-map)
@@ -79,9 +79,22 @@ See `browse-url' for URL and ARGS."
 
 (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter)
 
+(defvar compilation-button-map)
+(defvar compilation-mode-map)
 (defvar compilation-shell-minor-mode-map)
 (with-eval-after-load 'compile
+  (define-key compilation-button-map "\C-m" 'compile-goto-error-same-window)
+  (define-key compilation-button-map "o" 'compile-goto-error)
+  (define-key compilation-mode-map "\C-m" 'compile-goto-error-same-window)
+  (define-key compilation-mode-map "o" 'compile-goto-error)
   (define-key compilation-shell-minor-mode-map "\C-c\C-g" 'recompile))
+
+(declare-function compile-goto-error "compile")
+(defun compile-goto-error-same-window ()
+  "Run `compile-goto-error' in the same window."
+  (interactive)
+  (same-window-prefix)
+  (compile-goto-error))
 
 ;;; Consult
 
@@ -1182,6 +1195,11 @@ See `backward-kill-word' for COUNT."
 (define-key global-map [?\C-\M-&] 'with-editor-async-shell-command)
 
 ;;; Xref
+
+(defvar xref--xref-buffer-mode-map)
+(with-eval-after-load 'xref
+  (define-key xref--xref-buffer-mode-map "\C-m" 'xref-quit-and-goto-xref)
+  (define-key xref--xref-buffer-mode-map "o" 'xref-goto-xref))
 
 (autoload 'xref-push-marker-stack "xref")
 (defun xref-push-marker-stack-ignore-args (&rest _)
