@@ -1,4 +1,0 @@
-#!/bin/sh
-
-ffprobe -v quiet -of json -show_entries format=duration "${1:?provide file}" \
-    | jq '.format.duration | tonumber | round'

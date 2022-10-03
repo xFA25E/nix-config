@@ -1,8 +1,0 @@
-#!/bin/bash
-for file in "$@"; do
-    dur=$(video_seconds "$file" | xargs format_seconds '%hh%mm%z%ss')
-    ext=${file##*.}
-    len=$((${#ext} + 1))
-    printf -v newfile "%s - %s.%s" "${file:0:-${len}}" "$dur" "$ext"
-    mv -v "$file" "$newfile"
-done

@@ -8,4 +8,11 @@
       !!! REMEMBER TO CUSTOMIZE PACKAGE-NAME THROUGHOUT THE PROJECT !!!
     '';
   };
+  lisp = {
+    description = "Simple common-lisp environment";
+    path = ./lisp;
+    welcomeText = ''
+      Welcome to common-lisp development environment!
+    '';
+  };
 }

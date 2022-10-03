@@ -6,10 +6,14 @@
   config,
   pkgs,
   lib,
+  nix-colors,
   ...
 }: let
-  colors = pkgs.base16Themes.theme "gruvbox-light-medium";
+  inherit (config.colorScheme) colors;
 in {
+  imports = [nix-colors.homeManagerModule];
+  colorScheme = nix-colors.colorSchemes.gruvbox-light-medium;
+
   accounts.email = {
     accounts = {
       "polimi" = {
@@ -82,24 +86,7 @@ in {
         configBase16 = {
           name = "Gruvbox-Light-Medium";
           kind = "light";
-          colors = {
-            base00.hex.rgb = colors.base00;
-            base01.hex.rgb = colors.base01;
-            base02.hex.rgb = colors.base02;
-            base03.hex.rgb = colors.base03;
-            base04.hex.rgb = colors.base04;
-            base05.hex.rgb = colors.base05;
-            base06.hex.rgb = colors.base06;
-            base07.hex.rgb = colors.base07;
-            base08.hex.rgb = colors.base08;
-            base09.hex.rgb = colors.base09;
-            base0A.hex.rgb = colors.base0A;
-            base0B.hex.rgb = colors.base0B;
-            base0C.hex.rgb = colors.base0C;
-            base0D.hex.rgb = colors.base0D;
-            base0E.hex.rgb = colors.base0E;
-            base0F.hex.rgb = colors.base0F;
-          };
+          colors = builtins.mapAttrs (_: color: {hex.rgb = color;}) colors;
         };
       };
     };
@@ -231,6 +218,7 @@ in {
       bind
       binutils
       brave
+      brave-incognito
       brightnessctl
       browser
       calibre
@@ -243,6 +231,8 @@ in {
       fd
       ffmpeg
       file
+      filename_put_duration
+      format_seconds
       ghostscript
       gimp
       go-mtpfs
@@ -250,6 +240,8 @@ in {
       hunspellDicts.en_US-large
       hunspellDicts.it_IT
       hunspellDicts.ru_RU
+      image-dired-external-viewer
+      image_clipboard
       imagemagick
       iw
       ledger
@@ -257,10 +249,13 @@ in {
       libjpeg
       libnotify
       libreoffice
+      make_backup
       mediainfo
       mkpasswd
       mpc_cli
+      mpvi
       nload
+      notifiers
       p7zip
       pandoc
       parted
@@ -271,22 +266,27 @@ in {
       pulsemixer
       pwgen
       qrencode
+      qrshow
       rar
+      recode_video
+      resize_video
       ripgrep
       rsync
-      scripts
       scrot
       sdcv
       shellcheck
       simplescreenrecorder
+      sort_videos_by_duration
       speedtest-cli
       stalonetray
+      strip_video
       stumpwm
       sxiv
       teams
       tor-browser-bundle-bin
       transmission
       unzip
+      video_seconds
       wget
       woof
       xclip
@@ -295,6 +295,13 @@ in {
       xterm
       xz
       yt-dlp
+      ytdl
+      ytdla
+      ytdlam
+      ytdli
+      ytdlp
+      ytdlpa
+      ytdlpam
       zip
       zoom-us
     ];
@@ -319,7 +326,7 @@ in {
       QT_IM_MODULE = "ibus";
       RUSTUP_HOME = "${config.xdg.cacheHome}/rustup";
       SSB_HOME = "${config.xdg.cacheHome}/zoom";
-      SUDO_ASKPASS = "${pkgs.scripts}/bin/sudo_askpass";
+      SUDO_ASKPASS = "${pkgs.sudo_askpass}/bin/sudo_askpass";
       TERMINAL = "uxterm";
       VISUAL = config.home.sessionVariables.EDITOR;
       WGETRC = "${config.xdg.configHome}/wgetrc";

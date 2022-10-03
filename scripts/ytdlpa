@@ -1,2 +1,0 @@
-#!/bin/sh
-exec ytdlp --format bestaudio/best --extract-audio "$@"

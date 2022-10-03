@@ -70,7 +70,7 @@
 
     devShells.${system}.default = pkgs.mkShell {
       inherit name;
-      buildInputs = [pkgs.eldev];
+      buildInputs = [pkgs.alejandra pkgs.eldev pkgs.statix];
       shellHook = ''
         export ELDEV_DIR=$PWD/.eldev
       '';

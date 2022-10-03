@@ -1,4 +1,0 @@
-#!/bin/sh
-for video in "$@"; do
-    ffmpeg -i "${video}" -vf scale=256:144 -acodec copy "${video%.*}.h144.${video##*.}"
-done

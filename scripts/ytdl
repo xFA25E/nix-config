@@ -1,3 +1,0 @@
-#!/bin/sh
-DIR=${YTDL_DIR:-${XDG_VIDEOS_DIR:-${HOME}/Videos}/youtube}
-exec yt-dlp --paths "$DIR" --exec 'filename_put_duration {}' "$@"

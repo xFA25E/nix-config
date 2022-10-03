@@ -1,9 +1,0 @@
-#!/bin/sh -u
-
-script='
-(let ((format (pop command-line-args-left))
-      (seconds (string-to-number (pop command-line-args-left))))
-  (princ (format-seconds format seconds)))
-'
-
-exec emacs -Q --kill --batch --eval "$script" "$1" "$2"

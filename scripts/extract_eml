@@ -1,6 +1,0 @@
-#!/bin/sh -eu
-test -e "$1"
-basename=$(basename "$1" .eml)
-mkdir -p "$basename"
-mu extract --save-all --target-dir "$basename" "$1"
-mu view "$1" >"$basename/mail.txt"

@@ -5,3 +5,5 @@ result
 /Eldev-local
 *.elc
 *-autoloads.el
+*.o
+*.so
