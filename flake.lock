@@ -183,7 +183,7 @@
     "emacs-overlay": {
       "inputs": {
         "flake-utils": [
-          "flake-utils"
+          "fu"
         ],
         "nixpkgs": [
           "nixpkgs"
@@ -425,7 +425,7 @@
         "type": "github"
       }
     },
-    "flake-utils": {
+    "fu": {
       "locked": {
         "lastModified": 1659877975,
         "narHash": "sha256-zllb8aq3YO3h8B/U0/J1WBgAL8EX5yWf5pMj3G0NAmc=",
@@ -458,6 +458,22 @@
         "owner": "nix-community",
         "ref": "release-22.05",
         "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "mozlz4": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1656426974,
+        "narHash": "sha256-csLtrErA0miCPMJMOXrDGH9RlszpZPyPSaA+zToaEzQ=",
+        "owner": "jusw85",
+        "repo": "mozlz4",
+        "rev": "d003163712347b2aa5e88396281ee0cb511d4638",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jusw85",
+        "repo": "mozlz4",
         "type": "github"
       }
     },
@@ -555,8 +571,9 @@
         "epkg-rx-widget": "epkg-rx-widget",
         "epkg-sdcwoc": "epkg-sdcwoc",
         "epkg-skempo": "epkg-skempo",
-        "flake-utils": "flake-utils",
+        "fu": "fu",
         "home-manager": "home-manager",
+        "mozlz4": "mozlz4",
         "mpv-youtube-quality": "mpv-youtube-quality",
         "nix-colors": "nix-colors",
         "nixpkgs": "nixpkgs",
