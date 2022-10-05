@@ -20,25 +20,45 @@ in {
     profiles = {
       default = {
         searchEngines = {
-          default = "sp";
+          default = "startpage";
           engines = {
-            "ddg" = {
+            "bitchute" = {
+              keyword = ":bc";
+              url = "https://www.bitchute.com/search/?query={searchTerms}";
+            };
+            "duckduckgo" = {
               keyword = ":d";
               url = "https://duckduckgo.com/?q={searchTerms}&kk=-1&kah=it-it&kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&kak=-1&kax=-1&km=l";
             };
-            "gh" = {
+            "github" = {
               keyword = ":gh";
               url = "https://github.com/search?q={searchTerms}";
             };
-            "sp" = {
+            "metalarchivesband" = {
+              keyword = ":maband";
+              url = "https://www.metal-archives.com/search?searchString={searchTerms}&type=band_name";
+            };
+            "odysee" = {
+              keyword = ":os";
+              url = "https://odysee.com/$/search?q={searchTerms}";
+            };
+            "rutracker" = {
+              keyword = ":rt";
+              url = "https://rutracker.net/forum/tracker.php?nm={searchTerms}";
+            };
+            "startpage" = {
               keyword = ":sp";
               url = "https://startpage.com/sp/search?query={searchTerms}&prfe=a715a36c09c1472e9d5d804b0ba9312716a96d474575edbfa5e7cb0c646b34216e65fa4ae420b5df58e6c8d3e420eb1771f23caa2663bb5435b01ebb741af66083a80b0bb3682e008b0e7e1126";
             };
-            "sx" = {
+            "searx" = {
               keyword = ":sx";
               url = "https://searx.be/?q={searchTerms}&preferences=eJxtVcuO2zoM_ZrrjTFFH4uuvChaXNwBCkzRpN0KtEQrrCXRleRk3K8vnUSOMncWMSKaOjw8fFhDRsuRMHUWA0ZwjYNgZ7DYYXj4sWsca3DroYE5s2Y_OczYWWbrsCEvnmqK_Lx0-zhj4zEf2HTfnnb7JsGACSHqQ_e2yQf02HHSEJuIaXY5KQ4q4Ell6Lt_wSVsDJOSl-yOGDsGOb7haJvzrYeUFyHi2JJmg8fGUILeoVEYLAXJ4N2HDx-flTqSQU7_vP88kh4hJaX8nEiL4ciQlUqsCVzr0RCIcYFgUK5d8xeLJSvAkHJt1Fo_5GOFbik76JWiLIeIxpD4n_VY3yZEMyFGpQZyZ4ujPkJc2hUyUaqxBydM46u3t3A95X7WI-ZrxEsB2snB0no-SgUrZ7949CzBcoSQnBTZ1PES_gng7y1rmVZd2_VxjREWgJt6oG3iuYqSeVw4czrwCOHm57hPGd_EVFAmf_2XMsQ8rR1ThV7gwFwbeMIQceJ0007KTRDW25VIJxrJQIb67oXxxnCIiG3iIZ8gYmsoos4iy2sSruRvOWDkE91pNpjIq6VQOoCUc31cwYo6G70-G7L2dmGI4GFtgqLu75OkVIcoEIVEQdhI5cVzcNLrd8QihZFAV6FfFKYwmEOSXNOh8rzoVRy2gdkENMa2BgcKlInDXdPW6sE0pVdgttQhriWWWT9jzgbDXd7T2HqKkYuWL_jf2JDOf_g-fc-_EMfa0lOw9bnM5jX8u-f_5b8dKdTdg5nZpdcqVBIr0FXwa802kNsolzKWSy_20DqAdMT2fjVYSS6TxzJMVynLssZwvwKNrIj1ZyufbU9Obhav1P0k_-BoRHXgPOKysnySmVOftEYp25enR1nCp0gZ5c1jOFcfVdKRnSu-lxWupBnHbY_3MjRJMpV9njZmJejuvGFWV3355iwqoZN5FMQdukFJII4ezn0mtv_2-2-7isc-gmy_qH58_ypW2XgYG-kTFOi_m0eMQg==";
             };
-            "yt" = {
+            "yandex" = {
+              keyword = ":ya";
+              url = "https://yandex.ru/search/?text={searchTerms}";
+            };
+            "youtube" = {
               keyword = ":yt";
               url = "https://www.youtube.com/results?search_query={searchTerms}";
             };

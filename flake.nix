@@ -1,6 +1,4 @@
-# TODOs
-# write update scrits for wallpapers, stumpwm, stardicts
-# write modules and write nixos
+# TODO: write update scrits for wallpapers, stumpwm, stardicts
 {
   description = "xFA25E various nix configurations";
 
