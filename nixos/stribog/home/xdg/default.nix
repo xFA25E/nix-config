@@ -23,7 +23,7 @@
         };
       };
 
-      "stardict/dic".source = "${pkgs.stardicts}/share/stardict/dic";
+      "stardict/dic".source = pkgs.stardicts;
     };
 
     mimeApps = {

@@ -3,7 +3,8 @@
   imagemagick,
   runCommand,
 }: let
-  wallpapers = map fetchurl (import ./urls.nix);
+  inherit (builtins) fromJSON readFile;
+  wallpapers = map fetchurl (fromJSON (readFile ./urls.json));
 in
   runCommand "wallpapers" {
     srcs = builtins.tail wallpapers;

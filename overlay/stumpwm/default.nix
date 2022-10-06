@@ -22,7 +22,7 @@
   swm-config = sourceFilesBySuffices ./swm-config [".lisp" ".asd"];
 
   deps =
-    (map fetchzip (importJSON ./dependency-urls.json))
+    (map fetchzip (importJSON ./urls.json))
     ++ [swm-config]
     ++ optional slynk sly;
 

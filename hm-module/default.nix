@@ -20,24 +20,19 @@
 in {
   options.programs.firefox.profiles = lib.mkOption {
     type = types.attrsOf (types.submodule {
-      options.searchEngines = {
-        default = lib.mkOption {
-          type = types.str;
-        };
-        engines = lib.mkOption {
-          type = types.attrsOf (types.submodule {
-            options = {
-              keyword = lib.mkOption {
-                type = types.str;
-              };
-              url = lib.mkOption {
-                type = types.str;
-                description = "Use {searchTerms}";
-              };
+      options.searchEngines = lib.mkOption {
+        type = types.attrsOf (types.submodule {
+          options = {
+            keyword = lib.mkOption {
+              type = types.str;
             };
-          });
-          default = {};
-        };
+            url = lib.mkOption {
+              type = types.str;
+              description = "Use {searchTerms}";
+            };
+          };
+        });
+        default = {};
       };
     });
   };
@@ -46,7 +41,7 @@ in {
     home.file = lib.mkMerge (flatten (
       mapAttrsToList
       (name: value:
-        optional (isAttrsetEmpty value.searchEngines.engines)
+        optional (isAttrsetEmpty value.searchEngines)
         {
           ".mozilla/firefox/${name}/hmSearchEngines.json" = {
             text = builtins.toJSON value.searchEngines;
