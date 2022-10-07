@@ -186,7 +186,6 @@ in {
           "privacy.donottrackheader.value" = 1;
           "privacy.firstparty.isolate" = true;
           "privacy.history.custom" = true;
-          "privacy.resistFingerprinting" = true; # might brake
           "privacy.sanitize.pending" = "[{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}},{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"cookies\",\"offlineApps\",\"history\",\"formdata\",\"downloads\",\"sessions\",\"siteSettings\"],\"options\":{}}]";
           "privacy.sanitize.sanitizeOnShutdown" = true;
           "privacy.trackingprotection.enabled" = true;
@@ -220,6 +219,9 @@ in {
           "toolkit.telemetry.unified" = false;
           "toolkit.telemetry.unifiedIsOptIn" = true;
           "webgl.disabled" = true;
+
+          # Breaks sites
+          # "privacy.resistFingerprinting" = true;
         };
       };
     };

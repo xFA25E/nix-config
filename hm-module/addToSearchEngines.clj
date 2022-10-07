@@ -13,4 +13,5 @@
 (let [result (json/parse-stream (java.io.BufferedReader. *in*))
       engines (json/parse-stream (io/reader (first *command-line-args*)))]
   (json/generate-stream (update-engines result engines)
-                        (java.io.BufferedWriter. *out*)))
+                        (java.io.BufferedWriter. *out*))
+  nil)
