@@ -7,6 +7,8 @@
         async
         avy
         cargo
+        cider
+        clojure-mode
         consult
         csv-mode
         cyrillic-dvorak-im

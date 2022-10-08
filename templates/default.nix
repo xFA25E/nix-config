@@ -1,4 +1,13 @@
 {
+  clojure = {
+    description = "Simple clojure environment";
+    path = ./clojure;
+    welcomeText = ''
+      Welcome to clojure development environment!
+
+      !!! REMEMBER TO RUN LEIN NEW !!!
+    '';
+  };
   emacs = {
     description = "Simple emacs-lisp environment";
     path = ./emacs;

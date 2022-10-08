@@ -71,6 +71,20 @@
   programs.dconf.enable = true;
 
   services = {
+    i2pd = {
+      # enable = true;
+      proto = {
+        i2cp.enable = true;
+        httpProxy = {
+          enable = true;
+          # outproxy = "http://acetone.i2p:8888";
+          # These are not working as expected
+          inbound.length = 1;
+          outbound.length = 1;
+        };
+      };
+    };
+
     locate = {
       enable = true;
       interval = "13:00";
