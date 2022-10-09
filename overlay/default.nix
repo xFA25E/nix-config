@@ -36,9 +36,9 @@ in {
   wallpapers = callPackage ./wallpapers {};
   ytdl = callPackage ./ytdl.nix {};
   ytdla = callPackage ./ytdla.nix {};
-  ytdlam = callPackage ./ytdlam.nix {};
+  ytdlap = callPackage ./ytdlap.nix {};
   ytdli = callPackage ./ytdli.nix {};
+  ytdlm = callPackage ./ytdlm.nix {};
+  ytdlmp = callPackage ./ytdlmp.nix {};
   ytdlp = callPackage ./ytdlp.nix {};
-  ytdlpa = callPackage ./ytdlpa.nix {};
-  ytdlpam = callPackage ./ytdlpam.nix {};
 }

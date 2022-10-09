@@ -86,11 +86,11 @@
     yt-dlp
     ytdl
     ytdla
-    ytdlam
+    ytdlap
     ytdli
+    ytdlm
+    ytdlmp
     ytdlp
-    ytdlpa
-    ytdlpam
     zip
     zoom-us
   ];

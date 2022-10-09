@@ -3,7 +3,7 @@
   writeShellScriptBin,
   yt-dlp,
 }:
-writeShellScriptBin "ytdlam" ''
+writeShellScriptBin "ytdlm" ''
   set -eu
   DIR=$(${select_music_dir}/bin/select_music_dir)
   test -n "$DIR"
