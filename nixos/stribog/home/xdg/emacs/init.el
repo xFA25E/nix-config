@@ -5,7 +5,7 @@
 (add-hook
  'after-init-hook
  (lambda ()
-   (load (expand-file-name "emacs/custom.el" (xdg-config-home)) nil nil t)))
+   (load (locate-user-emacs-file "custom.el") nil nil t)))
 
 (define-prefix-command 'load-command-map)
 (define-key ctl-x-map "\C-l" 'load-command-map)
@@ -1097,13 +1097,13 @@ See `backward-kill-word' for COUNT."
   (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
 
   (with-eval-after-load 'elisp-mode
-    (load (expand-file-name "emacs/skempo/emacs-lisp.el" (xdg-config-home))))
+    (load (locate-user-emacs-file "skempo/emacs-lisp.el")))
   (with-eval-after-load 'lisp
-    (load (expand-file-name "emacs/skempo/lisp.el" (xdg-config-home))))
+    (load (locate-user-emacs-file "skempo/lisp.el")))
   (with-eval-after-load 'js
-    (load (expand-file-name "emacs/skempo/js.el" (xdg-config-home))))
+    (load (locate-user-emacs-file "skempo/js.el")))
   (with-eval-after-load 'nix
-    (load (expand-file-name "emacs/skempo/nix.el" (xdg-config-home)))))
+    (load (locate-user-emacs-file "skempo/nix.el"))))
 
 ;;; Sort
 
@@ -1114,6 +1114,11 @@ See `backward-kill-word' for COUNT."
 (define-key 'region-commands-map "\C-r" 'reverse-region)
 (define-key 'region-commands-map "\C-s" 'sort-lines)
 (define-key 'region-commands-map "\C-x" 'sort-regexp-fields)
+
+;;; Subr X
+
+(put 'thread-first 'lisp-indent-function 1)
+(put 'thread-last 'lisp-indent-function 1)
 
 ;;; Subword
 

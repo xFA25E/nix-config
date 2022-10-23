@@ -624,7 +624,9 @@ The document was typeset with
  '(newsticker-treeview-listwindow-height 6)
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
-   '(("Заяц" "https://www.youtube.com/feeds/videos.xml?channel_id=UCxgTNtX8LuhMxHQ56naTBfw" nil nil nil)
+   '(("Counter-Currents Podcast" "https://counter-currents.com/tag/podcasts/feed/" nil nil nil)
+     ("Counter-Currents Webzine" "https://counter-currents.com/feed/" nil nil nil)
+     ("Заяц" "https://www.youtube.com/feeds/videos.xml?channel_id=UCxgTNtX8LuhMxHQ56naTBfw" nil nil nil)
      ("Motion Philosophy" "https://www.youtube.com/feeds/videos.xml?channel_id=UCpi0JLkVK0RrAHkfpB3B2Aw" nil nil nil)
      ("thuletide" "https://thuletide.wordpress.com/feed/" nil nil nil)
      ("Illuminat. Студия перевода" "https://www.youtube.com/feeds/videos.xml?channel_id=UCFAEAzg28fs6mJWbVYUlg8g" nil nil nil)

@@ -1,10 +1,10 @@
 {
-  buildGoModule,
+  buildGo118Module,
   src,
 }:
-buildGoModule {
+buildGo118Module {
   name = "unflac";
   inherit src;
-  vendorSha256 = "sha256-R5Sa7pYRg79tkZ0jsupjvJVZ6D5jqN1syPz/YR5wF8g=";
+  vendorSha256 = "sha256-DHgE6QWzcgzvSF2hzLvnfzQeWLQPJxy1d2vjfxWc+Vo=";
   proxyVendor = true;
 }

@@ -34,7 +34,6 @@
     imagemagick
     iw
     ledger
-    leiningen
     libjpeg
     libnotify
     libreoffice

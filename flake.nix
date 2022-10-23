@@ -73,7 +73,7 @@
     {
       hmModules.firefoxSearchEngines = import ./hm-module;
       nixosConfigurations = import ./nixos inputs;
-      nixosModules.default = import ./module;
+      nixosModules.base = import ./module;
       overlays.default = import ./overlay inputs;
       templates = import ./templates;
     }

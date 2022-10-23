@@ -4,7 +4,7 @@
   username,
   ...
 }: {
-  imports = [inputs.self.nixosModules.default];
+  imports = [inputs.self.nixosModules.base];
 
   boot = {
     initrd.availableKernelModules = ["ahci" "ohci_pci" "ehci_pci" "pata_atiixp" "usb_storage" "sd_mod" "sr_mod"];

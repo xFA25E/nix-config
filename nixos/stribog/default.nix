@@ -8,7 +8,7 @@
 }: {
   imports = [
     inputs.home-manager.nixosModules.home-manager
-    inputs.self.nixosModules.default
+    inputs.self.nixosModules.base
   ];
 
   boot = {
