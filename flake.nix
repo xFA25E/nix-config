@@ -6,7 +6,7 @@
     amded.url = "github:ft/amded";
 
     discord.flake = false;
-    discord.url = "https://dl.discordapp.net/apps/linux/0.0.20/discord-0.0.20.tar.gz";
+    discord.url = "https://dl.discordapp.net/apps/linux/0.0.21/discord-0.0.21.tar.gz";
 
     emacs-overlay.inputs.flake-utils.follows = "fu";
     emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";

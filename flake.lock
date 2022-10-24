@@ -35,13 +35,13 @@
     "discord": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-+y6VIWBD+x80u0bWZve9olkCzbW+sOfU/4+sdO7+TGE=",
+        "narHash": "sha256-f39g9rnvvOuquPSGdJkqSoc12VGHzaVjF8Z6kATBid8=",
         "type": "tarball",
-        "url": "https://dl.discordapp.net/apps/linux/0.0.20/discord-0.0.20.tar.gz"
+        "url": "https://dl.discordapp.net/apps/linux/0.0.21/discord-0.0.21.tar.gz"
       },
       "original": {
         "type": "tarball",
-        "url": "https://dl.discordapp.net/apps/linux/0.0.20/discord-0.0.20.tar.gz"
+        "url": "https://dl.discordapp.net/apps/linux/0.0.21/discord-0.0.21.tar.gz"
       }
     },
     "eldev": {
