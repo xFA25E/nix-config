@@ -22,10 +22,10 @@
     git = {
       enable = true;
       extraConfig.credential.helper = "cache --timeout=86400";
-      # signing = {
-      #   key = "vlr.ltkvsk@protonmail.com";
-      #   signByDefault = true;
-      # };
+      signing = {
+        key = "Litkovskyy Valeriy <vlr.ltkvsk@protonmail.com>";
+        signByDefault = true;
+      };
       userEmail = "vlr.ltkvsk@protonmail.com";
       userName = "Valeriy Litkovskyy";
     };
