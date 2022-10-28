@@ -555,6 +555,7 @@ The document was typeset with
                      (xdg-cache-home)))
  '(image-file-name-extensions
    '("mp4" "mkv" "png" "jpeg" "jpg" "gif" "tiff" "tif" "xbm" "xpm" "pbm" "pgm" "ppm" "pnm" "svg"))
+ '(image-use-external-converter t)
  '(imenu-auto-rescan t)
  '(imenu-level-separator "/")
  '(imenu-space-replacement " ")
@@ -624,7 +625,8 @@ The document was typeset with
  '(newsticker-treeview-listwindow-height 6)
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
-   '(("Leather Apron Club" "https://odysee.com/$/rss/@LeatherApronClub:c" nil nil nil)
+   '(("Motion Philosophy" "https://www.youtube.com/feeds/videos.xml?channel_id=UCpi0JLkVK0RrAHkfpB3B2Aw" nil nil nil)
+     ("Leather Apron Club" "https://odysee.com/$/rss/@LeatherApronClub:c" nil nil nil)
      ("thuletide" "https://thuletide.wordpress.com/feed/" nil nil nil)
      ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg" nil nil nil)
      ("Просто Глеб" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8whgZ18JO0Hr4g0053LuGQ" nil nil nil)
