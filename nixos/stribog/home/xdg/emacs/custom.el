@@ -461,7 +461,8 @@ The document was typeset with
    '((format-time-string "%a %b %e %H:%M" now)
      (if mail
          (concat " @" mail)
-       "")))
+       "")
+     " "))
  '(ebdb-complete-mail nil)
  '(ebdb-complete-mail-allow-cycling nil)
  '(ebdb-completion-display-record nil)
