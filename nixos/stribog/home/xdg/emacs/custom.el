@@ -626,7 +626,10 @@ The document was typeset with
  '(newsticker-treeview-listwindow-height 6)
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
-   '(("Motion Philosophy" "https://www.youtube.com/feeds/videos.xml?channel_id=UCpi0JLkVK0RrAHkfpB3B2Aw" nil nil nil)
+   '(("Just Emil Kirkegaard Things" "https://kirkegaard.substack.com/feed" nil nil nil)
+     ("UBERSOY" "https://www.youtube.com/feeds/videos.xml?channel_id=UCqBN8cSd6hfwqq0BM2biXOg" nil nil nil)
+     ("Wags" "https://www.youtube.com/feeds/videos.xml?channel_id=UCA5Zo2kmdP9ig4f9fsvyRgg" nil nil nil)
+     ("Motion Philosophy" "https://www.youtube.com/feeds/videos.xml?channel_id=UCpi0JLkVK0RrAHkfpB3B2Aw" nil nil nil)
      ("Leather Apron Club" "https://odysee.com/$/rss/@LeatherApronClub:c" nil nil nil)
      ("thuletide" "https://thuletide.wordpress.com/feed/" nil nil nil)
      ("Простые Мысли" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZuRMfF5ZUHqYlKkvU12xvg" nil nil nil)
@@ -702,7 +705,7 @@ The document was typeset with
                      (xdg-cache-home)))
  '(nxml-child-indent 4)
  '(org-adapt-indentation nil)
- '(org-agenda-files '("~/org/study.org" "~/org/life.org"))
+ '(org-agenda-files '("~/org/study.org" "~/org/life.org" "~/org/free_time.org"))
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
  '(org-babel-load-languages
