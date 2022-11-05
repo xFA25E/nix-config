@@ -1,5 +1,6 @@
 ;; -*- lexical-binding: t; outline-regexp: ";;;\\(;*\\)"; -*-
 
+(require 'cl-lib)
 (require 'xdg)
 
 (add-hook
@@ -571,6 +572,24 @@ See `xref-backend-apropos' docs for PATTERN."
 (define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
 (define-key minibuffer-local-completion-map " " nil)
 (define-key minibuffer-local-must-match-map "\C-j" 'minibuffer-force-complete-and-exit)
+
+(defun regexp-try-completion (string table pred point)
+  (let ((completions (all-completions "" table pred)))
+    (when (cl-some (apply-partially #'string-match-p string) completions)
+      (cons string point))))
+
+(defun regexp-all-completions (string table pred _point)
+  (cl-loop
+   for completion in (all-completions "" table pred)
+   if (string-match string completion)
+   do (add-face-text-property (match-beginning 0) (match-end 0)
+                              'completions-common-part nil completion)
+   and collect completion))
+
+(add-to-list 'completion-styles-alist
+             '(regexp regexp-try-completion regexp-all-completions "regexp"))
+(cl-pushnew '(const regexp)
+            (cdar (cdddr (get 'completion-styles 'custom-type))))
 
 ;;; Mpc
 
