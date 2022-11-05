@@ -5,7 +5,8 @@
 writeShellScriptBin "recode_video" ''
   set -eu
 
-  case "$1" in
+  name=$1
+  case "$name" in
       avc) vcodec=libx264 ;;
       hevc) vcodec=libx265 ;;
       *) echo "Select vcodec: avc, hevc" >&2 ; exit 1
@@ -15,6 +16,6 @@ writeShellScriptBin "recode_video" ''
 
   for video in "$@"; do
       ${ffmpeg}/bin/ffmpeg -n -i "$video" -vcodec "$vcodec" -crf 23 \
-               "''${video%.*}.$1.''${video##*.}"
+               "''${video%.*}.$name.''${video##*.}"
   done
 ''
