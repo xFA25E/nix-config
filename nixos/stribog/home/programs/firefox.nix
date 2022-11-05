@@ -32,6 +32,18 @@ in {
             keyword = ":gh";
             url = "https://github.com/search?q={searchTerms}";
           };
+          "google-translate-to-russian" = {
+            keyword = ":gtr";
+            url = "https://translate.google.com/?sl=auto&tl=ru&op=translate&text={searchTerms}";
+          };
+          "google-translate-to-english" = {
+            keyword = ":gte";
+            url = "https://translate.google.com/?sl=auto&tl=en&op=translate&text={searchTerms}";
+          };
+          "google-translate-to-italian" = {
+            keyword = ":gti";
+            url = "https://translate.google.com/?sl=auto&tl=it&op=translate&text={searchTerms}";
+          };
           "metalarchivesband" = {
             keyword = ":maband";
             url = "https://www.metal-archives.com/search?searchString={searchTerms}&type=band_name";
