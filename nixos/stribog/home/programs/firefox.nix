@@ -230,10 +230,6 @@ in {
           "toolkit.telemetry.server" = "";
           "toolkit.telemetry.unified" = false;
           "toolkit.telemetry.unifiedIsOptIn" = true;
-          "webgl.disabled" = true;
-
-          # Breaks sites
-          # "privacy.resistFingerprinting" = true;
         };
       };
     };
