@@ -21,8 +21,7 @@
         emmet-mode
         envrc
         enwc
-        flymake-eslint
-        flymake-shellcheck
+        flymake-collection
         flymake-statix
         format-all
         htmlize

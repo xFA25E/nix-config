@@ -426,9 +426,10 @@ See `xref-backend-apropos' docs for PATTERN."
   (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error)
   (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error))
 
-;;; Flymake Eslint
+;;; Flymake collection
 
-(add-hook 'js-mode-hook 'flymake-eslint-enable)
+(declare-function flymake-collection-hook-setup "flymake-collection-hook")
+(flymake-collection-hook-setup)
 
 ;;; Flymake Statix
 

@@ -507,7 +507,6 @@ The document was typeset with
  '(fill-column 80)
  '(find-ls-option
    '("-print0 | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
- '(flymake-eslint-defer-binary-check t)
  '(flymake-mode-line-format
    '(" " flymake-mode-line-exception flymake-mode-line-counters))
  '(flymake-statix-enable-fix t)
@@ -803,7 +802,7 @@ The document was typeset with
  '(sendmail-program "msmtp")
  '(sgml-basic-offset 4)
  '(sh-mode-hook
-   '(sh-electric-here-document-mode flymake-shellcheck-load flymake-mode tree-sitter-mode))
+   '(sh-electric-here-document-mode flymake-mode tree-sitter-mode))
  '(shell-mode-hook '(abbrev-mode ansi-color-for-comint-mode-on))
  '(shift-select-mode nil)
  '(shr-max-image-proportion 0.7)
