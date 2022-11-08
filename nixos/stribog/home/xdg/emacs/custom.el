@@ -361,6 +361,7 @@ The document was typeset with
  '(avy-goto-word-0-regexp "\\_<\\(\\sw\\|\\s_\\)")
  '(avy-keys '(97 111 101 117 104 116 110 115))
  '(avy-style 'words)
+ '(avy-timeout-seconds 0.3)
  '(backup-by-copying t)
  '(backup-directory-alist '(("." . "~/.local/share/emacs/backups")))
  '(before-save-hook '(whitespace-cleanup delete-trailing-whitespace))

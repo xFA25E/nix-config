@@ -24,8 +24,9 @@
 
 ;;; Avy
 
-(define-key global-map "\M-z" 'avy-goto-word-0)
+(define-key global-map "\M-z" 'avy-goto-char-timer)
 (define-key goto-map "\M-g" 'avy-goto-line)
+(define-key isearch-mode-map "\M-z" 'avy-isearch)
 
 ;;; Browse Url
 
