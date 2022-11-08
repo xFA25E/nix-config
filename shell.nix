@@ -1,8 +1,9 @@
 {
   alejandra,
   mkShell,
+  shellcheck,
   statix,
 }:
 mkShell {
-  buildInputs = [alejandra statix];
+  buildInputs = [alejandra shellcheck statix];
 }

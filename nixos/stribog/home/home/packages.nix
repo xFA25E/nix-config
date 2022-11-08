@@ -62,7 +62,6 @@
     rsync
     scrot
     sdcv
-    shellcheck
     simplescreenrecorder
     sort_videos_by_duration
     speedtest-cli
