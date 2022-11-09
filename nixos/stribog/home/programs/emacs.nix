@@ -22,7 +22,6 @@
         envrc
         enwc
         flymake-collection
-        flymake-statix
         format-all
         htmlize
         ipretty

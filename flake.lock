@@ -163,23 +163,6 @@
         "type": "github"
       }
     },
-    "eldev_8": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1662672849,
-        "narHash": "sha256-yna3SPVUb6Dzt0Wrl7EY05oNrGHSFVJL1QFhUKNb3DQ=",
-        "owner": "doublep",
-        "repo": "eldev",
-        "rev": "659f4d9c97a44cf29ded5594b3f5de8da99ec973",
-        "type": "github"
-      },
-      "original": {
-        "owner": "doublep",
-        "ref": "1.2.2",
-        "repo": "eldev",
-        "type": "github"
-      }
-    },
     "emacs-overlay": {
       "inputs": {
         "flake-utils": [
@@ -276,33 +259,9 @@
         "type": "github"
       }
     },
-    "epkg-flymake-statix": {
-      "inputs": {
-        "eldev": "eldev_4",
-        "emacs-overlay": [
-          "emacs-overlay"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1663191673,
-        "narHash": "sha256-XJU10SX+fsDRZiwfaKVkTis6+5h6qdZqao1fqkjMRok=",
-        "owner": "xFA25E",
-        "repo": "flymake-statix",
-        "rev": "71f05bd875ef5c196438c6ec9e13f2d15d2152be",
-        "type": "github"
-      },
-      "original": {
-        "owner": "xFA25E",
-        "repo": "flymake-statix",
-        "type": "github"
-      }
-    },
     "epkg-nixos-options": {
       "inputs": {
-        "eldev": "eldev_5",
+        "eldev": "eldev_4",
         "emacs-overlay": [
           "emacs-overlay"
         ],
@@ -326,7 +285,7 @@
     },
     "epkg-rx-widget": {
       "inputs": {
-        "eldev": "eldev_6",
+        "eldev": "eldev_5",
         "emacs-overlay": [
           "emacs-overlay"
         ],
@@ -350,7 +309,7 @@
     },
     "epkg-sdcwoc": {
       "inputs": {
-        "eldev": "eldev_7",
+        "eldev": "eldev_6",
         "emacs-overlay": [
           "emacs-overlay"
         ],
@@ -374,7 +333,7 @@
     },
     "epkg-skempo": {
       "inputs": {
-        "eldev": "eldev_8",
+        "eldev": "eldev_7",
         "emacs-overlay": [
           "emacs-overlay"
         ],
@@ -566,7 +525,6 @@
         "epkg-amded": "epkg-amded",
         "epkg-cyrillic-dvorak-im": "epkg-cyrillic-dvorak-im",
         "epkg-dired-tags": "epkg-dired-tags",
-        "epkg-flymake-statix": "epkg-flymake-statix",
         "epkg-nixos-options": "epkg-nixos-options",
         "epkg-rx-widget": "epkg-rx-widget",
         "epkg-sdcwoc": "epkg-sdcwoc",

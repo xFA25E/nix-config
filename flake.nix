@@ -24,10 +24,6 @@
     epkg-dired-tags.inputs.nixpkgs.follows = "nixpkgs";
     epkg-dired-tags.url = "github:xFA25E/dired-tags";
 
-    epkg-flymake-statix.inputs.emacs-overlay.follows = "emacs-overlay";
-    epkg-flymake-statix.inputs.nixpkgs.follows = "nixpkgs";
-    epkg-flymake-statix.url = "github:xFA25E/flymake-statix";
-
     epkg-nixos-options.inputs.emacs-overlay.follows = "emacs-overlay";
     epkg-nixos-options.inputs.nixpkgs.follows = "nixpkgs";
     epkg-nixos-options.url = "github:xFA25E/nixos-options";

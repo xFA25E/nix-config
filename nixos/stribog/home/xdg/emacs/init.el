@@ -426,19 +426,15 @@ See `xref-backend-apropos' docs for PATTERN."
   (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error)
   (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error))
 
-;;; Flymake collection
+;;; Flymake Collection
 
 (declare-function flymake-collection-hook-setup "flymake-collection-hook")
 (flymake-collection-hook-setup)
 
-;;; Flymake Statix
-
-(add-hook 'nix-mode-hook 'flymake-statix-setup)
-
 (defvar nix-mode-map)
 (with-eval-after-load 'nix-mode
-  (with-eval-after-load 'flymake-statix
-    (define-key nix-mode-map "\C-c\C-x" 'flymake-statix-fix)))
+  (with-eval-after-load 'flymake-collection-statix
+    (define-key nix-mode-map "\C-c\C-x" 'flymake-collection-statix-fix)))
 
 ;;; Format All
 
