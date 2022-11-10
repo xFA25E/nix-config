@@ -4,6 +4,7 @@
     extraPackages = epkgs:
       with epkgs; [
         amded
+        apheleia
         async
         avy
         cargo
@@ -22,7 +23,6 @@
         envrc
         enwc
         flymake-collection
-        format-all
         htmlize
         ipretty
         json-navigator

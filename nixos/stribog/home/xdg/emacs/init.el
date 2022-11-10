@@ -22,6 +22,14 @@
 
 (define-key 'region-commands-map "\C-a" 'align-regexp)
 
+;;; Apheleia
+
+(add-hook 'js-mode-hook 'apheleia-mode)
+(add-hook 'nix-mode-hook 'apheleia-mode)
+(add-hook 'css-mode 'apheleia-mode)
+(add-hook 'html-mode 'apheleia-mode)
+(add-hook 'web-mode 'apheleia-mode)
+
 ;;; Avy
 
 (define-key global-map "\M-z" 'avy-goto-char-timer)
@@ -435,11 +443,6 @@ See `xref-backend-apropos' docs for PATTERN."
 (with-eval-after-load 'nix-mode
   (with-eval-after-load 'flymake-collection-statix
     (define-key nix-mode-map "\C-c\C-x" 'flymake-collection-statix-fix)))
-
-;;; Format All
-
-(add-hook 'js-mode-hook 'format-all-mode)
-(add-hook 'nix-mode-hook 'format-all-mode)
 
 ;;; Grep
 
