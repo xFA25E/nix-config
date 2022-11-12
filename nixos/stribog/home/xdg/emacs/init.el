@@ -24,11 +24,12 @@
 
 ;;; Apheleia
 
+(autoload 'apheleia-mode "apheleia")
 (add-hook 'js-mode-hook 'apheleia-mode)
 (add-hook 'nix-mode-hook 'apheleia-mode)
-(add-hook 'css-mode 'apheleia-mode)
-(add-hook 'html-mode 'apheleia-mode)
-(add-hook 'web-mode 'apheleia-mode)
+(add-hook 'css-mode-hook 'apheleia-mode)
+(add-hook 'html-mode-hook 'apheleia-mode)
+(add-hook 'web-mode-hook 'apheleia-mode)
 
 ;;; Avy
 

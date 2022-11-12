@@ -84,14 +84,14 @@
                (:on-enter (lambda () (setf ,timer (swm:run-with-timer 0.1 1 #',name)))
                 :on-exit (lambda () (swm:cancel-timer ,timer)))
              ,@(mapcar (lambda-match
-                         ((list key args)
+                         ((or (list _ args key) (list key args))
                           `((swm:kbd ,key) ,(format nil "~(~A~) ~A" name args))))
                        keys-and-args)))))))
 
 (define-interactive-controller mpd ("mpc" "-q")
   "~A" (list (run-program '("mpc") :output :string))
-  (("less" "prev")
-   ("greater" "next")
+  (("<" "prev" "less")
+   (">" "next" "greater")
    ("t" "toggle")
    ("n" "volume -10")
    ("p" "volume +10")
@@ -127,6 +127,7 @@
 (defvar *main-menu*
   '(("screenshot"     (:command "screenshot"))
     ("suspend"        (:shell ("systemctl" "suspend")))
+    ("hibernate"      (:shell ("systemctl" "hibernate")))
     ("clipboard-type" (:command "clipboard-type"))))
 
 (swm:defcommand main-menu () ()

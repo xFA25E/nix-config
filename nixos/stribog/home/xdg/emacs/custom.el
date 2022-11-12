@@ -53,6 +53,7 @@
      (typescript-mode . prettier)
      (web-mode . prettier)
      (yaml-mode . prettier)))
+ '(apheleia-mode-lighter nil)
  '(apropos-sort-by-scores t)
  '(async-shell-command-buffer 'new-buffer)
  '(auth-sources '("~/.authinfo.gpg" "~/.netrc" "~/.authinfo"))
@@ -467,7 +468,7 @@ The document was typeset with
      ("\\.\\(?:ai\\|eps\\)\\'" "setsid -f inkscape * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
      ("\\.\\(?:djvu\\|fb2\\)\\'" "ebook-convert ? .epub &")
      ("\\.pdf\\'" "setsid -f libreoffice * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
-     ("\\.\\(?:3gp\\|aiff\\|avi\\|flac\\|flv\\|m4a\\|mkv\\|mov\\|mp3\\|mp4\\|mpg\\|ogg\\|ogv\\|opus\\|vob\\|wav\\|webm\\|wmv\\|mka\\|m4v\\)\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1" "for vid in * ; do dur=$(video_seconds \"$vid\"); sum=$((sum + dur)); done; format_seconds \"%02h:%02m:%02s\" \"$sum\"" "compress_video * &" "strip_video * &" "mediainfo" "mpv -vo=drm" "sort_videos_by_duration *")
+     ("\\.\\(?:3gp\\|aiff\\|avi\\|flac\\|flv\\|m4a\\|mkv\\|mov\\|mp3\\|mp4\\|mpg\\|ogg\\|ogv\\|opus\\|vob\\|wav\\|webm\\|wmv\\|mka\\|m4v\\)\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1" "for vid in * ; do dur=$(video_seconds \"$vid\"); sum=$((sum + dur)); done; format_seconds \"%02h:%02m:%02s\" \"$sum\"" "recode_video hevc * &" "strip_video opus * &" "resize_video 360 * &" "mediainfo" "mpv -vo=drm" "sort_videos_by_duration *")
      ("\\.cue\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1")
      ("\\.rar\\'"
       (let
@@ -667,7 +668,10 @@ The document was typeset with
  '(newsticker-treeview-listwindow-height 6)
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
-   '(("Algosaurus" "http://algosaur.us/feed/" nil nil nil)
+   '(("Михаил Веллер" "https://www.youtube.com/feeds/videos.xml?channel_id=UCW06e3Y2_HVdxUJGqTa1nVg" nil nil nil)
+     ("AltHype Cozy" "https://cozysounds.kanyecode.repl.co/feed/althype" nil nil nil)
+     ("dickmao" "https://www.youtube.com/feeds/videos.xml?channel_id=UCyf-xqc0ovYSDgaCcB3CUoA" nil nil nil)
+     ("Joseph Everett’s Newsletter" "https://josepheverettwil.substack.com/feed" nil nil nil)
      ("Just Emil Kirkegaard Things" "https://kirkegaard.substack.com/feed" nil nil nil)
      ("UBERSOY" "https://www.youtube.com/feeds/videos.xml?channel_id=UCqBN8cSd6hfwqq0BM2biXOg" nil nil nil)
      ("Wags" "https://www.youtube.com/feeds/videos.xml?channel_id=UCA5Zo2kmdP9ig4f9fsvyRgg" nil nil nil)
