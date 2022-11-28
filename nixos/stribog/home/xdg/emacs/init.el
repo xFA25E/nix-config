@@ -121,41 +121,6 @@ See `browse-url' for URL and ARGS."
 (with-eval-after-load 'consult
   (add-hook 'completion-list-mode-hook 'consult-preview-at-point-mode))
 
-(eval-when-compile (require 'consult))
-(declare-function consult--current-history "consult")
-(declare-function consult--insertion-preview "consult")
-(declare-function consult--read "consult")
-(declare-function consult--remove-dups "consult")
-(declare-function ring-elements "ring")
-(define-advice consult-history (:override (&optional history index) require-match)
-  (interactive)
-  (let* ((pair (if history (cons history index) (consult--current-history)))
-         (history (if (ring-p (car pair)) (ring-elements (car pair)) (car pair)))
-         (index (cdr pair))
-         (str (consult--local-let ((enable-recursive-minibuffers t))
-                (consult--read
-                 (or (consult--remove-dups history)
-                     (user-error "History is empty"))
-                 :prompt "History: "
-                 :history t ;; disable history
-                 :category  ;; Report category depending on history variable
-                 (and (minibufferp)
-                      (pcase minibuffer-history-variable
-                        ('extended-command-history 'command)
-                        ('buffer-name-history 'buffer)
-                        ('face-name-history 'face)
-                        ('read-envvar-name-history 'environment-variable)
-                        ('bookmark-history 'bookmark)
-                        ('file-name-history 'file)))
-                 :sort nil
-                 :state (consult--insertion-preview (point) (point))
-                 :require-match t))))
-    (when (minibufferp)
-      (delete-minibuffer-contents))
-    (when index
-      (set index (seq-position history str)))
-    (insert (substring-no-properties str))))
-
 ;;; Css Mode
 
 (defvar css-mode-map)
