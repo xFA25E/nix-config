@@ -668,7 +668,9 @@ The document was typeset with
  '(newsticker-treeview-listwindow-height 6)
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
-   '(("Михаил Веллер" "https://www.youtube.com/feeds/videos.xml?channel_id=UCW06e3Y2_HVdxUJGqTa1nVg" nil nil nil)
+   '(("Максим Вердикт" "https://www.youtube.com/feeds/videos.xml?channel_id=UC44oy3QadzoUZt7G0DDf5DQ" nil nil nil)
+     ("Biopolitics" "https://biopolitics.substack.com/feed" nil nil nil)
+     ("Михаил Веллер" "https://www.youtube.com/feeds/videos.xml?channel_id=UCW06e3Y2_HVdxUJGqTa1nVg" nil nil nil)
      ("AltHype Cozy" "https://cozysounds.kanyecode.repl.co/feed/althype" nil nil nil)
      ("dickmao" "https://www.youtube.com/feeds/videos.xml?channel_id=UCyf-xqc0ovYSDgaCcB3CUoA" nil nil nil)
      ("Joseph Everett’s Newsletter" "https://josepheverettwil.substack.com/feed" nil nil nil)
