@@ -35,13 +35,13 @@
     "discord": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-f39g9rnvvOuquPSGdJkqSoc12VGHzaVjF8Z6kATBid8=",
+        "narHash": "sha256-8b60/jCVnEX54cAirvTJy2fuzWBoi99YEr7y+scFKP0=",
         "type": "tarball",
-        "url": "https://dl.discordapp.net/apps/linux/0.0.21/discord-0.0.21.tar.gz"
+        "url": "https://dl.discordapp.net/apps/linux/0.0.22/discord-0.0.22.tar.gz"
       },
       "original": {
         "type": "tarball",
-        "url": "https://dl.discordapp.net/apps/linux/0.0.21/discord-0.0.21.tar.gz"
+        "url": "https://dl.discordapp.net/apps/linux/0.0.22/discord-0.0.22.tar.gz"
       }
     },
     "eldev": {
@@ -130,23 +130,6 @@
       }
     },
     "eldev_6": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1662672849,
-        "narHash": "sha256-yna3SPVUb6Dzt0Wrl7EY05oNrGHSFVJL1QFhUKNb3DQ=",
-        "owner": "doublep",
-        "repo": "eldev",
-        "rev": "659f4d9c97a44cf29ded5594b3f5de8da99ec973",
-        "type": "github"
-      },
-      "original": {
-        "owner": "doublep",
-        "ref": "1.2.2",
-        "repo": "eldev",
-        "type": "github"
-      }
-    },
-    "eldev_7": {
       "flake": false,
       "locked": {
         "lastModified": 1662672849,
@@ -331,30 +314,6 @@
         "type": "github"
       }
     },
-    "epkg-skempo": {
-      "inputs": {
-        "eldev": "eldev_7",
-        "emacs-overlay": [
-          "emacs-overlay"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1664797664,
-        "narHash": "sha256-7FXkUUNLrFK1lA78Ko/XXJakLI816TgKWGHW6eTz3ak=",
-        "owner": "xFA25E",
-        "repo": "skempo",
-        "rev": "47b53a2f11798bd44ce2f4134abc3b6682ee010f",
-        "type": "github"
-      },
-      "original": {
-        "owner": "xFA25E",
-        "repo": "skempo",
-        "type": "github"
-      }
-    },
     "epkg-xattr": {
       "inputs": {
         "eldev": [
@@ -528,7 +487,6 @@
         "epkg-nixos-options": "epkg-nixos-options",
         "epkg-rx-widget": "epkg-rx-widget",
         "epkg-sdcwoc": "epkg-sdcwoc",
-        "epkg-skempo": "epkg-skempo",
         "fu": "fu",
         "home-manager": "home-manager",
         "mozlz4": "mozlz4",

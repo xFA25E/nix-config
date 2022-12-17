@@ -6,7 +6,7 @@
     amded.url = "github:ft/amded";
 
     discord.flake = false;
-    discord.url = "https://dl.discordapp.net/apps/linux/0.0.21/discord-0.0.21.tar.gz";
+    discord.url = "https://dl.discordapp.net/apps/linux/0.0.22/discord-0.0.22.tar.gz";
 
     emacs-overlay.inputs.flake-utils.follows = "fu";
     emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
@@ -35,10 +35,6 @@
     epkg-sdcwoc.inputs.emacs-overlay.follows = "emacs-overlay";
     epkg-sdcwoc.inputs.nixpkgs.follows = "nixpkgs";
     epkg-sdcwoc.url = "github:xFA25E/sdcwoc";
-
-    epkg-skempo.inputs.emacs-overlay.follows = "emacs-overlay";
-    epkg-skempo.inputs.nixpkgs.follows = "nixpkgs";
-    epkg-skempo.url = "github:xFA25E/skempo";
 
     fu.url = "github:numtide/flake-utils";
 

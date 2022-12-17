@@ -1078,26 +1078,6 @@ See `backward-kill-word' for COUNT."
       (kill-region (region-beginning) (region-end))
     (backward-kill-word count)))
 
-;;; Skempo
-
-(add-hook 'nix-mode-hook 'skempo-mode)
-(add-hook 'js-mode-hook 'skempo-mode)
-
-(defvar skempo-mode-map)
-(with-eval-after-load 'skempo
-  (define-key skempo-mode-map "\C-z" 'skempo-complete-tag-or-call-on-region)
-  (define-key skempo-mode-map "\M-g\M-e" 'skempo-forward-mark)
-  (define-key skempo-mode-map "\M-g\M-a" 'skempo-backward-mark)
-
-  (with-eval-after-load 'elisp-mode
-    (load (locate-user-emacs-file "skempo/emacs-lisp.el")))
-  (with-eval-after-load 'lisp
-    (load (locate-user-emacs-file "skempo/lisp.el")))
-  (with-eval-after-load 'js
-    (load (locate-user-emacs-file "skempo/js.el")))
-  (with-eval-after-load 'nix
-    (load (locate-user-emacs-file "skempo/nix.el"))))
-
 ;;; Sort
 
 (define-key 'region-commands-map "\C-d" 'delete-duplicate-lines)
@@ -1128,6 +1108,21 @@ See `backward-kill-word' for COUNT."
 
 (autoload 'center-region "text-mode")
 (define-key 'region-commands-map "\C-c" 'center-region)
+
+
+;;; Tempo Ext
+
+(add-to-list 'load-path (locate-user-emacs-file "lisp"))
+
+(with-eval-after-load 'tempo-ext
+  (define-key global-map "\C-z" 'tempo-ext-call)
+  (define-key goto-map "\M-e" 'tempo-forward-mark)
+  (define-key goto-map "\M-a" 'tempo-backward-mark))
+
+(with-eval-after-load 'elisp-mode (require 'tempo-ext-emacs-lisp))
+(with-eval-after-load 'lisp (require 'tempo-ext-lisp))
+(with-eval-after-load 'js (require 'tempo-ext-js))
+(with-eval-after-load 'nix (require 'tempo-ext-nix))
 
 ;;; Term
 

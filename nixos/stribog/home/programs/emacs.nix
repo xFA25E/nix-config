@@ -50,7 +50,6 @@
         rust-mode
         rx-widget
         sdcwoc
-        skempo
         sly
         sly-asdf
         sly-quicklisp

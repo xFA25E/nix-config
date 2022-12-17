@@ -57,338 +57,6 @@
  '(apropos-sort-by-scores t)
  '(async-shell-command-buffer 'new-buffer)
  '(auth-sources '("~/.authinfo.gpg" "~/.netrc" "~/.authinfo"))
- '(auto-insert-alist
-   '((("\\.\\(?:[Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C / C++ header")
-      (replace-regexp-in-string "[^A-Z0-9]" "_"
-                                (replace-regexp-in-string "\\+" "P"
-                                                          (upcase
-                                                           (file-name-nondirectory buffer-file-name))))
-      "#ifndef " str n "#define " str "
-
-" _ "
-
-#endif")
-     (("\\.\\(?:[Cc]\\|cc\\|cpp\\|cxx\\|c\\+\\+\\)\\'" . "C / C++ program")
-      nil "#include \""
-      (let
-          ((stem
-            (file-name-sans-extension buffer-file-name))
-           ret)
-        (dolist
-            (ext
-             '("H" "h" "hh" "hpp" "hxx" "h++")
-             ret)
-          (when
-              (file-exists-p
-               (concat stem "." ext))
-            (setq ret
-                  (file-name-nondirectory
-                   (concat stem "." ext))))))
-      & 34 | -10)
-     (("[Mm]akefile\\'" . "Makefile")
-      . "makefile.inc")
-     (html-mode lambda nil
-                (sgml-tag "html"))
-     (plain-tex-mode . "tex-insert.tex")
-     (bibtex-mode . "tex-insert.tex")
-     (latex-mode "options, RET: " "\\documentclass[" str & 93 | -1 123
-                 (read-string "class: ")
-                 "}
-"
-                 ("package, %s: " "\\usepackage["
-                  (read-string "options, RET: ")
-                  & 93 | -1 123 str "}
-")
-                 _ "
-\\begin{document}
-" _ "
-\\end{document}")
-     (("/bin/.*[^/]\\'" . "Shell-Script mode magic number")
-      lambda nil
-      (if
-          (eq major-mode
-              (default-value 'major-mode))
-          (sh-mode)))
-     (ada-mode . ada-header)
-     (("\\.[1-9]\\'" . "Man page skeleton")
-      "Short description: " ".\\\" Copyright (C), "
-      (format-time-string "%Y")
-      "  "
-      (getenv "ORGANIZATION")
-      |
-      (progn user-full-name)
-      "
-.\\\" You may distribute this file under the terms of the GNU Free
-.\\\" Documentation License.
-.TH "
-      (file-name-base
-       (buffer-file-name))
-      " "
-      (file-name-extension
-       (buffer-file-name))
-      " "
-      (format-time-string "%Y-%m-%d ")
-      "
-.SH NAME
-"
-      (file-name-base
-       (buffer-file-name))
-      " \\- " str "
-.SH SYNOPSIS
-.B "
-      (file-name-base
-       (buffer-file-name))
-      "
-" _ "
-.SH DESCRIPTION
-.SH OPTIONS
-.SH FILES
-.SH \"SEE ALSO\"
-.SH BUGS
-.SH AUTHOR
-"
-      (user-full-name)
-      '(if
-           (search-backward "&"
-                            (line-beginning-position)
-                            t)
-           (replace-match
-            (capitalize
-             (user-login-name))
-            t t))
-      '(end-of-line 1)
-      " <"
-      (progn user-mail-address)
-      ">
-")
-     ("\\.dir-locals\\.el" nil ";;; Directory Local Variables
-" ";;; For more information see (info \"(emacs) Directory Variables\")
-
-" "(("
-'(setq v1
-       (let
-           (modes)
-         (mapatoms
-          (lambda
-            (mode)
-            (let
-                ((name
-                  (symbol-name mode)))
-              (when
-                  (string-match "-mode$" name)
-                (push name modes)))))
-         (sort modes 'string<)))
-(completing-read "Local variables for mode: " v1 nil t)
-" . (("
-(let
-    ((all-variables
-      (apropos-internal ".*"
-                        (lambda
-                          (symbol)
-                          (and
-                           (boundp symbol)
-                           (get symbol 'variable-documentation))))))
-  (completing-read "Variable to set: " all-variables))
-" . "
-(completing-read "Value to set it to: " nil)
-"))))
-")
-     (("\\.el\\'" . "Emacs Lisp header")
-      "Short description: " ";;; "
-      (file-name-nondirectory
-       (buffer-file-name))
-      " --- " str
-      (make-string
-       (max 2
-            (- 80
-               (current-column)
-               27))
-       32)
-      "-*- lexical-binding: t; -*-"
-      '(setq lexical-binding t)
-      "
-
-;; Copyright (C) "
-      (format-time-string "%Y")
-      "  "
-      (getenv "ORGANIZATION")
-      |
-      (progn user-full-name)
-      "
-
-;; Author: "
-      (user-full-name)
-      '(if
-           (search-backward "&"
-                            (line-beginning-position)
-                            t)
-           (replace-match
-            (capitalize
-             (user-login-name))
-            t t))
-      '(end-of-line 1)
-      " <"
-      (progn user-mail-address)
-      ">
-;; Keywords: "
-      '(require 'finder)
-      '(setq v1
-             (mapcar
-              (lambda
-                (x)
-                (list
-                 (symbol-name
-                  (car x))))
-              finder-known-keywords)
-             v2
-             (mapconcat
-              (lambda
-                (x)
-                (format "%12s:  %s"
-                        (car x)
-                        (cdr x)))
-              finder-known-keywords "
-"))
-      ((let
-           ((minibuffer-help-form v2))
-         (completing-read "Keyword, C-h: " v1 nil t))
-       str ", ")
-      & -2 "
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; " _ "
-
-;;; Code:
-
-
-
-(provide '"
-      (file-name-base
-       (buffer-file-name))
-      ")
-;;; "
-      (file-name-nondirectory
-       (buffer-file-name))
-      " ends here
-")
-     (("\\.texi\\(?:nfo\\)?\\'" . "Texinfo file skeleton")
-      "Title: " "\\input texinfo   @c -*-texinfo-*-
-@c %**start of header
-@setfilename "
-      (file-name-base
-       (buffer-file-name))
-      ".info
-" "@settitle " str "
-@c %**end of header
-@copying
-"
-      (setq short-description
-            (read-string "Short description: "))
-      ".
-
-" "Copyright @copyright{} "
-      (format-time-string "%Y")
-      "  "
-      (getenv "ORGANIZATION")
-      |
-      (progn user-full-name)
-      "
-
-@quotation
-Permission is granted to copy, distribute and/or modify this document
-under the terms of the GNU Free Documentation License, Version 1.3
-or any later version published by the Free Software Foundation;
-with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
-A copy of the license is included in the section entitled ``GNU
-Free Documentation License''.
-
-A copy of the license is also available from the Free Software
-Foundation Web site at @url{https://www.gnu.org/licenses/fdl.html}.
-
-@end quotation
-
-The document was typeset with
-@uref{https://www.gnu.org/software/texinfo/, GNU Texinfo}.
-
-@end copying
-
-@titlepage
-@title " str "
-@subtitle " short-description "
-@author "
-      (getenv "ORGANIZATION")
-      |
-      (progn user-full-name)
-      " <"
-      (progn user-mail-address)
-      ">
-@page
-@vskip 0pt plus 1filll
-@insertcopying
-@end titlepage
-
-@c Output the table of the contents at the beginning.
-@contents
-
-@ifnottex
-@node Top
-@top " str "
-
-@insertcopying
-@end ifnottex
-
-@c Generate the nodes for this menu with `C-c C-u C-m'.
-@menu
-@end menu
-
-@c Update all node entries with `C-c C-u C-n'.
-@c Insert new nodes with `C-c C-c n'.
-@node Chapter One
-@chapter Chapter One
-
-" _ "
-
-@node Copying This Manual
-@appendix Copying This Manual
-
-@menu
-* GNU Free Documentation License::  License for copying this manual.
-@end menu
-
-@c Get fdl.texi from https://www.gnu.org/licenses/fdl.html
-@include fdl.texi
-
-@node Index
-@unnumbered Index
-
-@printindex cp
-
-@bye
-
-@c "
-      (file-name-nondirectory
-       (buffer-file-name))
-      " ends here
-")
-     (("\\.lisp\\'" . "Defpackage definition")
-      . skempo-template-lisp-defpackage)
-     (("\\.asd\\'" . "Asdf system definition")
-      . skempo-template-lisp-defsystem)))
- '(auto-insert-mode t)
  '(auto-revert-avoid-polling t)
  '(auto-revert-mode-text " AR")
  '(auto-revert-remote-files t)
@@ -528,7 +196,7 @@ The document was typeset with
  '(eldoc-echo-area-use-multiline-p t)
  '(eldoc-minor-mode-string "")
  '(electric-pair-mode t)
- '(emacs-lisp-mode-hook '(skempo-mode flymake-mode abbrev-mode))
+ '(emacs-lisp-mode-hook '(flymake-mode abbrev-mode))
  '(enable-recursive-minibuffers t)
  '(envrc-error-lighter
    '(" "
@@ -579,7 +247,7 @@ The document was typeset with
  '(history-delete-duplicates t)
  '(history-length 1000)
  '(hscroll-step 1)
- '(html-mode-hook '(emmet-mode tree-sitter-mode))
+ '(html-mode-hook '(emmet-mode tree-sitter-mode) t)
  '(ibuffer-default-sorting-mode 'major-mode)
  '(ibuffer-show-empty-filter-groups nil)
  '(image-dired-db-file (expand-file-name "emacs/image-dired-db" (xdg-data-home)))
@@ -633,7 +301,7 @@ The document was typeset with
  '(ledger-default-date-format "%Y-%m-%d")
  '(link-hint-types
    '(link-hint-shr-url link-hint-org-link link-hint-markdown-link link-hint-help-link link-hint-info-link link-hint-package-link link-hint-package-keyword-link link-hint-package-install-link link-hint-epkg-button link-hint-compilation-link link-hint-nov-link link-hint-customize-widget link-hint-notmuch-hello link-hint-button link-hint-completion-list-candidate link-hint-text-url link-hint-file-link link-hint-org-agenda-item link-hint-xref-item link-hint-man-button link-hint-dired-filename))
- '(lisp-mode-hook '(skempo-mode sly-editing-mode abbrev-mode))
+ '(lisp-mode-hook '(sly-editing-mode abbrev-mode))
  '(locate-update-command "systemctl --user start updatedb.service")
  '(magit-credential-cache-daemon-socket (expand-file-name "git/credential/socket" (xdg-cache-home)))
  '(magit-define-global-key-bindings nil)
@@ -774,7 +442,6 @@ The document was typeset with
  '(org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home)))
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
- '(org-mode-hook '(skempo-mode))
  '(org-modules
    '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
@@ -797,7 +464,7 @@ The document was typeset with
  '(org-tags-column 0)
  '(package-archives nil)
  '(php-mode-coding-style 'php)
- '(php-mode-hook '(skempo-mode subword-mode tree-sitter-mode))
+ '(php-mode-hook '(subword-mode tree-sitter-mode))
  '(proced-tree-flag t)
  '(project-compilation-buffer-name-function 'project-prefixed-buffer-name)
  '(project-list-file (expand-file-name "emacs/project.list" (xdg-cache-home)))
@@ -853,11 +520,6 @@ The document was typeset with
  '(shr-max-image-proportion 0.7)
  '(shr-use-fonts nil)
  '(size-indication-mode t)
- '(skempo-completing-read t)
- '(skempo-delete-duplicate-marks t)
- '(skempo-enable-tempo-elements t)
- '(skempo-mode-lighter "")
- '(skempo-skeleton-marks-support t)
  '(sly-default-lisp 'sbcl)
  '(sly-lisp-implementations
    '((sbcl

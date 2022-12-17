@@ -21,10 +21,11 @@ in {
       }) [
       "init.el"
       "early-init.el"
-      "skempo/emacs-lisp.el"
-      "skempo/lisp.el"
-      "skempo/js.el"
-      "skempo/nix.el"
+      "lisp/tempo-ext.el"
+      "lisp/tempo-ext-emacs-lisp.el"
+      "lisp/tempo-ext-lisp.el"
+      "lisp/tempo-ext-js.el"
+      "lisp/tempo-ext-nix.el"
     ]))
     // {
       "emacs/abbrev_defs".source = ./emacs/abbrev_defs;
