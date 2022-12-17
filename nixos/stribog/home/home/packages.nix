@@ -65,6 +65,7 @@
     simplescreenrecorder
     sort_videos_by_duration
     speedtest-cli
+    stalonetray
     strip_video
     stumpwm
     sxiv

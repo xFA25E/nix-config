@@ -13,6 +13,24 @@ in {
   home = {
     extraOutputsToInstall = ["man" "doc" "info" "devdoc"];
 
+    file.".stalonetrayrc".text =
+      generators.toKeyValue {
+        mkKeyValue = generators.mkKeyValueDefault {} " ";
+      } {
+        background = "\"#000000\"";
+        fuzzy_edges = "3";
+        geometry = "1x1+10+742";
+        grow_gravity = "SW";
+        icon_gravity = "SW";
+        icon_size = "16";
+        skip_taskbar = true;
+        sticky = true;
+        transparent = true;
+        window_layer = "bottom";
+        window_strut = "bottom";
+        window_type = "desktop";
+      };
+
     keyboard = {
       layout = "dvorak,ru";
       options = ["ctrl:swapcaps" "grp:shifts_toggle"];
