@@ -4,56 +4,20 @@
 
 ;;; Code:
 
-(require 'avl-tree)
+(require 'cl-lib)
 (require 'derived)
 (require 'subr-x)
 (require 'tempo)
 
-(defun avl-tree-between (tree data)
-  (let ((compare-function (avl-tree--cmpfun tree)))
-    (named-let find-pair ((node (avl-tree--root tree))
-                          (pair (cons nil nil)))
-      (if node
-          (pcase-let ((`[,left-node ,right-node ,node-data] node))
-            (cond
-             ((funcall compare-function data node-data)
-              (find-pair left-node (cons (car pair) node-data)))
-             ((funcall compare-function node-data data)
-              (find-pair right-node (cons node-data (cdr pair))))
-             (t (find-pair right-node (find-pair left-node pair)))))
-        pair))))
-
-(defun tempo-insert-mark (mark)
-  "Insert a MARK into `tempo-marks'."
-  (unless tempo-marks
-    (setq-local tempo-marks (avl-tree-create '<)))
-  (avl-tree-enter tempo-marks mark))
-
-(defun tempo-forward-mark ()
-  "Jump to the next mark in `tempo-marks'."
-  (interactive)
-  (when tempo-marks
-    (when-let ((next-mark (cdr (avl-tree-between tempo-marks (point)))))
-      (goto-char next-mark))))
-
-(defun tempo-backward-mark ()
-  "Jump to the previous mark in `tempo-marks'."
-  (interactive)
-  (when tempo-marks
-    (when-let ((prev-mark (car (avl-tree-between tempo-marks (point)))))
-      (goto-char prev-mark))))
-
 (defun te-deduplicate-marks ()
   "Delete duplicate marks in `tempo-marks'."
-  (when tempo-marks
-    (let ((stack (avl-tree-stack tempo-marks))
-          (new-tempo-marks (avl-tree-create '<))
-          (update (lambda (data new-data)
-                    (set-marker new-data nil)
-                    data)))
-      (while (when-let ((marker (avl-tree-stack-pop stack)))
-               (avl-tree-enter new-tempo-marks marker update)))
-      (setq tempo-marks new-tempo-marks))))
+  (let ((marks tempo-marks))
+    (while (cdr marks)
+      (if (/= (car marks) (cadr marks))
+          (setq marks (cdr marks))
+        (when (markerp (cadr marks))
+          (set-marker (cadr marks) nil))
+        (setcdr marks (cddr marks))))))
 
 (defun te-abbrevs ()
   (let ((abbrevs (make-hash-table :test 'equal))
