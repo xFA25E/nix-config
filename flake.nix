@@ -36,6 +36,10 @@
     epkg-sdcwoc.inputs.nixpkgs.follows = "nixpkgs";
     epkg-sdcwoc.url = "github:xFA25E/sdcwoc";
 
+    epkg-tempo-abbrev.inputs.emacs-overlay.follows = "emacs-overlay";
+    epkg-tempo-abbrev.inputs.nixpkgs.follows = "nixpkgs";
+    epkg-tempo-abbrev.url = "github:xFA25E/tempo-abbrev";
+
     fu.url = "github:numtide/flake-utils";
 
     home-manager.inputs.nixpkgs.follows = "nixpkgs";

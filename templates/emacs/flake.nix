@@ -1,6 +1,6 @@
 {
   inputs.eldev = {
-    url = "github:doublep/eldev/1.2.2";
+    url = "github:doublep/eldev/1.3.1";
     flake = false;
   };
   outputs = {

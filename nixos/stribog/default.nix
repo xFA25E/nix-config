@@ -60,6 +60,7 @@
       inputs.epkg-nixos-options.overlays.default
       inputs.epkg-rx-widget.overlays.default
       inputs.epkg-sdcwoc.overlays.default
+      inputs.epkg-tempo-abbrev.overlays.default
       inputs.self.overlays.default
     ];
     system = "x86_64-linux";

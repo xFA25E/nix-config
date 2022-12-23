@@ -51,25 +51,6 @@ Run one of these commands:
 ** Tips
 + You can customize settings in the package-name group.
 
-* Changelog
-** 1.1.0
-Additions
-+  Add command package-name-debarnacle to de-barnacle the hull.
-
-Changes
-+ Command package-name-anchor now takes an argument, weigh or let-go.
-
-Internal
-+  Rewrote input parsing.
-+  Factored out anchor-weighing.
-
-** 1.0.1
-Fixes
-+  Ensure anchor is secure before returning from package-name-anchor.
-
-** 1.0.0
-Initial release.
-
 * Credits
 This package would not have been possible without the following packages: foo which showed me how to bifurcate, and bar, which takes care of flanges.
 

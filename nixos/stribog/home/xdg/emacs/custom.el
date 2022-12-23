@@ -4,7 +4,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(Man-notify-method 'pushy)
- '(abbrev-file-name "~/Documents/projects/nix-config/emacs/abbrev_defs")
+ '(abbrev-file-name
+   "~/Documents/projects/nix-config/nixos/stribog/home/xdg/emacs/abbrev_defs")
  '(abbrev-suggest t)
  '(after-save-hook '(executable-make-buffer-file-executable-if-script-p))
  '(amded-editable-tags
@@ -107,6 +108,10 @@
  '(comint-input-ignoredups t)
  '(comint-input-ring-size 10000)
  '(compilation-always-kill t)
+ '(compilation-error-regexp-alist
+   '(absoft ada aix ant bash borland python-tracebacks-and-caml cmake cmake-info comma msft edg-1 edg-2 epc ftnchek gradle-kotlin iar ibm irix
+            ("\\(?:^ +at[^/]+\\([^:]+\\):\\([[:digit:]]+\\):\\([[:digit:]]+\\)\\)" 1 2 3)
+            java javac jikes-file maven jikes-line clang-include gcc-include ruby-Test::Unit gmake gnu cucumber lcc makepp mips-1 mips-2 omake oracle perl php rxp shellcheck sparc-pascal-file sparc-pascal-line sparc-pascal-example sun sun-ada watcom 4bsd gcov-file gcov-header gcov-nomark gcov-called-line gcov-never-called perl--Pod::Checker perl--Test perl--Test2 perl--Test::Harness weblint guile-file guile-line))
  '(compilation-scroll-output t)
  '(completion-category-overrides '((cider (styles basic)) (bookmark (styles basic))))
  '(completion-cycle-threshold 2)
@@ -247,7 +252,7 @@
  '(history-delete-duplicates t)
  '(history-length 1000)
  '(hscroll-step 1)
- '(html-mode-hook '(emmet-mode tree-sitter-mode) t)
+ '(html-mode-hook '(emmet-mode tree-sitter-mode))
  '(ibuffer-default-sorting-mode 'major-mode)
  '(ibuffer-show-empty-filter-groups nil)
  '(image-dired-db-file (expand-file-name "emacs/image-dired-db" (xdg-data-home)))

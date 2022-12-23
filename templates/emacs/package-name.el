@@ -61,7 +61,7 @@
 ;; This package would not have been possible without the following
 ;; packages: foo[1], which showed me how to bifurcate, and bar[2],
 ;; which takes care of flanges.
-;;
+
 ;;  [1] https://example.com/foo.el
 ;;  [2] https://example.com/bar.el
 

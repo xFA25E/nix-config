@@ -146,6 +146,23 @@
         "type": "github"
       }
     },
+    "eldev_7": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1671484062,
+        "narHash": "sha256-CIaSWt8oP5nh8LPT+2SphZgYJXFRIdfGLHk0znyBOZM=",
+        "owner": "doublep",
+        "repo": "eldev",
+        "rev": "870ca147d26a4da76828c50b5f4a3d82b51fe43f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "doublep",
+        "ref": "1.3.1",
+        "repo": "eldev",
+        "type": "github"
+      }
+    },
     "emacs-overlay": {
       "inputs": {
         "flake-utils": [
@@ -311,6 +328,30 @@
       "original": {
         "owner": "xFA25E",
         "repo": "sdcwoc",
+        "type": "github"
+      }
+    },
+    "epkg-tempo-abbrev": {
+      "inputs": {
+        "eldev": "eldev_7",
+        "emacs-overlay": [
+          "emacs-overlay"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1671813158,
+        "narHash": "sha256-L7Wr1C0MxSXXM0zoGEYUWK40MYaZSDW2/QJclXQXb6s=",
+        "owner": "xFA25E",
+        "repo": "tempo-abbrev",
+        "rev": "1e7e8dece259af0cb77addecd227b405c71e7aff",
+        "type": "github"
+      },
+      "original": {
+        "owner": "xFA25E",
+        "repo": "tempo-abbrev",
         "type": "github"
       }
     },
@@ -487,6 +528,7 @@
         "epkg-nixos-options": "epkg-nixos-options",
         "epkg-rx-widget": "epkg-rx-widget",
         "epkg-sdcwoc": "epkg-sdcwoc",
+        "epkg-tempo-abbrev": "epkg-tempo-abbrev",
         "fu": "fu",
         "home-manager": "home-manager",
         "mozlz4": "mozlz4",

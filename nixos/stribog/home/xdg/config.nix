@@ -18,15 +18,7 @@ in {
             ${escapeShellArg "${config.xdg.configHome}/emacs/${name}"}
         '';
         source = "${./emacs}/${name}";
-      }) [
-      "init.el"
-      "early-init.el"
-      "lisp/tempo-ext.el"
-      "lisp/tempo-ext-emacs-lisp.el"
-      "lisp/tempo-ext-lisp.el"
-      "lisp/tempo-ext-js.el"
-      "lisp/tempo-ext-nix.el"
-    ]))
+      }) ["init.el" "early-init.el"]))
     // {
       "emacs/abbrev_defs".source = ./emacs/abbrev_defs;
       "emacs/custom.el".source = ./emacs/custom.el;

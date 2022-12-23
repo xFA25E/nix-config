@@ -55,6 +55,7 @@
         sly-quicklisp
         sql-indent
         sqlup-mode
+        tempo-abbrev
         transmission
         tree-sitter
         tree-sitter-langs
