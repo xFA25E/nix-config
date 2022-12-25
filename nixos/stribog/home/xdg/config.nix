@@ -23,9 +23,6 @@ in {
       "emacs/abbrev_defs".source = ./emacs/abbrev_defs;
       "emacs/custom.el".source = ./emacs/custom.el;
 
-      "mpv/scripts/youtube-quality.lua".source = "${pkgs.mpv-youtube-quality}/youtube-quality.lua";
-      "mpv/script-opts/youtube-quality.conf".source = "${pkgs.mpv-youtube-quality}/youtube-quality.conf";
-
       "npm/npmrc".text = lib.generators.toKeyValue {} {
         prefix = "${config.xdg.dataHome}/npm";
         cache = "${config.xdg.cacheHome}/npm";

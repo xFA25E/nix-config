@@ -1,6 +1,6 @@
 inputs: final: prev: let
   inherit (final) callPackage;
-  inherit (inputs) amded discord mozlz4 mpv-youtube-quality stumpwm unflac;
+  inherit (inputs) amded discord mozlz4 stumpwm;
 in {
   amded = callPackage ./amded.nix {src = amded;};
   brave-incognito = callPackage ./brave-incognito.nix {};
@@ -17,7 +17,7 @@ in {
   install_keys = callPackage ./install_keys.nix {};
   make_backup = callPackage ./make_backup.nix {};
   mozlz4 = callPackage ./mozlz4.nix {src = mozlz4;};
-  mpv-youtube-quality = callPackage ./mpv-youtube-quality.nix {src = mpv-youtube-quality;};
+  mpvScripts = import ./mpvScripts final prev;
   mpvi = callPackage ./mpvi.nix {};
   notifiers = callPackage ./notifiers.nix {};
   preparehd = callPackage ./preparehd.nix {};
@@ -31,7 +31,6 @@ in {
   strip_video = callPackage ./strip_video.nix {};
   stumpwm = callPackage ./stumpwm {src = stumpwm;};
   sudo_askpass = callPackage ./sudo_askpass.nix {};
-  unflac = callPackage ./unflac.nix {src = unflac;};
   video_seconds = callPackage ./video_seconds.nix {};
   wallpapers = callPackage ./wallpapers {};
   ytdl = callPackage ./ytdl.nix {};

@@ -1105,6 +1105,10 @@ See `backward-kill-word' for COUNT."
 (declare-function tempo-abbrev-abbrev-table "tempo-abbrev")
 (declare-function tempo-abbrev-define "tempo-abbrev")
 
+(define-advice tempo-define-template (:filter-return (fn) compile)
+  (cl-callf byte-compile (symbol-function fn))
+  fn)
+
 (with-eval-after-load 'tempo-abbrev
   (define-key global-map "\C-z" 'tempo-abbrev-call)
   (define-key goto-map "\M-e" 'tempo-forward-mark)
@@ -1146,6 +1150,12 @@ See `backward-kill-word' for COUNT."
        (replace-regexp-in-string (rx (* "-") eos) "")
        (replace-regexp-in-string (rx bos (* "-")) "")))
 
+    (:elisp-prefix
+     (let ((prefix (concat (tempo-abbrev-user-elements :elisp-namespace) "-")))
+       (or (car (cl-find prefix read-symbol-shorthands
+                         :key #'cdr :test #'string=))
+           prefix)))
+
     (:elisp-group
      (thread-last :elisp-namespace
        tempo-abbrev-user-elements
@@ -1173,13 +1183,13 @@ See `backward-kill-word' for COUNT."
 
   (tempo-abbrev-define "defvar" 'emacs-lisp-mode
     '((:with-parens
-       "defvar " :elisp-namespace "-" p n>
+       "defvar " :elisp-prefix p n>
        r> n>
        "\"" p "\"")))
 
   (tempo-abbrev-define "defun" 'emacs-lisp-mode
     '((:with-parens
-       "defun " :elisp-namespace "-" p " (" p ")" n>
+       "defun " :elisp-prefix p " (" p ")" n>
        "\"" p "\"" n>
        r>)))
 
@@ -1191,7 +1201,7 @@ See `backward-kill-word' for COUNT."
 
   (tempo-abbrev-define "defcustom" 'emacs-lisp-mode
     '((:with-parens
-       "defcustom " :elisp-namespace "-" p n>
+       "defcustom " :elisp-prefix p n>
        r> n>
        "\"" p "\"" n>
        ":type " p "nil" n>
@@ -1199,7 +1209,7 @@ See `backward-kill-word' for COUNT."
 
   (tempo-abbrev-define "defface" 'emacs-lisp-mode
     '((:with-parens
-       "defface " :elisp-namespace "-" p n>
+       "defface " :elisp-prefix p n>
        "'((t :inherit " p "nil))" n>
        "\"" p "\"" n>
        ":group '" :elisp-group))))

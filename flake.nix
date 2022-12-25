@@ -44,15 +44,12 @@
 
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.utils.follows = "fu";
-    home-manager.url = "github:nix-community/home-manager/release-22.05";
+    home-manager.url = "github:nix-community/home-manager/release-22.11";
 
     mozlz4.flake = false;
     mozlz4.url = "github:jusw85/mozlz4";
 
-    mpv-youtube-quality.flake = false;
-    mpv-youtube-quality.url = "github:jgreco/mpv-youtube-quality";
-
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
 
     nix-colors.url = "github:Misterio77/nix-colors";
 
@@ -60,9 +57,6 @@
 
     stumpwm.flake = false;
     stumpwm.url = "github:stumpwm/stumpwm/22.05";
-
-    unflac.flake = false;
-    unflac.url = "git+https://git.sr.ht/~ft/unflac";
   };
 
   outputs = inputs:

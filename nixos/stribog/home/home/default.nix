@@ -80,5 +80,7 @@ in {
       XMODIFIERS = "ibus";
       YTDL_DIR = "${config.xdg.userDirs.videos}/youtube";
     };
+
+    stateVersion = "18.09";
   };
 }

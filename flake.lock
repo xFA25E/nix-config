@@ -403,19 +403,22 @@
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
+        ],
+        "utils": [
+          "fu"
         ]
       },
       "locked": {
-        "lastModified": 1656169755,
-        "narHash": "sha256-Nlnm4jeQWEGjYrE6hxi/7HYHjBSZ/E0RtjCYifnNsWk=",
+        "lastModified": 1670253003,
+        "narHash": "sha256-/tJIy4+FbsQyslq1ipyicZ2psOEd8dvl4OJ9lfisjd0=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "4a3d01fb53f52ac83194081272795aa4612c2381",
+        "rev": "0e8125916b420e41bf0d23a0aa33fadd0328beb3",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
-        "ref": "release-22.05",
+        "ref": "release-22.11",
         "repo": "home-manager",
         "type": "github"
       }
@@ -433,22 +436,6 @@
       "original": {
         "owner": "jusw85",
         "repo": "mozlz4",
-        "type": "github"
-      }
-    },
-    "mpv-youtube-quality": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1581385730,
-        "narHash": "sha256-voNP8tCwCv8QnAZOPC9gqHRV/7jgCAE63VKBd/1s5ic=",
-        "owner": "jgreco",
-        "repo": "mpv-youtube-quality",
-        "rev": "1f8c31457459ffc28cd1c3f3c2235a53efad7148",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jgreco",
-        "repo": "mpv-youtube-quality",
         "type": "github"
       }
     },
@@ -473,16 +460,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1665328694,
-        "narHash": "sha256-hVj8yEs5PAbR3cPPpmOtJYxZ8P+hD7RZTMSV9U0QYPA=",
+        "lastModified": 1671752829,
+        "narHash": "sha256-oFeJzAq0iRL6md9Si8Tx9bltjwjLmldvgUmAteMhYW4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "9282141c8bc05568ec0e342eac39df72603aa9fa",
+        "rev": "9898811c658d39b2692d0ab744377e02fd85d08b",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-22.05",
+        "ref": "nixos-22.11",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -532,12 +519,10 @@
         "fu": "fu",
         "home-manager": "home-manager",
         "mozlz4": "mozlz4",
-        "mpv-youtube-quality": "mpv-youtube-quality",
         "nix-colors": "nix-colors",
         "nixpkgs": "nixpkgs",
         "nur": "nur",
-        "stumpwm": "stumpwm",
-        "unflac": "unflac"
+        "stumpwm": "stumpwm"
       }
     },
     "stumpwm": {
@@ -555,22 +540,6 @@
         "ref": "22.05",
         "repo": "stumpwm",
         "type": "github"
-      }
-    },
-    "unflac": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1661812953,
-        "narHash": "sha256-SO/iHuReTlm7j/sH5pi5V2TV/ks9MVu92UQ1LVRu54o=",
-        "ref": "master",
-        "rev": "7902572226937b635dec18335f0f8c0521e4ff80",
-        "revCount": 63,
-        "type": "git",
-        "url": "https://git.sr.ht/~ft/unflac"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://git.sr.ht/~ft/unflac"
       }
     }
   },

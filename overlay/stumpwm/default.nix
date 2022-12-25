@@ -6,7 +6,7 @@
   makeWrapper,
   pkg-config,
   runCommand,
-  sbcl,
+  sbcl_2_2_6,
   sly ? emacsPackages.sly.src,
   slynk ? false,
   src,
@@ -38,7 +38,7 @@ in
   stdenv.mkDerivation {
     inherit src deps;
     name = "stumpwm";
-    nativeBuildInputs = [sbcl autoconf texinfo makeWrapper pkg-config];
+    nativeBuildInputs = [sbcl_2_2_6 autoconf texinfo makeWrapper pkg-config];
     configurePhase = ''
       ./autogen.sh
       ./configure --prefix=$out --with-module-dir=$out/share/stumpwm/modules
