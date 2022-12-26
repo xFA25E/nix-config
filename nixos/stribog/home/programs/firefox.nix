@@ -19,60 +19,73 @@ in {
     extensions = [i-dont-care-about-cookies ublock-origin unhook];
     profiles = {
       default = {
-        searchEngines = {
-          "bitchute" = {
+        bookmarks = [
+          {
             keyword = ":bc";
-            url = "https://www.bitchute.com/search/?query={searchTerms}";
-          };
-          "duckduckgo" = {
+            name = "bitchute";
+            url = "https://www.bitchute.com/search/?query=%s";
+          }
+          {
             keyword = ":d";
-            url = "https://duckduckgo.com/?q={searchTerms}&kk=-1&kah=it-it&kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&kak=-1&kax=-1&km=l";
-          };
-          "github" = {
+            name = "duckduckgo";
+            url = "https://duckduckgo.com/?q=%s&kk=-1&kah=it-it&kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&kak=-1&kax=-1&km=l";
+          }
+          {
             keyword = ":gh";
-            url = "https://github.com/search?q={searchTerms}";
-          };
-          "google-translate-to-russian" = {
+            name = "github";
+            url = "https://github.com/search?q=%s";
+          }
+          {
             keyword = ":gtr";
-            url = "https://translate.google.com/?sl=auto&tl=ru&op=translate&text={searchTerms}";
-          };
-          "google-translate-to-english" = {
+            name = "google-translate-to-russian";
+            url = "https://translate.google.com/?sl=auto&tl=ru&op=translate&text=%s";
+          }
+          {
             keyword = ":gte";
-            url = "https://translate.google.com/?sl=auto&tl=en&op=translate&text={searchTerms}";
-          };
-          "google-translate-to-italian" = {
+            name = "google-translate-to-english";
+            url = "https://translate.google.com/?sl=auto&tl=en&op=translate&text=%s";
+          }
+          {
             keyword = ":gti";
-            url = "https://translate.google.com/?sl=auto&tl=it&op=translate&text={searchTerms}";
-          };
-          "metalarchivesband" = {
+            name = "google-translate-to-italian";
+            url = "https://translate.google.com/?sl=auto&tl=it&op=translate&text=%s";
+          }
+          {
             keyword = ":maband";
-            url = "https://www.metal-archives.com/search?searchString={searchTerms}&type=band_name";
-          };
-          "odysee" = {
+            name = "metalarchivesband";
+            url = "https://www.metal-archives.com/search?searchString=%s&type=band_name";
+          }
+          {
             keyword = ":os";
-            url = "https://odysee.com/$/search?q={searchTerms}";
-          };
-          "rutracker" = {
+            name = "odysee";
+            url = "https://odysee.com/$/search?q=%s";
+          }
+          {
             keyword = ":rt";
-            url = "https://rutracker.net/forum/tracker.php?nm={searchTerms}";
-          };
-          "startpage" = {
+            name = "rutracker";
+            url = "https://rutracker.net/forum/tracker.php?nm=%s";
+          }
+          {
             keyword = ":sp";
-            url = "https://startpage.com/sp/search?query={searchTerms}&prfe=a715a36c09c1472e9d5d804b0ba9312716a96d474575edbfa5e7cb0c646b34216e65fa4ae420b5df58e6c8d3e420eb1771f23caa2663bb5435b01ebb741af66083a80b0bb3682e008b0e7e1126";
-          };
-          "searx" = {
+            name = "startpage";
+            url = "https://startpage.com/sp/search?query=%s&prfe=a715a36c09c1472e9d5d804b0ba9312716a96d474575edbfa5e7cb0c646b34216e65fa4ae420b5df58e6c8d3e420eb1771f23caa2663bb5435b01ebb741af66083a80b0bb3682e008b0e7e1126";
+          }
+          {
             keyword = ":sx";
-            url = "https://searx.be/?q={searchTerms}&preferences=eJxtVcuO2zoM_ZrrjTFFH4uuvChaXNwBCkzRpN0KtEQrrCXRleRk3K8vnUSOMncWMSKaOjw8fFhDRsuRMHUWA0ZwjYNgZ7DYYXj4sWsca3DroYE5s2Y_OczYWWbrsCEvnmqK_Lx0-zhj4zEf2HTfnnb7JsGACSHqQ_e2yQf02HHSEJuIaXY5KQ4q4Ell6Lt_wSVsDJOSl-yOGDsGOb7haJvzrYeUFyHi2JJmg8fGUILeoVEYLAXJ4N2HDx-flTqSQU7_vP88kh4hJaX8nEiL4ciQlUqsCVzr0RCIcYFgUK5d8xeLJSvAkHJt1Fo_5GOFbik76JWiLIeIxpD4n_VY3yZEMyFGpQZyZ4ujPkJc2hUyUaqxBydM46u3t3A95X7WI-ZrxEsB2snB0no-SgUrZ7949CzBcoSQnBTZ1PES_gng7y1rmVZd2_VxjREWgJt6oG3iuYqSeVw4czrwCOHm57hPGd_EVFAmf_2XMsQ8rR1ThV7gwFwbeMIQceJ0007KTRDW25VIJxrJQIb67oXxxnCIiG3iIZ8gYmsoos4iy2sSruRvOWDkE91pNpjIq6VQOoCUc31cwYo6G70-G7L2dmGI4GFtgqLu75OkVIcoEIVEQdhI5cVzcNLrd8QihZFAV6FfFKYwmEOSXNOh8rzoVRy2gdkENMa2BgcKlInDXdPW6sE0pVdgttQhriWWWT9jzgbDXd7T2HqKkYuWL_jf2JDOf_g-fc-_EMfa0lOw9bnM5jX8u-f_5b8dKdTdg5nZpdcqVBIr0FXwa802kNsolzKWSy_20DqAdMT2fjVYSS6TxzJMVynLssZwvwKNrIj1ZyufbU9Obhav1P0k_-BoRHXgPOKysnySmVOftEYp25enR1nCp0gZ5c1jOFcfVdKRnSu-lxWupBnHbY_3MjRJMpV9njZmJejuvGFWV3355iwqoZN5FMQdukFJII4ezn0mtv_2-2-7isc-gmy_qH58_ypW2XgYG-kTFOi_m0eMQg==";
-          };
-          "yandex" = {
+            name = "searx";
+            url = "https://searx.be/?q=%s&preferences=eJxtVcuO2zoM_ZrrjTFFH4uuvChaXNwBCkzRpN0KtEQrrCXRleRk3K8vnUSOMncWMSKaOjw8fFhDRsuRMHUWA0ZwjYNgZ7DYYXj4sWsca3DroYE5s2Y_OczYWWbrsCEvnmqK_Lx0-zhj4zEf2HTfnnb7JsGACSHqQ_e2yQf02HHSEJuIaXY5KQ4q4Ell6Lt_wSVsDJOSl-yOGDsGOb7haJvzrYeUFyHi2JJmg8fGUILeoVEYLAXJ4N2HDx-flTqSQU7_vP88kh4hJaX8nEiL4ciQlUqsCVzr0RCIcYFgUK5d8xeLJSvAkHJt1Fo_5GOFbik76JWiLIeIxpD4n_VY3yZEMyFGpQZyZ4ujPkJc2hUyUaqxBydM46u3t3A95X7WI-ZrxEsB2snB0no-SgUrZ7949CzBcoSQnBTZ1PES_gng7y1rmVZd2_VxjREWgJt6oG3iuYqSeVw4czrwCOHm57hPGd_EVFAmf_2XMsQ8rR1ThV7gwFwbeMIQceJ0007KTRDW25VIJxrJQIb67oXxxnCIiG3iIZ8gYmsoos4iy2sSruRvOWDkE91pNpjIq6VQOoCUc31cwYo6G70-G7L2dmGI4GFtgqLu75OkVIcoEIVEQdhI5cVzcNLrd8QihZFAV6FfFKYwmEOSXNOh8rzoVRy2gdkENMa2BgcKlInDXdPW6sE0pVdgttQhriWWWT9jzgbDXd7T2HqKkYuWL_jf2JDOf_g-fc-_EMfa0lOw9bnM5jX8u-f_5b8dKdTdg5nZpdcqVBIr0FXwa802kNsolzKWSy_20DqAdMT2fjVYSS6TxzJMVynLssZwvwKNrIj1ZyufbU9Obhav1P0k_-BoRHXgPOKysnySmVOftEYp25enR1nCp0gZ5c1jOFcfVdKRnSu-lxWupBnHbY_3MjRJMpV9njZmJejuvGFWV3355iwqoZN5FMQdukFJII4ezn0mtv_2-2-7isc-gmy_qH58_ypW2XgYG-kTFOi_m0eMQg==";
+          }
+          {
             keyword = ":ya";
-            url = "https://yandex.ru/search/?text={searchTerms}";
-          };
-          "youtube" = {
+            name = "yandex";
+            url = "https://yandex.ru/search/?text=%s";
+          }
+          {
             keyword = ":yt";
-            url = "https://www.youtube.com/results?search_query={searchTerms}";
-          };
-        };
+            name = "youtube";
+            url = "https://www.youtube.com/results?search_query=%s";
+          }
+        ];
 
         settings = {
           "accessibility.typeaheadfind" = false;
@@ -118,6 +131,7 @@ in {
           "browser.startup.homepage" = "about:blank";
           "browser.startup.homepage_override.mstone" = "ignore";
           "browser.tabs.crashReporting.sendReport" = false;
+          "browser.tabs.firefox-view" = false;
           "browser.toolbars.bookmarks.visibility" = "never";
           "browser.uiCustomization.state" = "{\"placements\":{\"widget-overflow-fixed-list\":[],\"nav-bar\":[\"back-button\",\"forward-button\",\"stop-reload-button\",\"urlbar-container\",\"downloads-button\",\"jid1-kkzogwgsw3ao4q_jetpack-browser-action\",\"ublock0_raymondhill_net-browser-action\",\"myallychou_gmail_com-browser-action\"],\"toolbar-menubar\":[\"menubar-items\"],\"TabsToolbar\":[\"tabbrowser-tabs\",\"new-tab-button\",\"alltabs-button\"],\"PersonalToolbar\":[\"import-button\",\"personal-bookmarks\"]},\"seen\":[\"save-to-pocket-button\",\"developer-button\",\"jid1-kkzogwgsw3ao4q_jetpack-browser-action\",\"ublock0_raymondhill_net-browser-action\",\"myallychou_gmail_com-browser-action\"],\"dirtyAreaCache\":[\"nav-bar\",\"PersonalToolbar\",\"toolbar-menubar\",\"TabsToolbar\"],\"currentVersion\":17,\"newElementCount\":3}";
           "browser.urlbar.placeholderName.private" = "";
@@ -162,6 +176,7 @@ in {
           "geo.wifi.logging.enabled" = false;
           "geo.wifi.uri" = "";
           "identity.fxaccounts.auth.uri" = "";
+          "identity.fxaccounts.enabled" = false;
           "identity.fxaccounts.remote.force_auth.uri" = "";
           "identity.fxaccounts.remote.signin.uri" = "";
           "identity.fxaccounts.remote.signup.uri" = "";

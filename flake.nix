@@ -46,9 +46,6 @@
     home-manager.inputs.utils.follows = "fu";
     home-manager.url = "github:nix-community/home-manager/release-22.11";
 
-    mozlz4.flake = false;
-    mozlz4.url = "github:jusw85/mozlz4";
-
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
 
     nix-colors.url = "github:Misterio77/nix-colors";
@@ -61,7 +58,6 @@
 
   outputs = inputs:
     {
-      hmModules.firefoxSearchEngines = import ./hm-module;
       nixosConfigurations = import ./nixos inputs;
       nixosModules.base = import ./module;
       overlays.default = import ./overlay inputs;

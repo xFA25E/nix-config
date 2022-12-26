@@ -57,12 +57,8 @@
 
     mpv = {
       enable = true;
-      bindings = {
-        B = "script_message bookmarker-menu";
-        b = "script_message bookmarker-quick-save";
-        "ctrl+b" = "script_message bookmarker-quick-load";
-      };
       config = {
+        osc = false;
         save-position-on-quit = true;
         watch-later-directory = "${config.xdg.cacheHome}/mpv/watch_later";
         screenshot-directory = "${config.xdg.userDirs.pictures}/mpv";
@@ -76,10 +72,12 @@
       };
       scripts = [
         pkgs.mpvScripts.youtube-quality
+        pkgs.mpvScripts.thumbnail
       ];
     };
 
     msmtp.enable = true;
+    nix-index.enable = true;
 
     password-store = {
       enable = true;

@@ -63,6 +63,5 @@
         web-mode
         wgrep
       ];
-    package = pkgs.emacsNativeComp;
   };
 }

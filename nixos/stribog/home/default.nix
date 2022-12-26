@@ -8,7 +8,6 @@
 in {
   imports = [
     inputs.nix-colors.homeManagerModule
-    inputs.self.hmModules.firefoxSearchEngines
     ./email.nix
     ./home
     ./programs

@@ -1,6 +1,6 @@
 inputs: final: prev: let
   inherit (final) callPackage;
-  inherit (inputs) amded discord mozlz4 stumpwm;
+  inherit (inputs) amded discord stumpwm;
 in {
   amded = callPackage ./amded.nix {src = amded;};
   brave-incognito = callPackage ./brave-incognito.nix {};
@@ -8,7 +8,7 @@ in {
   cl-hyperspec = callPackage ./cl-hyperspec.nix {};
   discord = prev.discord.override {src = discord;};
   dmenu = import ./dmenu.nix final prev;
-  emacsPackagesFor = import ./epkgs final prev;
+  emacsPackagesFor = import ./emacsPackages final prev;
   extract_eml = callPackage ./extract_eml.nix {};
   filename_put_duration = callPackage ./filename_put_duration.nix {};
   format_seconds = callPackage ./format_seconds.nix {};
@@ -16,7 +16,6 @@ in {
   image_clipboard = callPackage ./image_clipboard.nix {};
   install_keys = callPackage ./install_keys.nix {};
   make_backup = callPackage ./make_backup.nix {};
-  mozlz4 = callPackage ./mozlz4.nix {src = mozlz4;};
   mpvScripts = import ./mpvScripts final prev;
   mpvi = callPackage ./mpvi.nix {};
   notifiers = callPackage ./notifiers.nix {};
