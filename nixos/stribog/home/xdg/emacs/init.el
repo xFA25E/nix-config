@@ -104,6 +104,7 @@ See `browse-url' for URL and ARGS."
 (defun compile-goto-error-same-window ()
   "Run `compile-goto-error' in the same window."
   (interactive)
+  (xref-push-marker-stack)
   (same-window-prefix)
   (compile-goto-error))
 
