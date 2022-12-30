@@ -12,7 +12,6 @@ in {
     ./home
     ./programs
     ./services.nix
-    ./systemd.nix
     ./xdg
     ./xresources.nix
   ];
@@ -49,6 +48,33 @@ in {
     style = {
       name = "gtk2";
       package = pkgs.libsForQt5.qtstyleplugins;
+    };
+  };
+
+  systemd.user.services = {
+    pueue = {
+      Unit.Description = "Pueue Daemon - CLI process scheduler and manager";
+      Service = {
+        Restart = "no";
+        ExecStart = "${pkgs.pueue}/bin/pueued";
+        ExecReload = "${pkgs.pueue}/bin/pueued";
+        Environment = "ASYNC_STD_THREAD_COUNT=4";
+      };
+      Install.WantedBy = ["default.target"];
+    };
+
+    transmission = {
+      Unit = {
+        Description = "Transmission BitTorrent Daemon";
+        After = ["network.target"];
+      };
+      Service = {
+        Type = "notify";
+        ExecStart = "${pkgs.transmission}/bin/transmission-daemon -f --log-error";
+        ExecReload = "${pkgs.utillinux}/bin/kill -s HUP $MAINPID";
+        NoNewPrivileges = true;
+      };
+      Install.WantedBy = ["default.target"];
     };
   };
 
