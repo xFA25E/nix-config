@@ -72,6 +72,7 @@
     teams
     tor-browser-bundle-bin
     transmission
+    udiskie
     unzip
     video_seconds
     wget
