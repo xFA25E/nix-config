@@ -170,8 +170,11 @@ in {
           "extensions.webextensions.ExtensionStorageIDB.migrated.jid1-KKzOGWgsW3Ao4Q@jetpack" = true;
           "extensions.webextensions.ExtensionStorageIDB.migrated.uBlock0@raymondhill.net" = true;
           "extensions.webextensions.uuids" = "{\"uBlock0@raymondhill.net\":\"ed81545f-4149-47b9-a289-ea98eb20221d\",\"jid1-KKzOGWgsW3Ao4Q@jetpack\":\"38073834-2697-45b0-8238-c233089a7f8f\",\"doh-rollout@mozilla.org\":\"3e2f9e29-6753-4af0-87f4-30a67b9f1102\",\"formautofill@mozilla.org\":\"9b145aac-9bb4-4196-be4f-3cd25eefdb90\",\"pictureinpicture@mozilla.org\":\"4dc52942-8a8e-4aae-b312-6bbfd49aff0f\",\"screenshots@mozilla.org\":\"1deb33d4-528a-4034-9345-6c48cf23b301\",\"webcompat-reporter@mozilla.org\":\"dff469c9-d240-4a37-862f-a5b44fdf8b7c\",\"webcompat@mozilla.org\":\"82123520-5397-4573-9baa-f027fc401435\",\"default-theme@mozilla.org\":\"5296f9c7-d307-4aaf-b60a-406d4e0aa56f\",\"addons-search-detection@mozilla.com\":\"186e74f8-d5de-4409-a45a-55affa3faebb\",\"google@search.mozilla.org\":\"147e8d5f-207a-4397-8d05-11e68efdfd4a\",\"wikipedia@search.mozilla.org\":\"2faa6d11-eb7a-46bf-914f-663f5715b06e\",\"bing@search.mozilla.org\":\"fbc35289-8926-4380-ae6d-4b59984e28f8\",\"ddg@search.mozilla.org\":\"8624cf23-6a11-44c5-9143-26cb22b3fcc4\",\"amazon@search.mozilla.org\":\"86ed2a09-1db8-4add-bef7-b20dbea8621a\",\"amazondotcom@search.mozilla.org\":\"d4c17cbd-5aa0-4a57-885c-c484be3f138f\",\"myallychou@gmail.com\":\"4c2a7221-8620-40b5-9b25-572992d6e67f\",\"ebay@search.mozilla.org\":\"7016e5e1-271c-4e94-b611-ecbf00c5d9af\"}";
-          "general.platform.override" = "Win32";
-          "general.useragent.override" = "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0";
+
+          # Breaks google meet
+          # "general.platform.override" = "Win32";
+          # "general.useragent.override" = "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0";
+
           "geo.enabled" = false;
           "geo.wifi.logging.enabled" = false;
           "geo.wifi.uri" = "";
