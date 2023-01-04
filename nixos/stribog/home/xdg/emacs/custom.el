@@ -341,7 +341,9 @@
  '(newsticker-treeview-listwindow-height 6)
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
-   '(("The Alt Hyp" "https://nitter.moomoo.me/thealthype/rss" nil nil nil)
+   '(("Joseph Bronski YouTube" "https://www.youtube.com/feeds/videos.xml?channel_id=UCiMwMDPJBB_mcBPknjPrfGA" nil nil nil)
+     ("Joseph Bronski Substack" "https://josephbronski.substack.com/feed" nil nil nil)
+     ("The Alt Hyp" "https://nitter.moomoo.me/thealthype/rss" nil nil nil)
      ("Максим Вердикт" "https://www.youtube.com/feeds/videos.xml?channel_id=UC44oy3QadzoUZt7G0DDf5DQ" nil nil nil)
      ("Biopolitics" "https://biopolitics.substack.com/feed" nil nil nil)
      ("AltHype Cozy" "https://cozysounds.kanyecode.repl.co/feed/althype" nil nil nil)
