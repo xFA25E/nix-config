@@ -1,22 +1,11 @@
-{pkgs, ...}: let
-  inherit
-    (pkgs.nur.repos.rycee.firefox-addons)
-    buildFirefoxXpiAddon
-    i-dont-care-about-cookies
-    ublock-origin
-    ;
-  unhook = buildFirefoxXpiAddon {
-    pname = "unhook";
-    version = "1.6.1";
-    addonId = "myallychou@gmail.com";
-    url = "https://addons.mozilla.org/firefox/downloads/file/3936215/youtube_recommended_videos-1.6.1.xpi";
-    sha256 = "sha256-BLP3B0AeiO/LXNJWBKjHGbL9zM82ysPx7VIaB0ZJTYE=";
-    meta = {};
-  };
-in {
+{pkgs, ...}: {
   programs.firefox = {
     enable = true;
-    extensions = [i-dont-care-about-cookies ublock-origin unhook];
+    extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+      i-dont-care-about-cookies
+      ublock-origin
+      youtube-recommended-videos
+    ];
     profiles = {
       default = {
         bookmarks = [
