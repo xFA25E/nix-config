@@ -60,6 +60,7 @@ in {
       BROWSER = "browser";
       CARGO_HOME = "${config.xdg.cacheHome}/cargo";
       CUDA_CACHE_PATH = "${config.xdg.cacheHome}/nv";
+      DOTNET_CLI_TELEMETRY_OPTOUT = "1";
       EDITOR = "emacs";
       GEM_HOME = "${config.xdg.cacheHome}/gem";
       GEM_SPEC_CACHE = "${config.xdg.cacheHome}/gem";

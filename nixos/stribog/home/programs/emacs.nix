@@ -11,10 +11,13 @@
         cider
         clojure-mode
         consult
+        csharp-mode
+        csproj-mode
         csv-mode
         cyrillic-dvorak-im
         dired-tags
         djvu
+        dotnet
         dumb-jump
         ebdb
         edit-indirect

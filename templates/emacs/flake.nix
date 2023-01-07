@@ -1,8 +1,11 @@
 {
-  inputs.eldev = {
-    url = "github:doublep/eldev/1.3.1";
-    flake = false;
-  };
+  description = "Emacs package";
+
+  inputs.eldev.flake = false;
+  inputs.eldev.url = "github:doublep/eldev/1.3.1";
+
+  emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
+
   outputs = {
     self,
     nixpkgs,

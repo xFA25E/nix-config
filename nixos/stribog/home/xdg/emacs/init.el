@@ -1460,6 +1460,9 @@ See `backward-kill-word' for COUNT."
 (define-key global-map [?\C-\M-\S-f] 'next-buffer)
 (define-key global-map [?\C-\S-v] 'scroll-up-line)
 
+(with-eval-after-load 'window
+  (put 'other-window 'repeat-map nil))
+
 ;;; With Editor
 
 (define-key global-map [?\C-\M-&] 'with-editor-async-shell-command)

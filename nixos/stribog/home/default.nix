@@ -86,7 +86,7 @@ in {
     scriptPath = ".xinitrc";
     windowManager.command = ''
       eval "$(${pkgs.openssh}/bin/ssh-agent)"
-      ${pkgs.dbus}/bin/dbus-run-session ${pkgs.stumpwm}/bin/stumpwm
+      ${pkgs.stumpwm}/bin/stumpwm
       ${pkgs.openssh}/bin/ssh-agent -k
     '';
   };
