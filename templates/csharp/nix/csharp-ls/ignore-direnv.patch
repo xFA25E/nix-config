@@ -1,0 +1,20 @@
+diff --git a/src/CSharpLanguageServer/RoslynHelpers.fs b/src/CSharpLanguageServer/RoslynHelpers.fs
+index 2cd6c9c..68f5e53 100644
+--- a/src/CSharpLanguageServer/RoslynHelpers.fs
++++ b/src/CSharpLanguageServer/RoslynHelpers.fs
+@@ -865,9 +865,15 @@ let findAndLoadSolutionOnDir logMessage dir = async {
+         |> Seq.contains "node_modules"
+         |> not
+ 
++    let fileNotOnDotDirenv (filename: string) =
++        filename.Split(Path.DirectorySeparatorChar)
++        |> Seq.contains ".direnv"
++        |> not
++
+     let solutionFiles =
+         Directory.GetFiles(dir, "*.sln", SearchOption.AllDirectories)
+         |> Seq.filter fileNotOnNodeModules
++        |> Seq.filter fileNotOnDotDirenv
+         |> Seq.toList
+ 
+     logMessage (sprintf "%d solution(s) found: [%s]" solutionFiles.Length (String.Join(", ", solutionFiles)) )

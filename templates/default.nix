@@ -8,6 +8,27 @@
       !!! REMEMBER TO RUN LEIN NEW !!!
     '';
   };
+  csharp = {
+    description = "Simple C# environment";
+    path = ./csharp;
+    welcomeText = ''
+      Welcome to C# development environment!
+
+      !!! REMEMBER !!!
+
+      $ dotnet new <template> -n <name> -o .
+
+      $ dotnet new gitignore
+
+      $ dotnet new sln
+
+      $ dotnet sln add .
+
+      $ dotnet format --include-generated *.sln
+
+      $ dos2unix *.sln *.csproj .gitignore
+    '';
+  };
   emacs = {
     description = "Simple emacs-lisp environment";
     path = ./emacs;
