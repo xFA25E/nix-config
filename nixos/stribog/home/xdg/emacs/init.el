@@ -277,10 +277,15 @@ See the original function for ARG."
 
 (defvar eglot-mode-map)
 (defvar eglot-server-programs)
+(declare-function eglot-alternatives "eglot")
 (with-eval-after-load 'eglot
   (define-key eglot-mode-map "\C-c\C-l" 'eglot-code-actions)
+
   (setf (cdr (assoc '(js-mode typescript-mode) eglot-server-programs))
-        '("typescript-language-server" "--tsserver-path" "tsserver" "--stdio")))
+        '("typescript-language-server" "--tsserver-path" "tsserver" "--stdio"))
+
+  (setf (cdr (assq 'csharp-mode eglot-server-programs))
+        (eglot-alternatives '("CSharpLanguageServer" ("OmniSharp" "-lsp")))))
 
 (define-advice eglot-xref-backend (:override () dumb) 'eglot+dumb)
 
@@ -1096,6 +1101,7 @@ See `backward-kill-word' for COUNT."
 
 ;;; Subword
 
+(add-hook 'csharp-mode-hook 'subword-mode)
 (add-hook 'js-mode-hook 'subword-mode)
 (add-hook 'nix-mode-hook 'subword-mode)
 (add-hook 'rust-mode-hook 'subword-mode)
@@ -1427,6 +1433,7 @@ See `backward-kill-word' for COUNT."
 
 ;;; Tree Sitter
 
+(add-hook 'csharp-mode-hook 'tree-sitter-mode)
 (add-hook 'css-mode-hook 'tree-sitter-mode)
 (add-hook 'js-mode-hook 'tree-sitter-mode)
 (add-hook 'mhtml-mode-hook 'tree-sitter-mode)
