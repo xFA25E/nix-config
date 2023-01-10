@@ -79,7 +79,6 @@
     mpv = {
       enable = true;
       config = {
-        osc = false;
         save-position-on-quit = true;
         watch-later-directory = "${config.xdg.cacheHome}/mpv/watch_later";
         screenshot-directory = "${config.xdg.userDirs.pictures}/mpv";
@@ -91,10 +90,7 @@
           idle = "once";
         };
       };
-      scripts = [
-        pkgs.mpvScripts.youtube-quality
-        pkgs.mpvScripts.thumbnail
-      ];
+      scripts = [pkgs.mpvScripts.youtube-quality];
     };
 
     msmtp.enable = true;
