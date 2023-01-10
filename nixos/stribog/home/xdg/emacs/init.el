@@ -17,6 +17,7 @@
 ;;; Abbrev
 
 (add-hook 'js-mode-hook 'abbrev-mode)
+(add-hook 'nix-mode-hook 'abbrev-mode)
 
 ;;; Align
 

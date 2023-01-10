@@ -7,6 +7,7 @@
     ./bash.nix
     ./emacs.nix
     ./firefox.nix
+    ./git.nix
     ./notmuch.nix
   ];
 
@@ -18,38 +19,6 @@
     };
 
     feh.enable = true;
-
-    git = {
-      enable = true;
-      extraConfig.credential.helper = "cache --timeout=86400";
-      ignores = [
-        "*-autoloads.el"
-        "*.dx32fsl"
-        "*.dx64fsl"
-        "*.elc"
-        "*.fasl"
-        "*.lx32fsl"
-        "*.lx64fsl"
-        "*.o"
-        "*.so"
-        "*.x86f"
-        "*~"
-        ".#*"
-        ".common-lisp"
-        ".direnv/"
-        ".eldev/"
-        ".envrc"
-        ".quicklisp"
-        "Eldev-local"
-        "result"
-      ];
-      signing = {
-        key = "Litkovskyy Valeriy <vlr.ltkvsk@protonmail.com>";
-        signByDefault = true;
-      };
-      userEmail = "vlr.ltkvsk@protonmail.com";
-      userName = "Valeriy Litkovskyy";
-    };
 
     gpg = {
       enable = true;
