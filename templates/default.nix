@@ -16,17 +16,17 @@
 
       !!! REMEMBER !!!
 
-      $ dotnet new <template> -n <name> -o .
+      $ dotnet new <template> -n <name> -o src
 
       $ dotnet new gitignore
 
       $ dotnet new sln
 
-      $ dotnet sln add .
+      $ dotnet sln add src
 
       $ dotnet format --include-generated *.sln
 
-      $ dos2unix *.sln *.csproj .gitignore
+      $ dos2unix *.sln src/*.csproj .gitignore
     '';
   };
   emacs = {

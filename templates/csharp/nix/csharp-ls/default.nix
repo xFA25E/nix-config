@@ -16,8 +16,6 @@ in
       hash = "sha256-cGy09Q8wzQBH65n2zzIrmqOMkXtq6ylbwe6/tMbVNWw=";
     };
 
-    patches = [./ignore-direnv.patch];
-
     projectFile = "src/csharp-language-server.sln";
     nugetDeps = ./deps.nix;
 
