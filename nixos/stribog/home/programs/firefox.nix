@@ -45,6 +45,16 @@
             url = "https://www.metal-archives.com/search?searchString=%s&type=band_name";
           }
           {
+            keyword = ":nso";
+            name = "nixpkgs-search-options";
+            url = "https://search.nixos.org/options?query=%s";
+          }
+          {
+            keyword = ":nsp";
+            name = "nixpkgs-search-packages";
+            url = "https://search.nixos.org/packages?query=%s";
+          }
+          {
             keyword = ":os";
             name = "odysee";
             url = "https://odysee.com/$/search?q=%s";
