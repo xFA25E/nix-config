@@ -50,7 +50,15 @@
     (sb-ext:schedule-timer timer universal-time :absolute-p t)
     (swm:message "Timer \"~A\" is added" (make-instance 'timer :timer timer))))
 
-(swm:defcommand timer-add (name when) ((:string "Name: ") (:string "When? "))
+(swm:define-stumpwm-type :non-empty-string (input prompt)
+  (or (swm:argument-pop input)
+      (when-let ((string (swm:read-one-line (swm:current-screen) prompt)))
+        (unless (zerop (length string))
+          string))
+      (throw 'error "Empty input!")))
+
+(swm:defcommand timer-add (name when) ((:non-empty-string "Name: ")
+                                       (:non-empty-string "When? "))
   (when-let ((timer (existsp name)))
     (throw 'error (format nil "Timer \"~A\" already exists!" (make-instance 'timer :timer timer))))
 
