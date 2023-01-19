@@ -4,6 +4,7 @@
     alsaUtils
     amded
     ascii
+    atool
     bind
     binutils
     brave

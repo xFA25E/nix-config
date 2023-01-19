@@ -26,10 +26,10 @@
 ;;; Apheleia
 
 (autoload 'apheleia-mode "apheleia")
-(add-hook 'js-mode-hook 'apheleia-mode)
-(add-hook 'nix-mode-hook 'apheleia-mode)
 (add-hook 'css-mode-hook 'apheleia-mode)
 (add-hook 'html-mode-hook 'apheleia-mode)
+(add-hook 'js-mode-hook 'apheleia-mode)
+(add-hook 'nix-mode-hook 'apheleia-mode)
 (add-hook 'web-mode-hook 'apheleia-mode)
 
 ;;; Avy
@@ -159,7 +159,9 @@ See `browse-url' for URL and ARGS."
 (defvar dired-mode-map)
 (with-eval-after-load 'dired
   (require 'dired-x)
-  (define-key dired-mode-map "\M-+" 'dired-create-empty-file))
+  (define-key dired-mode-map "\M-+" 'dired-create-empty-file)
+  (define-key dired-mode-map "!" 'dired-do-shell-command)
+  (define-key dired-mode-map "X" nil))
 
 (defvar dired-compress-file-suffixes)
 (with-eval-after-load 'dired-aux
@@ -278,7 +280,16 @@ See the original function for ARG."
 
 (defvar eglot-mode-map)
 (defvar eglot-server-programs)
-(declare-function eglot-alternatives "eglot")
+(declare-function project-files "project")
+
+(defun eglot-csharp-server-program (_)
+  (let* ((files (project-files (project-current)))
+         (slns (cl-remove (rx ".sln" eos) files :test-not #'string-match-p))
+         (sln (if (cdr slns)
+                  (completing-read "Select solution: " slns nil t)
+                (car slns))))
+    (list "CSharpLanguageServer" "-s" sln)))
+
 (with-eval-after-load 'eglot
   (define-key eglot-mode-map "\C-c\C-l" 'eglot-code-actions)
 
@@ -286,7 +297,7 @@ See the original function for ARG."
         '("typescript-language-server" "--tsserver-path" "tsserver" "--stdio"))
 
   (setf (cdr (assq 'csharp-mode eglot-server-programs))
-        (eglot-alternatives '("CSharpLanguageServer" ("OmniSharp" "-lsp")))))
+        #'eglot-csharp-server-program))
 
 (define-advice eglot-xref-backend (:override () dumb) 'eglot+dumb)
 
@@ -401,6 +412,7 @@ See `xref-backend-apropos' docs for PATTERN."
 ;;; Flymake
 
 (add-hook 'nix-mode-hook 'flymake-mode)
+(add-hook 'nxml-mode-hook 'flymake-mode)
 
 (defvar flymake-mode-map)
 (with-eval-after-load 'flymake
@@ -908,6 +920,10 @@ Used as an advice."
 
 (setq disabled-command-function nil)
 
+;;; Nxml Mode
+
+(add-to-list 'auto-mode-alist (cons (rx ".axaml" eos) 'nxml-mode))
+
 ;;; Ob Http
 
 (with-eval-after-load 'org
@@ -970,6 +986,10 @@ Used as an advice."
 ;;; Proced
 
 (define-key mode-specific-map "op" 'proced)
+
+;;; Project
+
+(define-key project-prefix-map "&" nil)
 
 ;;; Pueue
 
@@ -1061,6 +1081,7 @@ Remove duplicates.  Remove inexistent files from
 (define-key ctl-x-x-map "f" 'auto-fill-mode)
 (define-key ctl-x-x-map "v" 'visual-line-mode)
 (define-key ctl-x-x-map "w" 'whitespace-mode)
+(define-key esc-map "&" nil)
 (define-key global-map "\C-h" 'backward-delete-char-untabify)
 (define-key global-map "\C-w" 'kill-region-dwim)
 (define-key global-map "\M- " 'cycle-spacing-fast)
@@ -1106,6 +1127,11 @@ See `backward-kill-word' for COUNT."
 (add-hook 'js-mode-hook 'subword-mode)
 (add-hook 'nix-mode-hook 'subword-mode)
 (add-hook 'rust-mode-hook 'subword-mode)
+
+;; Tab Bar
+
+(define-key tab-prefix-map "\M-b" 'tab-bar-history-back)
+(define-key tab-prefix-map "\M-f" 'tab-bar-history-forward)
 
 ;;; Tempo Abbrev
 
@@ -1473,7 +1499,7 @@ See `backward-kill-word' for COUNT."
 
 ;;; With Editor
 
-(define-key global-map [?\C-\M-&] 'with-editor-async-shell-command)
+(define-key global-map [?\C-\M-!] 'with-editor-shell-command)
 
 ;;; Xref
 
