@@ -39,5 +39,10 @@ in
         url = "https://www.orangefreesounds.com/wp-content/uploads/2018/02/Bruh-sound-effect.zip";
         hash = "sha256-CbJ7US6mV88L/+XywCAT1IZ0winIlcFbrRrJiakHHP8=";
       }
+      {
+        name = "ding";
+        url = "https://www.orangefreesounds.com/wp-content/uploads/Zip/Ding-sound.zip";
+        hash = "sha256-pi1Txpq/8R+/piDwK1Ky+SVAosI3uGe/8R5Sp2CFnug=";
+      }
     ];
   }

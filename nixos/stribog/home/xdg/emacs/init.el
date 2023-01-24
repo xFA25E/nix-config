@@ -939,7 +939,7 @@ Used as an advice."
   (define-key org-mode-map [?\C-c?\C-\S-t] 'org-todo-yesterday))
 
 (define-advice org-show-notification (:after (&rest _) sound)
-  (call-process "notify_bruh" nil 0 nil))
+  (call-process "notify_ding" nil 0 nil))
 
 (define-key mode-specific-map "Ga" 'org-agenda)
 
