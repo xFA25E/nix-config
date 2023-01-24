@@ -66,13 +66,14 @@
     firewall.allowedTCPPorts = [8080 8000];
     hosts = {
       "0.0.0.0" = [
-        "rewards.brave.com"
+        "anilibria.tv"
         "api.rewards.brave.com"
-        "grant.rewards.brave.com"
-        "variations.brave.com"
-        "laptop-updates.brave.com"
-        "static1.brave.com"
         "brave-core-ext.s3.brave.com"
+        "grant.rewards.brave.com"
+        "laptop-updates.brave.com"
+        "rewards.brave.com"
+        "static1.brave.com"
+        "variations.brave.com"
       ];
     };
     hostFiles = ["${pkgs.stevenblack-blocklist}/alternates/gambling-porn/hosts"];
