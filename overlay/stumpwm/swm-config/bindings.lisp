@@ -4,6 +4,7 @@
 (in-package #:swm-config.bindings)
 
 (defvar *open-map* (swm:make-sparse-keymap))
+(defvar *timer-map* (swm:make-sparse-keymap))
 
 (defun define-key (map key command)
   (swm:define-key map (swm:kbd key) command))
@@ -33,7 +34,7 @@
 ;;; OPEN
 
 (define-keys *open-map*
-  "C-c" "timer-add"
+  "C-c" '*timer-map*
   "c"   "timer-menu"
 
   "C-w" "pass-type"
@@ -54,6 +55,14 @@
   "C-b" "brave-incognito"
   "C-e" "mpv"
   "C-f" "firefox")
+
+;;; TIMER
+
+(define-keys *timer-map*
+  "C-c" "timer-add"
+  "C-b" "timer-add balls \"in 15 minutes\""
+  "C-s" "timer-add stand \"in 20 minutes\""
+  "C-n" "timer-add neck \"in 1 hour\"")
 
 ;;; REMAPPED KEYS
 
