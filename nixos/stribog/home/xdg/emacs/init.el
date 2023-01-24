@@ -1048,6 +1048,8 @@ Remove duplicates.  Remove inexistent files from
 
 ;;; Sgml mode
 
+(add-hook 'nxml-mode-hook 'sgml-electric-tag-pair-mode)
+
 (defvar html-mode-map)
 (defvar sgml-mode-map)
 (with-eval-after-load 'sgml-mode
@@ -1500,6 +1502,10 @@ See `backward-kill-word' for COUNT."
 ;;; With Editor
 
 (define-key global-map [?\C-\M-!] 'with-editor-shell-command)
+
+(define-advice with-editor-shell-command-read-args
+    (:filter-args (args) prefix-prompt)
+  (cons (concat "WE " (car args)) (cdr args)))
 
 ;;; Xref
 
