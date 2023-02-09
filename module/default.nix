@@ -66,7 +66,8 @@
     firewall.allowedTCPPorts = [8080 8000];
     hosts = {
       "0.0.0.0" = [
-        "anilibria.tv"
+        # "anilibria.tv"
+        # "twitch.tv"
         "api.rewards.brave.com"
         "brave-core-ext.s3.brave.com"
         "grant.rewards.brave.com"
@@ -99,7 +100,7 @@
   };
 
   programs.bash.promptInit = ''
-    PS1='\n$(e=$?;[[ $e != 0 ]]&&printf "%s " "$e")\u $(p=''${PWD#"$HOME"};[[ $PWD != "$p" ]]&&printf "~";IFS=/;for q in ''${p:1};do printf "/%s" "''${q:0:1}";[[ ''${q:0:1} = . ]]&&printf "%s" "''${q:1:1}";done;printf "%s" "''${q:1}") \$ '
+    PS1='\n$(e=$?;[[ $e != 0 ]]&&printf "%s " "$e")\u $(p=''${PWD#"$HOME"};[[ $PWD != "$p" ]]&&printf "~";IFS=/;for q in ''${p:1};do printf "/%s" "''${q:0:1}";[[ ''${q:0:1} = . ]]&&printf "%s" "''${q:1:1}";done;[[ ''${q:0:1} != . ]]&&printf "%s" "''${q:1:1}";printf "%s" "''${q:2}") \$ '
   '';
 
   services = {

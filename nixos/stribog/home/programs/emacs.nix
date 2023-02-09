@@ -25,6 +25,7 @@
         emmet-mode
         envrc
         enwc
+        fd-dired
         flymake-collection
         htmlize
         ipretty
@@ -58,7 +59,7 @@
         sly-quicklisp
         sql-indent
         sqlup-mode
-        tempo-abbrev
+        tempo-extra
         transmission
         tree-sitter
         tree-sitter-langs

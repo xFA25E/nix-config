@@ -170,7 +170,7 @@
  '(completion-category-overrides '((cider (styles basic)) (bookmark (styles basic))))
  '(completion-cycle-threshold 2)
  '(completion-ignored-extensions
-   '(".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" "flake.lock" ".gitignore" ".eldev/" ".direnv/" ".envrc" "Eldev" "LICENSE" ".dir-locals.el" ".prettierignore" ".editorconfig"))
+   '(".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" "flake.lock" ".gitignore" ".eldev/" ".direnv/" ".envrc" "Eldev" "Eldev-local" "LICENSE" ".dir-locals.el" ".prettierignore" ".editorconfig"))
  '(completion-show-help nil)
  '(completion-styles '(partial-completion regexp))
  '(completions-detailed t)
@@ -369,7 +369,7 @@
  '(mail-envelope-from 'header)
  '(mail-user-agent 'notmuch-user-agent)
  '(marginalia-mode t)
- '(max-mini-window-height 1.0)
+ '(max-mini-window-height 0.5)
  '(menu-bar-mode nil)
  '(message-directory "~/.mail/")
  '(message-kill-buffer-on-exit t)
@@ -484,7 +484,7 @@
    (expand-file-name "emacs/network-security.data"
                      (xdg-cache-home)))
  '(org-adapt-indentation nil)
- '(org-agenda-files '("~/org/study.org" "~/org/life.org" "~/org/free_time.org"))
+ '(org-agenda-files '("~/org/study.org" "~/org/life.org"))
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
  '(org-babel-load-languages
@@ -495,7 +495,7 @@
      (http . t)))
  '(org-capture-templates
    '(("r" "Remember" entry
-      (file+headline "~/org/free_time.org" "Remember")
+      (file+headline "~/org/life.org" "Remember")
       "* %?")))
  '(org-clock-display-default-range 'untilnow)
  '(org-duration-format 'h:mm)
@@ -541,6 +541,7 @@
      (project-vc-dir "VC-Dir" nil)
      (project-eshell "Eshell" nil)))
  '(read-buffer-completion-ignore-case t)
+ '(read-extended-command-predicate 'command-completion-default-include-p)
  '(read-file-name-completion-ignore-case t)
  '(read-minibuffer-restore-windows nil)
  '(recenter-positions '(top middle bottom))

@@ -23,6 +23,44 @@
 
 (define-key 'region-commands-map "\C-a" 'align-regexp)
 
+;;; Amded
+
+(require 'rx)
+(require 'subr-x)
+(require 'wid-edit)
+
+(defvar amded--widgets)
+(defun amded-set-from-template ()
+  (interactive nil amded-mode)
+  (let ((dir (concat (getenv "XDG_MUSIC_DIR") "/")))
+    (save-excursion
+      (seq-doseq (widget amded--widgets)
+        (let ((file (string-remove-prefix dir (widget-get widget :file))))
+          (pcase (replace-regexp-in-string "/" " - " file)
+            ((rx (let genre (+? any)) " - "
+                 (opt (let artist (+? any)) " - ")
+                 (opt (let year (+? num)) " - ")
+                 (opt (let album (+? any)) " - ")
+                 (opt (let track (+? num)) " - ")
+                 (let title (+? any)) "." (+ (not ".")) eos)
+             (seq-doseq (child (widget-get widget :children))
+               (seq-let (tag-widget value-widget) (widget-get child :children)
+                 (let ((tag (widget-value tag-widget))
+                       (value (widget-value value-widget)))
+                   (pcase tag
+                     ((and "genre" (guard (string-empty-p value)))
+                      (widget-value-set value-widget genre))
+                     ((and "artist" (guard artist))
+                      (widget-value-set value-widget artist))
+                     ((and "year" (guard year))
+                      (widget-value-set value-widget (string-to-number year)))
+                     ((and "album" (guard album))
+                      (widget-value-set value-widget album))
+                     ((and "track-number" (guard track))
+                      (widget-value-set value-widget (string-to-number track)))
+                     ("track-title"
+                      (widget-value-set value-widget title)))))))))))))
+
 ;;; Apheleia
 
 (autoload 'apheleia-mode "apheleia")
@@ -160,8 +198,8 @@ See `browse-url' for URL and ARGS."
 (with-eval-after-load 'dired
   (require 'dired-x)
   (define-key dired-mode-map "\M-+" 'dired-create-empty-file)
-  (define-key dired-mode-map "!" 'dired-do-shell-command)
-  (define-key dired-mode-map "X" nil))
+  (define-key dired-mode-map "X" nil)
+  (define-key dired-mode-map "&" nil))
 
 (defvar dired-compress-file-suffixes)
 (with-eval-after-load 'dired-aux
@@ -360,6 +398,67 @@ See `xref-backend-apropos' docs for PATTERN."
   (define-key envrc-mode-map "\C-xd" 'envrc-command-map)
   (define-key 'envrc-command-map "R" 'envrc-reload-all))
 
+;;; Fd Dired
+
+(require 'fd-dired)
+(require 'transient)
+
+(transient-define-suffix fd-dired-transient-execute ()
+  (interactive)
+  (let ((args (transient-args 'fd-dired-transient)))
+    (fd-dired
+     (transient-arg-value "--directory=" args)
+     (mapconcat
+      (lambda (arg)
+        (pcase arg
+          ((rx bos "--directory=") "")
+          ((rx bos "--pattern=" (let pattern (* any)))
+           (shell-quote-argument pattern))
+          ((rx bos "--contains-regexp=" (let regexp (* any)))
+           (concat "--exec " fd-grep-dired-program
+                   " " fd-grep-dired-pre-grep-args " "
+                   (shell-quote-argument regexp)
+                   " -0 -ls " (shell-quote-argument ";")))
+          (_ (shell-quote-argument arg))))
+      args " "))))
+
+(put 'fd-dired-transient-execute 'completion-predicate 'ignore)
+
+(transient-define-prefix fd-dired-transient ()
+  ["Flags"
+   ("-H" "Include hidden files" "--hidden")
+   ("-I" "Include ignored files" "--no-ignore")
+   ("-g" "Glob pattern" "--glob")
+   ("-F" "Literal pattern" "--fixed-strings")
+   ("-L" "Follow symlinks" "--follow")
+   ("-p" "Match against the full path" "--full-path")]
+  ["Options"
+   ("-D" "Directory" "--directory="
+    transient-read-existing-directory
+    :init-value (lambda (o) (oset o value default-directory))
+    :always-read t)
+   ("-P" "Pattern" "--pattern=")
+   ("-d" "Limit traversal" "--max-depth=" transient-read-number-N+)
+   ("-t" "Filter by type" "--type="
+    :multi-value repeat
+    :choices ("file" "directory" "symlink" "socket" "pipe" "executable" "empty"))
+   ("-e" "Filter by extension" "--extension=" :multi-value repeat)
+   ("-E" "Exclude files/directories" "--exclude="
+    :multi-value repeat
+    :prompt "(glob) --exclude=")
+   ("-S" "Limit based on the size" "--size="
+    :prompt "[-+]?[0-9]+[bkmgt] --size=")
+   ("-cw" "File changed within" "--changed-within="
+    :prompt "(YYYY-MM-DD( HH:MM:SS)?|[0-9]+[smhdwMy]) --changed-within=")
+   ("-cb" "File changed before" "--changed-before="
+    :prompt "(YYYY-MM-DD( HH:MM:SS)?|[0-9]+[smhdwMy]) --changed-before=")
+   ("-o" "User and/or group" "--owner="
+    :prompt "!?(user|uid)?(:(group|gid))? --owner=")
+   ("-cr" "File contains regexp" "--contains-regexp=")]
+  ["Actions" ("x" "Execute" fd-dired-transient-execute)])
+
+(define-key search-map "d" 'fd-dired-transient)
+
 ;;; Files
 
 (define-key 'load-command-map "\C-f" 'load-file)
@@ -370,30 +469,6 @@ See `xref-backend-apropos' docs for PATTERN."
 (define-key ctl-x-x-map "ad" 'add-dir-local-variable)
 (define-key ctl-x-x-map "aa" 'add-file-local-variable)
 (define-key ctl-x-x-map "ap" 'add-file-local-variable-prop-line)
-
-;;; Find Dired
-
-(define-key search-map "N" 'find-dired)
-(define-key search-map "n" 'find-name-dired)
-
-(with-eval-after-load 'find-dired
-  (cl-pushnew '(const :tag "Sort file names by video duration"
-                      find-dired-sort-by-video-duration)
-              (cdr (get 'find-dired-refine-function 'custom-type))
-              :test #'equal))
-
-(defun find-dired-sort-by-video-duration ()
-  "Sort entries in *Find* buffer by video duration."
-  (sort-subr nil 'forward-line 'end-of-line
-             (lambda ()
-               (let ((file-name
-                      (buffer-substring-no-properties
-                       (next-single-property-change
-                        (point) 'dired-filename)
-                       (line-end-position))))
-                 (with-temp-buffer
-                   (call-process "video_seconds" nil '(t nil) nil file-name)
-                   (string-to-number (buffer-string)))))))
 
 ;;; Find Func
 
@@ -640,149 +715,6 @@ See `xref-backend-apropos' docs for PATTERN."
 See its documentiation for N."
   (interactive "p")
   (mpc-move-forward (- n)))
-
-(defvar mpc-cover-image-re)
-(declare-function mpc-constraints-push "mpc")
-(declare-function mpc-constraints-restore "mpc")
-(declare-function mpc-file-local-copy "mpc")
-(declare-function mpc-secs-to-time "mpc")
-(declare-function mpc-tempfiles-add "mpc")
-(define-advice mpc-format (:override (format-spec info &optional hscroll) hash)
-  (let* ((pos 0)
-         (start (point))
-         (col (if hscroll (- hscroll) 0))
-         (insert (lambda (str)
-                   (cond
-                    ((>= col 0) (insert str))
-                    (t (insert (substring str (min (length str) (- col))))))))
-         (pred #'always))
-    (while (string-match "%\\(?:%\\|\\(-\\)?\\([0-9]+\\)?{\\([[:alpha:]][[:alnum:]]*\\)\\(?:-\\([^}]+\\)\\)?}\\)" format-spec pos)
-      (let ((pre-text (substring format-spec pos (match-beginning 0))))
-        (funcall insert pre-text)
-        (setq col (+ col (string-width pre-text))))
-      (setq pos (match-end 0))
-      (if (null (match-end 3))
-          (progn
-            (funcall insert "%")
-            (setq col (+ col 1)))
-        (let* ((size (match-string 2 format-spec))
-               (tag (intern (match-string 3 format-spec)))
-               (post (match-string 4 format-spec))
-               (right-align (match-end 1))
-               (text
-                (if (eq info 'self) (symbol-name tag)
-                  (pcase tag
-                    ((or 'Time 'Duration)
-                     (let ((time (cdr (or (assq 'time info) (assq 'Time info)))))
-                       (setq pred #'ignore) ;Just assume it's never eq.
-                       (when time
-                         (mpc-secs-to-time (if (and (eq tag 'Duration)
-                                                    (string-match ":" time))
-                                               (substring time (match-end 0))
-                                             time)))))
-                    ('Cover
-                     (let ((dir (file-name-directory (cdr (assq 'file info)))))
-                       ;; (debug)
-                       (setq pred
-                             ;; We want the closure to capture the current
-                             ;; value of `pred' and not a reference to the
-                             ;; variable itself.
-                             (let ((oldpred pred))
-                               (lambda (info)
-                                 (and (funcall oldpred info)
-                                      (equal dir (file-name-directory
-                                                  (cdr (assq 'file info))))))))
-                       (if-let* ((covers '(".folder.png" "folder.png" "cover.jpg" "folder.jpg"))
-                                 (cover (cl-loop for file in (directory-files (mpc-file-local-copy dir))
-                                                 if (or (member (downcase file) covers)
-                                                        (and mpc-cover-image-re
-                                                             (string-match mpc-cover-image-re file)))
-                                                 return (concat dir file)))
-                                 (file (with-demoted-errors "MPC: %s"
-                                         (mpc-file-local-copy cover))))
-                           (let (image)
-                             (if (null size)
-                                 (setq image (create-image file))
-                               (let* ((hash (with-temp-buffer
-                                              (insert-file-contents-literally file)
-                                              (md5 (current-buffer))))
-                                      (dir (expand-file-name "emacs/mpc" (xdg-cache-home)))
-                                      (scaled-file (expand-file-name (concat hash ".jpg") dir)))
-                                 (unless (file-exists-p scaled-file)
-                                   (make-directory dir t)
-                                   ;; FIXME: Use native image scaling instead.
-                                   (call-process "convert" nil nil nil
-                                                 "-scale" size file scaled-file))
-                                 (setq image (create-image scaled-file))
-                                 (mpc-tempfiles-add image scaled-file)))
-                             (setq size nil)
-                             (propertize dir 'display image))
-                         ;; Make sure we return something on which we can
-                         ;; place the `mpc--uptodate-p' property, as
-                         ;; a negative-cache.  We could also use
-                         ;; a default cover.
-                         (progn (setq size nil) " "))))
-                    (_ (let ((val (cdr (assq tag info))))
-                         ;; For Streaming URLs, there's no other info
-                         ;; than the URL in `file'.  Pretend it's in `Title'.
-                         (when (and (null val) (eq tag 'Title))
-                           (setq val (cdr (assq 'file info))))
-                         (setq pred
-                               ;; We want the closure to capture the current
-                               ;; value of `pred' and not a reference to the
-                               ;; variable itself.
-                               (let ((oldpred pred))
-                                 (lambda (info)
-                                   (and (funcall oldpred info)
-                                        (equal val (cdr (assq tag info)))))))
-                         (cond
-                          ((not (and (eq tag 'Date) (stringp val))) val)
-                          ;; For "date", only keep the year!
-                          ((string-match "[0-9]\\{4\\}" val)
-                           (match-string 0 val))
-                          (t val)))))))
-               (space (when size
-                        (setq size (string-to-number size))
-                        (propertize " " 'display
-                                    (list 'space :align-to (+ col size)))))
-               (textwidth (if text (string-width text) 0))
-               (postwidth (if post (string-width post) 0)))
-          (when text
-            (let ((display
-                   (if (and size
-                            (> (+ postwidth textwidth) size))
-                       (propertize
-                        (truncate-string-to-width text size nil nil "…")
-                        'help-echo text)
-                     text)))
-              (when (memq tag '(Artist Album Composer)) ;FIXME: wrong list.
-                (setq display
-                      (propertize display
-                                  'mouse-face 'highlight
-                                  'follow-link t
-                                  'keymap `(keymap
-                                            (mouse-2
-                                             . ,(lambda ()
-                                                  (interactive)
-                                                  (mpc-constraints-push 'noerror)
-                                                  (mpc-constraints-restore
-                                                   ',(list (list tag text)))))))))
-              (funcall insert
-                       (concat (when size
-                                 (propertize " " 'display
-                                             (list 'space :align-to
-                                                   (+ col
-                                                      (if (and size right-align)
-                                                          (- size postwidth textwidth)
-                                                        0)))))
-                               display post))))
-          (if (null size) (setq col (+ col textwidth postwidth))
-            (insert space)
-            (setq col (+ col size))))))
-    ;; Print the rest of format-spec, in case there is text after the
-    ;; last actual format specifier.
-    (insert (substring format-spec pos))
-    (put-text-property start (point) 'mpc--uptodate-p pred)))
 
 ;;; Net Utils
 
@@ -1135,296 +1067,22 @@ See `backward-kill-word' for COUNT."
 (define-key tab-prefix-map "\M-b" 'tab-bar-history-back)
 (define-key tab-prefix-map "\M-f" 'tab-bar-history-forward)
 
-;;; Tempo Abbrev
+;;; Tempo
 
-(declare-function tempo-save-named "tempo")
-(declare-function tempo-abbrev-abbrev-table "tempo-abbrev")
-(declare-function tempo-abbrev-define "tempo-abbrev")
-
-(define-advice tempo-define-template (:filter-return (fn) compile)
-  (cl-callf byte-compile (symbol-function fn))
-  fn)
-
-(with-eval-after-load 'tempo-abbrev
-  (define-key global-map "\C-z" 'tempo-abbrev-call)
+(with-eval-after-load 'tempo
   (define-key goto-map "\M-e" 'tempo-forward-mark)
-  (define-key goto-map "\M-a" 'tempo-backward-mark)
-  (add-hook 'tempo-user-elements 'tempo-abbrev-user-elements))
+  (define-key goto-map "\M-a" 'tempo-backward-mark))
 
-(defun tempo-abbrev-lisp-enable ()
-  (or (eq this-command 'expand-abbrev) (eql ?\s last-command-event)))
+;;; Tempo Extra
 
-(defun tempo-abbrev-user-elements (element)
-  (pcase element
-    ;; Skeleton constructs
-    (`(:if (,(and (pred stringp) prompt) ,(and (pred symbolp) var)) ,then ,else)
-     (let ((input (read-from-minibuffer prompt)))
-       (if (string-empty-p input)
-           else
-         (tempo-save-named var input)
-         then)))
-
-    (`(:when (,(and (pred stringp) prompt) ,(and (pred symbolp) var)) . ,body)
-     `(:if (,prompt ,var) (l ,@body) (l)))
-
-    (`(:while (,(and (pred stringp) prompt) ,(and (pred symbolp) var)) . ,body)
-     `(:when (,prompt ,var) ,@body ,element))
-
-    ;; Lisp
-    (`(:with-parens . ,body)
-     (if (or (not (eql (char-before) ?\()) (use-region-p))
-         `(l "(" ,@body ")")
-       `(l ,@body)))
-
-    (:elisp-namespace
-     (thread-last (if-let ((bfn (buffer-file-name)))
-                      (file-name-nondirectory bfn)
-                    (buffer-name))
-       downcase
-       (string-remove-suffix ".el")
-       (replace-regexp-in-string (rx (+ (not (any "a-z")))) "-")
-       (replace-regexp-in-string (rx (* "-") eos) "")
-       (replace-regexp-in-string (rx bos (* "-")) "")))
-
-    (:elisp-prefix
-     (let ((prefix (concat (tempo-abbrev-user-elements :elisp-namespace) "-")))
-       (or (car (cl-find prefix read-symbol-shorthands
-                         :key #'cdr :test #'string=))
-           prefix)))
-
-    (:elisp-group
-     (thread-last :elisp-namespace
-       tempo-abbrev-user-elements
-       (string-remove-suffix "-mode")))
-
-    ;; Nix
-    (:nix-hash "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=")
-
-    ;; Org
-    (:changelog-last-version
-     (save-excursion
-       (goto-char (point-min))
-       (search-forward-regexp (rx bol "** [" (group (+ (not (in "]\n")))) "]"))
-       (substring-no-properties (match-string 1))))
-
-    (:date (format-time-string "%Y-%m-%d"))))
-
-;;;; Tempo Abbrev Elisp
-
-(with-eval-after-load 'elisp-mode
-  (require 'tempo-abbrev)
-
-  (define-abbrev-table (tempo-abbrev-abbrev-table 'emacs-lisp-mode)
-    nil :enable-function 'tempo-abbrev-lisp-enable)
-
-  (tempo-abbrev-define "defvar" 'emacs-lisp-mode
-    '((:with-parens
-       "defvar " :elisp-prefix p n>
-       r> n>
-       "\"" p "\"")))
-
-  (tempo-abbrev-define "defun" 'emacs-lisp-mode
-    '((:with-parens
-       "defun " :elisp-prefix p " (" p ")" n>
-       "\"" p "\"" n>
-       r>)))
-
-  (tempo-abbrev-define "defgroup" 'emacs-lisp-mode
-    '((:with-parens
-       "defgroup " :elisp-group " nil" n>
-       "\"" p "\"" n>
-       ":group " p "nil")))
-
-  (tempo-abbrev-define "defcustom" 'emacs-lisp-mode
-    '((:with-parens
-       "defcustom " :elisp-prefix p n>
-       r> n>
-       "\"" p "\"" n>
-       ":type " p "nil" n>
-       ":group '" :elisp-group)))
-
-  (tempo-abbrev-define "defface" 'emacs-lisp-mode
-    '((:with-parens
-       "defface " :elisp-prefix p n>
-       "'((t :inherit " p "nil))" n>
-       "\"" p "\"" n>
-       ":group '" :elisp-group))))
-
-
-;;;; Tempo Abbrev Js
-
-(with-eval-after-load 'js
-  (require 'tempo-abbrev)
-
-  (tempo-abbrev-define "switch" 'js-mode
-    '("switch (" p ") {" n>
-      (:while ("Pattern: " pat)
-              "case " (s pat) ":" > n>
-              p n>
-              "break;" n>)
-      "default:" > n>
-      p n>
-      "break;" n>
-      "}" >))
-
-  (tempo-abbrev-define "function" 'js-mode
-    '("function " p "(" p ") {" n>
-      r> n>
-      "}" >))
-
-  (tempo-abbrev-define "if" 'js-mode
-    '("if (" p ") {" n>
-      r> n>
-      "}" >))
-
-  (tempo-abbrev-define "for" 'js-mode
-    '("for (" p ") {" n>
-      r> n>
-      "}" >))
-
-  (tempo-abbrev-define "try" 'js-mode
-    '("try {" n>
-      r> n>
-      "} catch (" p "error) {" > n>
-      p n>
-      "}" >))
-
-  (tempo-abbrev-define "clog" 'js-mode '("console.log(" r ")"))
-
-  (tempo-abbrev-define "ctime" 'js-mode
-    '("console.time(\"" (P "Time name: " time) "\");" > n>
-      r> n>
-      "console.timeEnd(\"" (s time) "\");" >)))
-
-;;;; Tempo Abbrev Lisp
-
-(with-eval-after-load 'lisp-mode
-  (require 'tempo-abbrev)
-
-  (define-abbrev-table (tempo-abbrev-abbrev-table 'lisp-mode)
-    nil :enable-function 'tempo-abbrev-lisp-enable)
-
-  (tempo-abbrev-define "lambda" 'lisp-mode
-    '((:with-parens "lambda (" p ") " r>)))
-
-  (tempo-abbrev-define "let" 'lisp-mode
-    '((:with-parens
-       "let ((" p "))" n>
-       r>)))
-
-  (tempo-abbrev-define "defvar" 'lisp-mode
-    '((:with-parens
-       "defvar " p n>
-       r> n>
-       "\"" p "\"")))
-
-  (tempo-abbrev-define "defun" 'lisp-mode
-    '((:with-parens
-       "defun " p " (" p ")" n>
-       "\"" p "\"" n>
-       r>)))
-
-  (tempo-abbrev-define "defpackage" 'lisp-mode
-    '((:with-parens
-       "defpackage #:" (P "Package name: " package) n>
-       "(:use #:cl)" n>
-       (:when ("Nickname: " nickname)
-              "(:nicknames #:" (s nickname)
-              (:while ("Nickname: " nickname) " #:" (s nickname))
-              ")" n>)
-       (:when ("Local nickname: " local-nickname)
-              (:when ("For package: " local-package)
-                     "(:local-nicknames (#:" (s local-nickname) " #:" (s local-package) ")"
-                     (:while ("Local nickname: " local-nickname)
-                             (:when ("For package: " local-package)
-                                    " (#:" (s local-nickname) " #:" (s local-package) ")"))
-                     ")" n>))
-       (:while ("Import from: " import-package)
-               (:when ("Import symbol: " import-symbol)
-                      "(:import-from #:" (s import-package) " #:" (s import-symbol)
-                      (:while ("Import symbol: " import-symbol) " #:" (s import-symbol))
-                      ")" n>))
-       (:when ("Export: " export)
-              "(:export #:" (s export)
-              (:while ("Export: " export) " #:" (s export))
-              ")" n>)
-       "(:documentation \"" (P "Documentation: ") "\"))" n>
-       "(in-package #:" (s package) ")" n>)))
-
-  (tempo-abbrev-define "defsystem" 'lisp-mode
-    '((:with-parens
-       "defsystem \"" (P "System: " system) "\"" n>
-       (:when ("Long name: " long-name) ":long-name \"" (s long-name) "\"" n>)
-       (:when ("Version: " version) ":version \""  (s version) "\"" n>)
-       (:when ("Author: " author) ":author \"" (s author) "\"" n>)
-       (:when ("Maintainer: " maintainer) ":maintainer \"" (s maintainer) "\"" n>)
-       (:when ("Mailto: " mailto) ":mailto \"" (s mailto) "\"" n>)
-       (:when ("License (ex: GPL3): " license) ":license \"" (s license) "\"" n>)
-       (:when ("Homepage: " homepage) ":homepage \"" (s homepage) "\"" n>)
-       (:when ("Bug tracker: " bug-tracker) ":bug-tracker \"" (s bug-tracker) "\"" n>)
-       (:when ("Source control (ex: git): " source-control)
-              (:when ("Link: " link) ":source-control (:" (s source-control) " \"" (s link) "\")" n>))
-       (:when ("Description: " description) ":description \"" (s description) "\"" n>)
-       ":long-description #.(let ((file (probe-file* (subpathname *load-pathname* \"README.md\")))) (when file (read-file-string file)))" n>
-       (:when ("Dependency: " dependency)
-              ":depends-on (" "\"" (s dependency) "\""
-              (:while ("Dependency: " dependency) " \"" (s dependency) "\"")
-              ")" n>)
-       ":components ((:module \"src\" :components ((:file \"" (s system) "\"))))" n>
-       ":in-order-to ((test-op (test-op \"" (s system) "/tests\"))))" n>
-       n>
-       "(defsystem \"" (s system) "/tests\"" n>
-       ":depends-on (\"" (s system) "\" \"fiveam\")" n>
-       ":components ((:module \"tests\" :components ((:file \"" (s system) "\"))))" n>
-       ":perform (test-op (op c) (symbol-call '#:fiveam '#:run! (find-symbol* '#:" (s system) " '#:" (s system) ".tests)))"))))
-
-;;;; Tempo Abbrev Nix
-
-(with-eval-after-load 'nix-mode
-  (require 'tempo-abbrev)
-
-  (tempo-abbrev-define "fetchurl" 'nix-mode
-    '("fetchurl {" n>
-      "url = \"" p "\";" n>
-      "hash = \"" p :nix-hash "\";" n>
-      "}" p >))
-
-  (tempo-abbrev-define "fetchzip" 'nix-mode
-    '("fetchzip {" n>
-      "url = \"" p "\";" n>
-      "hash = \"" p :nix-hash "\";" n>
-      "}" p >))
-
-  (tempo-abbrev-define "fetchgit" 'nix-mode
-    '("fetchgit {" n>
-      "url = \"" p "\";" n>
-      "rev = \"" p "\";" n>
-      "hash = \"" p :nix-hash "\";" n>
-      "}" p >))
-
-  (tempo-abbrev-define "fetchFromGitHub" 'nix-mode
-    '("fetchFromGitHub {" n>
-      "owner = \"" p "\";" n>
-      "repo = \"" p "\";" n>
-      "rev = \"" p "\";" n>
-      "hash = \"" p :nix-hash "\";" n>
-      "}" p >)))
-
-;;;; Tempo Abbrev Org
-
-(with-eval-after-load 'org
-  (require 'tempo-abbrev)
-
-  (tempo-abbrev-define "changelog" 'org-mode
-    '("** [" :changelog-last-version p "] - Unreleased" n n
-      "*** Added" n n
-      "*** Changed" n n
-      "*** Deprecated" n n
-      "*** Removed" n n
-      "*** Fixed" n n
-      "*** Security"))
-
-  (tempo-abbrev-define "Unreleased" 'org-mode '(:date)))
+(with-eval-after-load 'abbrev-hook
+  (define-key global-map "\C-z" 'abbrev-hook-call))
+(with-eval-after-load 'csharp-mode (require 'tempo-extra-csharp))
+(with-eval-after-load 'elisp-mode (require 'tempo-extra-elisp))
+(with-eval-after-load 'js (require 'tempo-extra-js))
+(with-eval-after-load 'lisp-mode (require 'tempo-extra-lisp))
+(with-eval-after-load 'nix-mode (require 'tempo-extra-nix))
+(with-eval-after-load 'org (require 'tempo-extra-org))
 
 ;;; Tex Mode
 

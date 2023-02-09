@@ -16,12 +16,13 @@
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
-      overlays = [self.overlays.eldev];
+      overlays = [self.overlays.eldev self.overlays.default];
     };
 
     inherit (builtins) attrNames elemAt foldl' head map match readDir readFile;
     inherit (builtins) stringLength tail;
     inherit (pkgs.lib.lists) filter;
+    inherit (pkgs.lib.sources) sourceFilesBySuffices;
     inherit (pkgs.lib.strings) hasSuffix removeSuffix;
     parse = pkgs.callPackage "${emacs-overlay}/parse.nix" {};
 
@@ -79,5 +80,24 @@
         export ELDEV_DIR=$PWD/.eldev
       '';
     };
+
+    packages.${system} = {
+      ${name} = (pkgs.emacsPackagesFor pkgs.emacs).${name};
+    };
+
+    checks.${system} =
+      self.packages.${system}
+      // {
+        tests = pkgs.runCommand "run-tests" {} ''
+          cp ${sourceFilesBySuffices ./. [".el"]}/* .
+          loadfiles=""
+          for file in *.el ; do
+            loadfiles="$loadfiles -l $file"
+          done
+          ${pkgs.emacs}/bin/emacs -Q -module-assertions -batch \
+            -L . $loadfiles -f ert-run-tests-batch-and-exit \
+            && touch $out
+        '';
+      };
   };
 }

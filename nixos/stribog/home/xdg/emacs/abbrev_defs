@@ -617,7 +617,7 @@
     ("peice" "piece" nil :count 0)
     ("peices" "pieces" nil :count 0)
     ("peolpe" "people" nil :count 0)
-    ("peopel" "people" nil :count 0)
+    ("peopel" "people" nil :count 1)
     ("percentof" "percent of" nil :count 0)
     ("percentto" "percent to" nil :count 0)
     ("performence" "performance" nil :count 0)
@@ -947,5 +947,6 @@
     ("du" "du --si" nil :count 3)
     ("free" "free --si" nil :count 1)
     ("ls" "ls --si" nil :count 5)
+    ("nix" "nix -L" nil :count 2)
    ))
 

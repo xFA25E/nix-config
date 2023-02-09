@@ -52,6 +52,7 @@
   nixpkgs = {
     config.allowUnfree = true;
     overlays = [
+      inputs.addictions-tracker.overlays.default
       inputs.nur.overlay
       inputs.emacs-overlay.overlay
       inputs.epkg-amded.overlays.default
@@ -60,7 +61,7 @@
       inputs.epkg-nixos-options.overlays.default
       inputs.epkg-rx-widget.overlays.default
       inputs.epkg-sdcwoc.overlays.default
-      inputs.epkg-tempo-abbrev.overlays.default
+      inputs.epkg-tempo-extra.overlays.default
       inputs.self.overlays.default
     ];
     system = "x86_64-linux";

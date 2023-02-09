@@ -2,6 +2,10 @@
   description = "xFA25E various nix configurations";
 
   inputs = {
+    addictions-tracker.inputs.flake-utils.follows = "fu";
+    addictions-tracker.inputs.nixpkgs.follows = "nixpkgs";
+    addictions-tracker.url = "github:xFA25E/AddictionsTracker";
+
     amded.flake = false;
     amded.url = "github:ft/amded";
 
@@ -12,6 +16,10 @@
     emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
 
+    epkg-abbrev-hook.inputs.emacs-overlay.follows = "emacs-overlay";
+    epkg-abbrev-hook.inputs.nixpkgs.follows = "nixpkgs";
+    epkg-abbrev-hook.url = "github:xFA25E/abbrev-hook";
+
     epkg-amded.inputs.emacs-overlay.follows = "emacs-overlay";
     epkg-amded.inputs.nixpkgs.follows = "nixpkgs";
     epkg-amded.url = "github:xFA25E/amded";
@@ -21,6 +29,7 @@
     epkg-cyrillic-dvorak-im.url = "github:xFA25E/cyrillic-dvorak-im";
 
     epkg-dired-tags.inputs.emacs-overlay.follows = "emacs-overlay";
+    epkg-dired-tags.inputs.epkg-xattr.follows = "epkg-xattr";
     epkg-dired-tags.inputs.nixpkgs.follows = "nixpkgs";
     epkg-dired-tags.url = "github:xFA25E/dired-tags";
 
@@ -36,9 +45,14 @@
     epkg-sdcwoc.inputs.nixpkgs.follows = "nixpkgs";
     epkg-sdcwoc.url = "github:xFA25E/sdcwoc";
 
-    epkg-tempo-abbrev.inputs.emacs-overlay.follows = "emacs-overlay";
-    epkg-tempo-abbrev.inputs.nixpkgs.follows = "nixpkgs";
-    epkg-tempo-abbrev.url = "github:xFA25E/tempo-abbrev";
+    epkg-tempo-extra.inputs.emacs-overlay.follows = "emacs-overlay";
+    epkg-tempo-extra.inputs.epkg-abbrev-hook.follows = "epkg-abbrev-hook";
+    epkg-tempo-extra.inputs.nixpkgs.follows = "nixpkgs";
+    epkg-tempo-extra.url = "github:xFA25E/tempo-extra";
+
+    epkg-xattr.inputs.emacs-overlay.follows = "emacs-overlay";
+    epkg-xattr.inputs.nixpkgs.follows = "nixpkgs";
+    epkg-xattr.url = "github:xFA25E/xattr";
 
     fu.url = "github:numtide/flake-utils";
 

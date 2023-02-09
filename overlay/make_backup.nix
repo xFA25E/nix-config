@@ -15,6 +15,7 @@ writeShellScriptBin "make_backup" ''
           ~/roam \
           ~/.authinfo.gpg ~/.bash_history ~/.gnupg ~/.ssh \
           ~/.local/share/emacs ~/.local/share/mail ~/.local/share/password-store \
+          ~/.local/share/AddictionsTracker.db \
           ~/.config/transmission-daemon \
           "''${1%/}/current"
 ''

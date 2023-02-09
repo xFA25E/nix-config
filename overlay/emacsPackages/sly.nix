@@ -15,8 +15,8 @@ eprev.sly.overrideAttrs ({
     patches
     ++ map final.fetchpatch [
       {
-        url = "https://github.com/xFA25E/sly/commit/4f95f882a7179170c09074c5c6986b407caa60f1.diff";
-        hash = "sha256-PgCGRHOyAuz9QMbc0EyX66/m29h+7xrhRycDwD0TDA0=";
+        url = "https://github.com/joaotavora/sly/pull/441.diff";
+        hash = "sha256-+rwVmrN4A4GY8oI3GiuMXq8JUyd0gT1oqdMA6NtTpnU=";
       }
     ];
 })
