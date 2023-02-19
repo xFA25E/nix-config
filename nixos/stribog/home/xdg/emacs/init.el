@@ -993,6 +993,14 @@ See `backward-kill-word' for COUNT."
 (define-key tab-prefix-map "\M-b" 'tab-bar-history-back)
 (define-key tab-prefix-map "\M-f" 'tab-bar-history-forward)
 
+(easy-mmode-defmap tab-bar-history-repeat-map
+  '(("\M-b" . tab-bar-history-back)
+    ("\M-f" . tab-bar-history-forward))
+  nil)
+
+(put 'tab-bar-history-back 'repeat-map 'tab-bar-history-repeat-map)
+(put 'tab-bar-history-forward 'repeat-map 'tab-bar-history-repeat-map)
+
 ;;; Tempo
 
 (with-eval-after-load 'tempo
