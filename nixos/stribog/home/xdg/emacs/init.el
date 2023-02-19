@@ -11,17 +11,10 @@
 (define-prefix-command 'load-command-map)
 (define-key ctl-x-map "\C-l" 'load-command-map)
 
-(define-prefix-command 'region-commands-map)
-(define-key ctl-x-map "\C-r" 'region-commands-map)
-
 ;;; Abbrev
 
 (add-hook 'js-mode-hook 'abbrev-mode)
 (add-hook 'nix-mode-hook 'abbrev-mode)
-
-;;; Align
-
-(define-key 'region-commands-map "\C-a" 'align-regexp)
 
 ;;; Amded
 
@@ -68,6 +61,7 @@
 (add-hook 'html-mode-hook 'apheleia-mode)
 (add-hook 'js-mode-hook 'apheleia-mode)
 (add-hook 'nix-mode-hook 'apheleia-mode)
+(add-hook 'nxml-mode-hook 'apheleia-mode)
 (add-hook 'web-mode-hook 'apheleia-mode)
 
 ;;; Avy
@@ -82,7 +76,7 @@
 
 (defun browse-url-choices (url &rest args)
   "Function to browse urls that provides a choices menu.
-See `browse-url' for URL and ARGS."
+    See `browse-url' for URL and ARGS."
   (let* ((browse-url-ytdli (lambda (url &rest _)
                              (call-process "ytdli" nil 0 nil url)))
          (browse-url-mpvi (lambda (url &rest _)
@@ -201,63 +195,11 @@ See `browse-url' for URL and ARGS."
   (define-key dired-mode-map "X" nil)
   (define-key dired-mode-map "&" nil))
 
-(defvar dired-compress-file-suffixes)
-(with-eval-after-load 'dired-aux
-  (add-to-list 'dired-compress-file-suffixes
-               (list (rx ".tar.bz2" eos) "" "bunzip2 -dc %i | tar -xf -")))
+;;; Dired Atool Transient
 
-(defvar dired-compress-files-alist)
-(defvar dired-log-buffer)
-(declare-function cl-find-if "cl-lib")
-(declare-function dired-get-marked-files "dired")
-(declare-function dired-log "dired")
-(declare-function dired-relist-file "dired-aux")
-(defun dired-do-compress-to@async (&optional arg)
-  "Like `dired-do-compress-to', but asynchronous.
-See the original function for ARG."
-  (interactive "P")
-  (require 'format-spec)
-  (let* ((in-files (dired-get-marked-files nil arg nil nil t))
-         (out-file (expand-file-name (read-file-name "Compress to: ")))
-         (rule (cl-find-if (lambda (x) (string-match-p (car x) out-file))
-                           dired-compress-files-alist)))
-    (cond
-     ((not rule)
-      (error
-       "No compression rule found for %s, see `dired-compress-files-alist'"
-       out-file))
-     ((and (file-exists-p out-file)
-           (not (y-or-n-p (format "%s exists, overwrite?"
-                                  (abbreviate-file-name out-file)))))
-      (message "Compression aborted"))
-     (t
-      (let* ((in-count 0)
-             (proc-name (concat "compress " out-file))
-             (qout-file (shell-quote-argument out-file))
-             (qin-files (mapconcat
-                         (lambda (file) (cl-incf in-count)
-                           (shell-quote-argument (file-name-nondirectory file)))
-                         in-files " "))
-             (cmd (format-spec (cdr rule) `((?\o . ,qout-file)
-                                            (?\i . ,qin-files))))
-             (buffer (generate-new-buffer "*dired-async-do-compress-to*"))
-             (proc (start-file-process-shell-command proc-name buffer cmd))
-             (sentinel
-              (lambda (process event)
-                (pcase event
-                  ("finished\n"
-                   (message "Compressed %d file%s to %s" in-count
-                            (ngettext "" "s" in-count)
-                            (file-name-nondirectory out-file))
-                   (kill-buffer (process-buffer process))
-                   (dired-relist-file out-file))
-                  ((rx bos "exited abnormally with code")
-                   (dired-log (process-buffer process))
-                   (dired-log t)
-                   (message "Compress %s %s\nInspect %s buffer"
-                            out-file event dired-log-buffer)
-                   (kill-buffer (process-buffer process)))))))
-        (set-process-sentinel proc sentinel))))))
+(with-eval-after-load 'dired
+  (define-key dired-mode-map "c" 'dired-atool-transient-pack)
+  (define-key dired-mode-map "Z" 'dired-atool-transient-unpack))
 
 ;;; Dired Tags
 
@@ -350,19 +292,19 @@ See the original function for ARG."
 
 (cl-defmethod xref-backend-definitions ((_backend (eql eglot+dumb)) identifier)
   "Xref backend that combines eglot and dumb-jump.
-See `xref-backend-definitions' docs for IDENTIFIER."
+    See `xref-backend-definitions' docs for IDENTIFIER."
   (or (xref-backend-definitions 'eglot (car identifier))
       (xref-backend-definitions 'dumb-jump (cdr identifier))))
 
 (cl-defmethod xref-backend-references ((_backend (eql eglot+dumb)) identifier)
   "Xref backend that combines eglot and dumb-jump.
-See `xref-backend-references' docs for IDENTIFIER."
+    See `xref-backend-references' docs for IDENTIFIER."
   (or (xref-backend-references 'eglot (car identifier))
       (xref-backend-references 'dumb-jump (cdr identifier))))
 
 (cl-defmethod xref-backend-apropos ((_backend (eql eglot+dumb)) pattern)
   "Xref backend that combines eglot and dumb-jump.
-See `xref-backend-apropos' docs for PATTERN."
+    See `xref-backend-apropos' docs for PATTERN."
   (xref-backend-apropos 'eglot pattern))
 
 ;;; Eldoc
@@ -403,7 +345,8 @@ See `xref-backend-apropos' docs for PATTERN."
 (require 'fd-dired)
 (require 'transient)
 
-(transient-define-suffix fd-dired-transient-execute ()
+(defun fd-dired-transient-execute ()
+  (declare (completion ignore) (interactive-only t))
   (interactive)
   (let ((args (transient-args 'fd-dired-transient)))
     (fd-dired
@@ -418,11 +361,9 @@ See `xref-backend-apropos' docs for PATTERN."
            (concat "--exec " fd-grep-dired-program
                    " " fd-grep-dired-pre-grep-args " "
                    (shell-quote-argument regexp)
-                   " -0 -ls " (shell-quote-argument ";")))
-          (_ (shell-quote-argument arg))))
+                   " -0 -ls " (shell-quote-argument " ;")))
+    (_ (shell-quote-argument arg))))
       args " "))))
-
-(put 'fd-dired-transient-execute 'completion-predicate 'ignore)
 
 (transient-define-prefix fd-dired-transient ()
   ["Flags"
@@ -940,11 +881,6 @@ Used as an advice."
 (define-key emacs-lisp-mode-map "\C-c\C-r" 're-builder)
 (define-key lisp-interaction-mode-map "\C-c\C-r" 're-builder)
 
-;;; Replace
-
-(define-key 'region-commands-map "\C-k" 'keep-lines)
-(define-key 'region-commands-map "\C-f" 'flush-lines)
-
 ;;; Reverse Im
 
 (require 'reverse-im)
@@ -1040,16 +976,6 @@ See `backward-kill-word' for COUNT."
       (kill-region (region-beginning) (region-end))
     (backward-kill-word count)))
 
-;;; Sort
-
-(define-key 'region-commands-map "\C-d" 'delete-duplicate-lines)
-(define-key 'region-commands-map "\C-l" 'sort-fields)
-(define-key 'region-commands-map "\C-m" 'sort-columns)
-(define-key 'region-commands-map "\C-n" 'sort-numeric-fields)
-(define-key 'region-commands-map "\C-r" 'reverse-region)
-(define-key 'region-commands-map "\C-s" 'sort-lines)
-(define-key 'region-commands-map "\C-x" 'sort-regexp-fields)
-
 ;;; Subr X
 
 (put 'thread-first 'lisp-indent-function 1)
@@ -1092,7 +1018,6 @@ See `backward-kill-word' for COUNT."
 ;;; Text Mode
 
 (autoload 'center-region "text-mode")
-(define-key 'region-commands-map "\C-c" 'center-region)
 
 ;;; Term
 
@@ -1102,6 +1027,27 @@ See `backward-kill-word' for COUNT."
 
 (define-key ctl-x-x-map "T" 'tramp-cleanup-all-buffers)
 
+;;; Transient
+
+(transient-define-prefix region-commands ()
+  [["Other"
+    ("a" "Align Regexp" align-regexp)
+    ("r" "Reverse Region" reverse-region)
+    ("c" "Center Region" center-region)]
+   ["Filter"
+    ("k" "Keep Lines" keep-lines)
+    ("f" "Flush Lines" flush-lines)
+    ("d" "Delete Duplicates" delete-duplicate-lines)]
+   ["Sort"
+    ("s" "Sort Lines" sort-lines)
+    ("x" "Sort Regexp Fields" sort-regexp-fields)
+    ("m" "Sort Columns" sort-columns)]
+   [""
+    ("l" "Sort Fields" sort-fields)
+    ("n" "Sort Numeric Fields" sort-numeric-fields)]])
+
+(define-key ctl-x-map "\C-r" 'region-commands)
+
 ;;; Transmission
 
 (define-key mode-specific-map "or" 'transmission)
@@ -1109,14 +1055,6 @@ See `backward-kill-word' for COUNT."
 (defvar transmission-mode-map)
 (with-eval-after-load 'transmission
   (define-key transmission-mode-map "M" 'transmission-move))
-
-(declare-function transmission-request "transmission")
-(declare-function transmission-torrents "transmission")
-(define-advice transmission-draw-info (:after (id) comment)
-  (let* ((arguments `(:ids ,id :fields ["comment"]))
-         (response (transmission-request "torrent-get" arguments))
-         (torrent (aref (transmission-torrents response) 0)))
-    (insert "\nComment: " (or (cdr (assq 'comment torrent)) ""))))
 
 ;;; Tree Sitter
 

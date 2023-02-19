@@ -7,6 +7,14 @@ This screenshot shows how to frobnicate the fripulator:
 
 screenshot1.png
 
+* Usage
+Run one of these commands:
+
++ package-name-command: Frobnicate the flange.
+
+** Tips
++ You can customize settings in the package-name group.
+
 * Installation
 ** Nix
 This repo is a nix flake.  You can just add ~overlays.default~ output to your
@@ -42,14 +50,6 @@ file:
 #+BEGIN_SRC elisp
 (require 'package-name)
 #+END_SRC
-
-* Usage
-Run one of these commands:
-
-+ package-name-command: Frobnicate the flange.
-
-** Tips
-+ You can customize settings in the package-name group.
 
 * Credits
 This package would not have been possible without the following packages: foo which showed me how to bifurcate, and bar, which takes care of flanges.

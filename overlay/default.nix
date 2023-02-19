@@ -39,4 +39,13 @@ in {
   ytdlm = callPackage ./ytdlm.nix {};
   ytdlmp = callPackage ./ytdlmp.nix {};
   ytdlp = callPackage ./ytdlp.nix {};
+
+  yt-dlp = prev.yt-dlp.overrideAttrs (_: {
+    src = final.fetchFromGitHub {
+      owner = "yt-dlp";
+      repo = "yt-dlp";
+      rev = "c9d14bd22ab31e2a41f9f8061843668a06db583b";
+      hash = "sha256-N5zK5wh8pNjsszXsNRyi6txq63WubOLB5oM/Y0BYOn4=";
+    };
+  });
 }

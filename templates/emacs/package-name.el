@@ -27,6 +27,16 @@
 
 ;; This package allows flanges to be easily frobnicated.
 
+;;;; Usage
+
+;; Run one of these commands:
+
+;; `package-name-command': Frobnicate the flange.
+
+;;;;; Tips
+
+;; + You can customize settings in the `package-name' group.
+
 ;;;; Installation
 
 ;;;;; Package manager
@@ -45,16 +55,6 @@
 ;; file:
 
 ;; (require 'package-name)
-
-;;;; Usage
-
-;; Run one of these commands:
-
-;; `package-name-command': Frobnicate the flange.
-
-;;;; Tips
-
-;; + You can customize settings in the `package-name' group.
 
 ;;;; Credits
 

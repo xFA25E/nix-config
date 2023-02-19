@@ -13,19 +13,10 @@
  '(ange-ftp-netrc-filename "~/.authinfo.gpg")
  '(apheleia-formatters
    '((alejandra "alejandra")
+     (xmllint "xmllint" "--format" "-" "--pretty" "2")
      (bean-format "bean-format")
      (black "black" "-")
      (brittany "brittany")
-     (clang-format "clang-format" "-assume-filename"
-                   (or
-                    (buffer-file-name)
-                    (cdr
-                     (assoc major-mode
-                            '((c-mode . ".c")
-                              (c++-mode . ".cpp")
-                              (cuda-mode . ".cu")
-                              (protobuf-mode . ".proto"))))
-                    ".c"))
      (crystal-tool-format "crystal" "tool" "format" "-")
      (dart-format "dart" "format")
      (elm-format "elm-format" "--yes" "--stdin")
@@ -58,7 +49,8 @@
      (rustfmt "rustfmt" "--quiet" "--emit" "stdout")
      (terraform "terraform" "fmt" "-")))
  '(apheleia-mode-alist
-   '((php-mode . phpcs)
+   '((nxml-mode . xmllint)
+     (php-mode . phpcs)
      (json-mode . prettier-json)
      (json-ts-mode . prettier-json)
      (bash-ts-mode . shfmt)
@@ -651,7 +643,8 @@
  '(x-gtk-use-system-tooltips nil)
  '(x-stretch-cursor t)
  '(xref-after-jump-hook '(recenter xref-pulse-momentarily))
- '(xref-search-program 'ripgrep))
+ '(xref-search-program 'ripgrep)
+ '(xref-show-definitions-function 'xref-show-definitions-buffer-at-bottom))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
