@@ -41,6 +41,10 @@
     epkg-nixos-options.inputs.nixpkgs.follows = "nixpkgs";
     epkg-nixos-options.url = "github:xFA25E/nixos-options";
 
+    epkg-pueue.inputs.emacs-overlay.follows = "emacs-overlay";
+    epkg-pueue.inputs.nixpkgs.follows = "nixpkgs";
+    epkg-pueue.url = "github:xFA25E/pueue";
+
     epkg-rx-widget.inputs.emacs-overlay.follows = "emacs-overlay";
     epkg-rx-widget.inputs.nixpkgs.follows = "nixpkgs";
     epkg-rx-widget.url = "github:xFA25E/rx-widget";

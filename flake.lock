@@ -125,6 +125,23 @@
     "eldev_10": {
       "flake": false,
       "locked": {
+        "lastModified": 1671484062,
+        "narHash": "sha256-CIaSWt8oP5nh8LPT+2SphZgYJXFRIdfGLHk0znyBOZM=",
+        "owner": "doublep",
+        "repo": "eldev",
+        "rev": "870ca147d26a4da76828c50b5f4a3d82b51fe43f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "doublep",
+        "ref": "1.3.1",
+        "repo": "eldev",
+        "type": "github"
+      }
+    },
+    "eldev_11": {
+      "flake": false,
+      "locked": {
         "lastModified": 1662672849,
         "narHash": "sha256-yna3SPVUb6Dzt0Wrl7EY05oNrGHSFVJL1QFhUKNb3DQ=",
         "owner": "doublep",
@@ -261,16 +278,16 @@
     "eldev_9": {
       "flake": false,
       "locked": {
-        "lastModified": 1671484062,
-        "narHash": "sha256-CIaSWt8oP5nh8LPT+2SphZgYJXFRIdfGLHk0znyBOZM=",
+        "lastModified": 1662672849,
+        "narHash": "sha256-yna3SPVUb6Dzt0Wrl7EY05oNrGHSFVJL1QFhUKNb3DQ=",
         "owner": "doublep",
         "repo": "eldev",
-        "rev": "870ca147d26a4da76828c50b5f4a3d82b51fe43f",
+        "rev": "659f4d9c97a44cf29ded5594b3f5de8da99ec973",
         "type": "github"
       },
       "original": {
         "owner": "doublep",
-        "ref": "1.3.1",
+        "ref": "1.2.2",
         "repo": "eldev",
         "type": "github"
       }
@@ -333,11 +350,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1664208412,
-        "narHash": "sha256-10Ndz0pr/KDsy85PoAaXsblIx5YIxaC2MtbJL08zUWg=",
+        "lastModified": 1676820926,
+        "narHash": "sha256-szLdQNLQeMNTm6RZi5Gw/5kaxvPNna26fpAsqyLj8Jg=",
         "owner": "xFA25E",
         "repo": "amded",
-        "rev": "58ab5545962d1a9a7e186b07b27ae3c8d8e910b3",
+        "rev": "f54a7ab2de88aee8aa5e7187bdddc28b425acbc9",
         "type": "github"
       },
       "original": {
@@ -445,9 +462,33 @@
         "type": "github"
       }
     },
-    "epkg-rx-widget": {
+    "epkg-pueue": {
       "inputs": {
         "eldev": "eldev_7",
+        "emacs-overlay": [
+          "emacs-overlay"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1676822323,
+        "narHash": "sha256-O9X+6seSlMJZDP8QMjxyDfFu21EZBLwWI0EHMQ+EWi4=",
+        "owner": "xFA25E",
+        "repo": "pueue",
+        "rev": "386e43d46cbf68470d040b422061ac2ba1629749",
+        "type": "github"
+      },
+      "original": {
+        "owner": "xFA25E",
+        "repo": "pueue",
+        "type": "github"
+      }
+    },
+    "epkg-rx-widget": {
+      "inputs": {
+        "eldev": "eldev_8",
         "emacs-overlay": [
           "emacs-overlay"
         ],
@@ -471,7 +512,7 @@
     },
     "epkg-sdcwoc": {
       "inputs": {
-        "eldev": "eldev_8",
+        "eldev": "eldev_9",
         "emacs-overlay": [
           "emacs-overlay"
         ],
@@ -495,7 +536,7 @@
     },
     "epkg-tempo-extra": {
       "inputs": {
-        "eldev": "eldev_9",
+        "eldev": "eldev_10",
         "emacs-overlay": [
           "emacs-overlay"
         ],
@@ -522,7 +563,7 @@
     },
     "epkg-xattr": {
       "inputs": {
-        "eldev": "eldev_10",
+        "eldev": "eldev_11",
         "emacs-overlay": [
           "emacs-overlay"
         ],
@@ -676,6 +717,7 @@
         "epkg-dired-atool-transient": "epkg-dired-atool-transient",
         "epkg-dired-tags": "epkg-dired-tags",
         "epkg-nixos-options": "epkg-nixos-options",
+        "epkg-pueue": "epkg-pueue",
         "epkg-rx-widget": "epkg-rx-widget",
         "epkg-sdcwoc": "epkg-sdcwoc",
         "epkg-tempo-extra": "epkg-tempo-extra",

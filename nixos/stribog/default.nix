@@ -60,6 +60,7 @@
       inputs.epkg-dired-atool-transient.overlays.default
       inputs.epkg-dired-tags.overlays.default
       inputs.epkg-nixos-options.overlays.default
+      inputs.epkg-pueue.overlays.default
       inputs.epkg-rx-widget.overlays.default
       inputs.epkg-sdcwoc.overlays.default
       inputs.epkg-tempo-extra.overlays.default
