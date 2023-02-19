@@ -18,7 +18,7 @@ in {
         generators.toKeyValue {
           mkKeyValue = generators.mkKeyValueDefault {} " ";
         } {
-          use_tar_lzip_option = "1";
+          # use_tar_lzip_option = "1";
           use_tar_lzop_option = "1";
           use_tar_xz_option = "1";
         };

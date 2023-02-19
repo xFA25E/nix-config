@@ -28,6 +28,10 @@
     epkg-cyrillic-dvorak-im.inputs.nixpkgs.follows = "nixpkgs";
     epkg-cyrillic-dvorak-im.url = "github:xFA25E/cyrillic-dvorak-im";
 
+    epkg-dired-atool-transient.inputs.emacs-overlay.follows = "emacs-overlay";
+    epkg-dired-atool-transient.inputs.nixpkgs.follows = "nixpkgs";
+    epkg-dired-atool-transient.url = "github:xFA25E/dired-atool-transient";
+
     epkg-dired-tags.inputs.emacs-overlay.follows = "emacs-overlay";
     epkg-dired-tags.inputs.epkg-xattr.follows = "epkg-xattr";
     epkg-dired-tags.inputs.nixpkgs.follows = "nixpkgs";

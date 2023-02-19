@@ -57,6 +57,7 @@
       inputs.emacs-overlay.overlay
       inputs.epkg-amded.overlays.default
       inputs.epkg-cyrillic-dvorak-im.overlays.default
+      inputs.epkg-dired-atool-transient.overlays.default
       inputs.epkg-dired-tags.overlays.default
       inputs.epkg-nixos-options.overlays.default
       inputs.epkg-rx-widget.overlays.default

@@ -15,6 +15,7 @@
         csproj-mode
         csv-mode
         cyrillic-dvorak-im
+        dired-atool-transient
         dired-tags
         djvu
         dotnet
