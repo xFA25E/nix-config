@@ -6,9 +6,6 @@
     addictions-tracker.inputs.nixpkgs.follows = "nixpkgs";
     addictions-tracker.url = "github:xFA25E/AddictionsTracker";
 
-    amded.flake = false;
-    amded.url = "github:ft/amded";
-
     discord.flake = false;
     discord.url = "https://dl.discordapp.net/apps/linux/0.0.22/discord-0.0.22.tar.gz";
 

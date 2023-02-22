@@ -55,6 +55,7 @@
       inputs.addictions-tracker.overlays.default
       inputs.nur.overlay
       inputs.emacs-overlay.overlay
+      inputs.epkg-amded.overlays.amded
       inputs.epkg-amded.overlays.default
       inputs.epkg-cyrillic-dvorak-im.overlays.default
       inputs.epkg-dired-atool-transient.overlays.default

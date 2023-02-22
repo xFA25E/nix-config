@@ -16,44 +16,6 @@
 (add-hook 'js-mode-hook 'abbrev-mode)
 (add-hook 'nix-mode-hook 'abbrev-mode)
 
-;;; Amded
-
-(require 'rx)
-(require 'subr-x)
-(require 'wid-edit)
-
-(defvar amded--widgets)
-(defun amded-set-from-template ()
-  (interactive nil amded-mode)
-  (let ((dir (concat (getenv "XDG_MUSIC_DIR") "/")))
-    (save-excursion
-      (seq-doseq (widget amded--widgets)
-        (let ((file (string-remove-prefix dir (widget-get widget :file))))
-          (pcase (replace-regexp-in-string "/" " - " file)
-            ((rx (let genre (+? any)) " - "
-                 (opt (let artist (+? any)) " - ")
-                 (opt (let year (+? num)) " - ")
-                 (opt (let album (+? any)) " - ")
-                 (opt (let track (+? num)) " - ")
-                 (let title (+? any)) "." (+ (not ".")) eos)
-             (seq-doseq (child (widget-get widget :children))
-               (seq-let (tag-widget value-widget) (widget-get child :children)
-                 (let ((tag (widget-value tag-widget))
-                       (value (widget-value value-widget)))
-                   (pcase tag
-                     ((and "genre" (guard (string-empty-p value)))
-                      (widget-value-set value-widget genre))
-                     ((and "artist" (guard artist))
-                      (widget-value-set value-widget artist))
-                     ((and "year" (guard year))
-                      (widget-value-set value-widget (string-to-number year)))
-                     ((and "album" (guard album))
-                      (widget-value-set value-widget album))
-                     ((and "track-number" (guard track))
-                      (widget-value-set value-widget (string-to-number track)))
-                     ("track-title"
-                      (widget-value-set value-widget title)))))))))))))
-
 ;;; Apheleia
 
 (autoload 'apheleia-mode "apheleia")

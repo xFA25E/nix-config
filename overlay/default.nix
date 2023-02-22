@@ -1,8 +1,7 @@
 inputs: final: prev: let
   inherit (final) callPackage;
-  inherit (inputs) amded discord stumpwm;
+  inherit (inputs) discord stumpwm;
 in {
-  amded = callPackage ./amded.nix {src = amded;};
   brave-incognito = callPackage ./brave-incognito.nix {};
   browser = callPackage ./browser.nix {};
   cl-hyperspec = callPackage ./cl-hyperspec.nix {};
