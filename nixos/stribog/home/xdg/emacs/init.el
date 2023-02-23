@@ -1,4 +1,10 @@
-;; -*- lexical-binding: t; outline-regexp: ";;;\\(;*\\)"; -*-
+;;; init --- Config -*- lexical-binding: t; outline-regexp: ";;;\\(;*\\)"; -*-
+
+;;; Commentary:
+
+;; Config
+
+;;; Code:
 
 (require 'cl-lib)
 (require 'xdg)
@@ -38,7 +44,7 @@
 
 (defun browse-url-choices (url &rest args)
   "Function to browse urls that provides a choices menu.
-    See `browse-url' for URL and ARGS."
+See `browse-url' for URL and ARGS."
   (let* ((browse-url-ytdli (lambda (url &rest _)
                              (call-process "ytdli" nil 0 nil url)))
          (browse-url-mpvi (lambda (url &rest _)
@@ -225,6 +231,7 @@
 (declare-function project-files "project")
 
 (defun eglot-csharp-server-program (_)
+  "Return a command for csharp language server."
   (let* ((files (project-files (project-current)))
          (slns (cl-remove (rx ".sln" eos) files :test-not #'string-match-p))
          (sln (if (cdr slns)
@@ -254,19 +261,19 @@
 
 (cl-defmethod xref-backend-definitions ((_backend (eql eglot+dumb)) identifier)
   "Xref backend that combines eglot and dumb-jump.
-    See `xref-backend-definitions' docs for IDENTIFIER."
+See `xref-backend-definitions' docs for IDENTIFIER."
   (or (xref-backend-definitions 'eglot (car identifier))
       (xref-backend-definitions 'dumb-jump (cdr identifier))))
 
 (cl-defmethod xref-backend-references ((_backend (eql eglot+dumb)) identifier)
   "Xref backend that combines eglot and dumb-jump.
-    See `xref-backend-references' docs for IDENTIFIER."
+See `xref-backend-references' docs for IDENTIFIER."
   (or (xref-backend-references 'eglot (car identifier))
       (xref-backend-references 'dumb-jump (cdr identifier))))
 
 (cl-defmethod xref-backend-apropos ((_backend (eql eglot+dumb)) pattern)
   "Xref backend that combines eglot and dumb-jump.
-    See `xref-backend-apropos' docs for PATTERN."
+See `xref-backend-apropos' docs for PATTERN."
   (xref-backend-apropos 'eglot pattern))
 
 ;;; Eldoc
@@ -308,6 +315,7 @@
 (require 'transient)
 
 (defun fd-dired-transient-execute ()
+  "Interactive command used as a transient prefix."
   (declare (completion ignore) (interactive-only t))
   (interactive)
   (let ((args (transient-args 'fd-dired-transient)))
@@ -467,13 +475,15 @@
 (defvar ledger-commodity-regexp)
 (with-eval-after-load 'ledger-regex
   (setq ledger-amount-regex
-        (concat "\\(  \\|\t\\| \t\\)[ \t]*-?"
-                "\\(?:" ledger-commodity-regexp " *\\)?"
-                "\\([-=]?\\(?:[0-9]+\\|[0-9,.]+?\\)\\)"
-                "\\([,.][0-9)]+\\)?"
-                "\\(?: *" ledger-commodity-regexp "\\)?"
-                "\\([ \t]*[@={]@?[^\n;]+?\\)?"
-                "\\([ \t]+;.+?\\|[ \t]*\\)?$")))
+        (rx (group (or "  " "\t" " \t")) (* (in " \t")) (? "-")
+            (? (regexp ledger-commodity-regexp) (* " "))
+            (group (? (in "=-")) (or (+ (in "0-9")) (+? (in "0-9,."))))
+            (? (group (in ",.") (+ (in "0-9)"))))
+            (? (* " ") (regexp ledger-commodity-regexp))
+            (? (group (* (in " \t")) (in "=@{") (? "@") (+? (not (in "\n;")))))
+            (? (group (or (seq (+ (in " \t")) ";" (+? nonl))
+                          (* (in " \t")))))
+            eol)))
 
 ;;; Link Hint
 
@@ -536,24 +546,6 @@
 (define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
 (define-key minibuffer-local-completion-map " " nil)
 (define-key minibuffer-local-must-match-map "\C-j" 'minibuffer-force-complete-and-exit)
-
-(defun regexp-try-completion (string table pred point)
-  (let ((completions (all-completions "" table pred)))
-    (when (cl-some (apply-partially #'string-match-p string) completions)
-      (cons string point))))
-
-(defun regexp-all-completions (string table pred _point)
-  (cl-loop
-   for completion in (all-completions "" table pred)
-   if (string-match string completion)
-   do (add-face-text-property (match-beginning 0) (match-end 0)
-                              'completions-common-part nil completion)
-   and collect completion))
-
-(add-to-list 'completion-styles-alist
-             '(regexp regexp-try-completion regexp-all-completions "regexp"))
-(cl-pushnew '(const regexp)
-            (cdar (cdddr (get 'completion-styles 'custom-type))))
 
 ;;; Mpc
 
@@ -1085,3 +1077,7 @@ See `backward-kill-word' for COUNT."
   "Like `xref-push-marker-stack', but ignore arguments.
 Used as an advice in goto functions."
   (xref-push-marker-stack))
+
+(provide 'init)
+
+;;; init.el ends here
