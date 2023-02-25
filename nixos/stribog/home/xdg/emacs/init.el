@@ -22,6 +22,11 @@
 (add-hook 'js-mode-hook 'abbrev-mode)
 (add-hook 'nix-mode-hook 'abbrev-mode)
 
+;;; Affe
+
+(define-key search-map "\M-g\M-z" 'affe-grep)
+(define-key search-map "\M-f\M-z" 'affe-find)
+
 ;;; Apheleia
 
 (autoload 'apheleia-mode "apheleia")
@@ -112,16 +117,40 @@ See `browse-url' for URL and ARGS."
 ;;; Consult
 
 (defvar kmacro-keymap)
+(define-key ctl-x-map "b" 'consult-buffer)
+(define-key ctl-x-r-map "b" 'consult-bookmark)
+(define-key ctl-x-r-map "l" 'consult-register-store)
+(define-key ctl-x-r-map "s" 'consult-register-load)
 (define-key global-map "\M-H" 'consult-history)
+(define-key global-map "\M-y" 'consult-yank-replace)
 (define-key goto-map "E" 'consult-compile-error)
 (define-key goto-map "F" 'consult-flymake)
 (define-key goto-map "i" 'consult-imenu)
+(define-key goto-map "I" 'consult-imenu-multi)
 (define-key goto-map "o" 'consult-outline)
+(define-key help-map "\M-i" 'consult-info)
+(define-key help-map "\M-m" 'consult-man)
+(define-key isearch-mode-map "\M-s\M-c\M-L" 'consult-line-multi)
+(define-key isearch-mode-map "\M-s\M-c\M-l" 'consult-line)
 (define-key kmacro-keymap "c" 'consult-kmacro)
+(define-key project-prefix-map "b" 'consult-project-buffer)
 (define-key project-prefix-map "i" 'consult-project-imenu)
+(define-key search-map "\M-c\M-L" 'consult-line-multi)
+(define-key search-map "\M-c\M-f" 'consult-focus-lines)
+(define-key search-map "\M-c\M-k" 'consult-keep-lines)
+(define-key search-map "\M-c\M-l" 'consult-line)
+(define-key search-map "\M-f\M-f" 'consult-find)
+(define-key search-map "\M-f\M-l" 'consult-locate)
+(define-key search-map "\M-g\M-g" 'consult-grep)
+(define-key search-map "\M-g\M-r" 'consult-ripgrep)
+(define-key search-map "\M-g\M-t" 'consult-git-grep)
 
 (with-eval-after-load 'consult
-  (add-hook 'completion-list-mode-hook 'consult-preview-at-point-mode))
+  (add-hook 'completion-list-mode-hook 'consult-preview-at-point-mode)
+  (add-hook 'embark-collect-mode-hook 'consult-preview-at-point-mode))
+
+(setq register-preview-function 'consult-register-format)
+(advice-add 'register-preview :override 'consult-register-window)
 
 ;;; Css Mode
 
@@ -291,6 +320,10 @@ See `xref-backend-apropos' docs for PATTERN."
 (setq completion-ignore-case t)
 (define-key ctl-x-map "\C-\M-t" 'transpose-regions)
 
+;;; Embark
+
+(define-key global-map [?\C-.] 'embark-act)
+
 ;;; Emmet Mode
 
 (add-hook 'mhtml-mode-hook 'emmet-mode)
@@ -308,6 +341,13 @@ See `xref-backend-apropos' docs for PATTERN."
 (with-eval-after-load 'envrc
   (define-key envrc-mode-map "\C-xd" 'envrc-command-map)
   (define-key 'envrc-command-map "R" 'envrc-reload-all))
+
+;;; Eww
+
+(defun eww-restore-browse-url-browser-function ()
+  "Restore `browse-url-browser-function' original value."
+  (kill-local-variable 'browse-url-browser-function))
+(add-hook 'eww-mode-hook 'eww-restore-browse-url-browser-function)
 
 ;;; Fd Dired
 
@@ -368,7 +408,7 @@ See `xref-backend-apropos' docs for PATTERN."
    ("-cr" "File contains regexp" "--contains-regexp=")]
   ["Actions" ("x" "Execute" fd-dired-transient-execute)])
 
-(define-key search-map "d" 'fd-dired-transient)
+(define-key search-map "\M-fd" 'fd-dired-transient)
 
 ;;; Files
 
@@ -417,7 +457,7 @@ See `xref-backend-apropos' docs for PATTERN."
 
 ;;; Grep
 
-(define-key search-map "g" 'rgrep)
+(define-key search-map "\M-gg" 'rgrep)
 
 (define-advice grep-expand-template (:filter-return (cmd) cut)
   (concat cmd " | cut -c-500"))
@@ -525,15 +565,11 @@ See `xref-backend-apropos' docs for PATTERN."
 
 ;;; Locate
 
-(define-key search-map "l" 'locate)
+(define-key search-map "\M-fl" 'locate)
 
 ;;; Magit
 
 (define-key project-prefix-map "m" 'magit-project-status)
-
-;;; Man
-
-(define-key help-map "\M-m" 'man)
 
 ;;; Menu Bar
 
@@ -541,7 +577,9 @@ See `xref-backend-apropos' docs for PATTERN."
 
 ;;; Minibuffer
 
-(setq minibuffer-allow-text-properties t)
+(setq completion-category-defaults nil
+      completion-in-region-function 'consult-completion-in-region
+      minibuffer-allow-text-properties t)
 
 (define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
 (define-key minibuffer-local-completion-map " " nil)
@@ -759,6 +797,12 @@ Used as an advice."
    (cdadr (memq :key-type (get 'org-babel-load-languages 'custom-type)))
    :test 'equal))
 
+;;; Orderless
+
+(cl-pushnew '(const orderless)
+            (cdr (nth 3 (get 'completion-styles 'custom-type)))
+            :test #'equal)
+
 ;;; Org
 
 (defvar org-mode-map)
@@ -842,7 +886,7 @@ Used as an advice."
 
 ;;; Rg
 
-(define-key search-map "r" 'rg-menu)
+(define-key search-map "\M-gr" 'rg-menu)
 
 ;;; Rx Widget
 
@@ -1032,6 +1076,19 @@ See `backward-kill-word' for COUNT."
 
 (define-advice url-generic-parse-url (:around (fn &rest args) save-match-data)
   (save-match-data (apply fn args)))
+
+;;; Vertico
+
+(defvar vertico-map)
+(with-eval-after-load 'vertico
+  (define-key vertico-map "\C-m" 'vertico-directory-enter)
+  (define-key vertico-map "\C-h" 'vertico-directory-delete-char)
+  (define-key vertico-map "\C-w" 'vertico-directory-delete-word)
+
+  (define-key vertico-map "\M-z" 'vertico-quick-exit)
+  (define-key vertico-map "\M-Z" 'vertico-quick-insert))
+
+(add-hook 'rfn-eshadow-update-overlay-hook 'vertico-directory-tidy)
 
 ;;; Web Mode
 

@@ -3,10 +3,12 @@
     enable = true;
     extraPackages = epkgs:
       with epkgs; [
+        affe
         amded
         apheleia
         async
         avy
+        avy-embark-collect
         cargo
         cider
         clojure-mode
@@ -23,6 +25,8 @@
         ebdb
         edit-indirect
         eglot
+        embark
+        embark-consult
         emmet-mode
         envrc
         enwc
@@ -40,6 +44,7 @@
         notmuch
         nov
         ob-http
+        orderless
         org
         org-contrib
         org-mime
@@ -64,6 +69,7 @@
         transmission
         tree-sitter
         tree-sitter-langs
+        vertico
         vlf
         web-mode
         wgrep
