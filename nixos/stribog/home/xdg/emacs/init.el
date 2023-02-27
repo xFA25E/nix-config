@@ -760,6 +760,14 @@ Used as an advice."
               nix-flake-update))
   (advice-add fn :around 'nix-compile-in-project-advice))
 
+(declare-function nix-flake "nix-flake")
+(defun nix-flake-project ()
+  "Run `nix-flake' in project root."
+  (interactive)
+  (nix-flake (project-root (project-current t))))
+
+(define-key project-prefix-map "l" 'nix-flake-project)
+
 ;;; Nixos Options
 
 (add-hook 'nixos-options-mode-hook 'nix-prettify-mode)
