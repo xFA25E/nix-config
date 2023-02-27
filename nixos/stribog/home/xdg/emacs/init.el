@@ -733,7 +733,9 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
 
 (with-eval-after-load 'nix-flake
   (transient-append-suffix 'nix-flake-dispatch '(2 -1)
-    '("l" "Log attribute" nix-flake-log-attribute)))
+    '("l" "Log attribute" nix-flake-log-attribute))
+  (transient-append-suffix 'nix-flake-dispatch '(2 -1)
+    '("o" "Rebuild attribute" nix-flake-rebuild-attribute)))
 
 (define-advice nix-search--display (:filter-args (args) display-buffer)
   (list (car args) (get-buffer-create "*Nix-Search*") (cddr args)))
@@ -757,7 +759,8 @@ Used as an advice."
               nix-flake-build-default
               nix-flake-check
               nix-flake-lock
-              nix-flake-update))
+              nix-flake-update
+              nix-flake-rebuild-attribute))
   (advice-add fn :around 'nix-compile-in-project-advice))
 
 (declare-function nix-flake "nix-flake")
@@ -767,6 +770,21 @@ Used as an advice."
   (nix-flake (project-root (project-current t))))
 
 (define-key project-prefix-map "l" 'nix-flake-project)
+
+(defvar nix-flake-outputs)
+(defun nix-flake-rebuild-attribute (options flake-ref attribute)
+  (interactive
+   (list
+    (nix-flake--options)
+    nix-flake-ref
+    (completing-read
+     "Nixos configuration: "
+     (mapcar (lambda (nc) (symbol-name (car nc)))
+             (alist-get 'nixosConfigurations nix-flake-outputs)))))
+  (compile (concat "nixos-rebuild build --flake "
+                   (mapconcat 'shell-quote-argument
+                              (cons (concat flake-ref "#" attribute) options)
+                              " "))))
 
 ;;; Nixos Options
 
