@@ -623,8 +623,8 @@
    (expand-file-name "emacs/transient/history.el"
                      (xdg-cache-home)))
  '(transient-levels-file
-   (expand-file-name "emacs/transient/levels.el"
-                     (xdg-cache-home)))
+   (expand-file-name "emacs/transient-levels.el"
+                     (xdg-data-home)))
  '(transient-values-file
    (expand-file-name "emacs/transient/values.el"
                      (xdg-cache-home)))

@@ -4,6 +4,7 @@
     addictionsTracker
     alsaUtils
     amded
+    arandr
     ascii
     atool
     bind

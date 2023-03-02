@@ -228,26 +228,34 @@ See `browse-url' for URL and ARGS."
 
 ;;; Ediff
 
-(define-prefix-command 'ediff-command-map)
-(define-key ctl-x-map "\C-d" 'ediff-command-map)
-(define-key 'ediff-command-map "\C-b" 'ediff-buffers)
-(define-key 'ediff-command-map "\C-c" 'ediff-current-file)
-(define-key 'ediff-command-map "\C-d" 'ediff-directories)
-(define-key 'ediff-command-map "\C-f" 'ediff-files)
-(define-key 'ediff-command-map "\C-k" 'ediff-backup)
-(define-key 'ediff-command-map "\C-m\C-b" 'ediff-merge-buffers)
-(define-key 'ediff-command-map "\C-m\C-d" 'ediff-merge-directories)
-(define-key 'ediff-command-map "\C-m\C-f" 'ediff-merge-files)
-(define-key 'ediff-command-map "\C-m\C-v" 'ediff-merge-revisions)
-(define-key 'ediff-command-map "\C-p\C-b" 'ediff-patch-buffer)
-(define-key 'ediff-command-map "\C-p\C-f" 'ediff-patch-file)
-(define-key 'ediff-command-map "\C-r\C-l" 'ediff-regions-linewise)
-(define-key 'ediff-command-map "\C-r\C-w" 'ediff-regions-wordwise)
-(define-key 'ediff-command-map "\C-v" 'ediff-revision)
-(define-key 'ediff-command-map "\C-w\C-l" 'ediff-windows-linewise)
-(define-key 'ediff-command-map "\C-w\C-w" 'ediff-windows-wordwise)
-(define-key 'ediff-command-map [?\C-\S-v] 'ediff-directory-revisions)
-(define-key 'ediff-command-map [?\C-m ?\C-\S-v] 'ediff-merge-directory-revisions)
+(require 'transient)
+(transient-define-prefix ediff-commands ()
+  [["Buffers"
+    ("bb" "Buffers" ediff-buffers)
+    ("bm" "Merge" ediff-merge-buffers)
+    ("bp" "Patch" ediff-patch-buffer)]
+   ["Regions"
+    ("rl" "Linewise" ediff-regions-linewise)
+    ("rw" "Wordwise" ediff-regions-wordwise)]
+   ["Windows"
+    ("wl" "Linewise" ediff-windows-linewise)
+    ("ww" "Wordwise" ediff-windows-wordwise)]]
+  [["Files"
+    ("fc" "Current" ediff-current-file)
+    ("fb" "Backup" ediff-current-file)
+    ("ff" "Files" ediff-files)
+    ("fm" "Merge" ediff-merge-files)
+    ("fp" "Patch" ediff-patch-file)]
+   ["Directories"
+    ("dd" "Directories" ediff-current-file)
+    ("dm" "Merge" ediff-merge-directories)]
+   ["Revisions"
+    ("vv" "Revision" ediff-revision)
+    ("vm" "Merge" ediff-merge-revisions)
+    ("vdd" "Directory" ediff-directory-revisions)
+    ("vdm" "Merge directory" ediff-merge-directory-revisions)]])
+
+(define-key ctl-x-map "\C-d" 'ediff-commands)
 
 ;;; Edit Indirect
 
@@ -257,6 +265,7 @@ See `browse-url' for URL and ARGS."
 
 (defvar eglot-mode-map)
 (defvar eglot-server-programs)
+(defvar eglot-stay-out-of)
 (declare-function project-files "project")
 
 (defun eglot-csharp-server-program (_)
@@ -275,7 +284,9 @@ See `browse-url' for URL and ARGS."
         '("typescript-language-server" "--tsserver-path" "tsserver" "--stdio"))
 
   (setf (cdr (assq 'csharp-mode eglot-server-programs))
-        #'eglot-csharp-server-program))
+        #'eglot-csharp-server-program)
+
+  (add-to-list 'eglot-stay-out-of 'eldoc-documentation-strategy))
 
 (define-advice eglot-xref-backend (:override () dumb) 'eglot+dumb)
 
@@ -352,7 +363,6 @@ See `xref-backend-apropos' docs for PATTERN."
 ;;; Fd Dired
 
 (require 'fd-dired)
-(require 'transient)
 
 (defun fd-dired-transient-execute ()
   "Interactive command used as a transient prefix."
@@ -765,7 +775,7 @@ Used as an advice."
 
 (declare-function nix-flake "nix-flake")
 (defun nix-flake-project ()
-  "Run `nix-flake' in project root."
+  "Run command `nix-flake' in project root."
   (interactive)
   (nix-flake (project-root (project-current t))))
 
@@ -773,6 +783,10 @@ Used as an advice."
 
 (defvar nix-flake-outputs)
 (defun nix-flake-rebuild-attribute (options flake-ref attribute)
+  "Command `nix-flake' suffix that builds nixos configurations.
+OPTIONS is a list of options passed to nixos-rebuild.  FLAKE-REF
+is a flake url.  ATTRIBUTE specifies which nixos configuration to
+build."
   (interactive
    (list
     (nix-flake--options)
