@@ -29,7 +29,6 @@
         embark-consult
         emmet-mode
         envrc
-        enwc
         fd-dired
         flymake-collection
         htmlize

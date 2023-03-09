@@ -36,6 +36,7 @@
     image_clipboard
     imagemagick
     iw
+    iwgtk
     ledger
     libjpeg
     libnotify

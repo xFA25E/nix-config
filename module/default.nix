@@ -66,8 +66,6 @@
     firewall.allowedTCPPorts = [8080 8000];
     hosts = {
       "0.0.0.0" = [
-        # "anilibria.tv"
-        # "twitch.tv"
         "api.rewards.brave.com"
         "brave-core-ext.s3.brave.com"
         "grant.rewards.brave.com"
@@ -78,8 +76,11 @@
       ];
     };
     hostFiles = ["${pkgs.stevenblack-blocklist}/alternates/gambling-porn/hosts"];
-    networkmanager.enable = true;
     useDHCP = lib.mkDefault true;
+    wireless.iwd = {
+      enable = true;
+      settings.General.EnableNetworkConfiguration = true;
+    };
   };
 
   nix = {
@@ -131,6 +132,6 @@
   users.users.${username} = {
     initialHashedPassword = "";
     isNormalUser = true;
-    extraGroups = ["wheel" "networkmanager"];
+    extraGroups = ["wheel"];
   };
 }

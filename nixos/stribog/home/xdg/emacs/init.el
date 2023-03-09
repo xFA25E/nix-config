@@ -119,8 +119,8 @@ See `browse-url' for URL and ARGS."
 (defvar kmacro-keymap)
 (define-key ctl-x-map "b" 'consult-buffer)
 (define-key ctl-x-r-map "b" 'consult-bookmark)
-(define-key ctl-x-r-map "l" 'consult-register-store)
-(define-key ctl-x-r-map "s" 'consult-register-load)
+(define-key ctl-x-r-map "l" 'consult-register-load)
+(define-key ctl-x-r-map "s" 'consult-register-store)
 (define-key global-map "\M-H" 'consult-history)
 (define-key global-map "\M-y" 'consult-yank-replace)
 (define-key goto-map "E" 'consult-compile-error)
@@ -688,11 +688,11 @@ See its documentiation for N."
 
 (define-advice nix-edit (:override () flake)
   (interactive)
-  (let ((cmd (read-shell-command "Nix edit command: " "nix edit "))
-        (process-environment (cons "EDITOR=echo" process-environment)))
+  (let ((cmd (read-shell-command "Nix edit command: " "nix edit ")))
     (find-file
      (with-temp-buffer
-       (call-process-shell-command cmd nil (list (current-buffer) nil) nil)
+       (let ((process-environment (cons "EDITOR=echo" process-environment)))
+         (call-process-shell-command cmd nil (list (current-buffer) nil) nil))
        (buffer-substring-no-properties (point-min) (1- (point-max)))))))
 
 (declare-function cl-delete-duplicates "cl-lib")
