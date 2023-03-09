@@ -152,6 +152,24 @@ See `browse-url' for URL and ARGS."
 (setq register-preview-function 'consult-register-format)
 (advice-add 'register-preview :override 'consult-register-window)
 
+(define-advice man (:override (man-args) faster)
+  (interactive (user-error "Please call `consult-man'"))
+  (let ((buffer-name (format "*Faster Man - %s*" man-args)))
+    (unless (get-buffer buffer-name)
+      (let* ((buffer (get-buffer-create buffer-name t))
+             (cmd (format "man %s 2>/dev/null | col -b" man-args)))
+        (with-current-buffer buffer
+          (special-mode))
+        (set-process-filter
+         (start-process-shell-command "man" buffer cmd)
+         (lambda (proc text)
+           (with-current-buffer (process-buffer proc)
+             (let ((point (point)))
+               (internal-default-process-filter proc text)
+               (goto-char point)))))))
+
+    (pop-to-buffer buffer-name)))
+
 ;;; Css Mode
 
 (defvar css-mode-map)
