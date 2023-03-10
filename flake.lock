@@ -522,11 +522,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1664797122,
-        "narHash": "sha256-LYPC/bcQ+sntDA4ZMw7Fu0DhQ+1jgj1ZJ6Lo4LFqkV0=",
+        "lastModified": 1678463732,
+        "narHash": "sha256-plsEF/LE68ldvGs3gVUNu1eLPGVBqMz5cDvVfcxWdsA=",
         "owner": "xFA25E",
         "repo": "sdcwoc",
-        "rev": "399abd5a83b048be5d73c9718775d8ef11b77418",
+        "rev": "a1087741f1cd7a5ee9e0553516198f2cddb5339c",
         "type": "github"
       },
       "original": {
