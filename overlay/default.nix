@@ -43,8 +43,8 @@ in {
     src = final.fetchFromGitHub {
       owner = "yt-dlp";
       repo = "yt-dlp";
-      rev = "c9d14bd22ab31e2a41f9f8061843668a06db583b";
-      hash = "sha256-N5zK5wh8pNjsszXsNRyi6txq63WubOLB5oM/Y0BYOn4=";
+      rev = "354d5fca7a533f60a6eee14e854b9b4c132a7314";
+      hash = "sha256-ihFJttwH4A5ENRLR5qDE21gJK3pYj4IUZd0hntliYJc=";
     };
   });
 }

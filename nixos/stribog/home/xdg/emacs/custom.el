@@ -264,7 +264,7 @@
  '(eww-browse-url-new-window-is-tab nil)
  '(executable-chmod 64)
  '(fd-dired-ls-option
-   '("| xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
+   '("| sed 's|/\\x00|\\x00|g' | (ls -ldF --si --quoting-style=literal . ; xargs -0 ls -ldF --si --quoting-style=literal)" . "-ldhF"))
  '(fill-column 80)
  '(find-ls-option
    '("-print0 | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))

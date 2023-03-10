@@ -117,6 +117,7 @@ See `browse-url' for URL and ARGS."
 ;;; Consult
 
 (defvar kmacro-keymap)
+(define-key ctl-x-4-map "b" 'consult-buffer-other-window)
 (define-key ctl-x-map "b" 'consult-buffer)
 (define-key ctl-x-r-map "b" 'consult-bookmark)
 (define-key ctl-x-r-map "l" 'consult-register-load)
@@ -125,8 +126,8 @@ See `browse-url' for URL and ARGS."
 (define-key global-map "\M-y" 'consult-yank-replace)
 (define-key goto-map "E" 'consult-compile-error)
 (define-key goto-map "F" 'consult-flymake)
-(define-key goto-map "i" 'consult-imenu)
 (define-key goto-map "I" 'consult-imenu-multi)
+(define-key goto-map "i" 'consult-imenu)
 (define-key goto-map "o" 'consult-outline)
 (define-key help-map "\M-i" 'consult-info)
 (define-key help-map "\M-m" 'consult-man)
@@ -144,6 +145,7 @@ See `browse-url' for URL and ARGS."
 (define-key search-map "\M-g\M-g" 'consult-grep)
 (define-key search-map "\M-g\M-r" 'consult-ripgrep)
 (define-key search-map "\M-g\M-t" 'consult-git-grep)
+(define-key tab-prefix-map "b" 'consult-buffer-other-tab)
 
 (with-eval-after-load 'consult
   (add-hook 'completion-list-mode-hook 'consult-preview-at-point-mode)
@@ -169,6 +171,14 @@ See `browse-url' for URL and ARGS."
                (goto-char point)))))))
 
     (pop-to-buffer buffer-name)))
+
+(defvar consult--buffer-display)
+(declare-function consult-buffer "consult")
+(defun consult-buffer-other-tab ()
+  "Variant of `consult-buffer' which opens in other tab."
+  (interactive)
+  (let ((consult--buffer-display #'switch-to-buffer-other-tab))
+    (consult-buffer)))
 
 ;;; Css Mode
 
