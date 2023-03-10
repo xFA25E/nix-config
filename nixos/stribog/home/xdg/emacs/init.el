@@ -857,14 +857,6 @@ build."
 
 (add-to-list 'auto-mode-alist (cons (rx ".axaml" eos) 'nxml-mode))
 
-;;; Ob Http
-
-(with-eval-after-load 'org
-  (cl-pushnew
-   '(const :tag "Http" http)
-   (cdadr (memq :key-type (get 'org-babel-load-languages 'custom-type)))
-   :test 'equal))
-
 ;;; Orderless
 
 (cl-pushnew '(const orderless)

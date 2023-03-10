@@ -42,7 +42,6 @@
         nixos-options
         notmuch
         nov
-        ob-http
         orderless
         org
         org-contrib
