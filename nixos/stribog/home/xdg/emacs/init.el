@@ -154,23 +154,25 @@ See `browse-url' for URL and ARGS."
 (setq register-preview-function 'consult-register-format)
 (advice-add 'register-preview :override 'consult-register-window)
 
-(define-advice man (:override (man-args) faster)
+(define-advice man (:around (fn man-args) faster)
   (interactive (user-error "Please call `consult-man'"))
-  (let ((buffer-name (format "*Faster Man - %s*" man-args)))
-    (unless (get-buffer buffer-name)
-      (let* ((buffer (get-buffer-create buffer-name t))
-             (cmd (format "man %s 2>/dev/null | col -b" man-args)))
-        (with-current-buffer buffer
-          (special-mode))
-        (set-process-filter
-         (start-process-shell-command "man" buffer cmd)
-         (lambda (proc text)
-           (with-current-buffer (process-buffer proc)
-             (let ((point (point)))
-               (internal-default-process-filter proc text)
-               (goto-char point)))))))
+  (if (string-match-p (rx "configuration.nix") man-args)
+      (let ((buffer-name (format "*Faster Man - %s*" man-args)))
+        (unless (get-buffer buffer-name)
+          (let* ((buffer (get-buffer-create buffer-name t))
+                 (cmd (format "man %s 2>/dev/null | col -b" man-args)))
+            (with-current-buffer buffer
+              (special-mode))
+            (set-process-filter
+             (start-process-shell-command "man" buffer cmd)
+             (lambda (proc text)
+               (with-current-buffer (process-buffer proc)
+                 (let ((point (point)))
+                   (internal-default-process-filter proc text)
+                   (goto-char point)))))))
 
-    (pop-to-buffer buffer-name)))
+        (pop-to-buffer buffer-name))
+    (funcall fn man-args)))
 
 (defvar consult--buffer-display)
 (declare-function consult-buffer "consult")
@@ -393,7 +395,7 @@ See `xref-backend-apropos' docs for PATTERN."
 (require 'fd-dired)
 
 (defun fd-dired-transient-execute ()
-  "Interactive command used as a transient prefix."
+  "Interactive command used as a transient suffix."
   (declare (completion ignore) (interactive-only t))
   (interactive)
   (let ((args (transient-args 'fd-dired-transient)))
@@ -708,11 +710,10 @@ See its documentiation for N."
 (add-hook 'proced-mode-hook 'nix-prettify-mode)
 
 (with-eval-after-load 'nix-mode
-  (define-key nix-mode-map "\C-c\C-e" 'nix-edit)
-  (define-key nix-mode-map "\C-c\C-f" 'nix-flake)
-  (define-key nix-mode-map "\C-c\C-r" 'nix-repl)
-  (define-key nix-mode-map "\C-c\C-s" 'nix-search)
-  (define-key nix-mode-map "\C-c\C-p" 'nix-store-show-path))
+  (define-key mode-specific-map "e" 'nix-edit)
+  (define-key mode-specific-map "r" 'nix-repl)
+  (define-key mode-specific-map "S" 'nix-search-transient)
+  (define-key mode-specific-map "T" 'nix-store-show-path))
 
 (define-advice nix-edit (:override () flake)
   (interactive)
@@ -775,9 +776,6 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
   (transient-append-suffix 'nix-flake-dispatch '(2 -1)
     '("o" "Rebuild attribute" nix-flake-rebuild-attribute)))
 
-(define-advice nix-search--display (:filter-args (args) display-buffer)
-  (list (car args) (get-buffer-create "*Nix-Search*") (cddr args)))
-
 (define-advice nix-read-flake (:override () always-prompt)
   (let ((default "nixpkgs"))
     (read-string (format-prompt "Nix flake" default) nil nil default)))
@@ -828,11 +826,36 @@ build."
                               (cons (concat flake-ref "#" attribute) options)
                               " "))))
 
-;;; Nixos Options
+(declare-function nix--process-json-nocheck "nix")
+(declare-function nix-search--display "nix-search")
+(defun nix-search-transient-execute ()
+  "Interactive command used as a transient suffix."
+  (declare (completion ignore) (interactive-only t))
+  (interactive)
+  (let* ((args (transient-args 'nix-search-transient))
+         (search (transient-arg-value "--regexp=" args))
+         (flake (transient-arg-value "--flake=" args))
+         (exclude (transient-arg-value "--exclude=" args)))
+    (nix-search--display
+     (apply #'nix--process-json-nocheck "search" "--json" flake search
+            (when exclude (list "--exclude" exclude)))
+     (get-buffer-create "*Nix-Search*")
+     t search flake)))
 
-(add-hook 'nixos-options-mode-hook 'nix-prettify-mode)
-(with-eval-after-load 'nix-mode
-  (define-key nix-mode-map "\C-c\C-o" 'nixos-options))
+(transient-define-prefix nix-search-transient ()
+  ["Options"
+   ("-r" "Regexp" "--regexp="
+    :prompt "Regexp: "
+    :init-value (lambda (o) (oset o value (read-regexp (oref o prompt))))
+    :always-read t)
+   ("-f" "Flake" "--flake="
+    nix-flake--read-flake-ref
+    :prompt "Flake: "
+    :init-value (lambda (o) (oset o value "flake:nixpkgs"))
+    :always-read t)
+   ("-e" "Exclude regexp" "--exclude=" :prompt "Exclude regexp: ")]
+  ["Actions" ("x" "Execute" nix-search-transient-execute)])
+
 
 ;;; Notmuch
 

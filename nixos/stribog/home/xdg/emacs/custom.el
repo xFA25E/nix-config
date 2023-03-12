@@ -426,6 +426,7 @@
  '(next-error-found-function 'next-error-quit-window)
  '(next-error-message-highlight t)
  '(next-screen-context-lines 10)
+ '(nix-flake-add-to-registry nil)
  '(notmuch-address-internal-completion '(received nil))
  '(notmuch-address-use-company nil)
  '(notmuch-always-prompt-for-sender t)
@@ -472,18 +473,13 @@
  '(nsm-settings-file
    (expand-file-name "emacs/network-security.data"
                      (xdg-cache-home)))
- '(orderless-component-separator "[[:space:]]+")
+ '(orderless-component-separator 'orderless-escapable-split-on-space)
  '(orderless-matching-styles '(orderless-regexp orderless-literal orderless-prefixes))
  '(org-adapt-indentation nil)
  '(org-agenda-files '("~/org/study.org" "~/org/life.org"))
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
- '(org-babel-load-languages
-   '((calc . t)
-     (emacs-lisp . t)
-     (sql . t)
-     (shell . t)
-     (http . t)))
+ '(org-babel-load-languages '((calc . t) (emacs-lisp . t) (sql . t) (shell . t)))
  '(org-capture-templates
    '(("r" "Remember" entry
       (file+headline "~/org/life.org" "Remember")
@@ -662,7 +658,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 124 :width normal :foundry "UKWN" :family "Iosevka"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "UKWN" :family "Iosevka"))))
  '(dired-async-message ((t (:foreground "dark orange"))))
  '(dired-async-mode-message ((t (:foreground "dark orange"))))
  '(header-line ((t (:inherit mode-line :background "grey90" :foreground "grey20" :box nil :height 124))))

@@ -34,10 +34,6 @@
     epkg-dired-tags.inputs.nixpkgs.follows = "nixpkgs";
     epkg-dired-tags.url = "github:xFA25E/dired-tags";
 
-    epkg-nixos-options.inputs.emacs-overlay.follows = "emacs-overlay";
-    epkg-nixos-options.inputs.nixpkgs.follows = "nixpkgs";
-    epkg-nixos-options.url = "github:xFA25E/nixos-options";
-
     epkg-pueue.inputs.emacs-overlay.follows = "emacs-overlay";
     epkg-pueue.inputs.nixpkgs.follows = "nixpkgs";
     epkg-pueue.url = "github:xFA25E/pueue";

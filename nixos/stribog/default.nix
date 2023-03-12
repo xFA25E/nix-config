@@ -54,13 +54,12 @@
     overlays = [
       inputs.addictions-tracker.overlays.default
       inputs.nur.overlay
-      inputs.emacs-overlay.overlay
+      inputs.emacs-overlay.overlays.default
       inputs.epkg-amded.overlays.amded
       inputs.epkg-amded.overlays.default
       inputs.epkg-cyrillic-dvorak-im.overlays.default
       inputs.epkg-dired-atool-transient.overlays.default
       inputs.epkg-dired-tags.overlays.default
-      inputs.epkg-nixos-options.overlays.default
       inputs.epkg-pueue.overlays.default
       inputs.epkg-rx-widget.overlays.default
       inputs.epkg-sdcwoc.overlays.default

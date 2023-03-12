@@ -39,7 +39,6 @@
         magit
         marginalia
         nix-mode
-        nixos-options
         notmuch
         nov
         orderless
