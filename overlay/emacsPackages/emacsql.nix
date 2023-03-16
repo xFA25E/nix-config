@@ -21,7 +21,7 @@ eprev.emacsql.overrideAttrs ({
     + "\n"
     + ''
       install -m=755 -D source/sqlite/emacsql-sqlite \
-        $out/share/emacs/site-lisp/elpa/emacsql-sqlite-${version}/sqlite/emacsql-sqlite
+        $out/share/emacs/site-lisp/elpa/emacsql-${version}/sqlite/emacsql-sqlite
     '';
 
   stripDebugList = ["share"];

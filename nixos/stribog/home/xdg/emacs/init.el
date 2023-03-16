@@ -746,11 +746,10 @@ See its documentiation for N."
 
 (add-hook 'proced-mode-hook 'nix-prettify-mode)
 
-(with-eval-after-load 'nix-mode
-  (define-key mode-specific-map "e" 'nix-edit)
-  (define-key mode-specific-map "r" 'nix-repl)
-  (define-key mode-specific-map "S" 'nix-search-transient)
-  (define-key mode-specific-map "T" 'nix-store-show-path))
+(define-key mode-specific-map "e" 'nix-edit)
+(define-key mode-specific-map "r" 'nix-repl)
+(define-key mode-specific-map "S" 'nix-search-transient)
+(define-key mode-specific-map "T" 'nix-store-show-path)
 
 (define-advice nix-edit (:override () flake)
   (interactive)
