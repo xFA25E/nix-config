@@ -29,7 +29,6 @@
         embark-consult
         emmet-mode
         envrc
-        fd-dired
         flymake-collection
         htmlize
         ipretty

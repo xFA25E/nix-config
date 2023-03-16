@@ -390,16 +390,40 @@ See `xref-backend-apropos' docs for PATTERN."
   (kill-local-variable 'browse-url-browser-function))
 (add-hook 'eww-mode-hook 'eww-restore-browse-url-browser-function)
 
-;;; Fd Dired
+;;; Files
 
-(require 'fd-dired)
+(define-key 'load-command-map "\C-f" 'load-file)
+(define-key 'load-command-map "\C-l" 'load-library)
 
-(defun fd-dired-transient-execute ()
+;;; Files X
+
+(define-key ctl-x-x-map "ad" 'add-dir-local-variable)
+(define-key ctl-x-x-map "aa" 'add-file-local-variable)
+(define-key ctl-x-x-map "ap" 'add-file-local-variable-prop-line)
+
+;;; Find Dired
+
+(defvar find-ls-option)
+(defun find-dired-command (dir cmd)
+  "Run `find-dired' with CMD in DIR.
+CMD must output files delimited by zero byte."
+  (interactive
+   (let ((cmd (read-shell-command "Shell command (zsf): "))
+         (dir (read-directory-name "Run find in directory: " nil "" t)))
+     (list dir cmd)))
+  (let ((find-program "true")
+        (find-ls-option
+         (cons
+          (concat "; " cmd " | xargs -0 ls -ldF --si --quoting-style=literal")
+          "-ldhF")))
+    (find-dired dir "")))
+
+(defun find-dired-fd--execute ()
   "Interactive command used as a transient suffix."
   (declare (completion ignore) (interactive-only t))
   (interactive)
-  (let ((args (transient-args 'fd-dired-transient)))
-    (fd-dired
+  (let ((args (transient-args 'find-dired-fd)))
+    (find-dired-command
      (transient-arg-value "--directory=" args)
      (mapconcat
       (lambda (arg)
@@ -408,14 +432,13 @@ See `xref-backend-apropos' docs for PATTERN."
           ((rx bos "--pattern=" (let pattern (* any)))
            (shell-quote-argument pattern))
           ((rx bos "--contains-regexp=" (let regexp (* any)))
-           (concat "--exec " fd-grep-dired-program
-                   " " fd-grep-dired-pre-grep-args " "
-                   (shell-quote-argument regexp)
-                   " -0 -ls " (shell-quote-argument " ;")))
-    (_ (shell-quote-argument arg))))
-      args " "))))
+           (concat "--exec rg --color never --regexp"
+                   " " (shell-quote-argument regexp)
+                   " -0 -ls " (shell-quote-argument ";")))
+          (_ (shell-quote-argument arg))))
+      (cl-list* "fd" "-0" "-c" "never" args) " "))))
 
-(transient-define-prefix fd-dired-transient ()
+(transient-define-prefix find-dired-fd ()
   ["Flags"
    ("-H" "Include hidden files" "--hidden")
    ("-I" "Include ignored files" "--no-ignore")
@@ -446,20 +469,38 @@ See `xref-backend-apropos' docs for PATTERN."
    ("-o" "User and/or group" "--owner="
     :prompt "!?(user|uid)?(:(group|gid))? --owner=")
    ("-cr" "File contains regexp" "--contains-regexp=")]
-  ["Actions" ("x" "Execute" fd-dired-transient-execute)])
+  ["Actions" ("x" "Execute" find-dired-fd--execute)])
 
-(define-key search-map "\M-fd" 'fd-dired-transient)
+(define-key search-map "\M-fd" 'find-dired-fd)
 
-;;; Files
+(defun find-dired-locate--execute ()
+  "Interactive command used as a transient suffix."
+  (declare (completion ignore) (interactive-only t))
+  (interactive)
+  (let ((args (transient-args 'find-dired-locate)))
+    (find-dired-command
+     "/"
+     (mapconcat
+      (lambda (arg)
+        (pcase arg
+          ((rx bos "--pattern=" (let pattern (* any)))
+           (shell-quote-argument pattern))
+          (_ (shell-quote-argument arg))))
+      (cl-list* "locate" "-0" args) " "))))
 
-(define-key 'load-command-map "\C-f" 'load-file)
-(define-key 'load-command-map "\C-l" 'load-library)
+(transient-define-prefix find-dired-locate ()
+  ["Flags"
+   ("-b" "Basename" "--basename")
+   ("-i" "Ignore case" "--ignore-case")
+   ("-r" "POSIX extended regex" "--regex")]
+  ["Options"
+   ("-P" "Pattern" "--pattern="
+    :prompt "Locate pattern: "
+    :init-value (lambda (o) (oset o value (read-string (oref o prompt))))
+    :always-read t)]
+  ["Actions" ("x" "Execute" find-dired-locate--execute)])
 
-;;; Files X
-
-(define-key ctl-x-x-map "ad" 'add-dir-local-variable)
-(define-key ctl-x-x-map "aa" 'add-file-local-variable)
-(define-key ctl-x-x-map "ap" 'add-file-local-variable-prop-line)
+(define-key search-map "\M-fl" 'find-dired-locate)
 
 ;;; Find Func
 
@@ -602,10 +643,6 @@ See `xref-backend-apropos' docs for PATTERN."
 ;;; Loadhist
 
 (define-key 'load-command-map "\C-u" 'unload-feature)
-
-;;; Locate
-
-(define-key search-map "\M-fl" 'locate)
 
 ;;; Magit
 
