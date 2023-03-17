@@ -10,7 +10,7 @@ pkgs: {
   switch = {
     type = "app";
     program = toString (pkgs.writeShellScript "switch" ''
-      sudo -A nixos-rebuild switch --print-build-logs --flake .
+      sudo -A nixos-rebuild switch --print-build-logs --flake ~/Documents/projects/nix-config
     '');
   };
 }

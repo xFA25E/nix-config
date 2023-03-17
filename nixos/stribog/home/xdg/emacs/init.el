@@ -786,13 +786,9 @@ See its documentiation for N."
                                       (nix-flake--run-attribute-names))
                      nil
                      (consp current-prefix-arg)))
-  (let ((default-directory (project-root (project-current t)))
-        (compilation-buffer-name-function
-         (or project-compilation-buffer-name-function
-             compilation-buffer-name-function)))
-    (compile (nix-flake--installable-command "run" options flake-ref attribute
-                                             command-args)
-             comint)))
+  (compile (nix-flake--installable-command "run" options flake-ref attribute
+                                           command-args)
+           comint))
 
 (declare-function nix-flake--build-attribute-names "nix-flake")
 (defun nix-flake-log-attribute (options flake-ref attribute)
@@ -819,13 +815,14 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
 (defun nix-compile-in-project-advice (fn &rest args)
   "Change compilation buffer name in FN with ARGS.
 Used as an advice."
-  (let ((default-directory (project-root (project-current t)))
+  (let ((default-directory nix-flake-ref)
         (compilation-buffer-name-function
          (or project-compilation-buffer-name-function
              compilation-buffer-name-function)))
     (apply fn args)))
 
 (dolist (fn '(nix-flake-log-attribute
+              nix-flake-run-attribute
               nix-flake-run-default
               nix-flake-build-attribute
               nix-flake-build-default
