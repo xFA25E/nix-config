@@ -50,7 +50,6 @@
         php-mode
         pueue
         rainbow-mode
-        restclient
         reverse-im
         rg
         rust-mode
@@ -65,6 +64,7 @@
         transmission
         tree-sitter
         tree-sitter-langs
+        verb
         vertico
         vlf
         web-mode
