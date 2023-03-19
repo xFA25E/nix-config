@@ -31,7 +31,6 @@
 
 (autoload 'apheleia-mode "apheleia")
 (add-hook 'css-mode-hook 'apheleia-mode)
-(add-hook 'html-mode-hook 'apheleia-mode)
 (add-hook 'js-mode-hook 'apheleia-mode)
 (add-hook 'nix-mode-hook 'apheleia-mode)
 (add-hook 'nxml-mode-hook 'apheleia-mode)

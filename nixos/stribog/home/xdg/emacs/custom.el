@@ -294,7 +294,7 @@
  '(history-delete-duplicates t)
  '(history-length 1000)
  '(hscroll-step 1)
- '(html-mode-hook '(emmet-mode tree-sitter-mode) t)
+ '(html-mode-hook '(apheleia-mode emmet-mode tree-sitter-mode))
  '(ibuffer-default-sorting-mode 'major-mode)
  '(ibuffer-show-empty-filter-groups nil)
  '(image-dired-db-file (expand-file-name "emacs/image-dired-db" (xdg-data-home)))
