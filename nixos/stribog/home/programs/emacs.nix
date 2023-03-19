@@ -1,10 +1,25 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  inputs,
+  ...
+}: {
   programs.emacs = {
     enable = true;
     extraPackages = epkgs:
-      with epkgs; [
+      (
+        map (flake: inputs."epkg-${flake}".packages.${pkgs.system}.default) [
+          "amded"
+          "cyrillic-dvorak-im"
+          "dired-atool-transient"
+          "dired-tags"
+          "pueue"
+          "rx-widget"
+          "sdcwoc"
+          "tempo-extra"
+        ]
+      )
+      ++ (with epkgs; [
         affe
-        amded
         apheleia
         async
         avy
@@ -16,9 +31,6 @@
         csharp-mode
         csproj-mode
         csv-mode
-        cyrillic-dvorak-im
-        dired-atool-transient
-        dired-tags
         djvu
         dotnet
         dumb-jump
@@ -48,19 +60,15 @@
         pcmpl-args
         pdf-tools
         php-mode
-        pueue
         rainbow-mode
         reverse-im
         rg
         rust-mode
-        rx-widget
-        sdcwoc
         sly
         sly-asdf
         sly-quicklisp
         sql-indent
         sqlup-mode
-        tempo-extra
         transmission
         tree-sitter
         tree-sitter-langs
@@ -69,6 +77,6 @@
         vlf
         web-mode
         wgrep
-      ];
+      ]);
   };
 }
