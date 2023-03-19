@@ -5,7 +5,7 @@
   inherit (inputs) nixpkgs self;
   l = inputs.nixpkgs.lib // builtins;
   meta = inputs.cells.automation.lib;
-  epkgs = nixpkgs.emacs.pkgs;
+  epkgs = (nixpkgs.appendOverlays [inputs.emacs-overlay.overlay]).emacs.pkgs;
 in {
   default = cell.packages."emacsPackages/${meta.name}";
   "emacsPackages/${meta.name}" = epkgs.melpaBuild {
