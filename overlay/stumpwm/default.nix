@@ -10,11 +10,30 @@
   stdenv,
   texinfo,
   writeText,
+  withSlynk ? false,
 }: let
   l = lib // builtins;
 
   sbclCmd = "${sbcl_2_2_6}/bin/sbcl --script";
   sbclPackages = lispPackages_new.lispPackagesFor sbclCmd;
+
+  slynk = lispPackages_new.build-asdf-system {
+    inherit (emacs.pkgs.sly) version src;
+    pname = "slynk";
+    lisp = sbclCmd;
+    systems = [
+      "slynk"
+      "slynk/arglists"
+      "slynk/fancy-inspector"
+      "slynk/indentation"
+      "slynk/mrepl"
+      "slynk/package-fu"
+      "slynk/profiler"
+      "slynk/retro"
+      "slynk/stickers"
+      "slynk/trace-dialog"
+    ];
+  };
 
   stumpwm = lispPackages_new.build-asdf-system {
     inherit src;
@@ -43,12 +62,17 @@
       sbclPackages;
   };
 
-  sbcl = lispPackages_new.lispWithPackages sbclCmd (_: [swm-config]);
+  sbcl =
+    lispPackages_new.lispWithPackages sbclCmd (_:
+      [swm-config] ++ l.lists.optional withSlynk slynk);
 
-  load-stumpwm = writeText "load-stumpwm.lisp" ''
-    (require "asdf")
-    (asdf:load-system "swm-config")
-  '';
+  load-stumpwm = writeText "load-stumpwm.lisp" (''
+      (require "asdf")
+      (asdf:load-system "swm-config") ''
+    + l.strings.optionalString withSlynk ''
+      (asdf:load-system "slynk")
+      (mapc #'asdf:load-system (remove "slynk/" (asdf:registered-systems) :test-not #'uiop:string-prefix-p))
+    '');
 in
   stdenv.mkDerivation {
     inherit src;
