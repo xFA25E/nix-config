@@ -1,54 +1,64 @@
 {
   autoconf,
-  emacsPackages,
-  fetchzip,
+  emacs,
   lib,
+  lispPackages_new,
   makeWrapper,
   pkg-config,
-  runCommand,
   sbcl_2_2_6,
-  sly ? emacsPackages.sly.src,
-  slynk ? false,
   src,
   stdenv,
   texinfo,
   writeText,
 }: let
-  inherit (lib.lists) optional;
-  inherit (lib.sources) sourceFilesBySuffices;
-  inherit (lib.strings) concatMapStringsSep optionalString;
-  inherit (lib.trivial) importJSON;
+  l = lib // builtins;
 
-  swm-config = sourceFilesBySuffices ./swm-config [".lisp" ".asd"];
+  sbclCmd = "${sbcl_2_2_6}/bin/sbcl --script";
+  sbclPackages = lispPackages_new.lispPackagesFor sbclCmd;
 
-  deps =
-    (map fetchzip (importJSON ./urls.json))
-    ++ [swm-config]
-    ++ optional slynk sly;
+  stumpwm = lispPackages_new.build-asdf-system {
+    inherit src;
+    pname = "stumpwm";
+    version = "22.05";
+    lisp = sbclCmd;
+    lispLibs = l.attrsets.attrVals ["alexandria" "cl-ppcre" "clx"] sbclPackages;
+  };
 
-  load-stumpwm = writeText "load-stumpwm.lisp" (''
-      (require "asdf")
-      (asdf:load-system "swm-config")
-    ''
-    + optionalString slynk ''
-      (asdf:load-system "slynk")
-      (mapc #'asdf:load-system (remove "slynk/" (asdf:registered-systems) :test-not #'uiop:string-prefix-p))
-    '');
+  swm-config = lispPackages_new.build-asdf-system {
+    pname = "swm-config";
+    version = "0.0.1";
+    src = l.sources.sourceFilesBySuffices ./swm-config [".lisp" ".asd"];
+    lisp = sbclCmd;
+    lispLibs =
+      [stumpwm]
+      ++ l.attrsets.attrVals [
+        "alexandria"
+        "chronicity"
+        "cl-ppcre"
+        "jonathan"
+        "local-time"
+        "local-time-duration"
+        "trivia"
+      ]
+      sbclPackages;
+  };
+
+  sbcl = lispPackages_new.lispWithPackages sbclCmd (_: [swm-config]);
+
+  load-stumpwm = writeText "load-stumpwm.lisp" ''
+    (require "asdf")
+    (asdf:load-system "swm-config")
+  '';
 in
   stdenv.mkDerivation {
-    inherit src deps;
-    name = "stumpwm";
-    nativeBuildInputs = [sbcl_2_2_6 autoconf texinfo makeWrapper pkg-config];
+    inherit src;
+    name = "stumpwm-with-config";
+    nativeBuildInputs = [sbcl autoconf texinfo makeWrapper pkg-config];
     configurePhase = ''
       ./autogen.sh
       ./configure --prefix=$out --with-module-dir=$out/share/stumpwm/modules
     '';
     preBuild = ''
-      mkdir deps
-      cp -rL $deps deps/
-      chmod -R 777 deps
-      export CL_SOURCE_REGISTRY="$PWD:$PWD/deps//:"
-      export ASDF_OUTPUT_TRANSLATIONS="(:output-translations :ignore-inherited-configuration (t \"$PWD/.common-lisp/\"))"
       cat "${load-stumpwm}" >./load-stumpwm.lisp
     '';
     dontStrip = true;

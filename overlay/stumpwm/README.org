@@ -1,9 +1,0 @@
-#+TITLE: Custom StumpWM build
-
-This is my custom build of *StumpWM* for *nix* with arbitrary dependencies and
-slynk.
-
-* Instructions
-
-1. Run ~./generate-dependency-urls.sh~
-2. Build with ~nix-build '<nixpkgs>' -A stumpwm~
