@@ -1,5 +1,7 @@
 #+TITLE: package-name
 
+[[https://github.com/xFA25E/package-name/actions/workflows/test.yml/badge.svg]]
+
 This is my package.  It is nice.  You should try it.
 
 * Screenshots

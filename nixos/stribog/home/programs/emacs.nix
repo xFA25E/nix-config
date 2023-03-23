@@ -31,6 +31,7 @@
         csharp-mode
         csproj-mode
         csv-mode
+        discomfort
         djvu
         dotnet
         dumb-jump

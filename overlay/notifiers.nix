@@ -1,7 +1,7 @@
 {
   fetchzip,
   ffmpeg,
-  mpv,
+  mpg321,
   runCommand,
   symlinkJoin,
   writeShellScriptBin,
@@ -23,7 +23,7 @@
 
   makeNotifier = {name, ...} @ src:
     writeShellScriptBin "notify_${name}" ''
-      exec ${mpv}/bin/mpv --no-terminal ${makeOrangeSound src}
+      exec ${mpg321}/bin/mpg321 -q ${makeOrangeSound src}
     '';
 in
   symlinkJoin {

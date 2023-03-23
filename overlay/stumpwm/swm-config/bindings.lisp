@@ -61,8 +61,7 @@
 (define-keys *timer-map*
   "C-c" "timer-add"
   "C-b" "timer-add balls \"in 15 minutes\""
-  "C-s" "timer-add stand \"in 20 minutes\""
-  "C-n" "timer-add neck \"in 1 hour\"")
+  "C-n" "timer-add-neck-block")
 
 ;;; REMAPPED KEYS
 
