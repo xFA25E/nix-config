@@ -170,7 +170,7 @@ See `browse-url' for URL and ARGS."
                    (internal-default-process-filter proc text)
                    (goto-char point)))))))
 
-        (pop-to-buffer buffer-name))
+        (pop-to-buffer-same-window buffer-name))
     (funcall fn man-args)))
 
 (defvar consult--buffer-display)

@@ -65,6 +65,26 @@ in {
       verbose = true;
     };
 
+    grobi = {
+      enable = true;
+      rules = [
+        {
+          name = "Dual Monitor";
+          outputs_connected = ["eDP-1" "HDMI-1"];
+          configure_row = ["HDMI-1" "eDP-1"];
+          atomic = true;
+          primary = "HDMI-1";
+        }
+        {
+          name = "Default";
+          outputs_connected = ["eDP-1"];
+          configure_single = "eDP-1";
+          atomic = true;
+          primary = "eDP-1";
+        }
+      ];
+    };
+
     mbsync = {
       enable = true;
       postExec = "${mailSync}";

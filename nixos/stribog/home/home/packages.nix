@@ -11,10 +11,8 @@
       acpi
       addictionsTracker
       alsaUtils
-      arandr
       ascii
       atool
-      autorandr
       bind
       binutils
       brave
