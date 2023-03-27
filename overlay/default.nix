@@ -38,4 +38,6 @@ in {
   ytdlm = callPackage ./ytdlm.nix {};
   ytdlmp = callPackage ./ytdlmp.nix {};
   ytdlp = callPackage ./ytdlp.nix {};
+
+  mahogany = callPackage ./mahogany.nix {};
 }
