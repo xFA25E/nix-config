@@ -13,4 +13,12 @@ pkgs: {
       sudo -A nixos-rebuild switch --print-build-logs --flake ~/Documents/projects/nix-config
     '');
   };
+  deployPerun = {
+    type = "app";
+    program = toString (pkgs.writeShellScript "switch" ''
+      export NIX_SSHOPTS=-t
+      nixos-rebuild -L switch --flake .#perun --target-host greypc \
+                              --use-remote-sudo --print-build-logs
+    '');
+  };
 }
