@@ -321,11 +321,9 @@ For EDIT-COMMAND see `recompile'."
 (with-eval-after-load 'eglot
   (define-key eglot-mode-map "\C-c\C-l" 'eglot-code-actions)
 
-  (setf (cdr (assoc '(js-mode typescript-mode) eglot-server-programs))
-        '("typescript-language-server" "--tsserver-path" "tsserver" "--stdio"))
-
-  (setf (cdr (assq 'csharp-mode eglot-server-programs))
-        #'eglot-csharp-server-program)
+  (mapc (apply-partially 'add-to-list 'eglot-server-programs)
+        '((js-mode . ("typescript-language-server" "--tsserver-path" "tsserver" "--stdio"))
+          (csharp-mode . eglot-csharp-server-program)))
 
   (add-to-list 'eglot-stay-out-of 'eldoc-documentation-strategy))
 
