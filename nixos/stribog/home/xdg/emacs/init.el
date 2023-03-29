@@ -103,7 +103,7 @@ See `browse-url' for URL and ARGS."
   (define-key compilation-button-map "o" 'compile-goto-error)
   (define-key compilation-mode-map "\C-m" 'compile-goto-error-same-window)
   (define-key compilation-mode-map "o" 'compile-goto-error)
-  (define-key compilation-shell-minor-mode-map "\C-c\C-g" 'recompile))
+  (define-key compilation-shell-minor-mode-map "\C-c\C-g" 'recompile-comint-maybe-in-project))
 
 (declare-function compile-goto-error "compile")
 (defun compile-goto-error-same-window ()
@@ -112,6 +112,18 @@ See `browse-url' for URL and ARGS."
   (xref-push-marker-stack)
   (same-window-prefix)
   (compile-goto-error))
+
+(defvar project-compilation-buffer-name-function)
+(declare-function recompile "compile")
+(defun recompile-comint-maybe-in-project (&optional edit-command)
+  "Recompile comint in project if in project.
+For EDIT-COMMAND see `recompile'."
+  (interactive "P")
+  (let ((compilation-buffer-name-function
+         (if (project-current)
+             project-compilation-buffer-name-function
+           compilation-buffer-name-function)))
+    (recompile edit-command)))
 
 ;;; Consult
 
@@ -771,7 +783,6 @@ See its documentiation for N."
    :test #'string=))
 
 (defvar nix-flake-ref)
-(defvar project-compilation-buffer-name-function)
 (declare-function nix-flake--installable-command "nix-flake")
 (declare-function nix-flake--options "nix-flake")
 (declare-function nix-flake--run-attribute-names "nix-flake")
