@@ -1,0 +1,19 @@
+diff --git a/lisp/globals.lisp b/lisp/globals.lisp
+index 1d7d93d..c70e333 100644
+--- a/lisp/globals.lisp
++++ b/lisp/globals.lisp
+@@ -7,7 +7,12 @@ defglobal *compositor-state* (make-instance 'mahogany-state))
+ (defun handle-server-stop (sequence seat)
+   (server-stop *compositor-state*))
+ 
++(defun run-fucking-something-foot ()
++  (log-string :debug "Running fucking foot")
++  (uiop:launch-program "foot"))
++
+ (setf (mahogany-state-keybindings *compositor-state*)
+       (list (define-kmap
+-	      (kbd "C-t") (define-kmap
+-			    (kbd "q") #'handle-server-stop))))
++              (kbd "C-t") (define-kmap
++                            (kbd "q") #'handle-server-stop
++                            (kbd "c") #'run-fucking-something-foot))))

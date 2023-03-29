@@ -179,7 +179,7 @@ in
       seatd
       vulkan-loader
       wayland
-      wayland-protocols
+      wayland-protocols # no lib
       # xgboost
       # xorg.libX11
       # xorg.libxcb
@@ -196,6 +196,8 @@ in
       cp -r ${cl-xkbcommonSrc}/* source/dependencies/cl-xkbcommon/
       chmod -R '+w' source/{heart/subprojects/wlroots,dependencies/{cl-wayland,cl-xkbcommon}}
     '';
+
+    patches = [./mahogany.patch];
 
     dontConfigure = true;
     buildPhase = ''
