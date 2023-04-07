@@ -658,17 +658,17 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "UKWN" :family "Iosevka"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 107 :width normal :foundry "UKWN" :family "Iosevka"))))
  '(dired-async-message ((t (:foreground "dark orange"))))
  '(dired-async-mode-message ((t (:foreground "dark orange"))))
- '(header-line ((t (:inherit mode-line :background "grey90" :foreground "grey20" :box nil :height 124))))
- '(mode-line ((t (:background "white smoke" :foreground "black" :box (:line-width 1 :color "grey75") :height 101))))
+ '(header-line ((t (:inherit default :background "grey90" :foreground "grey20"))))
+ '(mode-line ((t (:inherit default :background "white smoke" :foreground "black" :box (:line-width (1 . 1) :color "grey75") :height 0.83))))
  '(mode-line-inactive ((t (:weight light :foreground "grey20" :background "dark gray" :inherit mode-line))))
  '(newsticker-treeview-new-face ((t (:underline t :weight bold))))
  '(org-mode-line-clock ((t nil)))
  '(org-mode-line-clock-overrun ((t (:background "red"))))
  '(region ((t (:extend t :background "LemonChiffon2" :distant-foreground "gtk_selection_fg_color"))))
- '(tab-bar ((t (:inherit variable-pitch :background "black" :foreground "white smoke" :height 101))))
+ '(tab-bar ((t (:inherit (variable-pitch default) :background "black" :foreground "white smoke" :height 0.83))))
  '(tab-bar-tab ((t (:inherit tab-bar :background "white smoke" :foreground "black" :box (:line-width (1 . 1) :color "white smoke")))))
  '(tab-bar-tab-group-current ((t (:weight bold :box nil :inverse-video t :inherit tab-bar-tab))))
  '(tab-bar-tab-group-inactive ((t (:inherit tab-bar-tab-inactive))))
