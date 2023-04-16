@@ -129,6 +129,7 @@
           "browser.shell.checkDefaultBrowser" = false;
           "browser.startup.homepage" = "about:blank";
           "browser.startup.homepage_override.mstone" = "ignore";
+          "browser.tabs.closeWindowWithLastTab" = false;
           "browser.tabs.crashReporting.sendReport" = false;
           "browser.tabs.firefox-view" = false;
           "browser.toolbars.bookmarks.visibility" = "never";
