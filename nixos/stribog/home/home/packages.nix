@@ -41,6 +41,7 @@
       image-dired-external-viewer
       image_clipboard
       imagemagick
+      interval_timer
       iw
       iwgtk
       ledger

@@ -23,7 +23,7 @@
 
   makeNotifier = {name, ...} @ src:
     writeShellScriptBin "notify_${name}" ''
-      exec ${mpg321}/bin/mpg321 -q ${makeOrangeSound src}
+      exec ${mpg321}/bin/mpg321 -q ${makeOrangeSound src} >/dev/null 2>/dev/null
     '';
 in
   symlinkJoin {

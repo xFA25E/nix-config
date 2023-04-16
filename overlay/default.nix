@@ -14,6 +14,7 @@ in {
   image-dired-external-viewer = callPackage ./image-dired-external-viewer.nix {};
   image_clipboard = callPackage ./image_clipboard.nix {};
   install_keys = callPackage ./install_keys.nix {};
+  interval_timer = callPackage ./interval_timer.nix {};
   make_backup = callPackage ./make_backup.nix {};
   mpvScripts = import ./mpvScripts final prev;
   mpvi = callPackage ./mpvi.nix {};
