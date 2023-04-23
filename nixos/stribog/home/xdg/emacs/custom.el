@@ -346,6 +346,14 @@
  '(kill-read-only-ok t)
  '(leaf-expand-minimally t)
  '(ledger-default-date-format "%Y-%m-%d")
+ '(ledger-reports
+   '(("cash flow" "%(binary) -f %(ledger-file) bal ^income ^expenses")
+     ("net worth" "%(binary) -f %(ledger-file) bal ^assets ^liabilities")
+     ("bal" "%(binary) -f %(ledger-file) bal")
+     ("reg" "%(binary) -f %(ledger-file) reg")
+     ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
+     ("account" "%(binary) -f %(ledger-file) reg %(account)")
+     ("account monthly" "%(binary) -f %(ledger-file) -M reg %(account)")))
  '(link-hint-types
    '(link-hint-shr-url link-hint-org-link link-hint-markdown-link link-hint-help-link link-hint-info-link link-hint-package-link link-hint-package-keyword-link link-hint-package-install-link link-hint-epkg-button link-hint-compilation-link link-hint-nov-link link-hint-customize-widget link-hint-notmuch-hello link-hint-button link-hint-completion-list-candidate link-hint-text-url link-hint-file-link link-hint-org-agenda-item link-hint-xref-item link-hint-man-button link-hint-dired-filename))
  '(lisp-mode-hook '(sly-editing-mode abbrev-mode))
