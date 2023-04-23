@@ -25,6 +25,11 @@
             url = "https://github.com/search?q=%s";
           }
           {
+            keyword = ":gmaps";
+            name = "google-maps";
+            url = "https://www.google.com/maps/search/%s";
+          }
+          {
             keyword = ":gtr";
             name = "google-translate-to-russian";
             url = "https://translate.google.com/?sl=auto&tl=ru&op=translate&text=%s";
