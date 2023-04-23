@@ -131,7 +131,7 @@ For EDIT-COMMAND see `recompile'."
 (define-key ctl-x-4-map "b" 'consult-buffer-other-window)
 (define-key ctl-x-map "b" 'consult-buffer)
 (define-key ctl-x-r-map "b" 'consult-bookmark)
-(define-key ctl-x-r-map "l" 'consult-register-load)
+(define-key ctl-x-r-map "i" 'consult-register-load)
 (define-key ctl-x-r-map "s" 'consult-register-store)
 (define-key global-map "\M-H" 'consult-history)
 (define-key global-map "\M-y" 'consult-yank-replace)
@@ -406,9 +406,9 @@ See `xref-backend-apropos' docs for PATTERN."
 
 ;;; Files X
 
-(define-key ctl-x-x-map "ad" 'add-dir-local-variable)
-(define-key ctl-x-x-map "aa" 'add-file-local-variable)
-(define-key ctl-x-x-map "ap" 'add-file-local-variable-prop-line)
+(define-key ctl-x-x-map "ld" 'add-dir-local-variable)
+(define-key ctl-x-x-map "lf" 'add-file-local-variable)
+(define-key ctl-x-x-map "lF" 'add-file-local-variable-prop-line)
 
 ;;; Find Dired
 
