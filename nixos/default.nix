@@ -9,4 +9,5 @@ inputs: let
 in {
   stribog = mkNixos ./stribog;
   perun = mkNixos ./perun.nix;
+  khors = mkNixos ./khors.nix;
 }

@@ -55,6 +55,7 @@
       mpvi
       nload
       notifiers
+      ntfs3g
       p7zip
       pandoc
       parted

@@ -336,7 +336,11 @@ For EDIT-COMMAND see `recompile'."
 
 (cl-defmethod xref-backend-identifier-completion-table ((_backend (eql eglot+dumb)))
   "Xref backend that combines eglot and dumb-jump."
-  (xref-backend-identifier-completion-table 'eglot))
+  (lambda (string pred _action)
+    (or (all-completions
+         string (xref-backend-identifier-completion-table 'eglot) pred)
+        (all-completions
+         string (xref-backend-identifier-completion-table 'dumb-jump) pred))))
 
 (cl-defmethod xref-backend-definitions ((_backend (eql eglot+dumb)) identifier)
   "Xref backend that combines eglot and dumb-jump.
@@ -353,7 +357,8 @@ See `xref-backend-references' docs for IDENTIFIER."
 (cl-defmethod xref-backend-apropos ((_backend (eql eglot+dumb)) pattern)
   "Xref backend that combines eglot and dumb-jump.
 See `xref-backend-apropos' docs for PATTERN."
-  (xref-backend-apropos 'eglot pattern))
+  (or (xref-backend-apropos 'eglot pattern)
+      (xref-backend-apropos 'dumb-jump pattern)))
 
 ;;; Eldoc
 
@@ -600,6 +605,8 @@ CMD must output files delimited by zero byte."
   (define-key js-mode-map "\M-." nil))
 
 ;;; Ledger
+
+(add-hook 'ledger-mode-hook 'ledger-flymake-enable)
 
 (defvar ledger-amount-regex)
 (defvar ledger-commodity-regexp)

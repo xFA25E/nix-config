@@ -34,6 +34,10 @@
     epkg-dired-tags.inputs.nixpkgs.follows = "nixpkgs";
     epkg-dired-tags.url = "github:xFA25E/dired-tags";
 
+    epkg-enwc-iwd.inputs.emacs-overlay.follows = "emacs-overlay";
+    epkg-enwc-iwd.inputs.nixpkgs.follows = "nixpkgs";
+    epkg-enwc-iwd.url = "github:xFA25E/enwc-iwd";
+
     epkg-pueue.inputs.emacs-overlay.follows = "emacs-overlay";
     epkg-pueue.inputs.nixpkgs.follows = "nixpkgs";
     epkg-pueue.url = "github:xFA25E/pueue";

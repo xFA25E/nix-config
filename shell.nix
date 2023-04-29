@@ -6,5 +6,5 @@
   statix,
 }:
 mkShell {
-  buildInputs = [alejandra shellcheck statix rnix-lsp];
+  packages = [alejandra shellcheck statix rnix-lsp];
 }

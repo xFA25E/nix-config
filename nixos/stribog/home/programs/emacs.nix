@@ -12,6 +12,7 @@
           "cyrillic-dvorak-im"
           "dired-atool-transient"
           "dired-tags"
+          "enwc-iwd"
           "pueue"
           "rx-widget"
           "sdcwoc"
@@ -42,6 +43,7 @@
         embark-consult
         emmet-mode
         envrc
+        enwc
         flymake-collection
         htmlize
         ipretty
