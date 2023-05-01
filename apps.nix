@@ -21,4 +21,12 @@ pkgs: {
                               --use-remote-sudo --print-build-logs
     '');
   };
+  deployKhors = {
+    type = "app";
+    program = toString (pkgs.writeShellScript "switch" ''
+      export NIX_SSHOPTS=-t
+      nixos-rebuild -L switch --flake .#khors --target-host litkov.one \
+                              --use-remote-sudo --print-build-logs
+    '');
+  };
 }

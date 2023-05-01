@@ -18,45 +18,66 @@
   };
 in {
   accounts.email = {
-    accounts."polimi" = {
-      address = "valeriy.litkovskyy@mail.polimi.it";
-      aliases = ["10622800@polimi.it"];
+    accounts = {
+      "litkov" = {
+        address = "valeriy@litkov.one";
+        aliases = ["valery@litkov.one"];
 
-      imap = {
-        host = "outlook.office365.com";
-        tls.enable = true;
+        msmtp = {
+          enable = true;
+          extraConfig.logfile = "${config.xdg.cacheHome}/msmtp-litkov.log";
+        };
+
+        passwordCommand = "${pass} show litkov.one/val";
+        realName = "Valeriy Litkovskyy";
+
+        smtp = {
+          host = "mail.litkov.one";
+          tls.enable = true;
+        };
+
+        userName = "valeriy@litkov.one";
       };
+      "polimi" = {
+        address = "valeriy.litkovskyy@mail.polimi.it";
+        aliases = ["10622800@polimi.it"];
 
-      mbsync = {
-        enable = true;
-        groups."polimi" = {
-          channels = {
-            "inbox" = makeChannel "INBOX" "inbox";
-            "sent" = makeChannel "Sent Items" "sent";
+        imap = {
+          host = "outlook.office365.com";
+          tls.enable = true;
+        };
+
+        mbsync = {
+          enable = true;
+          groups."polimi" = {
+            channels = {
+              "inbox" = makeChannel "INBOX" "inbox";
+              "sent" = makeChannel "Sent Items" "sent";
+            };
           };
         };
-      };
 
-      msmtp = {
-        enable = true;
-        extraConfig.logfile = "${config.xdg.cacheHome}/msmtp-polimi.log";
-      };
-
-      notmuch.enable = true;
-      passwordCommand = "${pass} show mail/polimi | ${head} -n1";
-
-      primary = true;
-      realName = "Valeriy Litkovskyy";
-
-      smtp = {
-        host = "smtp.office365.com";
-        tls = {
+        msmtp = {
           enable = true;
-          useStartTls = true;
+          extraConfig.logfile = "${config.xdg.cacheHome}/msmtp-polimi.log";
         };
-      };
 
-      userName = "10622800@polimi.it";
+        notmuch.enable = true;
+        passwordCommand = "${pass} show mail/polimi | ${head} -n1";
+
+        primary = true;
+        realName = "Valeriy Litkovskyy";
+
+        smtp = {
+          host = "smtp.office365.com";
+          tls = {
+            enable = true;
+            useStartTls = true;
+          };
+        };
+
+        userName = "10622800@polimi.it";
+      };
     };
     maildirBasePath = "${config.xdg.dataHome}/mail";
   };

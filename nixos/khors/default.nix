@@ -1,15 +1,45 @@
 {
+  config,
   inputs,
+  modulesPath,
   username,
   ...
 }: {
+  imports = [
+    inputs.agenix.nixosModules.default
+    inputs.simple-nixos-mailserver.nixosModules.mailserver
+    "${modulesPath}/virtualisation/digital-ocean-image.nix"
+  ];
+
+  age.secrets."mail".file = ./secrets/mail.age;
+
   boot.cleanTmpDir = true;
 
   i18n.defaultLocale = "en_US.UTF-8";
 
+  mailserver = {
+    enable = true;
+    fqdn = "mail.litkov.one";
+    domains = ["litkov.one"];
+
+    loginAccounts = {
+      "valeriy@litkov.one" = {
+        aliases = ["postmaster@litkov.one" "valery@litkov.one"];
+        hashedPasswordFile = config.age.secrets."mail".path;
+      };
+    };
+
+    certificateScheme = 3;
+  };
+
   networking.hostName = "khors";
 
   nix = {
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 30d";
+    };
     registry.nixpkgs.flake = inputs.nixpkgs;
     settings = {
       auto-optimise-store = true;
@@ -27,10 +57,10 @@
     system = "x86_64-linux";
   };
 
-  # security.acme = {
-  #   acceptTerms = true;
-  #   defaults.email = "valeriy@litkov.one";
-  # };
+  security.acme = {
+    acceptTerms = true;
+    defaults.email = "vlr.ltkvsk@protonmail.com";
+  };
 
   services.openssh = {
     enable = true;

@@ -1,4 +1,5 @@
 {
+  agenix,
   alejandra,
   mkShell,
   rnix-lsp,
@@ -6,5 +7,6 @@
   statix,
 }:
 mkShell {
-  packages = [alejandra shellcheck statix rnix-lsp];
+  packages = [agenix alejandra shellcheck statix rnix-lsp];
+  shellHook = "export RULES=$PWD/nixos/khors/secrets/secrets.nix";
 }

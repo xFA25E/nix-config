@@ -84,6 +84,11 @@
   };
 
   nix = {
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 30d";
+    };
     registry = {
       nix-config.flake = inputs.self;
       nixpkgs.flake = inputs.nixpkgs;

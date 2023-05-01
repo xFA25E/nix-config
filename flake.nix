@@ -6,6 +6,9 @@
     addictions-tracker.inputs.nixpkgs.follows = "nixpkgs";
     addictions-tracker.url = "github:xFA25E/AddictionsTracker";
 
+    agenix.inputs.nixpkgs.follows = "nixpkgs";
+    agenix.url = "github:ryantm/agenix";
+
     discord.flake = false;
     discord.url = "https://dl.discordapp.net/apps/linux/0.0.22/discord-0.0.22.tar.gz";
 
@@ -71,6 +74,10 @@
 
     nur.url = "github:nix-community/NUR";
 
+    simple-nixos-mailserver.inputs.nixpkgs.follows = "nixpkgs";
+    simple-nixos-mailserver.inputs.nixpkgs-22_11.follows = "nixpkgs";
+    simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-22.11";
+
     stumpwm.flake = false;
     stumpwm.url = "github:stumpwm/stumpwm/22.05";
   };
@@ -86,7 +93,7 @@
       pkgs = import inputs.nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = [inputs.self.overlays.default];
+        overlays = [inputs.agenix.overlays.default inputs.self.overlays.default];
       };
     in {
       apps = import ./apps.nix pkgs;
