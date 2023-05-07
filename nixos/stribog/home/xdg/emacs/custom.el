@@ -440,22 +440,30 @@
  '(notmuch-address-internal-completion '(received nil))
  '(notmuch-address-use-company nil)
  '(notmuch-always-prompt-for-sender t)
- '(notmuch-archive-tags '("+archive" "-inbox" "-spam" "-trash" "-deleted"))
- '(notmuch-fcc-dirs '(("polimi" . "polimi/sent +sent +polimi")))
+ '(notmuch-archive-tags
+   '("+archive" "-flagged" "-inbox" "-spam" "-trash" "-deleted"))
+ '(notmuch-draft-tags '("+drafts"))
+ '(notmuch-fcc-dirs
+   '(("polimi" . "polimi/sent +sent +polimi")
+     ("litkov" . "litkov/sent +sent +litkov")))
  '(notmuch-mua-cite-function 'message-cite-original-without-signature)
  '(notmuch-mua-user-agent-function 'notmuch-mua-user-agent-full)
  '(notmuch-saved-searches
    '((:name "unread all" :query "tag:unread" :key "ua")
+     (:name "unread litkov" :query "tag:unread and tag:litkov" :key "ul")
      (:name "unread polimi" :query "tag:unread and tag:polimi" :key "up")
-     (:name "unread spam" :query "tag:unread and tag:spam" :key "us")
      (:name "inbox all" :query "tag:inbox" :key "ia")
+     (:name "inbox litkov" :query "tag:inbox and tag:litkov" :key "il")
      (:name "inbox polimi" :query "tag:polimi and tag:inbox" :key "ip")
      (:name "sent all" :query "tag:sent" :key "sa")
+     (:name "sent litkov" :query "tag:litkov and tag:sent" :key "sl")
      (:name "sent polimi" :query "tag:polimi and tag:sent" :key "sp")
      (:name "archive all" :query "tag:archive" :key "aa")
+     (:name "archive litkov" :query "tag:litkov and tag:archive" :key "al")
      (:name "archive polimi" :query "tag:polimi and tag:archive" :key "ap")
+     (:name "unread spam" :query "tag:unread and tag:spam" :key "us")
      (:name "flagged" :query "tag:flagged" :key "f")
-     (:name "drafts" :query "tag:draft" :key "d")))
+     (:name "drafts" :query "tag:drafts" :key "d")))
  '(notmuch-search-oldest-first nil)
  '(notmuch-show-all-multipart/alternative-parts t)
  '(notmuch-show-all-tags-list t)
@@ -464,19 +472,19 @@
    '(("a" notmuch-archive-tags "Archive")
      ("u" notmuch-show-mark-read-tags "Mark read")
      ("f"
-      ("+flagged" "-trash" "-spam" "-deleted")
+      ("-archive" "+flagged" "-inbox" "-spam" "-trash" "-deleted")
       "Flag")
      ("s"
-      ("+spam" "-inbox" "-archive" "-trash" "-deleted")
+      ("-archive" "-flagged" "-inbox" "+spam" "-trash" "-deleted")
       "Mark as spam")
      ("t"
-      ("+trash" "-inbox" "-spam" "-archive" "-deleted")
+      ("-archive" "-flagged" "-inbox" "-spam" "+trash" "-deleted")
       "Trash")
      ("d"
       ("+deleted")
       "Delete")
      ("i"
-      ("+inbox" "-trash" "-spam" "-archive" "-deleted")
+      ("-archive" "-flagged" "+inbox" "-spam" "-trash" "-deleted")
       "Inbox")))
  '(nov-save-place-file (expand-file-name "emacs/nov-places" (xdg-cache-home)))
  '(nov-text-width 80)
@@ -670,7 +678,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 107 :width normal :foundry "UKWN" :family "Iosevka"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 106 :width normal :foundry "UKWN" :family "Iosevka"))))
  '(dired-async-message ((t (:foreground "dark orange"))))
  '(dired-async-mode-message ((t (:foreground "dark orange"))))
  '(header-line ((t (:inherit default :background "grey90" :foreground "grey20"))))

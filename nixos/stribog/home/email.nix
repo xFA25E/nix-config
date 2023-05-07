@@ -23,12 +23,33 @@ in {
         address = "valeriy@litkov.one";
         aliases = ["valery@litkov.one"];
 
+        imap = {
+          host = "mail.litkov.one";
+          tls.enable = true;
+        };
+
+        mbsync = {
+          enable = true;
+          groups."litkov".channels = {
+            "archive" = makeChannel "Archive" "archive";
+            "drafts" = makeChannel "Drafts" "drafts";
+            "flagged" = makeChannel "Flagged" "flagged";
+            "inbox" = makeChannel "INBOX" "inbox";
+            "sent" = makeChannel "Sent" "sent";
+            "spam" = makeChannel "Junk" "spam";
+            "trash" = makeChannel "Trash" "trash";
+          };
+        };
+
         msmtp = {
           enable = true;
           extraConfig.logfile = "${config.xdg.cacheHome}/msmtp-litkov.log";
         };
 
+        notmuch.enable = true;
         passwordCommand = "${pass} show litkov.one/val";
+
+        primary = true;
         realName = "Valeriy Litkovskyy";
 
         smtp = {
@@ -48,7 +69,7 @@ in {
         };
 
         mbsync = {
-          enable = true;
+          enable = false;
           groups."polimi" = {
             channels = {
               "inbox" = makeChannel "INBOX" "inbox";
@@ -58,14 +79,13 @@ in {
         };
 
         msmtp = {
-          enable = true;
+          enable = false;
           extraConfig.logfile = "${config.xdg.cacheHome}/msmtp-polimi.log";
         };
 
         notmuch.enable = true;
         passwordCommand = "${pass} show mail/polimi | ${head} -n1";
 
-        primary = true;
         realName = "Valeriy Litkovskyy";
 
         smtp = {

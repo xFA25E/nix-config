@@ -41,6 +41,4 @@ in {
   ytdlp = callPackage ./ytdlp.nix {};
 
   mahogany = callPackage ./mahogany.nix {};
-
-  khors-doi = inputs.self.nixosConfigurations.khors.config.system.build.digitalOceanImage;
 }

@@ -1,6 +1,7 @@
 {
   config,
   inputs,
+  lib,
   modulesPath,
   username,
   ...
@@ -8,16 +9,29 @@
   imports = [
     inputs.agenix.nixosModules.default
     inputs.simple-nixos-mailserver.nixosModules.mailserver
-    "${modulesPath}/virtualisation/digital-ocean-image.nix"
+    "${modulesPath}/profiles/qemu-guest.nix"
   ];
 
   age.secrets."mail".file = ./secrets/mail.age;
 
-  boot.cleanTmpDir = true;
+  boot = {
+    cleanTmpDir = true;
+    initrd = {
+      availableKernelModules = ["ata_piix" "uhci_hcd" "xen_blkfront" "vmw_pvscsi"];
+      kernelModules = ["nvme"];
+    };
+    loader.grub.device = "/dev/sda";
+  };
+
+  fileSystems."/" = {
+    device = "/dev/sda2";
+    fsType = "ext4";
+  };
 
   i18n.defaultLocale = "en_US.UTF-8";
 
   mailserver = {
+    certificateScheme = 3;
     enable = true;
     fqdn = "mail.litkov.one";
     domains = ["litkov.one"];
@@ -29,10 +43,82 @@
       };
     };
 
-    certificateScheme = 3;
+    mailboxes = {
+      Archive = {
+        auto = "subscribe";
+        specialUse = "Archive";
+      };
+      Drafts = {
+        auto = "subscribe";
+        specialUse = "Drafts";
+      };
+      Flagged = {
+        auto = "subscribe";
+        specialUse = "Flagged";
+      };
+      Junk = {
+        auto = "subscribe";
+        specialUse = "Junk";
+      };
+      Sent = {
+        auto = "subscribe";
+        specialUse = "Sent";
+      };
+      Trash = {
+        auto = "subscribe";
+        specialUse = "Trash";
+      };
+    };
   };
 
-  networking.hostName = "khors";
+  networking = {
+    defaultGateway = "208.87.129.1";
+    defaultGateway6 = {
+      address = "2602:ff16:6::1";
+      interface = "enp3s0";
+    };
+    dhcpcd.enable = false;
+    domain = "";
+    hostName = "khors";
+    interfaces = {
+      enp3s0 = {
+        ipv4 = {
+          addresses = [
+            {
+              address = "208.87.129.98";
+              prefixLength = 24;
+            }
+          ];
+          routes = [
+            {
+              address = "208.87.129.1";
+              prefixLength = 32;
+            }
+          ];
+        };
+        ipv6 = {
+          addresses = [
+            {
+              address = "2602:ff16:6:0:1:3a2:0:1";
+              prefixLength = 64;
+            }
+            {
+              address = "fe80::5054:82ff:fe2c:a490";
+              prefixLength = 64;
+            }
+          ];
+          routes = [
+            {
+              address = "2602:ff16:6::1";
+              prefixLength = 128;
+            }
+          ];
+        };
+      };
+    };
+    nameservers = ["8.8.8.8"];
+    usePredictableInterfaceNames = lib.mkForce true;
+  };
 
   nix = {
     gc = {
@@ -62,10 +148,15 @@
     defaults.email = "vlr.ltkvsk@protonmail.com";
   };
 
-  services.openssh = {
-    enable = true;
-    permitRootLogin = "no";
-    passwordAuthentication = false;
+  services = {
+    openssh = {
+      enable = true;
+      permitRootLogin = "no";
+      passwordAuthentication = false;
+    };
+    udev.extraRules = ''
+      ATTR{address}=="52:54:82:2c:a4:90", NAME="enp3s0"
+    '';
   };
 
   system.stateVersion = "22.11";

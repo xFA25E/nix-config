@@ -17,7 +17,7 @@ pkgs: {
     type = "app";
     program = toString (pkgs.writeShellScript "switch" ''
       export NIX_SSHOPTS=-t
-      nixos-rebuild -L switch --flake .#perun --target-host greypc \
+      nixos-rebuild -L switch --flake .#perun --target-host perun \
                               --use-remote-sudo --print-build-logs
     '');
   };
@@ -25,7 +25,7 @@ pkgs: {
     type = "app";
     program = toString (pkgs.writeShellScript "switch" ''
       export NIX_SSHOPTS=-t
-      nixos-rebuild -L switch --flake .#khors --target-host litkov.one \
+      nixos-rebuild -L switch --flake .#khors --target-host khors \
                               --use-remote-sudo --print-build-logs
     '');
   };

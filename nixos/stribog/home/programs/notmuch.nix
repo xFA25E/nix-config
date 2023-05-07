@@ -13,46 +13,49 @@ in {
       preNew = ''
         export PATH="${pkgs.findutils}/bin''${PATH:+:}$PATH"
 
+        # Delete all mails with deleted tag
         notmuch search --format=text0 --output=files tag:deleted | xargs -r0 rm -v
 
-        # polimi rules
+        # Tag drafts with their accounts
+        notmuch tag +litkov -- tag:drafts AND from:/litkov.one/ AND NOT tag:litkov
+        notmuch tag +polimi -- tag:drafts AND from:/polimi.it/ AND NOT tag:polimi
 
-        mkdir -p '${maildir}'/polimi/{inbox,sent,all}/cur
-
-        ## all tags sent should be in polimi/sent
-        notmuch search --output=files --format=text0 tag:polimi AND tag:sent AND NOT 'path:polimi/sent/cur/**' \
-          | xargs -r0 -I '{}' mv -v '{}' '${maildir}/polimi/sent/cur'
-
-        ## all tags archive/trash/spam should be in polimi/all
-        notmuch search --output=files --format=text0 tag:polimi AND '(tag:archive OR tag:trash OR tag:spam)' AND NOT 'path:polimi/all/cur/**' \
-          | xargs -r0 -I '{}' mv -v '{}' '${maildir}/polimi/all/cur'
-
-        ## all tags inbox/flagged should be in polimi/inbox
-        notmuch search --output=files --format=text0 tag:polimi AND '(tag:inbox OR tag:flagged)' AND NOT 'path:polimi/inbox/cur/**' \
-          | xargs -r0 -I '{}' mv -v '{}' '${maildir}/polimi/inbox/cur'
+        # Create all folders and move mails to it
+        for account in litkov polimi; do
+          for folder in archive drafts flagged inbox sent spam trash; do
+            cur=$account/$folder/cur
+            mkdir -p "${maildir}/$cur"
+            notmuch search --output=files --format=text0 tag:"$account" AND tag:"$folder" AND NOT "path:$cur/**" \
+              | xargs -r0 -I '{}' mv -v '{}' "${maildir}/$cur"
+          done
+        done
 
       '';
       postNew = ''
-        # general
+        notmuch tag +drafts -- 'path:drafts/**'
 
-        notmuch tag +draft -- 'path:drafts/**'
+        # litkov rules
+        notmuch tag +litkov -- 'path:litkov/**'
+        notmuch tag +archive -- 'path:litkov/archive/**'
+        notmuch tag +drafts  -- 'path:litkov/drafts/**'
+        notmuch tag +flagged -- 'path:litkov/flagged/**'
+        notmuch tag +inbox  -- 'path:litkov/inbox/**'
+        notmuch tag +sent -- 'path:litkov/sent/**'
+        notmuch tag +spam  -- 'path:litkov/spam/**'
+        notmuch tag +trash  -- 'path:litkov/trash/**'
 
         # polimi rules
-
         notmuch tag +polimi -- 'path:polimi/**'
         notmuch tag +inbox -- 'path:polimi/inbox/**'
         notmuch tag +sent  -- 'path:polimi/sent/**'
 
         ## spam rules
-
         notmuch tag +spam -inbox -- tag:new AND tag:polimi AND subject:politamtam
         notmuch tag +spam -inbox -- tag:new AND tag:polimi AND subject:"[eventi/events]"
         notmuch tag +spam -inbox -- tag:new AND tag:polimi AND subject:"open day"
 
         # after processing remove tag new
-
         notmuch tag -new -- tag:new
-
       '';
     };
   };
