@@ -12,6 +12,13 @@
       addictionsTracker
       alsaUtils
       ascii
+      aspell
+      aspellDicts.en
+      aspellDicts.en-computers
+      aspellDicts.en-science
+      aspellDicts.it
+      aspellDicts.ru
+      aspellDicts.uk
       atool
       bind
       binutils
@@ -25,6 +32,7 @@
       discord
       djvulibre
       dmenu
+      enchant
       exiftool
       fd
       ffmpeg
@@ -38,6 +46,7 @@
       hunspellDicts.en_US-large
       hunspellDicts.it_IT
       hunspellDicts.ru_RU
+      hunspellDicts.uk_UA
       image-dired-external-viewer
       image_clipboard
       imagemagick
@@ -56,6 +65,7 @@
       nload
       notifiers
       ntfs3g
+      nuspell
       p7zip
       pandoc
       parted

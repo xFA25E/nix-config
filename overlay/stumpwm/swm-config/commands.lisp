@@ -69,10 +69,11 @@
   (let ((swm:*default-selections* (if primary '(:primary) '(:clipboard))))
     (swm:window-send-string (swm:get-x-selection))))
 
-(stumpwm:defcommand timer-add-neck-block () ()
-  (stumpwm::eval-command "timer-add stand1 \"in 20 minutes\"" t)
-  (stumpwm::eval-command "timer-add stand2 \"in 40 minutes\"" t)
-  (stumpwm::eval-command "timer-add neck \"in 1 hour\"" t))
+(swm:defcommand timer-add-neck-block () ()
+  (swm::eval-command "timer-add stand \"in 30 minutes\"" t)
+  (swm::eval-command "timer-add stand-pause-end \"in 35 minutes\"" t)
+  (swm::eval-command "timer-add neck \"in 65 minutes\"" t)
+  (swm::eval-command "timer-add neck-pause-end \"in 70 minutes\"" t))
 
 ;;; INTERACTIVE CONTROLLERS
 

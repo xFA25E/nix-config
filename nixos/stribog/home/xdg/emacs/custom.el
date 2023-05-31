@@ -272,8 +272,6 @@
    '("-print0 | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
  '(flymake-mode-line-format
    '(" " flymake-mode-line-exception flymake-mode-line-counters))
- '(flyspell-default-dictionary "russian")
- '(flyspell-dictionaries-that-consider-dash-as-word-delimiter '("francais" "deutsch8" "norsk" "russian"))
  '(gdb-many-windows t)
  '(gdb-show-main t)
  '(global-so-long-mode t)
@@ -333,15 +331,7 @@
  '(isearch-allow-scroll t)
  '(isearch-lazy-count t)
  '(isearch-repeat-on-direction-change t)
- '(ispell-local-dictionary-alist
-   '(("russian" "[А-Яа-яA-Za-z]" "[^А-Яа-яA-Za-z]" "[-]" nil
-      ("-d" "ru_RU,en_US")
-      "~tex" utf-8)
-     ("english" "[A-Za-z]" "[^A-Za-z]" "[-']" nil nil "~tex" utf-8)
-     ("italian" "[A-Za-zÀÒÈÙÌàòèùìÁÓÉÚÍáóéúí]" "[^A-Za-zÀÒÈÙÌàòèùìÁÓÉÚÍáóéúí]" "[-']" nil
-      ("-d" "it_IT,en_US")
-      "~tex" utf-8)))
- '(ispell-program-name "hunspell")
+ '(ispell-program-name "enchant-2")
  '(java-mode-hook '(subword-mode))
  '(js-indent-level 2)
  '(js-switch-indent-offset 2)
@@ -395,7 +385,14 @@
  '(newsticker-treeview-listwindow-height 6)
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
-   '(("Leather Apron Club" "https://odysee.com/$/rss/@LeatherApronClub:c" nil nil nil)
+   '(("Ideas and Data Substack" "https://seanlast.substack.com/feed" nil nil nil)
+     ("Uebermarginal Twitch" "https://twitchrss.appspot.com/vod/uebermarginal" nil nil nil)
+     ("Dysphorra" "https://www.youtube.com/feeds/videos.xml?channel_id=UCsfHjT6FKyJHm39qWIO3rVg" nil nil nil)
+     ("Неотеник" "https://www.youtube.com/feeds/videos.xml?channel_id=UC_4kLff8VIDAZ8NmUAIa_4w" nil nil nil)
+     ("Лучшее с Алиповым" "https://www.youtube.com/feeds/videos.xml?channel_id=UCC4ImDJs7sSxlMVytsE09Qw" nil nil nil)
+     ("Нейронаука с Владимиром Алиповым" "https://www.youtube.com/feeds/videos.xml?channel_id=UCmEG9pKNZaE6QG_SaBBt93Q" nil nil nil)
+     ("itpedia" "https://www.youtube.com/feeds/videos.xml?channel_id=UC6bTF68IAV1okfRfwXIP1Cg" nil nil nil)
+     ("Leather Apron Club" "https://odysee.com/$/rss/@LeatherApronClub:c" nil nil nil)
      ("Joseph Bronski YouTube" "https://www.youtube.com/feeds/videos.xml?channel_id=UCiMwMDPJBB_mcBPknjPrfGA" nil nil nil)
      ("Joseph Bronski Substack" "https://josephbronski.substack.com/feed" nil nil nil)
      ("The Alt Hype Twitter" "https://nitter.moomoo.me/thealthype/rss" nil nil nil)
@@ -678,7 +675,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 106 :width normal :foundry "UKWN" :family "Iosevka"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 103 :width normal :foundry "UKWN" :family "Iosevka"))))
  '(dired-async-message ((t (:foreground "dark orange"))))
  '(dired-async-mode-message ((t (:foreground "dark orange"))))
  '(header-line ((t (:inherit default :background "grey90" :foreground "grey20"))))

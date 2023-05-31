@@ -44,6 +44,9 @@ in {
         notmuch tag +spam  -- 'path:litkov/spam/**'
         notmuch tag +trash  -- 'path:litkov/trash/**'
 
+        ## polimi forwarding
+        notmuch tag +polimi -litkov -- tag:new AND tag:litkov AND tag:inbox AND to:/polimi.it/
+
         # polimi rules
         notmuch tag +polimi -- 'path:polimi/**'
         notmuch tag +inbox -- 'path:polimi/inbox/**'

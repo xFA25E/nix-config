@@ -46,6 +46,7 @@
         enwc
         flymake-collection
         htmlize
+        inspector
         ipretty
         json-navigator
         ledger-mode
