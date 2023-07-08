@@ -756,7 +756,7 @@ See its documentiation for N."
 
 ;;; Newsticker
 
-;; (define-key mode-specific-map "on" 'newsticker-show-news)
+(define-key mode-specific-map "on" 'newsticker-show-news)
 
 ;;; Nix Mode
 
