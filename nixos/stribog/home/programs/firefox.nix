@@ -1,11 +1,6 @@
 {pkgs, ...}: {
   programs.firefox = {
     enable = true;
-    extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-      i-dont-care-about-cookies
-      ublock-origin
-      youtube-recommended-videos
-    ];
     profiles = {
       default = {
         bookmarks = [
@@ -94,6 +89,12 @@
             name = "youtube";
             url = "https://www.youtube.com/results?search_query=%s";
           }
+        ];
+
+        extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+          i-dont-care-about-cookies
+          ublock-origin
+          youtube-recommended-videos
         ];
 
         settings = {

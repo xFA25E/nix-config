@@ -10,7 +10,6 @@
   imports = [(modulesPath + "/installer/scan/not-detected.nix")];
 
   boot = {
-    cleanTmpDir = true;
     initrd = {
       kernelModules = ["dm-snapshot"];
       luks.devices.luks = {
@@ -19,6 +18,7 @@
         allowDiscards = true;
       };
     };
+    tmp.cleanOnBoot = true;
   };
 
   console = {
@@ -75,7 +75,10 @@
         "variations.brave.com"
       ];
     };
-    hostFiles = ["${pkgs.stevenblack-blocklist}/alternates/gambling-porn/hosts"];
+    stevenblack = {
+      enable = true;
+      block = ["gambling" "porn"];
+    };
     useDHCP = lib.mkDefault true;
     wireless.iwd = {
       enable = true;

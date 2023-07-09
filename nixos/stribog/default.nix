@@ -50,7 +50,12 @@
   };
 
   nixpkgs = {
-    config.allowUnfree = true;
+    config = {
+      allowUnfree = true;
+      permittedInsecurePackages = [
+        "python-2.7.18.6"
+      ];
+    };
     overlays = [
       inputs.addictions-tracker.overlays.default
       inputs.nur.overlay

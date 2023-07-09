@@ -9,7 +9,7 @@
     ]
     ++ (with pkgs; [
       acpi
-      addictionsTracker
+      # addictionsTracker
       alsaUtils
       ascii
       aspell

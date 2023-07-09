@@ -5,7 +5,7 @@
   lispPackages_new,
   makeWrapper,
   pkg-config,
-  sbcl_2_2_6,
+  sbcl,
   src,
   stdenv,
   texinfo,
@@ -14,7 +14,7 @@
 }: let
   l = lib // builtins;
 
-  sbclCmd = "${sbcl_2_2_6}/bin/sbcl --script";
+  sbclCmd = "${sbcl}/bin/sbcl --script";
   sbclPackages = lispPackages_new.lispPackagesFor sbclCmd;
 
   slynk = lispPackages_new.build-asdf-system {
@@ -38,9 +38,10 @@
   stumpwm = lispPackages_new.build-asdf-system {
     inherit src;
     pname = "stumpwm";
-    version = "22.05";
+    version = "22.11";
     lisp = sbclCmd;
     lispLibs = l.attrsets.attrVals ["alexandria" "cl-ppcre" "clx"] sbclPackages;
+    systems = ["dynamic-mixins" "stumpwm"];
   };
 
   swm-config = lispPackages_new.build-asdf-system {
@@ -62,7 +63,7 @@
       sbclPackages;
   };
 
-  sbcl =
+  sbclWithSWMConfig =
     lispPackages_new.lispWithPackages sbclCmd (_:
       [swm-config] ++ l.lists.optional withSlynk slynk);
 
@@ -77,7 +78,7 @@ in
   stdenv.mkDerivation {
     inherit src;
     name = "stumpwm-with-config";
-    nativeBuildInputs = [sbcl autoconf texinfo makeWrapper pkg-config];
+    nativeBuildInputs = [sbclWithSWMConfig autoconf texinfo makeWrapper pkg-config];
     configurePhase = ''
       ./autogen.sh
       ./configure --prefix=$out --with-module-dir=$out/share/stumpwm/modules
