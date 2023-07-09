@@ -38,6 +38,7 @@
       ffmpeg
       file
       filename_put_duration
+      flameshot
       format_seconds
       ghostscript
       gimp

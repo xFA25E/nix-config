@@ -9,6 +9,10 @@
   xdg = {
     enable = true;
 
+    configFile."flameshot/flameshot.ini".text = lib.generators.toINI {} {
+      General.savePath = "${config.xdg.userDirs.pictures}/screenshots";
+    };
+
     dataFile = {
       "applications/browser.desktop".text = lib.generators.toINI {} {
         "Desktop Entry" = {
