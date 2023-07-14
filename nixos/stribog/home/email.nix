@@ -47,7 +47,7 @@ in {
         };
 
         notmuch.enable = true;
-        passwordCommand = "${pass} show litkov.one/val";
+        passwordCommand = "${pass} show khors/val";
 
         primary = true;
         realName = "Valeriy Litkovskyy";

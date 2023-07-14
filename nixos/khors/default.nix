@@ -15,12 +15,12 @@
   age.secrets."mail".file = ./secrets/mail.age;
 
   boot = {
-    cleanTmpDir = true;
     initrd = {
       availableKernelModules = ["ata_piix" "uhci_hcd" "xen_blkfront" "vmw_pvscsi"];
       kernelModules = ["nvme"];
     };
     loader.grub.device = "/dev/sda";
+    tmp.cleanOnBoot = true;
   };
 
   fileSystems."/" = {
@@ -31,7 +31,7 @@
   i18n.defaultLocale = "en_US.UTF-8";
 
   mailserver = {
-    certificateScheme = 3;
+    certificateScheme = "acme-nginx";
     enable = true;
     fqdn = "mail.litkov.one";
     domains = ["litkov.one"];
@@ -151,8 +151,10 @@
   services = {
     openssh = {
       enable = true;
-      permitRootLogin = "no";
-      passwordAuthentication = false;
+      settings = {
+        PermitRootLogin = "no";
+        PasswordAuthentication = false;
+      };
     };
     udev.extraRules = ''
       ATTR{address}=="52:54:82:2c:a4:90", NAME="enp3s0"
