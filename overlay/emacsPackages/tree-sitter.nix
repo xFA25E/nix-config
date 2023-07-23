@@ -5,7 +5,7 @@ eprev.tree-sitter.overrideAttrs ({patches ? [], ...}: {
     ++ map final.fetchpatch [
       {
         url = "https://github.com/emacs-tree-sitter/elisp-tree-sitter/pull/231.diff";
-        hash = "sha256-3ZJF27x/sezNij0veMAy42gRxq48l88asuiJLWoshZo=";
+        hash = "sha256-nJghRLLEsUvXx8kz6ZjX/NGs92JcrGMJBUlW+7YtVMg=";
       }
     ];
 })

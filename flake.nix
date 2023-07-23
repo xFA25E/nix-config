@@ -13,6 +13,7 @@
     discord.url = "https://dl.discordapp.net/apps/linux/0.0.22/discord-0.0.22.tar.gz";
 
     emacs-overlay.inputs.flake-utils.follows = "fu";
+    emacs-overlay.inputs.nixpkgs-stable.follows = "nixpkgs";
     emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
 
