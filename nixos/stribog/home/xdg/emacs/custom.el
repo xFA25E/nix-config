@@ -387,7 +387,8 @@
  '(newsticker-treeview-listwindow-height 6)
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
-   '(("Marginal Official" "https://www.youtube.com/feeds/videos.xml?channel_id=UCztofm5i39e16gP4UiaQemA" nil nil nil)
+   '(("the way i see things" "https://www.youtube.com/feeds/videos.xml?channel_id=UCFQYVdJHRHxmzffGKCqeZgQ" nil nil nil)
+     ("Marginal Official" "https://www.youtube.com/feeds/videos.xml?channel_id=UCztofm5i39e16gP4UiaQemA" nil nil nil)
      ("Ideas and Data Substack" "https://seanlast.substack.com/feed" nil nil nil)
      ("Uebermarginal Twitch" "https://twitchrss.appspot.com/vod/uebermarginal" nil nil nil)
      ("Dysphorra" "https://www.youtube.com/feeds/videos.xml?channel_id=UCsfHjT6FKyJHm39qWIO3rVg" nil nil nil)
@@ -404,8 +405,7 @@
      ("AltHype Cozy" "https://cozysounds.kanyecode.repl.co/feed/althype" nil nil nil)
      ("dickmao" "https://www.youtube.com/feeds/videos.xml?channel_id=UCyf-xqc0ovYSDgaCcB3CUoA" nil nil nil)
      ("Joseph Everett’s Newsletter" "https://josepheverettwil.substack.com/feed" nil nil nil)
-     ("Clear Language, Clear Mind" "https://emilkirkegaard.dk/en/feed/" nil nil
-      ("-q" "-O" "-" "-U" "Mozilla"))
+     ("Just Emil Kirkegaard Things" "https://www.emilkirkegaard.com/feed" nil nil nil)
      ("UBERSOY" "https://www.youtube.com/feeds/videos.xml?channel_id=UCqBN8cSd6hfwqq0BM2biXOg" nil nil nil)
      ("Wags" "https://www.youtube.com/feeds/videos.xml?channel_id=UCA5Zo2kmdP9ig4f9fsvyRgg" nil nil nil)
      ("Motion Philosophy" "https://www.youtube.com/feeds/videos.xml?channel_id=UCpi0JLkVK0RrAHkfpB3B2Aw" nil nil nil)
