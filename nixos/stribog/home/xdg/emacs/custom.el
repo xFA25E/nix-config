@@ -387,7 +387,8 @@
  '(newsticker-treeview-listwindow-height 6)
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
-   '(("the way i see things" "https://www.youtube.com/feeds/videos.xml?channel_id=UCFQYVdJHRHxmzffGKCqeZgQ" nil nil nil)
+   '(("The Alternative Hypothesis Substack" "https://thealternativehypothesis.substack.com/feed" nil nil nil)
+     ("the way i see things" "https://www.youtube.com/feeds/videos.xml?channel_id=UCFQYVdJHRHxmzffGKCqeZgQ" nil nil nil)
      ("Marginal Official" "https://www.youtube.com/feeds/videos.xml?channel_id=UCztofm5i39e16gP4UiaQemA" nil nil nil)
      ("Ideas and Data Substack" "https://seanlast.substack.com/feed" nil nil nil)
      ("Uebermarginal Twitch" "https://twitchrss.appspot.com/vod/uebermarginal" nil nil nil)
