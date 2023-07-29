@@ -10,8 +10,15 @@
   inherit (pkgs) coreutils dbus libnotify notmuch writeShellScript;
 
   maildir = config.accounts.email.maildirBasePath;
-  mailSync = writeShellScript "mailnotify" ''
-    export PATH="${makeBinPath [libnotify notmuch coreutils dbus]}''${PATH:+:}$PATH"
+  mailPaths = makeBinPath [libnotify notmuch coreutils dbus];
+
+  mailSync = writeShellScript "mailsync" ''
+    export PATH="${mailPaths}''${PATH:+:}$PATH"
+    ${config.services.mbsync.package}/bin/mbsync -aV || notify-send "eMail" "Mbsync service failed"
+  '';
+
+  mailIndex = writeShellScript "mailindex" ''
+    export PATH="${mailPaths}''${PATH:+:}$PATH"
     export NOTMUCH_CONFIG=${escapeShellArg NOTMUCH_CONFIG}
     notmuch new
     count="$(notmuch search --output=files tag:unread | wc -l)"
@@ -87,7 +94,7 @@ in {
 
     mbsync = {
       enable = true;
-      postExec = "${mailSync}";
+      postExec = "${mailIndex}";
       preExec = "${coreutils}/bin/mkdir -p ${maildir}";
       verbose = true;
     };
@@ -123,4 +130,6 @@ in {
     udiskie.enable = true;
     unclutter.enable = true;
   };
+
+  systemd.user.services.mbsync.Service.ExecStart = lib.mkForce "${mailSync}";
 }
