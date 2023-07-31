@@ -69,11 +69,29 @@
   (let ((swm:*default-selections* (if primary '(:primary) '(:clipboard))))
     (swm:window-send-string (swm:get-x-selection))))
 
-(swm:defcommand timer-add-neck-block () ()
-  (swm::eval-command "timer-add stand \"in 30 minutes\"" t)
-  (swm::eval-command "timer-add stand-pause-end \"in 35 minutes\"" t)
-  (swm::eval-command "timer-add neck \"in 65 minutes\"" t)
-  (swm::eval-command "timer-add neck-pause-end \"in 70 minutes\"" t))
+(defvar work-block-count (cons (nth-value 3 (get-decoded-time)) 0))
+(swm:defcommand timer-add-work-blocks (block-count) ((:number "How many blocks? "))
+  (unless (and (integerp block-count) (plusp block-count))
+    (throw 'error "Block count must be a positive integer."))
+
+  (let ((day (nth-value 3 (get-decoded-time))))
+    (when (/= day (car work-block-count))
+      (setf (car work-block-count) day
+            (cdr work-block-count) 0)))
+
+  (loop :for i :from 0 :below block-count
+
+        :for work-count := (incf (cdr work-block-count))
+        :for shift := (* i 35)
+
+        :for work-end := (format nil "in ~d minutes" (+ shift 30))
+        :for work-block-name := (format nil "work-block-~D" work-count)
+
+        :for work-pause-end := (format nil "in ~d minutes" (+ shift 35))
+        :for work-pause-block-name := (format nil "work-pause-block-~D" work-count)
+
+        :do (swm-config.timers:timer-add work-block-name work-end)
+        :do (swm-config.timers:timer-add work-pause-block-name work-pause-end)))
 
 ;;; INTERACTIVE CONTROLLERS
 

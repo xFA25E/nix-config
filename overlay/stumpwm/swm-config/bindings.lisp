@@ -60,7 +60,7 @@
 
 (define-keys *timer-map*
   "C-c" "timer-add"
-  "C-n" "timer-add-neck-block")
+  "C-n" "timer-add-work-blocks")
 
 ;;; REMAPPED KEYS
 
