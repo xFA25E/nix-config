@@ -35,7 +35,8 @@
       (setf (timers instance) (mapcar make-timer timers)))))
 
 (defmethod print-object ((object timers) stream)
-  (format stream "~{~A~%~}" (timers object)))
+  (let ((seconds-left (compose #'seconds-left #'timer)))
+    (format stream "~{~A~%~}" (sort (timers object) #'< :key seconds-left))))
 
 (defun existsp (name)
   (find name (sb-ext:list-all-timers) :key #'sb-ext:timer-name :test #'string=))
