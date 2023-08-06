@@ -23,6 +23,10 @@ in {
       "emacs/abbrev_defs".source = ./emacs/abbrev_defs;
       "emacs/custom.el".source = ./emacs/custom.el;
 
+      "ledger/ledgerrc".text = ''
+        --start-of-week 1
+      '';
+
       "npm/npmrc".text = lib.generators.toKeyValue {} {
         prefix = "${config.xdg.dataHome}/npm";
         cache = "${config.xdg.cacheHome}/npm";

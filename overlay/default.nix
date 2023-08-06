@@ -28,7 +28,10 @@ in {
   sort_videos_by_duration = callPackage ./sort_videos_by_duration.nix {};
   stardicts = callPackage ./stardicts {};
   strip_video = callPackage ./strip_video.nix {};
-  stumpwm = callPackage ./stumpwm {src = stumpwm;};
+  stumpwm = callPackage ./stumpwm {
+    src = stumpwm;
+    withSlynk = true;
+  };
   sudo_askpass = callPackage ./sudo_askpass.nix {};
   video_seconds = callPackage ./video_seconds.nix {};
   wallpapers = callPackage ./wallpapers {};

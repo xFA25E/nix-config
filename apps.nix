@@ -15,7 +15,7 @@ pkgs: {
   };
   deployPerun = {
     type = "app";
-    program = toString (pkgs.writeShellScript "switch" ''
+    program = toString (pkgs.writeShellScript "deployPerun" ''
       export NIX_SSHOPTS=-t
       nixos-rebuild -L switch --flake .#perun --target-host perun \
                               --use-remote-sudo --print-build-logs
@@ -23,7 +23,7 @@ pkgs: {
   };
   deployKhors = {
     type = "app";
-    program = toString (pkgs.writeShellScript "switch" ''
+    program = toString (pkgs.writeShellScript "deployKhors" ''
       export NIX_SSHOPTS=-t
       nixos-rebuild -L switch --flake .#khors --target-host khors \
                               --use-remote-sudo --print-build-logs

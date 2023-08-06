@@ -3,9 +3,9 @@
 in {
   xresources.properties = {
     "Sxiv.background" = "#${colors.base00}";
-    "Sxiv.font" = "monospace-14";
+    "Sxiv.font" = "monospace-10";
     "Sxiv.foreground" = "#${colors.base05}";
-    "dmenu.font" = "monospace:size=13";
+    "dmenu.font" = "monospace:size=10";
     "dmenu.normbgcolor" = "#${colors.base00}";
     "dmenu.normfgcolor" = "#${colors.base05}";
     "dmenu.selbgcolor" = "#${colors.base01}";
@@ -36,7 +36,7 @@ in {
     "xterm*cursorBlink" = "false";
     "xterm*cursorColor" = "#${colors.base08}";
     "xterm*eightBitInput" = "false";
-    "xterm*font" = "xft:monospace:size=11";
+    "xterm*font" = "xft:monospace:size=9";
     "xterm*foreground" = "#${colors.base05}";
     "xterm*internalBorder" = 0;
     "xterm*saveLines" = 10240;
