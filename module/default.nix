@@ -77,7 +77,7 @@
     };
     stevenblack = {
       enable = true;
-      block = ["gambling" "porn"];
+      block = ["gambling"];
     };
     useDHCP = lib.mkDefault true;
     wireless.iwd = {

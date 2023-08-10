@@ -19,7 +19,7 @@
 
 ;;; Abbrev
 
-(add-hook 'js-mode-hook 'abbrev-mode)
+(add-hook 'js-ts-mode-hook 'abbrev-mode)
 (add-hook 'nix-mode-hook 'abbrev-mode)
 
 ;;; Affe
@@ -30,8 +30,8 @@
 ;;; Apheleia
 
 (autoload 'apheleia-mode "apheleia")
-(add-hook 'css-mode-hook 'apheleia-mode)
-(add-hook 'js-mode-hook 'apheleia-mode)
+(add-hook 'css-ts-mode-hook 'apheleia-mode)
+(add-hook 'js-ts-mode-hook 'apheleia-mode)
 (add-hook 'nix-mode-hook 'apheleia-mode)
 (add-hook 'nxml-mode-hook 'apheleia-mode)
 (add-hook 'web-mode-hook 'apheleia-mode)
@@ -69,7 +69,7 @@ See `browse-url' for URL and ARGS."
 
 ;;; Cargo
 
-(add-hook 'rust-mode-hook 'cargo-minor-mode)
+(add-hook 'rust-ts-mode-hook 'cargo-minor-mode)
 
 ;;; Comint
 
@@ -127,7 +127,8 @@ For EDIT-COMMAND see `recompile'."
 
 ;;; Consult
 
-(defvar kmacro-keymap)
+(define-key 'kmacro-keymap "c" 'consult-kmacro)
+
 (define-key ctl-x-4-map "b" 'consult-buffer-other-window)
 (define-key ctl-x-map "b" 'consult-buffer)
 (define-key ctl-x-r-map "b" 'consult-bookmark)
@@ -144,7 +145,6 @@ For EDIT-COMMAND see `recompile'."
 (define-key help-map "\M-m" 'consult-man)
 (define-key isearch-mode-map "\M-s\M-c\M-L" 'consult-line-multi)
 (define-key isearch-mode-map "\M-s\M-c\M-l" 'consult-line)
-(define-key kmacro-keymap "c" 'consult-kmacro)
 (define-key project-prefix-map "b" 'consult-project-buffer)
 (define-key project-prefix-map "i" 'consult-project-imenu)
 (define-key search-map "\M-c\M-L" 'consult-line-multi)
@@ -192,12 +192,6 @@ For EDIT-COMMAND see `recompile'."
   (interactive)
   (let ((consult--buffer-display #'switch-to-buffer-other-tab))
     (consult-buffer)))
-
-;;; Css Mode
-
-(defvar css-mode-map)
-(with-eval-after-load 'css-mode
-  (define-key css-mode-map "\C-cm" 'css-lookup-symbol))
 
 ;;; Custom
 
@@ -322,7 +316,7 @@ For EDIT-COMMAND see `recompile'."
   (define-key eglot-mode-map "\C-c\C-l" 'eglot-code-actions)
 
   (mapc (apply-partially 'add-to-list 'eglot-server-programs)
-        '((js-mode . ("typescript-language-server" "--tsserver-path" "tsserver" "--stdio"))
+        '((js-ts-mode . ("typescript-language-server" "--tsserver-path" "tsserver" "--stdio"))
           (csharp-mode . eglot-csharp-server-program)))
 
   (add-to-list 'eglot-stay-out-of 'eldoc-documentation-strategy))
@@ -600,9 +594,9 @@ CMD must output files delimited by zero byte."
 
 ;;; Js
 
-(defvar js-mode-map)
+(defvar js-ts-mode-map)
 (with-eval-after-load 'js
-  (define-key js-mode-map "\M-." nil))
+  (define-key js-ts-mode-map "\M-." nil))
 
 ;;; Ledger
 
@@ -1019,6 +1013,10 @@ build."
 
 (define-key search-map "\M-gr" 'rg-menu)
 
+;;; Rust Ts Mode
+
+(add-to-list 'auto-mode-alist (cons (rx ".rs" eos) 'rust-ts-mode))
+
 ;;; Rx Widget
 
 (with-eval-after-load 'wid-edit
@@ -1055,6 +1053,11 @@ Remove duplicates.  Remove inexistent files from
   (define-key sgml-mode-map "\C-\M-p" 'sgml-skip-tag-backward)
   (define-key sgml-mode-map "\C-c\C-r" 'sgml-namify-char))
 
+;;; Sh Script
+
+(add-hook 'bash-ts-mode-hook 'sh-electric-here-document-mode)
+(add-hook 'bash-ts-mode-hook 'flymake-mode)
+
 ;;; Shell
 
 (define-key mode-specific-map "s" 'shell)
@@ -1083,19 +1086,12 @@ Remove duplicates.  Remove inexistent files from
 (define-key esc-map "&" nil)
 (define-key global-map "\C-h" 'backward-delete-char-untabify)
 (define-key global-map "\C-w" 'kill-region-dwim)
-(define-key global-map "\M- " 'cycle-spacing-fast)
 (define-key global-map "\M-K" 'kill-whole-line)
 (define-key global-map "\M-\\" 'delete-indentation)
 (define-key global-map "\M-c" 'capitalize-dwim)
 (define-key global-map "\M-l" 'downcase-dwim)
 (define-key global-map "\M-u" 'upcase-dwim)
 (define-key mode-specific-map "oP" 'list-processes)
-
-(defun cycle-spacing-fast (&optional n)
-  "Like `cycle-spacing' but with fast mode.
-See its documentation for N."
-  (interactive "*p")
-  (cycle-spacing n nil 'fast))
 
 (defun kill-region-dwim (&optional count)
   "Kill word or kill region if it's active.
@@ -1113,9 +1109,9 @@ See `backward-kill-word' for COUNT."
 ;;; Subword
 
 (add-hook 'csharp-mode-hook 'subword-mode)
-(add-hook 'js-mode-hook 'subword-mode)
+(add-hook 'js-ts-mode-hook 'subword-mode)
 (add-hook 'nix-mode-hook 'subword-mode)
-(add-hook 'rust-mode-hook 'subword-mode)
+(add-hook 'rust-ts-mode-hook 'subword-mode)
 
 ;; Tab Bar
 
@@ -1192,16 +1188,6 @@ See `backward-kill-word' for COUNT."
 (defvar transmission-mode-map)
 (with-eval-after-load 'transmission
   (define-key transmission-mode-map "M" 'transmission-move))
-
-;;; Tree Sitter
-
-(add-hook 'csharp-mode-hook 'tree-sitter-mode)
-(add-hook 'css-mode-hook 'tree-sitter-mode)
-(add-hook 'js-mode-hook 'tree-sitter-mode)
-(add-hook 'mhtml-mode-hook 'tree-sitter-mode)
-(add-hook 'nix-mode-hook 'tree-sitter-mode)
-(add-hook 'python-mode-hook 'tree-sitter-mode)
-(add-hook 'rust-mode-hook 'tree-sitter-mode)
 
 ;;; Url Parse
 

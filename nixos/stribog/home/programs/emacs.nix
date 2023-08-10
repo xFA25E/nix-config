@@ -29,7 +29,6 @@
         cider
         clojure-mode
         consult
-        csharp-mode
         csproj-mode
         csv-mode
         discomfort
@@ -67,20 +66,19 @@
         rainbow-mode
         reverse-im
         rg
-        rust-mode
         sly
         sly-asdf
         sly-quicklisp
         sql-indent
         sqlup-mode
         transmission
-        tree-sitter
-        tree-sitter-langs
+        treesit-grammars.with-all-grammars
         verb
         vertico
         vlf
         web-mode
         wgrep
       ]);
+    package = pkgs.emacs29;
   };
 }

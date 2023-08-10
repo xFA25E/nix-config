@@ -296,7 +296,7 @@
  '(history-delete-duplicates t)
  '(history-length 1000)
  '(hscroll-step 1)
- '(html-mode-hook '(apheleia-mode emmet-mode tree-sitter-mode))
+ '(html-mode-hook '(apheleia-mode emmet-mode))
  '(ibuffer-default-sorting-mode 'major-mode)
  '(ibuffer-show-empty-filter-groups nil)
  '(image-dired-db-file (expand-file-name "emacs/image-dired-db" (xdg-data-home)))
@@ -307,6 +307,7 @@
  '(image-dired-gallery-dir
    (expand-file-name "emacs/image-dired/gallery/"
                      (xdg-cache-home)))
+ '(image-dired-tags-db-file (expand-file-name "emacs/image-dired-db" (xdg-data-home)))
  '(image-dired-temp-image-file
    (expand-file-name "emacs/image-dired/temp"
                      (xdg-cache-home)))
@@ -358,6 +359,11 @@
  '(magit-define-global-key-bindings nil)
  '(mail-envelope-from 'header)
  '(mail-user-agent 'notmuch-user-agent)
+ '(major-mode-remap-alist
+   '((sh-mode . bash-ts-mode)
+     (css-mode . css-ts-mode)
+     (js-mode . js-ts-mode)
+     (javascript-mode . js-ts-mode)))
  '(marginalia-mode t)
  '(max-mini-window-height 0.5)
  '(menu-bar-mode nil)
@@ -517,16 +523,10 @@
  '(org-refile-targets '((org-agenda-files :level . 1)))
  '(org-refile-use-outline-path 'file)
  '(org-roam-capture-templates
-   '(("l" "Library" entry "* TODO ${title}%? %^g
-:PROPERTIES:
-:AUTHOR: %^{AUTHOR}
-:YEAR: %^{YEAR}
-:ID: %(org-id-uuid)
-:END:" :prepend t :empty-lines 1 :target
-(node "d97e3562-627c-4e0e-906b-e9f1958937a9"))
+   '(("l" "Library" entry "* TODO ${title}%? %^g\12:PROPERTIES:\12:AUTHOR: %^{AUTHOR}\12:YEAR: %^{YEAR}\12:ID: %(org-id-uuid)\12:END:" :prepend t :empty-lines 1 :target
+      (node "d97e3562-627c-4e0e-906b-e9f1958937a9"))
      ("d" "default" plain "%?" :target
-      (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}
-")
+      (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\12")
       :unnarrowed t)))
  '(org-roam-db-location (expand-file-name "emacs/org-roam.db" (xdg-cache-home)))
  '(org-roam-directory "~/roam/")
@@ -534,7 +534,7 @@
  '(org-tags-column 0)
  '(package-archives nil)
  '(php-mode-coding-style 'php)
- '(php-mode-hook '(subword-mode tree-sitter-mode))
+ '(php-mode-hook '(subword-mode))
  '(proced-tree-flag t)
  '(project-compilation-buffer-name-function 'project-prefixed-buffer-name)
  '(project-list-file (expand-file-name "emacs/project.list" (xdg-cache-home)))
@@ -598,8 +598,7 @@
  '(send-mail-function 'message-send-mail-with-sendmail)
  '(sendmail-program "msmtp")
  '(sgml-basic-offset 4)
- '(sh-mode-hook
-   '(sh-electric-here-document-mode flymake-mode tree-sitter-mode))
+ '(sh-mode-hook '(sh-electric-here-document-mode flymake-mode))
  '(shell-mode-hook '(abbrev-mode ansi-color-for-comint-mode-on))
  '(shift-select-mode nil)
  '(shr-max-image-proportion 0.7)
@@ -653,8 +652,6 @@
                      (xdg-cache-home)))
  '(transmission-pieces-function 'transmission-format-pieces-brief)
  '(transmission-units 'si)
- '(tree-sitter-after-on-hook '(tree-sitter-hl-mode))
- '(tree-sitter-mode-lighter " 🌳")
  '(truncate-lines t)
  '(undo-limit 200000)
  '(undo-strong-limit 300000)
@@ -662,13 +659,13 @@
  '(url-configuration-directory (expand-file-name "emacs/url/" (xdg-cache-home)))
  '(url-handler-mode t)
  '(use-dialog-box nil)
+ '(use-system-tooltips nil)
  '(user-full-name "Valeriy Litkovskyy")
  '(vc-handled-backends '(Git))
  '(version-control t)
  '(vertico-mode t)
  '(web-mode-markup-indent-offset 2)
  '(wgrep-auto-save-buffer t)
- '(x-gtk-use-system-tooltips nil)
  '(x-stretch-cursor t)
  '(xref-after-jump-hook '(recenter xref-pulse-momentarily))
  '(xref-search-program 'ripgrep)
@@ -678,7 +675,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 103 :width normal :foundry "UKWN" :family "Iosevka"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 84 :width normal :foundry "UKWN" :family "Iosevka"))))
  '(dired-async-message ((t (:foreground "dark orange"))))
  '(dired-async-mode-message ((t (:foreground "dark orange"))))
  '(header-line ((t (:inherit default :background "grey90" :foreground "grey20"))))
