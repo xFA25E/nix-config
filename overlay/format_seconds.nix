@@ -11,5 +11,5 @@
 in
   writeShellScriptBin "format_seconds" ''
     set -u
-    exec ${emacs}/bin/emacs -Q --batch --eval ${script} "$1" "$2"
+    exec ${emacs}/bin/emacs -Q --batch --eval ${script} "''${1:?}" "''${2:?}"
   ''

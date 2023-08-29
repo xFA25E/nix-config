@@ -42,6 +42,30 @@
 (define-key goto-map "\M-g" 'avy-goto-line)
 (define-key isearch-mode-map "\M-z" 'avy-isearch)
 
+;;; Battery
+
+(require 'battery)
+(require 'notifications)
+
+(defvar battery-previous-percentage
+  (thread-last battery-status-function
+    funcall
+    (alist-get ?p)
+    string-to-number))
+
+(defun battery-alarm-on-low-level (data)
+  "Alarm when battery DATA percentage is low."
+  (let ((status (alist-get ?B data))
+        (percentage (string-to-number (alist-get ?p data))))
+    (when (and (equal status "Discharging")
+               (< percentage 15)
+               (< 1 (- battery-previous-percentage percentage)))
+      (call-process "notify_ding" nil 0 nil)
+      (notifications-notify
+       :title "Battery"
+       :body (format-spec "%B %p%% %t" data)))
+    (setq battery-previous-percentage percentage)))
+
 ;;; Browse Url
 
 (define-key ctl-x-map "B" 'browse-url)
@@ -403,6 +427,11 @@ See `xref-backend-apropos' docs for PATTERN."
 (define-key 'load-command-map "\C-f" 'load-file)
 (define-key 'load-command-map "\C-l" 'load-library)
 
+(define-key ctl-x-map "\C-z" 'find-sibling-file)
+(put 'find-sibling-rules 'custom-type '(repeat (cons regexp (repeat regexp))))
+
+(define-key ctl-x-x-map "R" 'rename-visited-file)
+
 ;;; Files X
 
 (define-key ctl-x-x-map "ld" 'add-dir-local-variable)
@@ -411,40 +440,33 @@ See `xref-backend-apropos' docs for PATTERN."
 
 ;;; Find Dired
 
-(defvar find-ls-option)
-(defun find-dired-command (dir cmd)
-  "Run `find-dired' with CMD in DIR.
-CMD must output files delimited by zero byte."
-  (interactive
-   (let ((cmd (read-shell-command "Shell command (zsf): "))
-         (dir (read-directory-name "Run find in directory: " nil "" t)))
-     (list dir cmd)))
-  (let ((find-program "true")
-        (find-ls-option
-         (cons
-          (concat "; " cmd " | xargs -0 ls -ldF --si --quoting-style=literal")
-          "-ldhF")))
-    (find-dired dir "")))
+(autoload 'find-dired--escaped-ls-option "find-dired")
+(defun find-dired-append-xargs-pipe (cmd)
+  "Append xargs pipe to CMD."
+  (thread-last (find-dired--escaped-ls-option)
+    (string-remove-prefix "-print0")
+    (concat cmd)))
 
 (defun find-dired-fd--execute ()
   "Interactive command used as a transient suffix."
   (declare (completion ignore) (interactive-only t))
   (interactive)
-  (let ((args (transient-args 'find-dired-fd)))
-    (find-dired-command
-     (transient-arg-value "--directory=" args)
-     (mapconcat
-      (lambda (arg)
-        (pcase arg
-          ((rx bos "--directory=") "")
-          ((rx bos "--pattern=" (let pattern (* any)))
-           (shell-quote-argument pattern))
-          ((rx bos "--contains-regexp=" (let regexp (* any)))
-           (concat "--exec rg --color never --regexp"
-                   " " (shell-quote-argument regexp)
-                   " -0 -ls " (shell-quote-argument ";")))
-          (_ (shell-quote-argument arg))))
-      (cl-list* "fd" "-0" "-c" "never" args) " "))))
+  (let* ((args (transient-args 'find-dired-fd))
+         (dir (transient-arg-value "--directory=" args))
+         (fd-cmd (mapconcat
+                  (lambda (arg)
+                    (pcase arg
+                      ((rx bos "--directory=") "")
+                      ((rx bos "--pattern=" (let pattern (* any)))
+                       (shell-quote-argument pattern))
+                      ((rx bos "--contains-regexp=" (let regexp (* any)))
+                       (concat "--exec rg --color never --regexp"
+                               " " (shell-quote-argument regexp)
+                               " -0 -ls " (shell-quote-argument ";")))
+                      (_ (shell-quote-argument arg))))
+                  (cl-list* "fd" "-0" "-c" "never" args) " "))
+         (cmd (find-dired-append-xargs-pipe fd-cmd)))
+    (find-dired-with-command dir cmd)))
 
 (transient-define-prefix find-dired-fd ()
   ["Flags"
@@ -485,16 +507,16 @@ CMD must output files delimited by zero byte."
   "Interactive command used as a transient suffix."
   (declare (completion ignore) (interactive-only t))
   (interactive)
-  (let ((args (transient-args 'find-dired-locate)))
-    (find-dired-command
-     "/"
-     (mapconcat
-      (lambda (arg)
-        (pcase arg
-          ((rx bos "--pattern=" (let pattern (* any)))
-           (shell-quote-argument pattern))
-          (_ (shell-quote-argument arg))))
-      (cl-list* "locate" "-0" args) " "))))
+  (let* ((args (transient-args 'find-dired-locate))
+         (locate-cmd (mapconcat
+                      (lambda (arg)
+                        (pcase arg
+                          ((rx bos "--pattern=" (let pattern (* any)))
+                           (shell-quote-argument pattern))
+                          (_ (shell-quote-argument arg))))
+                      (cl-list* "locate" "-0" args) " "))
+         (cmd (find-dired-append-xargs-pipe locate-cmd)))
+    (find-dired-with-command "/" cmd)))
 
 (transient-define-prefix find-dired-locate ()
   ["Flags"
@@ -512,13 +534,8 @@ CMD must output files delimited by zero byte."
 
 ;;; Find Func
 
-(define-key ctl-x-map "F" 'find-function)
-(define-key ctl-x-map "K" 'find-function-on-key)
-(define-key ctl-x-map "L" 'find-library)
-(define-key ctl-x-map "V" 'find-variable)
-
-(dolist (fn '(find-library find-function find-function-on-key find-variable))
-  (advice-add fn :before 'xref-push-marker-stack-ignore-args))
+(find-function-setup-keys)
+(add-hook 'find-function-after-hook 'xref-push-previous-buffer-marker-stack)
 
 ;;; Finder
 
@@ -671,6 +688,16 @@ CMD must output files delimited by zero byte."
 (define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
 (define-key minibuffer-local-completion-map " " nil)
 (define-key minibuffer-local-must-match-map "\C-j" 'minibuffer-force-complete-and-exit)
+
+;;; Misc
+
+(define-key ctl-x-map "o" 'duplicate-dwim)
+
+(easy-mmode-defmap duplicate-dwim-repeat-map
+  '(("o" . duplicate-dwim))
+  nil)
+
+(put 'duplicate-dwim 'repeat-map 'duplicate-dwim-repeat-map)
 
 ;;; Mpc
 
@@ -1079,7 +1106,7 @@ Remove duplicates.  Remove inexistent files from
 
 ;;; Simple
 
-(define-key ctl-x-map "w" 'mark-whole-buffer)
+(define-key ctl-x-map "u" 'mark-whole-buffer)
 (define-key ctl-x-x-map "f" 'auto-fill-mode)
 (define-key ctl-x-x-map "v" 'visual-line-mode)
 (define-key ctl-x-x-map "w" 'whitespace-mode)
@@ -1247,10 +1274,11 @@ See `backward-kill-word' for COUNT."
   (define-key xref--xref-buffer-mode-map "o" 'xref-goto-xref))
 
 (autoload 'xref-push-marker-stack "xref")
-(defun xref-push-marker-stack-ignore-args (&rest _)
-  "Like `xref-push-marker-stack', but ignore arguments.
-Used as an advice in goto functions."
-  (xref-push-marker-stack))
+(defun xref-push-previous-buffer-marker-stack ()
+  "Push xref marker of previous buffer."
+  (previous-buffer)
+  (xref-push-marker-stack)
+  (next-buffer))
 
 (provide 'init)
 

@@ -123,6 +123,7 @@
  '(avy-timeout-seconds 0.3)
  '(backup-by-copying t)
  '(backup-directory-alist '(("." . "~/.local/share/emacs/backups")))
+ '(battery-update-functions '(battery-alarm-on-low-level))
  '(before-save-hook '(whitespace-cleanup delete-trailing-whitespace))
  '(blink-cursor-mode nil)
  '(bookmark-default-file (expand-file-name "emacs/bookmarks" (xdg-data-home)))
@@ -181,6 +182,7 @@
  '(dired-compress-file-default-suffix ".xz")
  '(dired-create-destination-dirs 'ask)
  '(dired-dwim-target t)
+ '(dired-free-space 'separate)
  '(dired-guess-shell-alist-user
    '(("\\.\\(?:csv\\|doc\\|docx\\|odp\\|ods\\|odt\\|ppt\\|pptx\\|xls\\|xlsx\\)\\'" "setsid -f libreoffice * >/dev/null 2>&1" "libreoffice --invisible --headless --convert-to pdf * &")
      ("\\.\\(?:bmp\\|gif\\|jfif\\|jpeg\\|jpg\\|nef\\|png\\|thm\\|tif\\|webp\\|xpm\\)\\'" "setsid -f sxiv * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
@@ -270,6 +272,9 @@
  '(fill-column 80)
  '(find-ls-option
    '("-print0 | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
+ '(find-sibling-rules
+   '(("\\([^/]+\\)\\.cs\\'" "\\1\\.axaml")
+     ("\\([^/]+\\)\\.axaml\\'" "\\1\\.cs")))
  '(flymake-mode-line-format
    '(" " flymake-mode-line-exception flymake-mode-line-counters))
  '(gdb-many-windows t)
@@ -291,6 +296,9 @@
      ("tex" . "*.tex")
      ("texi" . "*.texi")
      ("asm" . "*.[sS]")))
+ '(help-enable-variable-value-editing t)
+ '(help-window-keep-selected t)
+ '(help-window-select t)
  '(hippie-expand-try-functions-list
    '(try-complete-file-name-partially try-complete-file-name try-expand-list try-expand-line try-expand-dabbrev try-expand-dabbrev-all-buffers try-expand-dabbrev-from-kill try-complete-lisp-symbol-partially try-complete-lisp-symbol try-expand-all-abbrevs))
  '(history-delete-duplicates t)
@@ -373,8 +381,8 @@
  '(message-subject-re-regexp
    "^[[:blank:]]*\\(?:\\(?:R\\|RE\\|Re\\|Ris\\)\\(?:\\[[[:digit:]]*]\\)* ?:[[:blank:]]*\\)*")
  '(minibuffer-beginning-of-buffer-movement t)
+ '(minibuffer-default-prompt-format " [%s]")
  '(minibuffer-depth-indicate-mode t)
- '(minibuffer-eldef-shorten-default t)
  '(minibuffer-electric-default-mode t)
  '(minibuffer-prompt-properties '(read-only t cursor-intangible t face minibuffer-prompt))
  '(mode-line-compact 'long)
@@ -601,6 +609,7 @@
  '(sh-mode-hook '(sh-electric-here-document-mode flymake-mode))
  '(shell-mode-hook '(abbrev-mode ansi-color-for-comint-mode-on))
  '(shift-select-mode nil)
+ '(show-paren-context-when-offscreen 'overlay)
  '(shr-max-image-proportion 0.7)
  '(shr-use-fonts nil)
  '(size-indication-mode t)
@@ -622,6 +631,7 @@
  '(sql-mode-hook '(sqlup-mode sql-indent-enable))
  '(sql-sqlite-options '("-column" "-header" "-cmd" "PRAGMA foreign_keys = ON;"))
  '(sql-sqlite-program "sqlite3")
+ '(tab-bar-auto-width nil)
  '(tab-bar-close-button-show nil)
  '(tab-bar-format '(tab-bar-format-tabs-groups tab-bar-separator))
  '(tab-bar-history-mode t)
@@ -650,6 +660,7 @@
  '(transient-values-file
    (expand-file-name "emacs/transient/values.el"
                      (xdg-cache-home)))
+ '(translate-upper-case-key-bindings nil)
  '(transmission-pieces-function 'transmission-format-pieces-brief)
  '(transmission-units 'si)
  '(truncate-lines t)
