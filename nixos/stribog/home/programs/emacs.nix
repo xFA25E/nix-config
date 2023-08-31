@@ -53,6 +53,7 @@
         magit
         marginalia
         nix-mode
+        nix-ts-mode
         notmuch
         nov
         orderless

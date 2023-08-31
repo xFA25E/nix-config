@@ -21,6 +21,7 @@
 
 (add-hook 'js-ts-mode-hook 'abbrev-mode)
 (add-hook 'nix-mode-hook 'abbrev-mode)
+(add-hook 'nix-ts-mode-hook 'abbrev-mode)
 
 ;;; Affe
 
@@ -33,6 +34,7 @@
 (add-hook 'css-ts-mode-hook 'apheleia-mode)
 (add-hook 'js-ts-mode-hook 'apheleia-mode)
 (add-hook 'nix-mode-hook 'apheleia-mode)
+(add-hook 'nix-ts-mode-hook 'apheleia-mode)
 (add-hook 'nxml-mode-hook 'apheleia-mode)
 (add-hook 'web-mode-hook 'apheleia-mode)
 
@@ -381,6 +383,7 @@ See `xref-backend-apropos' docs for PATTERN."
 ;;; Eldoc
 
 (add-hook 'nix-mode-hook 'eldoc-mode)
+(add-hook 'nix-ts-mode-hook 'eldoc-mode)
 
 ;;; Elisp Mode
 
@@ -544,6 +547,7 @@ See `xref-backend-apropos' docs for PATTERN."
 ;;; Flymake
 
 (add-hook 'nix-mode-hook 'flymake-mode)
+(add-hook 'nix-ts-mode-hook 'flymake-mode)
 (add-hook 'nxml-mode-hook 'flymake-mode)
 
 (defvar flymake-mode-map)
@@ -551,15 +555,22 @@ See `xref-backend-apropos' docs for PATTERN."
   (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error)
   (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error))
 
+(with-eval-after-load 'flymake-proc
+  (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake))
+
 ;;; Flymake Collection
 
 (declare-function flymake-collection-hook-setup "flymake-collection-hook")
 (flymake-collection-hook-setup)
 
 (defvar nix-mode-map)
-(with-eval-after-load 'nix-mode
-  (with-eval-after-load 'flymake-collection-statix
-    (define-key nix-mode-map "\C-c\C-x" 'flymake-collection-statix-fix)))
+(defvar nix-ts-mode-map)
+
+(with-eval-after-load 'flymake-collection-statix
+  (with-eval-after-load 'nix-mode
+    (define-key nix-mode-map "\C-c\C-x" 'flymake-collection-statix-fix))
+  (with-eval-after-load 'nix-ts-mode
+    (define-key nix-ts-mode-map "\C-c\C-x" 'flymake-collection-statix-fix)))
 
 ;;; Grep
 
@@ -1138,6 +1149,7 @@ See `backward-kill-word' for COUNT."
 (add-hook 'csharp-mode-hook 'subword-mode)
 (add-hook 'js-ts-mode-hook 'subword-mode)
 (add-hook 'nix-mode-hook 'subword-mode)
+(add-hook 'nix-ts-mode-hook 'subword-mode)
 (add-hook 'rust-ts-mode-hook 'subword-mode)
 
 ;; Tab Bar
@@ -1169,6 +1181,37 @@ See `backward-kill-word' for COUNT."
 (with-eval-after-load 'lisp-mode (require 'tempo-extra-lisp))
 (with-eval-after-load 'nix-mode (require 'tempo-extra-nix))
 (with-eval-after-load 'org (require 'tempo-extra-org))
+
+(declare-function tempo-extra-define "tempo-extra")
+(with-eval-after-load 'nix-ts-mode
+  (require 'tempo-extra)
+
+  (tempo-extra-define "fetchurl" 'nix-ts-mode
+    '("fetchurl {" n>
+      "url = \"" p "\";" n>
+      "hash = \"" p :nix-hash "\";" n>
+      "}" p >))
+
+  (tempo-extra-define "fetchzip" 'nix-ts-mode
+    '("fetchzip {" n>
+      "url = \"" p "\";" n>
+      "hash = \"" p :nix-hash "\";" n>
+      "}" p >))
+
+  (tempo-extra-define "fetchgit" 'nix-ts-mode
+    '("fetchgit {" n>
+      "url = \"" p "\";" n>
+      "rev = \"" p "\";" n>
+      "hash = \"" p :nix-hash "\";" n>
+      "}" p >))
+
+  (tempo-extra-define "fetchFromGitHub" 'nix-ts-mode
+    '("fetchFromGitHub {" n>
+      "owner = \"" p "\";" n>
+      "repo = \"" p "\";" n>
+      "rev = \"" p "\";" n>
+      "hash = \"" p :nix-hash "\";" n>
+      "}" p >)))
 
 ;;; Tex Mode
 
