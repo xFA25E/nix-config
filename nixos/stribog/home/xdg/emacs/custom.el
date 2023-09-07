@@ -412,7 +412,8 @@
      (sh-mode . bash-ts-mode)
      (css-mode . css-ts-mode)
      (js-mode . js-ts-mode)
-     (javascript-mode . js-ts-mode)))
+     (javascript-mode . js-ts-mode)
+     (js-json-mode . json-ts-mode)))
  '(marginalia-mode t)
  '(max-mini-window-height 0.5)
  '(menu-bar-mode nil)
@@ -585,6 +586,7 @@
  '(package-archives nil)
  '(php-mode-coding-style 'php)
  '(php-mode-hook '(subword-mode))
+ '(proced-enable-color-flag t)
  '(proced-tree-flag t)
  '(project-compilation-buffer-name-function 'project-prefixed-buffer-name)
  '(project-list-file (expand-file-name "emacs/project.list" (xdg-cache-home)))
@@ -714,6 +716,8 @@
  '(use-dialog-box nil)
  '(use-system-tooltips nil)
  '(user-full-name "Valeriy Litkovskyy")
+ '(vc-directory-exclusion-list
+   '("SCCS" "RCS" "CVS" "MCVS" ".src" ".svn" ".git" ".hg" ".bzr" "_MTN" "_darcs" "{arch}" ".eldev"))
  '(vc-handled-backends '(Git))
  '(version-control t)
  '(vertico-mode t)
@@ -728,7 +732,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 84 :width normal :foundry "UKWN" :family "Iosevka"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 90 :width normal :foundry "UKWN" :family "Iosevka"))))
  '(dired-async-message ((t (:foreground "dark orange"))))
  '(dired-async-mode-message ((t (:foreground "dark orange"))))
  '(header-line ((t (:inherit default :background "grey90" :foreground "grey20"))))
@@ -738,7 +742,7 @@
  '(org-mode-line-clock ((t nil)))
  '(org-mode-line-clock-overrun ((t (:background "red"))))
  '(region ((t (:extend t :background "LemonChiffon2" :distant-foreground "gtk_selection_fg_color"))))
- '(tab-bar ((t (:inherit (variable-pitch default) :background "black" :foreground "white smoke" :height 0.83))))
+ '(tab-bar ((t (:inherit (variable-pitch default) :background "black" :foreground "white smoke" :height 0.8))))
  '(tab-bar-tab ((t (:inherit tab-bar :background "white smoke" :foreground "black" :box (:line-width (1 . 1) :color "white smoke")))))
  '(tab-bar-tab-group-current ((t (:weight bold :box nil :inverse-video t :inherit tab-bar-tab))))
  '(tab-bar-tab-group-inactive ((t (:inherit tab-bar-tab-inactive))))

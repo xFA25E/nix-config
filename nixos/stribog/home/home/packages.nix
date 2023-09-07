@@ -43,6 +43,7 @@
       ghostscript
       gimp
       go-mtpfs
+      graphicsmagick
       hunspell
       hunspellDicts.en_US-large
       hunspellDicts.it_IT

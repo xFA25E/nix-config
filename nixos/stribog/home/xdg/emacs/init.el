@@ -14,8 +14,8 @@
  (lambda ()
    (load (locate-user-emacs-file "custom.el") nil nil t)))
 
-(define-prefix-command 'load-command-map)
-(define-key ctl-x-map "\C-l" 'load-command-map)
+(define-keymap :prefix 'load-command-map)
+(keymap-set ctl-x-map "C-l" 'load-command-map)
 
 ;;; Abbrev
 
@@ -25,8 +25,17 @@
 
 ;;; Affe
 
-(define-key search-map "\M-g\M-z" 'affe-grep)
-(define-key search-map "\M-f\M-z" 'affe-find)
+(define-keymap :keymap search-map
+  "M-g M-z" 'affe-grep
+  "M-f M-z" 'affe-find)
+
+;;; Ansi Color
+
+(add-hook 'compilation-filter-hook 'ansi-color-compilation-filter)
+
+;;; Ansi Osc
+
+(add-hook 'compilation-filter-hook 'ansi-osc-compilation-filter)
 
 ;;; Apheleia
 
@@ -40,9 +49,9 @@
 
 ;;; Avy
 
-(define-key global-map "\M-z" 'avy-goto-char-timer)
-(define-key goto-map "\M-g" 'avy-goto-line)
-(define-key isearch-mode-map "\M-z" 'avy-isearch)
+(keymap-global-set "M-z" 'avy-goto-char-timer)
+(keymap-set goto-map "M-g" 'avy-goto-line)
+(keymap-set isearch-mode-map "M-z" 'avy-isearch)
 
 ;;; Battery
 
@@ -70,7 +79,7 @@
 
 ;;; Browse Url
 
-(define-key ctl-x-map "B" 'browse-url)
+(keymap-set ctl-x-map "B" 'browse-url)
 
 (defun browse-url-choices (url &rest args)
   "Function to browse urls that provides a choices menu.
@@ -99,7 +108,7 @@ See `browse-url' for URL and ARGS."
 
 ;;; Comint
 
-(define-key mode-specific-map "c" 'comint-run)
+(keymap-set mode-specific-map "c" 'comint-run)
 
 (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
 (add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
@@ -119,17 +128,16 @@ See `browse-url' for URL and ARGS."
 
 ;;; Compile
 
-(add-hook 'compilation-filter-hook 'ansi-color-compilation-filter)
-
 (defvar compilation-button-map)
 (defvar compilation-mode-map)
 (defvar compilation-shell-minor-mode-map)
 (with-eval-after-load 'compile
-  (define-key compilation-button-map "\C-m" 'compile-goto-error-same-window)
-  (define-key compilation-button-map "o" 'compile-goto-error)
-  (define-key compilation-mode-map "\C-m" 'compile-goto-error-same-window)
-  (define-key compilation-mode-map "o" 'compile-goto-error)
-  (define-key compilation-shell-minor-mode-map "\C-c\C-g" 'recompile-comint-maybe-in-project))
+  (dolist (keymap (list compilation-button-map compilation-mode-map))
+    (define-keymap :keymap keymap
+      "RET" 'compile-goto-error-same-window
+      "o" 'compile-goto-error))
+  (keymap-set compilation-shell-minor-mode-map "C-c C-g"
+              'recompile-comint-maybe-in-project))
 
 (declare-function compile-goto-error "compile")
 (defun compile-goto-error-same-window ()
@@ -153,36 +161,51 @@ For EDIT-COMMAND see `recompile'."
 
 ;;; Consult
 
-(define-key 'kmacro-keymap "c" 'consult-kmacro)
+(keymap-set 'kmacro-keymap "c" 'consult-kmacro)
 
-(define-key ctl-x-4-map "b" 'consult-buffer-other-window)
-(define-key ctl-x-map "b" 'consult-buffer)
-(define-key ctl-x-r-map "b" 'consult-bookmark)
-(define-key ctl-x-r-map "i" 'consult-register-load)
-(define-key ctl-x-r-map "s" 'consult-register-store)
-(define-key global-map "\M-H" 'consult-history)
-(define-key global-map "\M-y" 'consult-yank-replace)
-(define-key goto-map "E" 'consult-compile-error)
-(define-key goto-map "F" 'consult-flymake)
-(define-key goto-map "I" 'consult-imenu-multi)
-(define-key goto-map "i" 'consult-imenu)
-(define-key goto-map "o" 'consult-outline)
-(define-key help-map "\M-i" 'consult-info)
-(define-key help-map "\M-m" 'consult-man)
-(define-key isearch-mode-map "\M-s\M-c\M-L" 'consult-line-multi)
-(define-key isearch-mode-map "\M-s\M-c\M-l" 'consult-line)
-(define-key project-prefix-map "b" 'consult-project-buffer)
-(define-key project-prefix-map "i" 'consult-project-imenu)
-(define-key search-map "\M-c\M-L" 'consult-line-multi)
-(define-key search-map "\M-c\M-f" 'consult-focus-lines)
-(define-key search-map "\M-c\M-k" 'consult-keep-lines)
-(define-key search-map "\M-c\M-l" 'consult-line)
-(define-key search-map "\M-f\M-f" 'consult-find)
-(define-key search-map "\M-f\M-l" 'consult-locate)
-(define-key search-map "\M-g\M-g" 'consult-grep)
-(define-key search-map "\M-g\M-r" 'consult-ripgrep)
-(define-key search-map "\M-g\M-t" 'consult-git-grep)
-(define-key tab-prefix-map "b" 'consult-buffer-other-tab)
+(keymap-set ctl-x-4-map "b" 'consult-buffer-other-window)
+(keymap-set ctl-x-map "b" 'consult-buffer)
+
+(define-keymap :keymap ctl-x-r-map
+  "b" 'consult-bookmark
+  "i" 'consult-register-load
+  "s" 'consult-register-store)
+
+(define-keymap :keymap (current-global-map)
+  "M-H" 'consult-history
+  "M-y" 'consult-yank-replace)
+
+(define-keymap :keymap goto-map
+  "E" 'consult-compile-error
+  "F" 'consult-flymake
+  "I" 'consult-imenu-multi
+  "i" 'consult-imenu
+  "o" 'consult-outline)
+
+(define-keymap :keymap help-map
+  "M-i" 'consult-info
+  "M-m" 'consult-man)
+
+(define-keymap :keymap isearch-mode-map
+  "M-s M-c M-L" 'consult-line-multi
+  "M-s M-c M-l" 'consult-line)
+
+(define-keymap :keymap project-prefix-map
+  "b" 'consult-project-buffer
+  "i" 'consult-project-imenu)
+
+(define-keymap :keymap search-map
+  "M-c M-L" 'consult-line-multi
+  "M-c M-f" 'consult-focus-lines
+  "M-c M-k" 'consult-keep-lines
+  "M-c M-l" 'consult-line
+  "M-f M-f" 'consult-find
+  "M-f M-l" 'consult-locate
+  "M-g M-g" 'consult-grep
+  "M-g M-r" 'consult-ripgrep
+  "M-g M-t" 'consult-git-grep)
+
+(keymap-set tab-prefix-map "b" 'consult-buffer-other-tab)
 
 (with-eval-after-load 'consult
   (add-hook 'completion-list-mode-hook 'consult-preview-at-point-mode)
@@ -221,14 +244,14 @@ For EDIT-COMMAND see `recompile'."
 
 ;;; Custom
 
-(define-prefix-command 'cus-edit-map)
-(define-key ctl-x-map "c" 'cus-edit-map)
+(define-keymap :prefix 'cus-edit-map
+  "v" 'customize-option
+  "g" 'customize-group
+  "f" 'customize-face
+  "s" 'customize-saved
+  "u" 'customize-unsaved)
 
-(define-key 'cus-edit-map "v" 'customize-option)
-(define-key 'cus-edit-map "g" 'customize-group)
-(define-key 'cus-edit-map "f" 'customize-face)
-(define-key 'cus-edit-map "s" 'customize-saved)
-(define-key 'cus-edit-map "u" 'customize-unsaved)
+(keymap-set ctl-x-map "c" 'cus-edit-map)
 
 ;;; Cyrillic Dvorak Im
 
@@ -236,38 +259,39 @@ For EDIT-COMMAND see `recompile'."
 
 ;;; Dictionary
 
-(define-key mode-specific-map "oT" 'dictionary-search)
+(keymap-set mode-specific-map "o T" 'dictionary-search)
 
 ;;; Diff
 
 (defvar diff-mode-map)
 (with-eval-after-load 'diff-mode
-  (define-key diff-mode-map "\M-o" nil))
+  (keymap-unset diff-mode-map "M-o" t))
 
 ;;; Dired
 
 (defvar dired-mode-map)
 (with-eval-after-load 'dired
   (require 'dired-x)
-  (define-key dired-mode-map "\M-+" 'dired-create-empty-file)
-  (define-key dired-mode-map "X" nil)
-  (define-key dired-mode-map "&" nil))
+  (keymap-set dired-mode-map "M-+" 'dired-create-empty-file)
+  (dolist (key '("X" "&"))
+    (keymap-unset dired-mode-map key t)))
 
 ;;; Dired Atool Transient
 
 (with-eval-after-load 'dired
-  (define-key dired-mode-map "c" 'dired-atool-transient-pack)
-  (define-key dired-mode-map "Z" 'dired-atool-transient-unpack))
+  (define-keymap :keymap dired-mode-map
+    "c" 'dired-atool-transient-pack
+    "Z" 'dired-atool-transient-unpack))
 
 ;;; Dired Tags
 
 (with-eval-after-load 'dired
-  (define-key dired-mode-map "\C-c\C-t" 'dired-tags-prefix-map))
+  (keymap-set dired-mode-map "C-c C-t" 'dired-tags-prefix-map))
 
 ;;; Disass
 
-(define-key emacs-lisp-mode-map "\C-c\C-d" 'disassemble)
-(define-key lisp-interaction-mode-map "\C-c\C-d" 'disassemble)
+(dolist (keymap (list emacs-lisp-mode-map lisp-interaction-mode-map))
+  (keymap-set keymap "C-c C-d" 'disassemble))
 
 ;;; Dumb Jump
 
@@ -275,17 +299,18 @@ For EDIT-COMMAND see `recompile'."
 
 ;;; Ebdb
 
-(define-key mode-specific-map "oe" 'ebdb)
+(keymap-set mode-specific-map "o e" 'ebdb)
 
 (defvar ebdb-mode-map)
 (with-eval-after-load 'ebdb-com
-  (define-key ebdb-mode-map "\C-cm" 'ebdb-complete-push-mail-and-quit-window)
-  (define-key ebdb-mode-map "\C-cM" 'ebdb-complete-push-mail))
+  (define-keymap :keymap ebdb-mode-map
+    "C-c m" 'ebdb-complete-push-mail-and-quit-window
+    "C-c M" 'ebdb-complete-push-mail))
 
 (defvar message-mode-map)
 (with-eval-after-load 'message
   (require 'ebdb-message)
-  (define-key message-mode-map "\C-ce" 'ebdb-complete))
+  (keymap-set message-mode-map "C-c e" 'ebdb-complete))
 
 ;;; Ediff
 
@@ -316,11 +341,11 @@ For EDIT-COMMAND see `recompile'."
     ("vdd" "Directory" ediff-directory-revisions)
     ("vdm" "Merge directory" ediff-merge-directory-revisions)]])
 
-(define-key ctl-x-map "\C-d" 'ediff-commands)
+(keymap-set ctl-x-map "C-d" 'ediff-commands)
 
 ;;; Edit Indirect
 
-(define-key ctl-x-map "E" 'edit-indirect-region)
+(keymap-set ctl-x-map "E" 'edit-indirect-region)
 
 ;;; Eglot
 
@@ -339,7 +364,7 @@ For EDIT-COMMAND see `recompile'."
     (list "CSharpLanguageServer" "-s" sln)))
 
 (with-eval-after-load 'eglot
-  (define-key eglot-mode-map "\C-c\C-l" 'eglot-code-actions)
+  (keymap-set eglot-mode-map "C-c C-l" 'eglot-code-actions)
 
   (mapc (apply-partially 'add-to-list 'eglot-server-programs)
         '((js-ts-mode . ("typescript-language-server" "--tsserver-path" "tsserver" "--stdio"))
@@ -387,18 +412,19 @@ See `xref-backend-apropos' docs for PATTERN."
 
 ;;; Elisp Mode
 
-(define-key emacs-lisp-mode-map [?\C-c ?\C-\S-m] 'emacs-lisp-macroexpand)
-(define-key lisp-interaction-mode-map [?\C-c ?\C-\S-m] 'emacs-lisp-macroexpand)
 (setq elisp-flymake-byte-compile-load-path (cons "./" load-path))
+
+(dolist (keymap (list emacs-lisp-mode-map lisp-interaction-mode-map))
+  (keymap-set keymap "C-c S-RET" 'emacs-lisp-macroexpand))
 
 ;;; Emacs
 
 (setq completion-ignore-case t)
-(define-key ctl-x-map "\C-\M-t" 'transpose-regions)
+(keymap-set ctl-x-map "C-M-t" 'transpose-regions)
 
 ;;; Embark
 
-(define-key global-map [?\C-.] 'embark-act)
+(keymap-global-set "C-." 'embark-act)
 
 ;;; Emmet Mode
 
@@ -409,14 +435,14 @@ See `xref-backend-apropos' docs for PATTERN."
 ;;; Env
 
 (setenv "PAGER" "cat")
-(define-key global-map [?\C-\M-$] 'getenv)
+(keymap-global-set "C-M-$" 'getenv)
 
 ;;; Envrc
 
 (defvar envrc-mode-map)
 (with-eval-after-load 'envrc
-  (define-key envrc-mode-map "\C-xd" 'envrc-command-map)
-  (define-key 'envrc-command-map "R" 'envrc-reload-all))
+  (keymap-set 'envrc-command-map "R" 'envrc-reload-all)
+  (keymap-set envrc-mode-map "C-x d" 'envrc-command-map))
 
 ;;; Eww
 
@@ -427,19 +453,21 @@ See `xref-backend-apropos' docs for PATTERN."
 
 ;;; Files
 
-(define-key 'load-command-map "\C-f" 'load-file)
-(define-key 'load-command-map "\C-l" 'load-library)
+(define-keymap :keymap 'load-command-map
+  "C-f" 'load-file
+  "C-l" 'load-library)
 
-(define-key ctl-x-map "\C-z" 'find-sibling-file)
+(keymap-set ctl-x-map "C-z" 'find-sibling-file)
 (put 'find-sibling-rules 'custom-type '(repeat (cons regexp (repeat regexp))))
 
-(define-key ctl-x-x-map "R" 'rename-visited-file)
+(keymap-set ctl-x-x-map "R" 'rename-visited-file)
 
 ;;; Files X
 
-(define-key ctl-x-x-map "ld" 'add-dir-local-variable)
-(define-key ctl-x-x-map "lf" 'add-file-local-variable)
-(define-key ctl-x-x-map "lF" 'add-file-local-variable-prop-line)
+(define-keymap :keymap ctl-x-x-map
+  "l d" 'add-dir-local-variable
+  "l f" 'add-file-local-variable
+  "l F" 'add-file-local-variable-prop-line)
 
 ;;; Find Dired
 
@@ -504,8 +532,6 @@ See `xref-backend-apropos' docs for PATTERN."
    ("-cr" "File contains regexp" "--contains-regexp=")]
   ["Actions" ("x" "Execute" find-dired-fd--execute)])
 
-(define-key search-map "\M-fd" 'find-dired-fd)
-
 (defun find-dired-locate--execute ()
   "Interactive command used as a transient suffix."
   (declare (completion ignore) (interactive-only t))
@@ -533,7 +559,9 @@ See `xref-backend-apropos' docs for PATTERN."
     :always-read t)]
   ["Actions" ("x" "Execute" find-dired-locate--execute)])
 
-(define-key search-map "\M-fl" 'find-dired-locate)
+(define-keymap :keymap search-map
+  "M-f d" 'find-dired-fd
+  "M-f l" 'find-dired-locate)
 
 ;;; Find Func
 
@@ -542,7 +570,7 @@ See `xref-backend-apropos' docs for PATTERN."
 
 ;;; Finder
 
-(define-key help-map "\M-c" 'finder-commentary)
+(keymap-set help-map "M-c" 'finder-commentary)
 
 ;;; Flymake
 
@@ -552,8 +580,9 @@ See `xref-backend-apropos' docs for PATTERN."
 
 (defvar flymake-mode-map)
 (with-eval-after-load 'flymake
-  (define-key flymake-mode-map "\M-g\M-b" 'flymake-goto-prev-error)
-  (define-key flymake-mode-map "\M-g\M-f" 'flymake-goto-next-error))
+  (define-keymap :keymap flymake-mode-map
+    "M-g M-b" 'flymake-goto-prev-error
+    "M-g M-f" 'flymake-goto-next-error))
 
 (with-eval-after-load 'flymake-proc
   (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake))
@@ -568,33 +597,34 @@ See `xref-backend-apropos' docs for PATTERN."
 
 (with-eval-after-load 'flymake-collection-statix
   (with-eval-after-load 'nix-mode
-    (define-key nix-mode-map "\C-c\C-x" 'flymake-collection-statix-fix))
+    (keymap-set nix-mode-map "C-c C-x" 'flymake-collection-statix-fix))
   (with-eval-after-load 'nix-ts-mode
-    (define-key nix-ts-mode-map "\C-c\C-x" 'flymake-collection-statix-fix)))
+    (keymap-set nix-ts-mode-map "C-c C-x" 'flymake-collection-statix-fix)))
 
 ;;; Grep
 
-(define-key search-map "\M-gg" 'rgrep)
+(keymap-set search-map "M-g g" 'rgrep)
 
 (define-advice grep-expand-template (:filter-return (cmd) cut)
   (concat cmd " | cut -c-500"))
 
 ;;; Help
 
-(define-key ctl-x-map "h" 'help-command)
+(keymap-set ctl-x-map "h" 'help-command)
 
 ;;; Help Fns
 
-(define-key help-map "\M-f" 'describe-face)
-(define-key help-map "\M-k" 'describe-keymap)
+(define-keymap :keymap help-map
+  "M-f" 'describe-face
+  "M-k" 'describe-keymap)
 
 ;;; Hippie Exp
 
-(define-key ctl-x-map [?\C-\;] 'hippie-expand)
+(keymap-set ctl-x-map "C-;" 'hippie-expand)
 
 ;;; Hl Line
 
-(define-key ctl-x-x-map "h" 'hl-line-mode)
+(keymap-set ctl-x-x-map "h" 'hl-line-mode)
 
 (add-hook 'csv-mode-hook 'hl-line-mode)
 (add-hook 'grep-mode-hook 'hl-line-mode)
@@ -608,23 +638,24 @@ See `xref-backend-apropos' docs for PATTERN."
 
 (defvar ibuffer-mode-map)
 (with-eval-after-load 'ibuffer
-  (define-key ibuffer-mode-map "\M-o" nil))
+  (keymap-unset ibuffer-mode-map "M-o" t))
 
 ;;; Ipretty
 
-(define-key lisp-interaction-mode-map "\C-j" 'ipretty-last-sexp)
+(keymap-set lisp-interaction-mode-map "C-j" 'ipretty-last-sexp)
 
 ;;; Isearch
 
 (fset 'isearch-help-map isearch-help-map)
-(define-key isearch-mode-map (kbd "C-?") 'isearch-help-map)
-(define-key isearch-mode-map "\C-h" 'isearch-delete-char)
+(define-keymap :keymap isearch-mode-map
+  "C-?" 'isearch-help-map
+  "C-h" 'isearch-delete-char)
 
 ;;; Js
 
 (defvar js-ts-mode-map)
 (with-eval-after-load 'js
-  (define-key js-ts-mode-map "\M-." nil))
+  (keymap-unset js-ts-mode-map "M-." t))
 
 ;;; Ledger
 
@@ -646,16 +677,19 @@ See `xref-backend-apropos' docs for PATTERN."
 
 ;;; Link Hint
 
-(define-key goto-map "\M-l" 'link-hint-open-link)
-(define-key goto-map "\M-L" 'link-hint-copy-link)
+(define-keymap :keymap goto-map
+  "M-l" 'link-hint-open-link
+  "M-L" 'link-hint-copy-link)
+
 (with-eval-after-load 'link-hint
   (cl-pushnew 'rg-mode (get 'link-hint-compilation-link :vars)))
 
 ;;; Lisp
 
-(define-key global-map "\M-[" 'delete-pair)
-(define-key global-map "\M-]" 'change-pair)
-(define-key global-map [?\C-\)] 'slurp-pair)
+(define-keymap :keymap (current-global-map)
+  "M-[" 'delete-pair
+  "M-]" 'change-pair
+  "C-)" 'slurp-pair)
 
 (defun change-pair (change-to)
   "Change pair at point to CHANGE-TO."
@@ -680,15 +714,15 @@ See `xref-backend-apropos' docs for PATTERN."
 
 ;;; Loadhist
 
-(define-key 'load-command-map "\C-u" 'unload-feature)
+(keymap-set 'load-command-map "C-u" 'unload-feature)
 
 ;;; Magit
 
-(define-key project-prefix-map "m" 'magit-project-status)
+(keymap-set project-prefix-map "m" 'magit-project-status)
 
 ;;; Menu Bar
 
-(define-key ctl-x-map "`" 'toggle-debug-on-error)
+(keymap-set ctl-x-map "`" 'toggle-debug-on-error)
 
 ;;; Minibuffer
 
@@ -696,48 +730,50 @@ See `xref-backend-apropos' docs for PATTERN."
       completion-in-region-function 'consult-completion-in-region
       minibuffer-allow-text-properties t)
 
-(define-key completion-in-region-mode-map "\M-v" 'switch-to-completions)
-(define-key minibuffer-local-completion-map " " nil)
-(define-key minibuffer-local-must-match-map "\C-j" 'minibuffer-force-complete-and-exit)
+(keymap-set completion-in-region-mode-map "M-v" 'switch-to-completions)
+(keymap-set minibuffer-local-must-match-map "C-j" 'minibuffer-force-complete-and-exit)
+(keymap-unset minibuffer-local-completion-map "SPC" t)
 
 ;;; Misc
 
-(define-key ctl-x-map "o" 'duplicate-dwim)
+(keymap-set ctl-x-map "o" 'duplicate-dwim)
 
-(easy-mmode-defmap duplicate-dwim-repeat-map
-  '(("o" . duplicate-dwim))
-  nil)
-
-(put 'duplicate-dwim 'repeat-map 'duplicate-dwim-repeat-map)
+(defvar-keymap duplicate-dwim-repeat-map
+  :repeat t
+  "o" 'duplicate-dwim)
 
 ;;; Mpc
 
-(define-key mode-specific-map "os" 'mpc)
+(keymap-set mode-specific-map "o s" 'mpc)
 
 (defvar mpc-mode-map)
 (defvar mpc-songs-mode-map)
 (with-eval-after-load 'mpc
-  (define-key mpc-mode-map "." 'mpc-toggle-single)
-  (define-key mpc-mode-map "D" 'mpc-playlist-delete)
-  (define-key mpc-mode-map "M" 'mpc-select-extend)
-  (define-key mpc-mode-map "\C-m" 'mpc-songs-jump-to)
-  (define-key mpc-mode-map "\M-m" 'mpc-select)
-  (define-key mpc-mode-map "a" 'mpc-playlist-add)
-  (define-key mpc-mode-map "b" 'mpc-rewind)
-  (define-key mpc-mode-map "c" 'mpc-toggle-consume)
-  (define-key mpc-mode-map "f" 'mpc-ffwd)
-  (define-key mpc-mode-map "j" 'mpc-dired-jump)
-  (define-key mpc-mode-map "k" 'mpc-songs-kill-search)
-  (define-key mpc-mode-map "m" 'mpc-select-toggle)
-  (define-key mpc-mode-map "p" 'mpc-playlist)
-  (define-key mpc-mode-map "r" 'mpc-toggle-repeat)
-  (define-key mpc-mode-map "s" 'mpc-songs-search)
-  (define-key mpc-mode-map "t" 'mpc-toggle-play)
-  (define-key mpc-mode-map "u" 'mpc-update)
-  (define-key mpc-mode-map "z" 'mpc-toggle-shuffle)
-  (define-key mpc-songs-mode-map "V" 'mpc-move-backward)
-  (define-key mpc-songs-mode-map "v" 'mpc-move-forward)
-  (define-key mpc-songs-mode-map [remap mpc-select] nil))
+  (define-keymap :keymap mpc-mode-map
+    "." 'mpc-toggle-single
+    "D" 'mpc-playlist-delete
+    "M" 'mpc-select-extend
+    "RET" 'mpc-songs-jump-to
+    "M-m" 'mpc-select
+    "a" 'mpc-playlist-add
+    "b" 'mpc-rewind
+    "c" 'mpc-toggle-consume
+    "f" 'mpc-ffwd
+    "j" 'mpc-dired-jump
+    "k" 'mpc-songs-kill-search
+    "m" 'mpc-select-toggle
+    "p" 'mpc-playlist
+    "r" 'mpc-toggle-repeat
+    "s" 'mpc-songs-search
+    "t" 'mpc-toggle-play
+    "u" 'mpc-update
+    "z" 'mpc-toggle-shuffle)
+
+  (define-keymap :keymap mpc-songs-mode-map
+    "V" 'mpc-move-backward
+    "v" 'mpc-move-forward)
+
+  (keymap-unset mpc-songs-mode-map "<remap> <mpc-select>" t))
 
 (defvar mpc-mpd-music-directory)
 (declare-function mpc-tagbrowser-all-p "mpc")
@@ -776,28 +812,30 @@ See its documentiation for N."
 
 ;;; Net Utils
 
-(define-key mode-specific-map "nh" 'nslookup-host)
-(define-key mode-specific-map "ni" 'ifconfig)
-(define-key mode-specific-map "nn" 'netstat)
-(define-key mode-specific-map "np" 'ping)
-(define-key mode-specific-map "nw" 'iwconfig)
+(define-keymap :keymap mode-specific-map
+  "n h" 'nslookup-host
+  "n i" 'ifconfig
+  "n n" 'netstat
+  "n p" 'ping
+  "n w" 'iwconfig)
 
 ;;; Newcomment
 
-(define-key global-map [?\C-\;] 'comment-line)
+(keymap-global-set "C-;" 'comment-line)
 
 ;;; Newsticker
 
-(define-key mode-specific-map "on" 'newsticker-show-news)
+(keymap-set mode-specific-map "o n" 'newsticker-show-news)
 
 ;;; Nix Mode
 
 (add-hook 'proced-mode-hook 'nix-prettify-mode)
 
-(define-key mode-specific-map "e" 'nix-edit)
-(define-key mode-specific-map "r" 'nix-repl)
-(define-key mode-specific-map "S" 'nix-search-transient)
-(define-key mode-specific-map "T" 'nix-store-show-path)
+(define-keymap :keymap mode-specific-map
+  "e" 'nix-edit
+  "r" 'nix-repl
+  "S" 'nix-search-transient
+  "T" 'nix-store-show-path)
 
 (define-advice nix-edit (:override () flake)
   (interactive)
@@ -853,7 +891,9 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
   (transient-append-suffix 'nix-flake-dispatch '(2 -1)
     '("l" "Log attribute" nix-flake-log-attribute))
   (transient-append-suffix 'nix-flake-dispatch '(2 -1)
-    '("o" "Rebuild attribute" nix-flake-rebuild-attribute)))
+    '("o" "Rebuild attribute" nix-flake-rebuild-attribute))
+
+  (add-to-list 'auto-mode-alist '("\\flake.lock\\'" . json-ts-mode)))
 
 (define-advice nix-read-flake (:override () always-prompt)
   (let ((default "nixpkgs"))
@@ -885,7 +925,7 @@ Used as an advice."
   (interactive)
   (nix-flake (project-root (project-current t))))
 
-(define-key project-prefix-map "l" 'nix-flake-project)
+(keymap-set project-prefix-map "l" 'nix-flake-project)
 
 (defvar nix-flake-outputs)
 (defun nix-flake-rebuild-attribute (options flake-ref attribute)
@@ -939,7 +979,7 @@ build."
 
 ;;; Notmuch
 
-(define-key mode-specific-map "om" 'notmuch)
+(keymap-set mode-specific-map "o m" 'notmuch)
 
 (autoload 'notmuch-mua-mail "notmuch-mua")
 (define-mail-user-agent 'notmuch-user-agent
@@ -970,34 +1010,36 @@ build."
 
 (defvar org-mode-map)
 (with-eval-after-load 'org
-  (define-key org-mode-map [?\C-c?\C-\S-t] 'org-todo-yesterday))
+  (keymap-set org-mode-map "C-c C-S-t" 'org-todo-yesterday))
 
 (define-advice org-show-notification (:after (&rest _) sound)
   (call-process "notify_ding" nil 0 nil))
 
-(define-key mode-specific-map "Ga" 'org-agenda)
+(keymap-set mode-specific-map "G a" 'org-agenda)
 
 (defvar org-agenda-mode-map)
 (with-eval-after-load 'org-agenda
-  (define-key org-agenda-mode-map "T" 'org-agenda-todo-yesterday))
+  (keymap-set org-agenda-mode-map "T" 'org-agenda-todo-yesterday))
 
-(define-key mode-specific-map "Gc" 'org-capture)
+(keymap-set mode-specific-map "G c" 'org-capture)
 
 ;;; Org Mime
 
 (autoload 'org-mime-edit-mail-in-org-mode "org-mime" nil t)
 (autoload 'org-mime-revert-to-plain-text-mail "org-mime" nil t)
 (with-eval-after-load 'message
-  (define-key message-mode-map "\C-c\M-o" 'org-mime-htmlize)
-  (define-key message-mode-map "\C-c\M-e" 'org-mime-edit-mail-in-org-mode)
-  (define-key message-mode-map "\C-c\M-t" 'org-mime-revert-to-plain-text-mail))
+  (define-keymap :keymap message-mode-map
+    "C-c M-o" 'org-mime-htmlize
+    "C-c M-e" 'org-mime-edit-mail-in-org-mode
+    "C-c M-t" 'org-mime-revert-to-plain-text-mail))
 
 ;;; Org Roam
 
-(define-key mode-specific-map "Gf" 'org-roam-node-find)
-(define-key mode-specific-map "Gi" 'org-roam-node-insert)
-(define-key mode-specific-map "Gl" 'org-roam-buffer-toggle)
-(define-key mode-specific-map "Gs" 'org-roam-db-sync)
+(define-keymap :keymap mode-specific-map
+  "G f" 'org-roam-node-find
+  "G i" 'org-roam-node-insert
+  "G l" 'org-roam-buffer-toggle
+  "G s" 'org-roam-db-sync)
 
 (declare-function org-roam-db-autosync-mode "org-roam-db")
 (with-eval-after-load 'org-roam
@@ -1005,7 +1047,7 @@ build."
 
 ;;; Paragraphs
 
-(define-key global-map [?\C-\M-\S-t] 'transpose-paragraphs)
+(keymap-global-set "C-M-S-t" 'transpose-paragraphs)
 
 ;;; Pdf Tools
 
@@ -1014,33 +1056,34 @@ build."
 
 ;;; Pp
 
-(define-key emacs-lisp-mode-map "\C-c\C-m" 'pp-macroexpand-last-sexp)
-(define-key lisp-interaction-mode-map "\C-c\C-m" 'pp-macroexpand-last-sexp)
+(dolist (keymap (list emacs-lisp-mode-map lisp-interaction-mode-map))
+  (keymap-set keymap "C-c RET" 'pp-macroexpand-last-sexp))
 
 ;;; Proced
 
-(define-key mode-specific-map "op" 'proced)
+(keymap-set mode-specific-map "o p" 'proced)
 
 ;;; Project
 
-(define-key project-prefix-map "&" nil)
+(keymap-unset project-prefix-map "&" t)
 
 ;;; Pueue
 
-(define-key mode-specific-map "ou" 'pueue)
+(keymap-set mode-specific-map "o u" 'pueue)
 (add-hook 'pueue-mode-hook 'hl-line-mode)
 
 ;;; Register
 
-(define-key ctl-x-r-map "L" 'list-registers)
-(define-key ctl-x-r-map "a" 'append-to-register)
-(define-key ctl-x-r-map "p" 'prepend-to-register)
-(define-key ctl-x-r-map "v" 'view-register)
+(define-keymap :keymap ctl-x-r-map
+  "L" 'list-registers
+  "a" 'append-to-register
+  "p" 'prepend-to-register
+  "v" 'view-register)
 
 ;;; Re Builder
 
-(define-key emacs-lisp-mode-map "\C-c\C-r" 're-builder)
-(define-key lisp-interaction-mode-map "\C-c\C-r" 're-builder)
+(dolist (keymap (list emacs-lisp-mode-map lisp-interaction-mode-map))
+  (keymap-set keymap "C-c C-r" 're-builder))
 
 ;;; Reverse Im
 
@@ -1049,7 +1092,7 @@ build."
 
 ;;; Rg
 
-(define-key search-map "\M-gr" 'rg-menu)
+(keymap-set search-map "M-g r" 'rg-menu)
 
 ;;; Rust Ts Mode
 
@@ -1077,7 +1120,7 @@ Remove duplicates.  Remove inexistent files from
 
 ;;; Sdcwoc
 
-(define-key mode-specific-map "ot" 'sdcwoc)
+(keymap-set mode-specific-map "o t" 'sdcwoc)
 
 ;;; Sgml mode
 
@@ -1086,10 +1129,11 @@ Remove duplicates.  Remove inexistent files from
 (defvar html-mode-map)
 (defvar sgml-mode-map)
 (with-eval-after-load 'sgml-mode
-  (define-key html-mode-map "\M-o" nil)
-  (define-key sgml-mode-map "\C-\M-n" 'sgml-skip-tag-forward)
-  (define-key sgml-mode-map "\C-\M-p" 'sgml-skip-tag-backward)
-  (define-key sgml-mode-map "\C-c\C-r" 'sgml-namify-char))
+  (keymap-unset html-mode-map "M-o" t)
+  (define-keymap :keymap sgml-mode-map
+    "C-M-n" 'sgml-skip-tag-forward
+    "C-M-p" 'sgml-skip-tag-backward
+    "C-c C-r" 'sgml-namify-char))
 
 ;;; Sh Script
 
@@ -1098,8 +1142,9 @@ Remove duplicates.  Remove inexistent files from
 
 ;;; Shell
 
-(define-key mode-specific-map "s" 'shell)
-(define-key mode-specific-map "l" 'shell-list)
+(define-keymap :keymap mode-specific-map
+  "s" 'shell
+  "l" 'shell-list)
 
 (defun shell-list (&optional other-window-p)
   "Open shell buffers in ibuffer.
@@ -1117,19 +1162,25 @@ Remove duplicates.  Remove inexistent files from
 
 ;;; Simple
 
-(define-key ctl-x-map "u" 'mark-whole-buffer)
-(define-key ctl-x-x-map "f" 'auto-fill-mode)
-(define-key ctl-x-x-map "v" 'visual-line-mode)
-(define-key ctl-x-x-map "w" 'whitespace-mode)
-(define-key esc-map "&" nil)
-(define-key global-map "\C-h" 'backward-delete-char-untabify)
-(define-key global-map "\C-w" 'kill-region-dwim)
-(define-key global-map "\M-K" 'kill-whole-line)
-(define-key global-map "\M-\\" 'delete-indentation)
-(define-key global-map "\M-c" 'capitalize-dwim)
-(define-key global-map "\M-l" 'downcase-dwim)
-(define-key global-map "\M-u" 'upcase-dwim)
-(define-key mode-specific-map "oP" 'list-processes)
+(keymap-set ctl-x-map "u" 'mark-whole-buffer)
+
+(define-keymap :keymap ctl-x-x-map
+  "f" 'auto-fill-mode
+  "v" 'visual-line-mode
+  "w" 'whitespace-mode)
+
+(define-keymap :keymap (current-global-map)
+  "C-h" 'backward-delete-char-untabify
+  "C-w" 'kill-region-dwim
+  "M-K" 'kill-whole-line
+  "M-\\" 'delete-indentation
+  "M-c" 'capitalize-dwim
+  "M-l" 'downcase-dwim
+  "M-u" 'upcase-dwim)
+
+(keymap-set mode-specific-map "o P" 'list-processes)
+
+(keymap-unset esc-map "&" t)
 
 (defun kill-region-dwim (&optional count)
   "Kill word or kill region if it's active.
@@ -1152,29 +1203,29 @@ See `backward-kill-word' for COUNT."
 (add-hook 'nix-ts-mode-hook 'subword-mode)
 (add-hook 'rust-ts-mode-hook 'subword-mode)
 
-;; Tab Bar
+;;; Tab Bar
 
-(define-key tab-prefix-map "\M-b" 'tab-bar-history-back)
-(define-key tab-prefix-map "\M-f" 'tab-bar-history-forward)
+(define-keymap :keymap tab-prefix-map
+  "M-b" 'tab-bar-history-back
+  "M-f" 'tab-bar-history-forward)
 
-(easy-mmode-defmap tab-bar-history-repeat-map
-  '(("\M-b" . tab-bar-history-back)
-    ("\M-f" . tab-bar-history-forward))
-  nil)
-
-(put 'tab-bar-history-back 'repeat-map 'tab-bar-history-repeat-map)
-(put 'tab-bar-history-forward 'repeat-map 'tab-bar-history-repeat-map)
+(defvar-keymap tab-bar-history-repeat-map
+  :repeat t
+  "M-b" 'tab-bar-history-back
+  "M-f" 'tab-bar-history-forward)
 
 ;;; Tempo
 
 (with-eval-after-load 'tempo
-  (define-key goto-map "\M-e" 'tempo-forward-mark)
-  (define-key goto-map "\M-a" 'tempo-backward-mark))
+  (define-keymap :keymap goto-map
+    "M-e" 'tempo-forward-mark
+    "M-a" 'tempo-backward-mark))
 
 ;;; Tempo Extra
 
 (with-eval-after-load 'abbrev-hook
-  (define-key global-map "\C-z" 'abbrev-hook-call))
+  (keymap-global-set "C-z" 'abbrev-hook-call))
+
 (with-eval-after-load 'csharp-mode (require 'tempo-extra-csharp))
 (with-eval-after-load 'elisp-mode (require 'tempo-extra-elisp))
 (with-eval-after-load 'js (require 'tempo-extra-js))
@@ -1224,11 +1275,11 @@ See `backward-kill-word' for COUNT."
 
 ;;; Term
 
-(define-key mode-specific-map "t" 'term)
+(keymap-set mode-specific-map "t" 'term)
 
 ;;; Tramp
 
-(define-key ctl-x-x-map "T" 'tramp-cleanup-all-buffers)
+(keymap-set ctl-x-x-map "T" 'tramp-cleanup-all-buffers)
 
 ;;; Transient
 
@@ -1249,15 +1300,15 @@ See `backward-kill-word' for COUNT."
     ("l" "Sort Fields" sort-fields)
     ("n" "Sort Numeric Fields" sort-numeric-fields)]])
 
-(define-key ctl-x-map "\C-r" 'region-commands)
+(keymap-set ctl-x-map "C-r" 'region-commands)
 
 ;;; Transmission
 
-(define-key mode-specific-map "or" 'transmission)
+(keymap-set mode-specific-map "o r" 'transmission)
 
 (defvar transmission-mode-map)
 (with-eval-after-load 'transmission
-  (define-key transmission-mode-map "M" 'transmission-move))
+  (keymap-set transmission-mode-map "M" 'transmission-move))
 
 ;;; Url Parse
 
@@ -1268,12 +1319,12 @@ See `backward-kill-word' for COUNT."
 
 (defvar vertico-map)
 (with-eval-after-load 'vertico
-  (define-key vertico-map "\C-m" 'vertico-directory-enter)
-  (define-key vertico-map "\C-h" 'vertico-directory-delete-char)
-  (define-key vertico-map "\C-w" 'vertico-directory-delete-word)
-
-  (define-key vertico-map "\M-z" 'vertico-quick-exit)
-  (define-key vertico-map "\M-Z" 'vertico-quick-insert))
+  (define-keymap :keymap vertico-map
+    "RET" 'vertico-directory-enter
+    "C-h" 'vertico-directory-delete-char
+    "C-w" 'vertico-directory-delete-word
+    "M-z" 'vertico-quick-exit
+    "M-Z" 'vertico-quick-insert))
 
 (add-hook 'rfn-eshadow-update-overlay-hook 'vertico-directory-tidy)
 
@@ -1286,24 +1337,25 @@ See `backward-kill-word' for COUNT."
 (defvar widget-field-keymap)
 (defvar widget-text-keymap)
 (with-eval-after-load 'wid-edit
-  (define-key widget-field-keymap "\C-xnf" 'widget-narrow-to-field)
-  (define-key widget-text-keymap "\C-xnf" 'widget-narrow-to-field))
+  (dolist (keymap (list widget-field-keymap widget-text-keymap))
+    (keymap-set keymap "C-x n f" 'widget-narrow-to-field)))
 
 ;;; Window
 
-(define-key global-map "\M-Q" 'quit-window)
-(define-key global-map "\M-V" 'scroll-down-line)
-(define-key global-map "\M-o" 'other-window)
-(define-key global-map [?\C-\M-\S-b] 'previous-buffer)
-(define-key global-map [?\C-\M-\S-f] 'next-buffer)
-(define-key global-map [?\C-\S-v] 'scroll-up-line)
+(define-keymap :keymap (current-global-map)
+  "M-Q" 'quit-window
+  "M-V" 'scroll-down-line
+  "M-o" 'other-window
+  "C-M-S-b" 'previous-buffer
+  "C-M-S-f" 'next-buffer
+  "C-S-v" 'scroll-up-line)
 
 (with-eval-after-load 'window
   (put 'other-window 'repeat-map nil))
 
 ;;; With Editor
 
-(define-key global-map [?\C-\M-!] 'with-editor-shell-command)
+(keymap-global-set "C-M-!" 'with-editor-shell-command)
 
 (define-advice with-editor-shell-command-read-args
     (:filter-args (args) prefix-prompt)
@@ -1313,8 +1365,9 @@ See `backward-kill-word' for COUNT."
 
 (defvar xref--xref-buffer-mode-map)
 (with-eval-after-load 'xref
-  (define-key xref--xref-buffer-mode-map "\C-m" 'xref-quit-and-goto-xref)
-  (define-key xref--xref-buffer-mode-map "o" 'xref-goto-xref))
+  (define-keymap :keymap xref--xref-buffer-mode-map
+    "RET" 'xref-quit-and-goto-xref
+    "o" 'xref-goto-xref))
 
 (autoload 'xref-push-marker-stack "xref")
 (defun xref-push-previous-buffer-marker-stack ()
