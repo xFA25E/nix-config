@@ -36,7 +36,7 @@ in {
     "xterm*cursorBlink" = "false";
     "xterm*cursorColor" = "#${colors.base08}";
     "xterm*eightBitInput" = "false";
-    "xterm*font" = "xft:monospace:size=8";
+    "xterm*font" = "xft:monospace:size=10";
     "xterm*foreground" = "#${colors.base05}";
     "xterm*internalBorder" = 0;
     "xterm*saveLines" = 10240;
