@@ -190,7 +190,16 @@
      ("\\.\\(?:ai\\|eps\\)\\'" "setsid -f inkscape * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
      ("\\.\\(?:djvu\\|fb2\\)\\'" "ebook-convert ? .epub &")
      ("\\.pdf\\'" "setsid -f libreoffice * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
-     ("\\.\\(?:3gp\\|aiff\\|avi\\|flac\\|flv\\|m4a\\|mkv\\|mov\\|mp3\\|mp4\\|mpg\\|ogg\\|ogv\\|opus\\|vob\\|wav\\|webm\\|wmv\\|mka\\|m4v\\)\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1" "for vid in * ; do dur=$(video_seconds \"$vid\"); sum=$((sum + dur)); done; format_seconds \"%02h:%02m:%02s\" \"$sum\"" "recode_video hevc * &" "strip_video opus * &" "resize_video 360 * &" "mediainfo" "mpv -vo=drm" "sort_videos_by_duration *")
+     ("\\.\\(?:3gp\\|aiff\\|avi\\|flac\\|flv\\|m4a\\|mkv\\|mov\\|mp3\\|mp4\\|mpg\\|ogg\\|ogv\\|opus\\|vob\\|wav\\|webm\\|wmv\\|mka\\|m4v\\)\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1" "for vid in * ; do dur=$(video_seconds \"$vid\"); sum=$((sum + dur)); done; format_seconds \"%02h:%02m:%02s\" \"$sum\"" "recode_video hevc * &"
+      (pcase file
+        ((rx ".webm" eos)
+         "strip_video opus * &")
+        ((rx "."
+             (or "mp4" "m4v")
+             eos)
+         "strip_video m4a * &")
+        (_ "strip_video mp3 * &"))
+      "resize_video 360 * &" "mediainfo" "mpv -vo=drm" "sort_videos_by_duration *")
      ("\\.cue\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1")
      ("\\.rar\\'"
       (let
@@ -306,8 +315,6 @@
                (flymake-collection-sqlint :disabled t))
      ((ruby-mode ruby-ts-mode)
       flymake-collection-rubocop)
-     ((sh-mode bash-ts-mode)
-      flymake-collection-shellcheck)
      ((yaml-mode yaml-ts-mode)
       . flymake-collection-yamllint)
      ((web-mode html-ts-mode)
@@ -390,7 +397,9 @@
  '(leaf-expand-minimally t)
  '(ledger-default-date-format "%Y-%m-%d")
  '(ledger-reports
-   '(("intex trips" "%(binary) -f %(ledger-file) register \"Assets:Debt:Intex System\" --limit \"amount > 0\" --period %(month)")
+   '(("expenses monthly" "%(binary) -f %(ledger-file) register '^Expenses' --monthly --empty --collapse --average --period 'from 2023-4'")
+     ("groceries weekly" "%(binary) -f %(ledger-file) register 'Expenses:Groceries' --period 'from 2023-7-24' --average --weekly")
+     ("intex trips" "%(binary) -f %(ledger-file) register 'Assets:Debt:Intex System' --limit 'amount > 0' --period %(month)")
      ("account monthly collapsed" "%(binary) -f %(ledger-file) --monthly --empty --collapse register %(account)")
      ("cash flow" "%(binary) -f %(ledger-file) balance ^Income ^Expenses")
      ("net worth" "%(binary) -f %(ledger-file) balance ^Assets ^Liabilities")
@@ -444,6 +453,7 @@
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
    '(("The Alternative Hypothesis Substack" "https://thealternativehypothesis.substack.com/feed" nil nil nil)
+     ("Информационное насилие" "https://www.youtube.com/feeds/videos.xml?channel_id=UCwpF2sTk7VLnCImJtYr45oQ" nil nil nil)
      ("the way i see things" "https://www.youtube.com/feeds/videos.xml?channel_id=UCFQYVdJHRHxmzffGKCqeZgQ" nil nil nil)
      ("Marginal Official" "https://www.youtube.com/feeds/videos.xml?channel_id=UCztofm5i39e16gP4UiaQemA" nil nil nil)
      ("Ideas and Data Substack" "https://seanlast.substack.com/feed" nil nil nil)
@@ -526,23 +536,28 @@
  '(notmuch-show-all-tags-list t)
  '(notmuch-show-empty-saved-searches t)
  '(notmuch-tagging-keys
-   '(("a" notmuch-archive-tags "Archive")
-     ("u" notmuch-show-mark-read-tags "Mark read")
-     ("f"
+   '(([97]
+      notmuch-archive-tags "Archive")
+     ([117]
+      notmuch-show-mark-read-tags "Mark read")
+     ([102]
       ("-archive" "+flagged" "-inbox" "-spam" "-trash" "-deleted")
       "Flag")
-     ("s"
+     ([115]
       ("-archive" "-flagged" "-inbox" "+spam" "-trash" "-deleted")
       "Mark as spam")
-     ("t"
+     ([116]
       ("-archive" "-flagged" "-inbox" "-spam" "+trash" "-deleted")
       "Trash")
-     ("d"
+     ([100]
       ("+deleted")
       "Delete")
-     ("i"
+     ([105]
       ("-archive" "-flagged" "+inbox" "-spam" "-trash" "-deleted")
-      "Inbox")))
+      "Inbox")
+     ([112]
+      ("-litkov" "+polimi")
+      "Polimi")))
  '(nov-save-place-file (expand-file-name "emacs/nov-places" (xdg-cache-home)))
  '(nov-text-width 80)
  '(nsm-settings-file
@@ -707,6 +722,7 @@
  '(translate-upper-case-key-bindings nil)
  '(transmission-pieces-function 'transmission-format-pieces-brief)
  '(transmission-units 'si)
+ '(treesit-font-lock-level 4)
  '(truncate-lines t)
  '(undo-limit 200000)
  '(undo-strong-limit 300000)

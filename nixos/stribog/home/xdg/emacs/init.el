@@ -272,9 +272,50 @@ For EDIT-COMMAND see `recompile'."
 (defvar dired-mode-map)
 (with-eval-after-load 'dired
   (require 'dired-x)
-  (keymap-set dired-mode-map "M-+" 'dired-create-empty-file)
+  (define-keymap :keymap dired-mode-map
+    "M-+" 'dired-create-empty-file
+    "* i" 'dired-mark-images
+    "* v" 'dired-mark-videos)
   (dolist (key '("X" "&"))
     (keymap-unset dired-mode-map key t)))
+
+(defvar dired-marker-char)
+(declare-function dired-mark-extension "dired-x")
+(defun dired-mark-images (&optional marker-char)
+  "Mark images.
+For MARKER-CHAR see `dired-mark-extension'."
+  (interactive
+   (list
+    (pcase current-prefix-arg
+      ('(4) ?\s)
+      ('(16)
+       (let* ((dflt (char-to-string dired-marker-char))
+              (input (read-string
+                      (format-prompt "Marker character to use" dflt)
+                      nil nil dflt)))
+         (aref input 0)))
+      (_ dired-marker-char))))
+  (dired-mark-extension
+   '("bmp" "gif" "jfif" "jpeg" "jpg" "nef" "png" "thm" "tif" "webp" "xpm")
+   marker-char))
+
+(defun dired-mark-videos (&optional marker-char)
+  "Mark videos.
+For MARKER-CHAR see `dired-mark-extension'."
+  (interactive
+   (list
+    (pcase current-prefix-arg
+      ('(4) ?\s)
+      ('(16)
+       (let* ((dflt (char-to-string dired-marker-char))
+              (input (read-string
+                      (format-prompt "Marker character to use" dflt)
+                      nil nil dflt)))
+         (aref input 0)))
+      (_ dired-marker-char))))
+  (dired-mark-extension
+   '("3gp" "aiff" "avi" "flac" "flv" "m4a" "mkv" "mov" "mp3" "mp4" "mpg" "ogg" "ogv" "opus" "vob" "wav" "webm" "wmv" "mka" "m4v")
+   marker-char))
 
 ;;; Dired Atool Transient
 

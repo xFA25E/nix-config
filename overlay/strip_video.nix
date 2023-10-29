@@ -20,8 +20,15 @@ writeShellScriptBin "strip_video" ''
                        "''${video%.*}.opus"
           done
           ;;
+      m4a)
+          shift
+          for video in "$@"; do
+              ${ffmpeg}/bin/ffmpeg -n -i "$video" -vn -acodec copy \
+                       "''${video%.*}.m4a"
+          done
+          ;;
       *)
-          echo "Select output format: mp3, opus" >&2
+          echo "Select output format: mp3, m4a, opus" >&2
           exit 1
   esac
 ''

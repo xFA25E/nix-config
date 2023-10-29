@@ -54,6 +54,7 @@
       allowUnfree = true;
       permittedInsecurePackages = [
         "python-2.7.18.6"
+        "teams-1.5.00.23861"
       ];
     };
     overlays = [

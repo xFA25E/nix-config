@@ -81,6 +81,7 @@ in {
           configure_row = ["HDMI-1" "eDP-1"];
           atomic = true;
           primary = "HDMI-1";
+          execute_after = ["xrandr --dpi 96"];
         }
         {
           name = "Default";
@@ -88,6 +89,7 @@ in {
           configure_single = "eDP-1";
           atomic = true;
           primary = "eDP-1";
+          execute_after = ["xrandr --dpi 96"];
         }
       ];
     };

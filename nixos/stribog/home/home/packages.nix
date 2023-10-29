@@ -86,6 +86,7 @@
       rsync
       scrot
       sdcv
+      shellcheck
       simplescreenrecorder
       sort_videos_by_duration
       speedtest-cli
@@ -94,6 +95,7 @@
       stumpwm
       sxiv
       teams
+      telegram-desktop
       tor-browser-bundle-bin
       transmission
       udiskie
