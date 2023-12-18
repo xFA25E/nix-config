@@ -64,7 +64,7 @@
       "strings*"
       "strip*"
       "studies_*"
-      "sxiv*"
+      "nsxiv*"
       "tail*"
       "time*"
       "timer*"

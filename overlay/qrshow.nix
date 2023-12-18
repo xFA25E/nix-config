@@ -1,6 +1,6 @@
 {
   qrencode,
-  sxiv,
+  nsxiv,
   writeShellScriptBin,
 }:
 writeShellScriptBin "qrshow" ''
@@ -8,6 +8,6 @@ writeShellScriptBin "qrshow" ''
   text=$1
   out=$(mktemp /tmp/qrXXXXX.png)
   ${qrencode}/bin/qrencode -o "$out" -s 15 "$text"
-  ${sxiv}/bin/sxiv "$out"
+  ${nsxiv}/bin/nsxiv "$out"
   rm "$out"
 ''

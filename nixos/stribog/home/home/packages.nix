@@ -93,7 +93,7 @@
       stalonetray
       strip_video
       stumpwm
-      sxiv
+      nsxiv
       teams
       telegram-desktop
       tor-browser-bundle-bin
