@@ -702,20 +702,6 @@ See `xref-backend-apropos' docs for PATTERN."
 
 (add-hook 'ledger-mode-hook 'ledger-flymake-enable)
 
-(defvar ledger-amount-regex)
-(defvar ledger-commodity-regexp)
-(with-eval-after-load 'ledger-regex
-  (setq ledger-amount-regex
-        (rx (group (or "  " "\t" " \t")) (* (in " \t")) (? "-")
-            (? (regexp ledger-commodity-regexp) (* " "))
-            (group (? (in "=-")) (or (+ (in "0-9")) (+? (in "0-9,."))))
-            (? (group (in ",.") (+ (in "0-9)"))))
-            (? (* " ") (regexp ledger-commodity-regexp))
-            (? (group (* (in " \t")) (in "=@{") (? "@") (+? (not (in "\n;")))))
-            (? (group (or (seq (+ (in " \t")) ";" (+? nonl))
-                          (* (in " \t")))))
-            eol)))
-
 ;;; Link Hint
 
 (define-keymap :keymap goto-map
@@ -1248,7 +1234,8 @@ See `backward-kill-word' for COUNT."
 
 (define-keymap :keymap tab-prefix-map
   "M-b" 'tab-bar-history-back
-  "M-f" 'tab-bar-history-forward)
+  "M-f" 'tab-bar-history-forward
+  "1" nil)
 
 (defvar-keymap tab-bar-history-repeat-map
   :repeat t

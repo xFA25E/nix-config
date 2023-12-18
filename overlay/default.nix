@@ -44,4 +44,11 @@ in {
   ytdlp = callPackage ./ytdlp.nix {};
 
   mahogany = callPackage ./mahogany.nix {};
+  emacsUP = (inputs.emacs-overlay.overlay final final).emacsWithPackagesFromUsePackage {
+    config = final.fetchurl {
+      url = "https://raw.githubusercontent.com/a13/emacs.d/master/init.el";
+      hash = "sha256-wpsSNRN/BOK3dqBga6/spfbktKlVcBDvQ41JvLAZFp0=";
+    };
+    package = final.emacs29;
+  };
 }

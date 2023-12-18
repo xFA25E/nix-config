@@ -103,6 +103,7 @@
       video_seconds
       wget
       woof
+      wormhole-william
       xclip
       xdg-user-dirs
       xkb-switch
