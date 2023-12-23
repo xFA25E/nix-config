@@ -397,7 +397,8 @@
  '(leaf-expand-minimally t)
  '(ledger-default-date-format "%Y-%m-%d")
  '(ledger-reports
-   '(("expenses monthly" "%(binary) -f %(ledger-file) register '^Expenses' --monthly --empty --collapse --average --period 'from 2023-4'")
+   '(("register" "ledger [[ledger-mode-flags]] -f /home/val/org/money.ledger register --sort '-date' --period 'from 1 month ago' ")
+     ("expenses monthly" "%(binary) -f %(ledger-file) register '^Expenses' --monthly --empty --collapse --average --period 'from 2023-4'")
      ("groceries weekly" "%(binary) -f %(ledger-file) register 'Expenses:Groceries' --period 'from 2023-7-24' --average --weekly")
      ("intex trips" "%(binary) -f %(ledger-file) register 'Assets:Debt:Intex System' --limit 'amount > 0' --period %(month)")
      ("account monthly collapsed" "%(binary) -f %(ledger-file) --monthly --empty --collapse register %(account)")
@@ -406,7 +407,6 @@
      ("net worth monthly" "%(binary) -f %(ledger-file) register ^Assets ^Liabilities --monthly --empty --collapse --average --period 'from 2023-4'")
      ("net worth" "%(binary) -f %(ledger-file) balance ^Assets ^Liabilities")
      ("balance" "%(binary) -f %(ledger-file) balance")
-     ("register" "%(binary) -f %(ledger-file) register")
      ("payee" "%(binary) -f %(ledger-file) register @%(payee)")
      ("account" "%(binary) -f %(ledger-file) register %(account)")
      ("account monthly" "%(binary) -f %(ledger-file) --monthly register %(account)")))
