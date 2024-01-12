@@ -1215,11 +1215,11 @@
         "std": "std_2"
       },
       "locked": {
-        "lastModified": 1694158568,
-        "narHash": "sha256-COz/zH12Z5yP16SLqY2wuz+p74JRuZs8elPpcU8jJsY=",
+        "lastModified": 1703583220,
+        "narHash": "sha256-hHPIwNIxjPOtqx3lUwK8Qv6hocPcZ0EuGsNM+anVjvk=",
         "owner": "xFA25E",
         "repo": "amded",
-        "rev": "77b1ab6a925dfc2e04f00ea50296f4086a8a7a12",
+        "rev": "bd8cb6a9109e9bdd5a4c562b18127d177bb2628e",
         "type": "github"
       },
       "original": {

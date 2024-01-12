@@ -490,7 +490,6 @@
      ("Knight's Move" "https://www.youtube.com/feeds/videos.xml?channel_id=UC63HcOlghFQ3pcursLUp3NQ" nil nil nil)
      ("Ideas And Data" "https://ideasanddata.wordpress.com/feed/" nil nil nil)
      ("Fringe Elements" "https://odysee.com/$/rss/@TheAltHype:6" nil nil nil)
-     ("CleverMind" "https://www.youtube.com/feeds/videos.xml?channel_id=UCI0wUrfRUN2F-5G_AgTpR-w" nil nil nil)
      ("American Renaissance" "https://odysee.com/$/rss/@AmericanRenaissance:7" nil nil nil)
      ("Alt Hype Livestream Archive" "https://odysee.com/$/rss/@AltHypeLiveArchive:9" nil nil nil)))
  '(newsticker-url-list-defaults nil)

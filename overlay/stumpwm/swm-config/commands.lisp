@@ -1,7 +1,7 @@
 (defpackage #:swm-config.commands
   (:use #:cl)
   (:local-nicknames (#:re #:cl-ppcre) (#:status #:swm-config.status) (#:swm #:stumpwm))
-  (:import-from #:alexandria #:format-symbol #:with-gensyms)
+  (:import-from #:alexandria #:format-symbol #:with-gensyms #:if-let)
   (:import-from #:trivia #:match #:lambda-match #:let-match #:plist)
   (:import-from #:uiop #:launch-program #:run-program #:subpathname*)
   (:export #:brave-incognito
@@ -11,6 +11,8 @@
            #:covid-19-italy
            #:hardware
            #:clipboard-type
+           #:timer-add-work-block
+           #:timer-add-work-blocks
            #:mpd
            #:mpd-interactive
            #:exit-mpd-interactive
@@ -70,6 +72,31 @@
     (swm:window-send-string (swm:get-x-selection))))
 
 (defvar work-block-count (cons (nth-value 3 (get-decoded-time)) 0))
+(swm:defcommand timer-add-work-block () ()
+  (let ((day (nth-value 3 (get-decoded-time))))
+    (when (/= day (car work-block-count))
+      (setf work-block-count (cons day 0))))
+
+  (let* ((offset
+           (if-let ((all-timers (remove "work-block-" (sb-ext:list-all-timers)
+                                        :key #'sb-ext:timer-name
+                                        :test-not #'uiop:string-prefix-p)))
+             (round (/ (- (reduce #'max all-timers :key #'sb-impl::%timer-expire-time)
+                          (get-internal-real-time))
+                       internal-time-units-per-second))
+             0))
+
+         (work-count (incf (cdr work-block-count)))
+
+         (work-end (format nil "in ~d seconds" (+ (* 30 60) offset)))
+         (work-block-name (format nil "work-block-~D" work-count))
+
+         (work-pause-end (format nil "in ~d seconds" (+ (* 35 60) offset)))
+         (work-block-pause-name (format nil "work-block-pause-~D" work-count)))
+
+    (swm-config.timers:timer-add work-block-name work-end)
+    (swm-config.timers:timer-add work-block-pause-name work-pause-end)))
+
 (swm:defcommand timer-add-work-blocks (block-count) ((:number "How many blocks? "))
   (unless (and (integerp block-count) (plusp block-count))
     (throw 'error "Block count must be a positive integer."))
@@ -88,10 +115,10 @@
         :for work-block-name := (format nil "work-block-~D" work-count)
 
         :for work-pause-end := (format nil "in ~d minutes" (+ shift 35))
-        :for work-pause-block-name := (format nil "work-pause-block-~D" work-count)
+        :for work-block-pause-name := (format nil "work-block-pause-~D" work-count)
 
         :do (swm-config.timers:timer-add work-block-name work-end)
-        :do (swm-config.timers:timer-add work-pause-block-name work-pause-end)))
+        :do (swm-config.timers:timer-add work-block-pause-name work-pause-end)))
 
 ;;; INTERACTIVE CONTROLLERS
 
