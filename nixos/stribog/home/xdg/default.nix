@@ -45,7 +45,6 @@
         "text/html" = ["browser.desktop"];
         "x-scheme-handler/https" = ["browser.desktop"];
         "x-scheme-handler/http" = ["browser.desktop"];
-        "x-scheme-handler/msteams" = ["teams.desktop"];
       };
     };
 

@@ -14,5 +14,4 @@ in
   filterSet pkgs packageNames
   // mapAttrs (name: recurseIntoAttrs) {
     emacsPackages = filterSet (pkgs.emacsPackagesFor pkgs.emacs29) emacsPackageNames;
-    mpvScripts = filterSet pkgs.mpvScripts mpvScriptNames;
   }

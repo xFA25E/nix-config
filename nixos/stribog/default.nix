@@ -52,12 +52,11 @@
   nixpkgs = {
     config = {
       allowUnfree = true;
-      permittedInsecurePackages = [
-        "python-2.7.18.6"
-        "teams-1.5.00.23861"
-      ];
+      nvidia.acceptLicense = true;
+      permittedInsecurePackages = ["python-2.7.18.6"];
     };
     overlays = [
+      inputs.lem-flake.overlays.default
       inputs.addictions-tracker.overlays.default
       inputs.nur.overlay
       inputs.emacs-overlay.overlays.default
@@ -73,15 +72,17 @@
     locate = {
       enable = true;
       interval = "13:00";
-      locate = pkgs.plocate;
+      package = pkgs.plocate;
       localuser = null;
     };
 
     xserver = {
       enable = true;
-      layout = "dvorak,ru";
-      xkbVariant = ",ruu";
-      xkbOptions = "ctrl:swapcaps,grp:shifts_toggle";
+      xkb = {
+        layout = "us,ru";
+        options = "ctrl:swapcaps,grp:shifts_toggle";
+        variant = "dvorak,ruu";
+      };
       libinput.enable = true;
       displayManager = {
         startx.enable = true;

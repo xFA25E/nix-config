@@ -43,7 +43,7 @@
     enableGhostscriptFonts = true;
     fontDir.enable = true;
     fontconfig.defaultFonts.monospace = ["Iosevka"];
-    fonts = with pkgs; [
+    packages = with pkgs; [
       corefonts
       fira-code
       font-awesome

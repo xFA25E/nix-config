@@ -16,7 +16,6 @@ in {
   install_keys = callPackage ./install_keys.nix {};
   interval_timer = callPackage ./interval_timer.nix {};
   make_backup = callPackage ./make_backup.nix {};
-  mpvScripts = import ./mpvScripts final prev;
   mpvi = callPackage ./mpvi.nix {};
   notifiers = callPackage ./notifiers.nix {};
   preparehd = callPackage ./preparehd.nix {};

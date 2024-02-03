@@ -1737,16 +1737,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1702195668,
-        "narHash": "sha256-Lxmjez0nfNBptdqV5GsXKm7Bb7swjGsrxiLxWJu0tL8=",
+        "lastModified": 1704980875,
+        "narHash": "sha256-IPZmMjk5f4TBbEpzUFBc3OC1W6OwDNEXk2w/0uVXX1o=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "33110fb3c7fe6a94b98b641866a5eddb64b7c23f",
+        "rev": "5f0ab0eedc6ede69beb8f45561ffefa54edc6e65",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
-        "ref": "release-23.05",
+        "ref": "release-23.11",
         "repo": "home-manager",
         "type": "github"
       }
@@ -1990,6 +1990,26 @@
       "original": {
         "owner": "divnix",
         "repo": "incl",
+        "type": "github"
+      }
+    },
+    "lem-flake": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1692724401,
+        "narHash": "sha256-ePZAMzOa97nMRfoIMqbu2fgZ23pLj4ktKHG1a4eJbI0=",
+        "owner": "dariof4",
+        "repo": "lem-flake",
+        "rev": "16a21316608b1a3c49b249fa99f767532b82653c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "dariof4",
+        "repo": "lem-flake",
         "type": "github"
       }
     },
@@ -2692,6 +2712,21 @@
         "type": "indirect"
       }
     },
+    "nixpkgs-23_05": {
+      "locked": {
+        "lastModified": 1704290814,
+        "narHash": "sha256-LWvKHp7kGxk/GEtlrGYV68qIvPHkU9iToomNFGagixU=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "70bdadeb94ffc8806c0570eb5c2695ad29f0e421",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "ref": "nixos-23.05",
+        "type": "indirect"
+      }
+    },
     "nixpkgs-lib": {
       "locked": {
         "lastModified": 1694911725,
@@ -2709,16 +2744,16 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1703034876,
-        "narHash": "sha256-4bMPFv/bs5g1nEsXQwXlrAGJgjv1Ilr0ejdaTkBwQLs=",
+        "lastModified": 1704874635,
+        "narHash": "sha256-YWuCrtsty5vVZvu+7BchAxmcYzTMfolSPP5io8+WYCg=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "312ab59e8ade69e6083017bd9b98a2919f1fb86a",
+        "rev": "3dc440faeee9e889fe2d1b4d25ad0f430d449356",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-23.05",
+        "ref": "nixos-23.11",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -3585,6 +3620,7 @@
         "epkg-xattr": "epkg-xattr",
         "fu": "fu",
         "home-manager": "home-manager_2",
+        "lem-flake": "lem-flake",
         "nix-colors": "nix-colors",
         "nixpkgs": "nixpkgs_2",
         "nur": "nur",
@@ -3648,22 +3684,23 @@
           "nixpkgs"
         ],
         "nixpkgs-22_11": "nixpkgs-22_11",
-        "nixpkgs-23_05": [
+        "nixpkgs-23_05": "nixpkgs-23_05",
+        "nixpkgs-23_11": [
           "nixpkgs"
         ],
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1687462267,
-        "narHash": "sha256-rNSputjn/0HEHHnsKfQ8mQVEPVchcBw7DsbND7Wg8dk=",
+        "lastModified": 1703023684,
+        "narHash": "sha256-XQU4OaacV0F2tf9cNAvIMqlC0HBIrAtvb0MLjIHt+7M=",
         "owner": "simple-nixos-mailserver",
         "repo": "nixos-mailserver",
-        "rev": "24128c3052090311688b09a400aa408ba61c6ee5",
+        "rev": "4bfb8eb058f098302c97b909df2d019926e11220",
         "type": "gitlab"
       },
       "original": {
         "owner": "simple-nixos-mailserver",
-        "ref": "nixos-23.05",
+        "ref": "nixos-23.11",
         "repo": "nixos-mailserver",
         "type": "gitlab"
       }
@@ -4212,16 +4249,16 @@
     "stumpwm": {
       "flake": false,
       "locked": {
-        "lastModified": 1669075998,
-        "narHash": "sha256-zXj17ucgyFhv7P0qEr4cYSVRPGrL1KEIofXWN2trr/M=",
+        "lastModified": 1700869487,
+        "narHash": "sha256-sWCr3wm99Hv4LsZ572921wcUnQV40AmWSUVMWnmfeSo=",
         "owner": "stumpwm",
         "repo": "stumpwm",
-        "rev": "fff2508fd54b4035b0d80bafbd75a13f1756130f",
+        "rev": "b3a0e2d067da839453ca3a4581e7d5957677cac3",
         "type": "github"
       },
       "original": {
         "owner": "stumpwm",
-        "ref": "22.11",
+        "ref": "23.11",
         "repo": "stumpwm",
         "type": "github"
       }

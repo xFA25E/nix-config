@@ -214,25 +214,25 @@ For EDIT-COMMAND see `recompile'."
 (setq register-preview-function 'consult-register-format)
 (advice-add 'register-preview :override 'consult-register-window)
 
-(define-advice man (:around (fn man-args) faster)
-  (interactive (user-error "Please call `consult-man'"))
-  (if (string-match-p (rx "configuration.nix") man-args)
-      (let ((buffer-name (format "*Faster Man - %s*" man-args)))
-        (unless (get-buffer buffer-name)
-          (let* ((buffer (get-buffer-create buffer-name t))
-                 (cmd (format "man %s 2>/dev/null | col -b" man-args)))
-            (with-current-buffer buffer
-              (special-mode))
-            (set-process-filter
-             (start-process-shell-command "man" buffer cmd)
-             (lambda (proc text)
-               (with-current-buffer (process-buffer proc)
-                 (let ((point (point)))
-                   (internal-default-process-filter proc text)
-                   (goto-char point)))))))
+;; (define-advice man (:around (fn man-args) faster)
+;;   (interactive (user-error "Please call `consult-man'"))
+;;   (if (string-match-p (rx "configuration.nix") man-args)
+;;       (let ((buffer-name (format "*Faster Man - %s*" man-args)))
+;;         (unless (get-buffer buffer-name)
+;;           (let* ((buffer (get-buffer-create buffer-name t))
+;;                  (cmd (format "man %s 2>/dev/null | col -b" man-args)))
+;;             (with-current-buffer buffer
+;;               (special-mode))
+;;             (set-process-filter
+;;              (start-process-shell-command "man" buffer cmd)
+;;              (lambda (proc text)
+;;                (with-current-buffer (process-buffer proc)
+;;                  (let ((point (point)))
+;;                    (internal-default-process-filter proc text)
+;;                    (goto-char point)))))))
 
-        (pop-to-buffer-same-window buffer-name))
-    (funcall fn man-args)))
+;;         (pop-to-buffer-same-window buffer-name))
+;;     (funcall fn man-args)))
 
 (defvar consult--buffer-display)
 (declare-function consult-buffer "consult")

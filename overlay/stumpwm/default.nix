@@ -38,10 +38,10 @@
   stumpwm = lispPackages_new.build-asdf-system {
     inherit src;
     pname = "stumpwm";
-    version = "22.11";
+    version = "23.11";
     lisp = sbclCmd;
     lispLibs = l.attrsets.attrVals ["alexandria" "cl-ppcre" "clx"] sbclPackages;
-    systems = ["dynamic-mixins" "stumpwm"];
+    systems = ["dynamic-mixins-swm" "stumpwm"];
   };
 
   swm-config = lispPackages_new.build-asdf-system {
@@ -84,6 +84,7 @@ in
       ./configure --prefix=$out --with-module-dir=$out/share/stumpwm/modules
     '';
     preBuild = ''
+      makeFlagsArray+=(sbcl_BUILDOPTS="--non-interactive --eval \"(setf sb-impl::*default-external-format* :UTF-8)\" --load ./load-stumpwm.lisp --load ./make-image.lisp")
       cat "${load-stumpwm}" >./load-stumpwm.lisp
     '';
     dontStrip = true;

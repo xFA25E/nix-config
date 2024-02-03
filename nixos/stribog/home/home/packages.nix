@@ -53,9 +53,11 @@
       image_clipboard
       imagemagick
       interval_timer
+      inxi
       iw
       iwgtk
       ledger
+      lem
       libjpeg
       libnotify
       libreoffice
@@ -94,7 +96,6 @@
       strip_video
       stumpwm
       nsxiv
-      teams
       telegram-desktop
       tor-browser-bundle-bin
       transmission

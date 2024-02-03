@@ -66,20 +66,23 @@
     fu.url = "github:numtide/flake-utils";
 
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    home-manager.url = "github:nix-community/home-manager/release-23.05";
+    home-manager.url = "github:nix-community/home-manager/release-23.11";
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
 
     nix-colors.url = "github:Misterio77/nix-colors";
 
     nur.url = "github:nix-community/NUR";
 
     simple-nixos-mailserver.inputs.nixpkgs.follows = "nixpkgs";
-    simple-nixos-mailserver.inputs.nixpkgs-23_05.follows = "nixpkgs";
-    simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-23.05";
+    simple-nixos-mailserver.inputs.nixpkgs-23_11.follows = "nixpkgs";
+    simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-23.11";
 
     stumpwm.flake = false;
-    stumpwm.url = "github:stumpwm/stumpwm/22.11";
+    stumpwm.url = "github:stumpwm/stumpwm/23.11";
+
+    lem-flake.inputs.nixpkgs.follows = "nixpkgs";
+    lem-flake.url = "github:dariof4/lem-flake";
   };
 
   outputs = inputs:

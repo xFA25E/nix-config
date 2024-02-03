@@ -59,7 +59,7 @@
           idle = "once";
         };
       };
-      scripts = [pkgs.mpvScripts.youtube-quality];
+      scripts = [pkgs.mpvScripts.quality-menu];
     };
 
     msmtp.enable = true;
