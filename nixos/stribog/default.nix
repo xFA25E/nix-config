@@ -25,6 +25,7 @@
   };
 
   hardware = {
+    keyboard.zsa.enable = true;
     nvidia.package = config.boot.kernelPackages.nvidiaPackages.legacy_470;
     pulseaudio.enable = true;
   };

@@ -43,9 +43,9 @@ in {
     };
 
     keyboard = {
-      layout = "dvorak,ru";
+      layout = "us,ru";
       options = ["ctrl:swapcaps" "grp:shifts_toggle"];
-      variant = ",ruu";
+      variant = "dvorak,ruu";
     };
 
     language = listToAttrs (map (n: nameValuePair n "en_US.UTF-8") [

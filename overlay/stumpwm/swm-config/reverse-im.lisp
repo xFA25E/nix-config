@@ -5,7 +5,7 @@
   (:export #:init))
 (in-package #:swm-config.reverse-im)
 
-(defvar *default-layout* "dvorak")
+(defvar *default-layout* "us")
 (defvar *current-layout* nil)
 (defvar *nested-counter* 0)
 
