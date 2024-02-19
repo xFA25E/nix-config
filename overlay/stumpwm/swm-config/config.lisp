@@ -11,5 +11,5 @@
   (swm:set-font "-*-terminus-medium-r-*-*-18-*-*-*-*-*-iso10646-1")
   (swm:clear-window-placement-rules)
   (launch-program '("systemctl" "--user" "start" "random-background.service"))
-  ;; (swm-config.reverse-im:init)
+  (swm-config.reverse-im:init)
   (swm-config.timers:init))
