@@ -54,7 +54,8 @@
 
   "C-b" "brave-incognito"
   "C-e" "mpv"
-  "C-f" "firefox")
+  "C-f" "firefox"
+  "C-t" "telegram-desktop")
 
 ;;; TIMER
 
@@ -65,7 +66,7 @@
 ;;; REMAPPED KEYS
 
 (swm:define-remapped-keys
-    '(("(Tor Browser|Brave-browser|firefox|discord)"
+    '(("(Tor Browser|Brave-browser|firefox|discord|TelegramDesktop)"
        ("C-n"   . "Down")
        ("C-p"   . "Up")
        ("C-f"   . "Right")

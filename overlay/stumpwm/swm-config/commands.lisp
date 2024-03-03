@@ -37,6 +37,9 @@
 (swm:defcommand firefox () ()
   (swm:run-or-raise "firefox" '(:class "firefox")))
 
+(swm:defcommand telegram-desktop () ()
+  (swm:run-or-raise "telegram-desktop" '(:class "TelegramDesktop")))
+
 ;;; MISC
 
 (swm:defcommand screenshot (name selectp) ((:string "Name (w/o ext): ") (:y-or-n "Select? "))
