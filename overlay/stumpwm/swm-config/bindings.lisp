@@ -61,7 +61,7 @@
 
 (define-keys *timer-map*
   "C-c" "timer-add"
-  "C-n" "timer-add-work-block")
+  "C-n" "timer-add-sitting-timer")
 
 ;;; REMAPPED KEYS
 

@@ -12,7 +12,6 @@
            #:hardware
            #:clipboard-type
            #:timer-add-work-block
-           #:timer-add-work-blocks
            #:mpd
            #:mpd-interactive
            #:exit-mpd-interactive
@@ -99,29 +98,6 @@
 
     (swm-config.timers:timer-add work-block-name work-end)
     (swm-config.timers:timer-add work-block-pause-name work-pause-end)))
-
-(swm:defcommand timer-add-work-blocks (block-count) ((:number "How many blocks? "))
-  (unless (and (integerp block-count) (plusp block-count))
-    (throw 'error "Block count must be a positive integer."))
-
-  (let ((day (nth-value 3 (get-decoded-time))))
-    (when (/= day (car work-block-count))
-      (setf (car work-block-count) day
-            (cdr work-block-count) 0)))
-
-  (loop :for i :from 0 :below block-count
-
-        :for work-count := (incf (cdr work-block-count))
-        :for shift := (* i 35)
-
-        :for work-end := (format nil "in ~d minutes" (+ shift 30))
-        :for work-block-name := (format nil "work-block-~D" work-count)
-
-        :for work-pause-end := (format nil "in ~d minutes" (+ shift 35))
-        :for work-block-pause-name := (format nil "work-block-pause-~D" work-count)
-
-        :do (swm-config.timers:timer-add work-block-name work-end)
-        :do (swm-config.timers:timer-add work-block-pause-name work-pause-end)))
 
 ;;; INTERACTIVE CONTROLLERS
 
