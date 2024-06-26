@@ -4,7 +4,7 @@
   inputs,
   ...
 }: let
-  inherit (config.colorScheme) colors;
+  inherit (config.colorScheme) palette;
 in {
   imports = [
     inputs.nix-colors.homeManagerModule
@@ -36,7 +36,7 @@ in {
         configBase16 = {
           name = "Gruvbox-Light-Medium";
           kind = "light";
-          colors = builtins.mapAttrs (_: color: {hex.rgb = color;}) colors;
+          colors = builtins.mapAttrs (_: color: {hex.rgb = color;}) palette;
         };
       };
     };

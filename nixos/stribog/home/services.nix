@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: let
-  inherit (config.colorScheme) colors;
+  inherit (config.colorScheme) palette;
   inherit (config.home.sessionVariables) NOTMUCH_CONFIG;
   inherit (lib.strings) escapeShellArg makeBinPath;
   inherit (pkgs) coreutils dbus libnotify notmuch writeShellScript;
@@ -35,7 +35,7 @@ in {
           browser = "${pkgs.browser}/bin/browser";
           dmenu = "${pkgs.dmenu}/bin/dmenu";
           font = "monospace 15";
-          frame_color = "#${colors.base04}";
+          frame_color = "#${palette.base04}";
           frame_width = 3;
           geometry = "0x0-0+0";
           horizontal_padding = 8;
@@ -45,16 +45,16 @@ in {
           word_wrap = true;
         };
         urgency_low = {
-          background = "#${colors.base00}";
-          foreground = "#${colors.base0D}";
+          background = "#${palette.base00}";
+          foreground = "#${palette.base0D}";
         };
         urgency_normal = {
-          background = "#${colors.base00}";
-          foreground = "#${colors.base04}";
+          background = "#${palette.base00}";
+          foreground = "#${palette.base04}";
         };
         urgency_critical = {
-          background = "#${colors.base00}";
-          foreground = "#${colors.base08}";
+          background = "#${palette.base00}";
+          foreground = "#${palette.base08}";
         };
       };
     };

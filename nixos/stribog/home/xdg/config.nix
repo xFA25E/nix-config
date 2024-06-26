@@ -5,7 +5,7 @@
   ...
 }: let
   inherit (builtins) listToAttrs;
-  inherit (config.colorScheme) colors;
+  inherit (config.colorScheme) palette;
   inherit (lib.attrsets) nameValuePair;
   inherit (lib.strings) escapeShellArg;
 in {
@@ -34,7 +34,7 @@ in {
         tmp = "\${XDG_RUNTIME_DIR}/npm";
       };
 
-      "stumpwm/config".text = with colors; ''
+      "stumpwm/config".text = with palette; ''
         (swm-config:init)
         (stumpwm:set-fg-color "#${base04}")
         (stumpwm:set-bg-color "#${base00}")
