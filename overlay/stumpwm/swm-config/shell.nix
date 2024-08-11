@@ -1,6 +1,4 @@
-{ pkgs ? import <nixpkgs> {} }:
-let
-
+{pkgs ? import <nixpkgs> {}}: let
   PROJECT_ROOT = builtins.toString ./.;
   QUICKLISP_DIR = "${PROJECT_ROOT}/.quicklisp";
 
@@ -22,22 +20,22 @@ let
 
   sbcl = pkgs.symlinkJoin {
     name = "sbcl";
-    paths = [ pkgs.sbcl ];
-    nativeBuildInputs = [ pkgs.makeWrapper ];
+    paths = [pkgs.sbcl];
+    nativeBuildInputs = [pkgs.makeWrapper];
     postBuild = ''
       wrapProgram $out/bin/sbcl --add-flags '--userinit ${init-lisp}'
     '';
   };
-
-in pkgs.mkShell {
-  CL_SOURCE_REGISTRY="${PROJECT_ROOT}:";
-  ASDF_OUTPUT_TRANSLATIONS = ''
-    (:output-translations
-     :ignore-inherited-configuration
-     (t ("${PROJECT_ROOT}" ".common-lisp" :implementation)))
-  '';
-  buildInputs =  [ quickstart sbcl ];
-  shellHook = ''
-    [ -d "${QUICKLISP_DIR}" ] || quickstart
-  '';
-}
+in
+  pkgs.mkShell {
+    CL_SOURCE_REGISTRY = "${PROJECT_ROOT}:";
+    ASDF_OUTPUT_TRANSLATIONS = ''
+      (:output-translations
+       :ignore-inherited-configuration
+       (t ("${PROJECT_ROOT}" ".common-lisp" :implementation)))
+    '';
+    buildInputs = [quickstart sbcl];
+    shellHook = ''
+      [ -d "${QUICKLISP_DIR}" ] || quickstart
+    '';
+  }

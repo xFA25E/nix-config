@@ -43,7 +43,8 @@
     pname = "swm-config";
     version = "0.0.1";
     src = l.sources.sourceFilesBySuffices ./swm-config [".lisp" ".asd"];
-    lispLibs = [stumpwm]
+    lispLibs =
+      [stumpwm]
       ++ l.attrsets.attrVals [
         "alexandria"
         "chronicity"
@@ -66,7 +67,7 @@
       (mapc #'asdf:load-system (remove "slynk/" (asdf:registered-systems) :test-not #'uiop:string-prefix-p))
     '');
 in
-   stdenv.mkDerivation {
+  stdenv.mkDerivation {
     inherit src;
     name = "stumpwm-with-config";
     nativeBuildInputs = [sbclWithSWMConfig autoconf texinfo makeWrapper pkg-config];

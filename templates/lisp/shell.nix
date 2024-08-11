@@ -20,30 +20,31 @@ let
         (load quicklisp-init)))
   '';
 
-  make-implementation = name: pkg: flags: pkgs.symlinkJoin {
-    name = name;
-    paths = [ pkg ];
-    nativeBuildInputs = [ pkgs.makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/${name} --add-flags '${flags}'
-    '';
-  };
+  make-implementation = name: pkg: flags:
+    pkgs.symlinkJoin {
+      name = name;
+      paths = [pkg];
+      nativeBuildInputs = [pkgs.makeWrapper];
+      postBuild = ''
+        wrapProgram $out/bin/${name} --add-flags '${flags}'
+      '';
+    };
 
   sbcl = make-implementation "sbcl" pkgs.sbcl "--userinit ${init-lisp}";
   ecl = make-implementation "ecl" pkgs.ecl "--norc --load ${init-lisp}";
   ccl = make-implementation "ccl" pkgs.ccl "--no-init --load ${init-lisp}";
   clisp = make-implementation "clisp" pkgs.clisp "-norc -i ${init-lisp}";
   abcl = make-implementation "abcl" pkgs.abcl "--noinit --load ${init-lisp}";
-
-in pkgs.mkShell {
-  CL_SOURCE_REGISTRY="${PROJECT_ROOT}:";
-  ASDF_OUTPUT_TRANSLATIONS = ''
-    (:output-translations
-     :ignore-inherited-configuration
-     (t ("${PROJECT_ROOT}" ".common-lisp" :implementation)))
-  '';
-  buildInputs =  [ quickstart sbcl ecl ccl clisp abcl ];
-  shellHook = ''
-    [ -d "${QUICKLISP_DIR}" ] || quickstart
-  '';
-}
+in
+  pkgs.mkShell {
+    CL_SOURCE_REGISTRY = "${PROJECT_ROOT}:";
+    ASDF_OUTPUT_TRANSLATIONS = ''
+      (:output-translations
+       :ignore-inherited-configuration
+       (t ("${PROJECT_ROOT}" ".common-lisp" :implementation)))
+    '';
+    buildInputs = [quickstart sbcl ecl ccl clisp abcl];
+    shellHook = ''
+      [ -d "${QUICKLISP_DIR}" ] || quickstart
+    '';
+  }
