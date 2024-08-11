@@ -14,13 +14,9 @@
 }: let
   l = lib // builtins;
 
-  sbclCmd = "${sbcl}/bin/sbcl --script";
-  sbclPackages = lispPackages_new.lispPackagesFor sbclCmd;
-
-  slynk = lispPackages_new.build-asdf-system {
+  slynk = sbcl.buildASDFSystem {
     inherit (emacs.pkgs.sly) version src;
     pname = "slynk";
-    lisp = sbclCmd;
     systems = [
       "slynk"
       "slynk/arglists"
@@ -35,22 +31,19 @@
     ];
   };
 
-  stumpwm = lispPackages_new.build-asdf-system {
+  stumpwm = sbcl.buildASDFSystem {
     inherit src;
     pname = "stumpwm";
     version = "23.11";
-    lisp = sbclCmd;
-    lispLibs = l.attrsets.attrVals ["alexandria" "cl-ppcre" "clx"] sbclPackages;
+    lispLibs = l.attrsets.attrVals ["alexandria" "cl-ppcre" "clx"] sbcl.pkgs;
     systems = ["dynamic-mixins-swm" "stumpwm"];
   };
 
-  swm-config = lispPackages_new.build-asdf-system {
+  swm-config = sbcl.buildASDFSystem {
     pname = "swm-config";
     version = "0.0.1";
     src = l.sources.sourceFilesBySuffices ./swm-config [".lisp" ".asd"];
-    lisp = sbclCmd;
-    lispLibs =
-      [stumpwm]
+    lispLibs = [stumpwm]
       ++ l.attrsets.attrVals [
         "alexandria"
         "chronicity"
@@ -60,12 +53,10 @@
         "local-time-duration"
         "trivia"
       ]
-      sbclPackages;
+      sbcl.pkgs;
   };
 
-  sbclWithSWMConfig =
-    lispPackages_new.lispWithPackages sbclCmd (_:
-      [swm-config] ++ l.lists.optional withSlynk slynk);
+  sbclWithSWMConfig = sbcl.withPackages (_: [swm-config] ++ l.lists.optional withSlynk slynk);
 
   load-stumpwm = writeText "load-stumpwm.lisp" (''
       (require "asdf")
@@ -75,7 +66,7 @@
       (mapc #'asdf:load-system (remove "slynk/" (asdf:registered-systems) :test-not #'uiop:string-prefix-p))
     '');
 in
-  stdenv.mkDerivation {
+   stdenv.mkDerivation {
     inherit src;
     name = "stumpwm-with-config";
     nativeBuildInputs = [sbclWithSWMConfig autoconf texinfo makeWrapper pkg-config];

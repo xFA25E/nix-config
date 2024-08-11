@@ -54,7 +54,7 @@
     config = {
       allowUnfree = true;
       nvidia.acceptLicense = true;
-      permittedInsecurePackages = ["python-2.7.18.6"];
+      permittedInsecurePackages = ["python-2.7.18.6" "nix-2.15.3"];
     };
     overlays = [
       inputs.lem-flake.overlays.default
@@ -70,6 +70,9 @@
   programs.dconf.enable = true;
 
   services = {
+    displayManager.defaultSession = "none";
+    libinput.enable = true;
+
     locate = {
       enable = true;
       interval = "13:00";
@@ -84,11 +87,7 @@
         options = "ctrl:swapcaps,grp:shifts_toggle";
         variant = "dvorak,ruu";
       };
-      libinput.enable = true;
-      displayManager = {
-        startx.enable = true;
-        defaultSession = "none";
-      };
+      displayManager.startx.enable = true;
       videoDrivers = ["modesetting" "nvidia"];
     };
   };

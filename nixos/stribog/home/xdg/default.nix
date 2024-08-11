@@ -36,6 +36,7 @@
         added = {
           "application/pdf" = ["emacs.desktop"];
           "application/epub" = ["emacs.desktop"];
+          "x-scheme-handler/tg" = ["org.telegram.desktop.desktop"];
         };
         removed = {};
       };

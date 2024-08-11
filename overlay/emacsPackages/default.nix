@@ -1,5 +1,5 @@
 final: prev: emacs:
-(prev.emacsPackagesFor emacs).overrideScope' (
+(prev.emacsPackagesFor emacs).overrideScope (
   efinal: eprev: let
     inherit (builtins) attrNames filter listToAttrs readDir;
     inherit (final.lib.attrsets) nameValuePair;

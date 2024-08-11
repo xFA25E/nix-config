@@ -141,6 +141,8 @@
  '(browse-url-secondary-browser-function 'browse-url)
  '(byte-count-to-string-function '(lambda (s) (file-size-human-readable s 'si)))
  '(c-default-style '((java-mode . "java") (other . "awk")))
+ '(calendar-latitude 45.724458)
+ '(calendar-longitude 9.038057)
  '(calendar-time-zone-style 'numeric)
  '(calendar-week-start-day 1)
  '(cargo-process--command-build "build --color never")
@@ -397,7 +399,8 @@
  '(leaf-expand-minimally t)
  '(ledger-default-date-format "%Y-%m-%d")
  '(ledger-reports
-   '(("register" "ledger [[ledger-mode-flags]] -f /home/val/org/money.ledger register --sort '-date' --period 'from 1 month ago' ")
+   '(("intex kilometers" "%(binary) -f %(ledger-file) balance 'Income:Job:Intex System:KR' --limit 'a < 0' ")
+     ("register" "%(binary) -f %(ledger-file) register --sort '-date' --period 'from 1 month ago' ")
      ("expenses monthly" "%(binary) -f %(ledger-file) register '^Expenses' --monthly --empty --collapse --average --period 'from 2023-4'")
      ("groceries weekly" "%(binary) -f %(ledger-file) register 'Expenses:Groceries' --period 'from 2023-7-24' --average --weekly")
      ("intex trips" "%(binary) -f %(ledger-file) register 'Assets:Debt:Intex System' --limit 'amount > 0' --period %(month)")
