@@ -565,6 +565,8 @@
  '(org-agenda-files '("~/org/study.org" "~/org/life.org"))
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
+ '(org-agenda-span 'fortnight)
+ '(org-agenda-start-on-weekday nil)
  '(org-babel-load-languages '((calc . t) (emacs-lisp . t) (sql . t) (shell . t)))
  '(org-capture-templates
    '(("r" "Remember" entry
