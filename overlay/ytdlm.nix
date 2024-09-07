@@ -9,5 +9,6 @@ writeShellScriptBin "ytdlm" ''
   test -n "$DIR"
 
   exec ${yt-dlp}/bin/yt-dlp --format bestaudio/best --extract-audio \
+                            --embed-thumbnail --embed-metadata \
                             --paths "$DIR" --output '%(title)s.%(ext)s' "$@"
 ''

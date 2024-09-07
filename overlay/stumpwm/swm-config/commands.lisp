@@ -127,6 +127,8 @@
    ("p" "volume +10")
    ("f" "seek +00:00:10")
    ("b" "seek -00:00:10")
+   ("F" "seek +00:01:00")
+   ("B" "seek -00:01:00")
    ("r" "repeat")
    ("z" "random")
    ("Z" "shuffle")

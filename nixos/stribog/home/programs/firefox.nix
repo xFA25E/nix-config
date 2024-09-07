@@ -95,6 +95,7 @@
           i-dont-care-about-cookies
           ublock-origin
           youtube-recommended-videos
+          tab-stash
         ];
 
         settings = {

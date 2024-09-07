@@ -10,5 +10,6 @@ writeShellScriptBin "ytdlmp" ''
 
   FMT='%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s'
   exec ${yt-dlp}/bin/yt-dlp --format bestaudio/best --extract-audio \
+                            --embed-thumbnail --embed-metadata \
                             --yes-playlist --paths "$DIR" --output "$FMT" "$@"
 ''
