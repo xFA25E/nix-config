@@ -57,7 +57,7 @@
       permittedInsecurePackages = ["python-2.7.18.6" "nix-2.15.3"];
     };
     overlays = [
-      inputs.lem-flake.overlays.default
+      # inputs.lem-flake.overlays.default
       inputs.addictions-tracker.overlays.default
       inputs.nur.overlay
       inputs.emacs-overlay.overlays.default

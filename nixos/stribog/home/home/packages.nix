@@ -54,10 +54,10 @@
       imagemagick
       interval_timer
       inxi
-      iw
-      iwgtk
+      # iw
+      # iwgtk
       ledger
-      lem
+      # lem
       libjpeg
       libnotify
       libreoffice

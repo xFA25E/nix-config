@@ -80,10 +80,11 @@
       block = ["gambling"];
     };
     useDHCP = lib.mkDefault true;
-    wireless.iwd = {
-      enable = true;
-      settings.General.EnableNetworkConfiguration = true;
-    };
+    networkmanager.enable = true;
+    # wireless.iwd = {
+    #   enable = true;
+    #   settings.General.EnableNetworkConfiguration = true;
+    # };
   };
 
   nix = {
@@ -140,6 +141,6 @@
   users.users.${username} = {
     initialHashedPassword = "";
     isNormalUser = true;
-    extraGroups = ["wheel"];
+    extraGroups = ["wheel" "networkmanager"];
   };
 }
