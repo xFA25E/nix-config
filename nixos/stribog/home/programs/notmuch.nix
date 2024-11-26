@@ -46,6 +46,7 @@ in {
 
         ## polimi forwarding
         notmuch tag +polimi -litkov -- tag:new AND tag:litkov AND tag:inbox AND to:/polimi.it/
+        notmuch tag +polimi -litkov -- tag:new AND tag:litkov AND tag:inbox AND from:/polimi.it/
 
         # polimi rules
         notmuch tag +polimi -- 'path:polimi/**'
@@ -56,6 +57,15 @@ in {
         notmuch tag +spam -inbox -- tag:new AND tag:polimi AND subject:politamtam
         notmuch tag +spam -inbox -- tag:new AND tag:polimi AND subject:"[eventi/events]"
         notmuch tag +spam -inbox -- tag:new AND tag:polimi AND subject:"open day"
+        notmuch tag +spam -inbox -- tag:new AND tag:polimi AND subject:"Career Service"
+        notmuch tag +spam -inbox -- tag:new AND tag:polimi AND from:"Career Service"
+
+        ## ignore radar imaging
+        notmuch tag +trash -inbox -- tag:new AND tag:polimi AND subject:"[Registrazioni/Recordings]" AND body:"GEOPHYSICAL AND RADAR IMAGING"
+
+        ## mark subjcts
+        notmuch tag +statistica -- tag:new AND tag:polimi AND "elio piazza"
+        notmuch tag +analisi -- tag:new AND tag:polimi AND "maristella galeazzi"
 
         # after processing remove tag new
         notmuch tag -new -- tag:new

@@ -37,10 +37,23 @@
        :sitting-timer-stand
        :sitting-timer-sit)))
 
+(swm:defcommand timer-add-cazzeggio-timer () ()
+  (let ((name :cazzeggio-timer)
+        (seconds (* 60 5)))
+
+    (when-let ((timer (existsp name)))
+      (when (sb-ext:timer-scheduled-p timer)
+        (sb-ext:unschedule-timer timer)))
+
+    (let ((timer (sb-ext:make-timer (callback name) :name name :thread t)))
+      (sb-ext:schedule-timer timer seconds :repeat-interval seconds)
+      (swm:message "Timer \"~A\" is added" (make-instance 'timer :timer timer)))))
+
 (swm:defcommand timer-menu () ()
   (let ((menu '(("add" "timer-add")
                 ("list" "timer-list")
-                ("kill" "timer-kill"))))
+                ("kill" "timer-kill")
+                ("cazzeggio" "timer-add-cazzeggio-timer"))))
     (match (swm:select-from-menu (swm:current-screen) menu "Timer: ")
       ((list _ command)
        (swm::eval-command command t)))))
