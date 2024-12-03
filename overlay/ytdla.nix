@@ -3,5 +3,5 @@
   ytdl,
 }:
 writeShellScriptBin "ytdla" ''
-  exec ${ytdl}/bin/ytdl --format bestaudio/best --extract-audio "$@"
+  exec ${ytdl}/bin/ytdl --format bestaudio/best --extract-audio --embed-thumbnail "$@"
 ''
