@@ -418,7 +418,7 @@
  '(lisp-mode-hook '(sly-editing-mode abbrev-mode))
  '(locate-update-command "systemctl --user start updatedb.service")
  '(magit-credential-cache-daemon-socket (expand-file-name "git/credential/socket" (xdg-cache-home)))
- '(magit-define-global-key-bindings nil)
+ '(magit-define-global-key-bindings 'recommended)
  '(mail-envelope-from 'header)
  '(mail-user-agent 'notmuch-user-agent)
  '(major-mode-remap-alist

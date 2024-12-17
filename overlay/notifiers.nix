@@ -44,5 +44,10 @@ in
         url = "https://www.orangefreesounds.com/wp-content/uploads/Zip/Ding-sound.zip";
         hash = "sha256-pi1Txpq/8R+/piDwK1Ky+SVAosI3uGe/8R5Sp2CFnug=";
       }
+      {
+        name = "church_bell";
+        url = "https://orangefreesounds.com/wp-content/uploads/2023/06/Sound-effect-of-a-church-bell-ringing-in-a-mediterranean-village.zip";
+        hash = "sha256-2622yU+UIhjsQPEP2bWse+ydCcTmvG0rf0AQRyE+J7I=";
+      }
     ];
   }

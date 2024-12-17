@@ -115,10 +115,10 @@
 (defun existsp (name)
   (find name (sb-ext:list-all-timers) :key #'sb-ext:timer-name :test #'equal))
 
-(defun callback (name)
+(defun callback (name &optional (executable "notify_ding"))
   (lambda ()
-    (run-program `("notify-send" ,(format nil "Timer \"~A\" is out!" name)))
-    (run-program '("notify_ding"))))
+    (run-program (list "notify-send" (format nil "Timer \"~A\" is out!" name)))
+    (run-program (list executable))))
 
 (defun launch (name universal-time)
   (let ((timer (sb-ext:make-timer (callback name) :name name :thread t)))
@@ -149,7 +149,7 @@
 
 (defun sitting-timer-callback (name)
   (lambda ()
-    (funcall (callback name))
+    (funcall (callback name "notify_church_bell"))
     (launch-sitting-timer
      (ecase name
        (:sitting-timer-sit :sitting-timer-stand)
