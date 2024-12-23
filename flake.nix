@@ -12,7 +12,7 @@
     discord.flake = false;
     discord.url = "https://dl.discordapp.net/apps/linux/0.0.22/discord-0.0.22.tar.gz";
 
-    emacs-overlay.inputs.flake-utils.follows = "fu";
+    # emacs-overlay.inputs.flake-utils.follows = "fu";
     emacs-overlay.inputs.nixpkgs-stable.follows = "nixpkgs";
     emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
@@ -66,17 +66,17 @@
     fu.url = "github:numtide/flake-utils";
 
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    home-manager.url = "github:nix-community/home-manager/release-24.05";
+    home-manager.url = "github:nix-community/home-manager/release-24.11";
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
 
     nix-colors.url = "github:Misterio77/nix-colors";
 
     nur.url = "github:nix-community/NUR";
 
     simple-nixos-mailserver.inputs.nixpkgs.follows = "nixpkgs";
-    simple-nixos-mailserver.inputs.nixpkgs-24_05.follows = "nixpkgs";
-    simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-24.05";
+    simple-nixos-mailserver.inputs.nixpkgs-24_11.follows = "nixpkgs";
+    simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-24.11";
 
     stumpwm.flake = false;
     stumpwm.url = "github:stumpwm/stumpwm/23.11";

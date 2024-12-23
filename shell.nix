@@ -2,7 +2,7 @@
   agenix,
   alejandra,
   mkShell,
-  rnix-lsp,
+  # rnix-lsp,
   shellcheck,
   statix,
 }:

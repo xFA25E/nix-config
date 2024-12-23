@@ -70,7 +70,7 @@ in {
       };
       Service = {
         Type = "notify";
-        ExecStart = "${pkgs.transmission}/bin/transmission-daemon -f --log-error";
+        ExecStart = "${pkgs.transmission_3}/bin/transmission-daemon -f --log-error";
         ExecReload = "${pkgs.utillinux}/bin/kill -s HUP $MAINPID";
         NoNewPrivileges = true;
       };

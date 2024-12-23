@@ -10,7 +10,7 @@
     ++ (with pkgs; [
       acpi
       # addictionsTracker
-      alsaUtils
+      alsa-utils
       ascii
       aspell
       aspellDicts.en
@@ -98,7 +98,7 @@
       nsxiv
       telegram-desktop
       tor-browser-bundle-bin
-      transmission
+      transmission_3
       udiskie
       unzip
       video_seconds

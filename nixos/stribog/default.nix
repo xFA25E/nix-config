@@ -27,7 +27,7 @@
   hardware = {
     keyboard.zsa.enable = true;
     nvidia.package = config.boot.kernelPackages.nvidiaPackages.legacy_470;
-    pulseaudio.enable = true;
+    # pulseaudio.enable = true;
   };
 
   home-manager = {
@@ -59,7 +59,7 @@
     overlays = [
       # inputs.lem-flake.overlays.default
       inputs.addictions-tracker.overlays.default
-      inputs.nur.overlay
+      inputs.nur.overlays.default
       inputs.emacs-overlay.overlays.default
       inputs.self.overlays.default
     ];
@@ -92,6 +92,6 @@
     };
   };
 
-  sound.enable = true;
+  # sound.enable = true;
   users.users.${username}.extraGroups = ["video" "audio"];
 }
