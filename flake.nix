@@ -79,7 +79,7 @@
     simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-24.11";
 
     stumpwm.flake = false;
-    stumpwm.url = "github:stumpwm/stumpwm/23.11";
+    stumpwm.url = "github:stumpwm/stumpwm/24.11";
 
     # lem-flake.inputs.nixpkgs.follows = "nixpkgs";
     # lem-flake.url = "github:dariof4/lem-flake";

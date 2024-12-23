@@ -34,7 +34,7 @@
   stumpwm = sbcl.buildASDFSystem {
     inherit src;
     pname = "stumpwm";
-    version = "23.11";
+    version = "24.11";
     lispLibs = l.attrsets.attrVals ["alexandria" "cl-ppcre" "clx"] sbcl.pkgs;
     systems = ["dynamic-mixins-swm" "stumpwm"];
   };
