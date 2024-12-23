@@ -59,6 +59,7 @@ in {
           "--ignore-errors" = "";
           "--no-playlist" = "";
           "--output" = "'%(channel,uploader)s - %(upload_date)s - %(title)s.%(ext)s'";
+          "--cookies-from-browser" = "firefox";
         };
     };
 }
