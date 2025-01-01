@@ -914,6 +914,11 @@ For OPTIONS, FLAKE-REF, and ATTRIBUTE, see the documentation of
                                       (nix-flake--build-attribute-names))))
   (compile (nix-flake--installable-command "log" options flake-ref attribute)))
 
+(declare-function nix-flake--command "nix-flake")
+(define-advice nix-flake-update (:override (options flake-ref) fix-flag)
+  (interactive (list (nix-flake--options) nix-flake-ref))
+  (compile (nix-flake--command '("flake" "update" "--flake") options flake-ref)))
+
 (with-eval-after-load 'nix-flake
   (transient-append-suffix 'nix-flake-dispatch '(2 -1)
     '("l" "Log attribute" nix-flake-log-attribute))

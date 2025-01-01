@@ -79,6 +79,7 @@
       pueue
       pulsemixer
       pwgen
+      pwvucontrol
       qrencode
       qrshow
       rar

@@ -37,6 +37,7 @@
           "application/pdf" = ["emacs.desktop"];
           "application/epub" = ["emacs.desktop"];
           "x-scheme-handler/tg" = ["org.telegram.desktop.desktop"];
+          "x-scheme-handler/tonsite" = ["org.telegram.desktop.desktop"];
         };
         removed = {};
       };
@@ -46,6 +47,7 @@
         "text/html" = ["browser.desktop"];
         "x-scheme-handler/https" = ["browser.desktop"];
         "x-scheme-handler/http" = ["browser.desktop"];
+        "x-scheme-handler/tonsite" = ["org.telegram.desktop.desktop"];
       };
     };
 
