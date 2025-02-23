@@ -1208,7 +1208,8 @@ Remove duplicates.  Remove inexistent files from
   "M-\\" 'delete-indentation
   "M-c" 'capitalize-dwim
   "M-l" 'downcase-dwim
-  "M-u" 'upcase-dwim)
+  "M-u" 'upcase-dwim
+  "<remap> <back-to-indentation>" 'back-to-indentation-or-beginning)
 
 (keymap-set mode-specific-map "o P" 'list-processes)
 
@@ -1221,6 +1222,13 @@ See `backward-kill-word' for COUNT."
   (if (use-region-p)
       (kill-region (region-beginning) (region-end))
     (backward-kill-word count)))
+
+(defun back-to-indentation-or-beginning (arg)
+  "Move point to indentation or to beginning of line if it's alreade there.
+ARG as in `move-beginning-of-line'."
+  (interactive "^p")
+  (when (= (point) (progn (back-to-indentation) (point)))
+    (move-beginning-of-line arg)))
 
 ;;; Subr X
 
