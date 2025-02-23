@@ -19,9 +19,10 @@ in {
         # Tag drafts with their accounts
         notmuch tag +litkov -- tag:drafts AND from:/litkov.one/ AND NOT tag:litkov
         notmuch tag +polimi -- tag:drafts AND from:/polimi.it/ AND NOT tag:polimi
+        notmuch tag +nonsolcodice -- tag:drafts AND from:/nonsolocodice.it/ AND NOT tag:nonsolocodice
 
         # Create all folders and move mails to it
-        for account in litkov polimi; do
+        for account in litkov polimi nonsolocodice; do
           for folder in archive drafts flagged inbox sent spam trash; do
             cur=$account/$folder/cur
             mkdir -p "${maildir}/$cur"
@@ -66,6 +67,12 @@ in {
         ## mark subjcts
         notmuch tag +statistica -- tag:new AND tag:polimi AND "elio piazza"
         notmuch tag +analisi -- tag:new AND tag:polimi AND "maristella galeazzi"
+
+        # nonsolocodice rules
+
+        notmuch tag +nonsolocodice -- 'path:nonsolocodice/**'
+        notmuch tag +inbox  -- 'path:nonsolocodice/inbox/**'
+        notmuch tag +sent -- 'path:nonsolocodice/sent/**'
 
         # after processing remove tag new
         notmuch tag -new -- tag:new

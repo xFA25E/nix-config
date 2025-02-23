@@ -8,8 +8,8 @@
 
   makeChannel = far: near: {
     extraConfig = {
-      Create = "Slave";
-      Sync = "All";
+      Create = "Near";
+      Sync = "Full";
       Expunge = "Both";
       SyncState = "*";
     };
@@ -59,6 +59,7 @@ in {
 
         userName = "valeriy@litkov.one";
       };
+
       "polimi" = {
         address = "valeriy.litkovskyy@mail.polimi.it";
         aliases = ["10622800@polimi.it"];
@@ -97,6 +98,41 @@ in {
         };
 
         userName = "10622800@polimi.it";
+      };
+
+      "nonsolocodice" = {
+        address = "vl@nonsolocodice.it";
+        aliases = [];
+
+        imap = {
+          host = "pop.tophost.it";
+          tls.enable = true;
+        };
+
+        mbsync = {
+          enable = true;
+          groups."nonsolocodice".channels = {
+            "inbox" = makeChannel "INBOX" "inbox";
+            "sent" = makeChannel "Sent" "sent";
+          };
+        };
+
+        msmtp = {
+          enable = true;
+          extraConfig.logfile = "${config.xdg.cacheHome}/msmtp-nonsolocodice.log";
+        };
+
+        notmuch.enable = true;
+        passwordCommand = "${pass} show nonsolocodice/mail";
+
+        realName = "Valeriy Litkovskyy";
+
+        smtp = {
+          host = "mail.tophost.it";
+          tls.enable = true;
+        };
+
+        userName = "nonsolocodice.it38613";
       };
     };
     maildirBasePath = "${config.xdg.dataHome}/mail";

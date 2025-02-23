@@ -507,26 +507,50 @@
    '("+archive" "-flagged" "-inbox" "-spam" "-trash" "-deleted"))
  '(notmuch-draft-tags '("+drafts"))
  '(notmuch-fcc-dirs
-   '(("polimi" . "polimi/sent +sent +polimi")
-     ("litkov" . "litkov/sent +sent +litkov")))
+   '(("polimi\\.it" . "polimi/sent +sent +polimi")
+     ("litkov\\.one" . "litkov/sent +sent +litkov")
+     ("nonsolocodice\\.it" . "nonsolocodice/sent +sent +nonsolocodice")))
  '(notmuch-mua-cite-function 'message-cite-original-without-signature)
  '(notmuch-mua-user-agent-function 'notmuch-mua-user-agent-full)
  '(notmuch-saved-searches
-   '((:name "unread all" :query "tag:unread" :key "ua")
-     (:name "unread litkov" :query "tag:unread and tag:litkov" :key "ul")
-     (:name "unread polimi" :query "tag:unread and tag:polimi" :key "up")
-     (:name "inbox all" :query "tag:inbox" :key "ia")
-     (:name "inbox litkov" :query "tag:inbox and tag:litkov" :key "il")
-     (:name "inbox polimi" :query "tag:polimi and tag:inbox" :key "ip")
-     (:name "sent all" :query "tag:sent" :key "sa")
-     (:name "sent litkov" :query "tag:litkov and tag:sent" :key "sl")
-     (:name "sent polimi" :query "tag:polimi and tag:sent" :key "sp")
-     (:name "archive all" :query "tag:archive" :key "aa")
-     (:name "archive litkov" :query "tag:litkov and tag:archive" :key "al")
-     (:name "archive polimi" :query "tag:polimi and tag:archive" :key "ap")
-     (:name "unread spam" :query "tag:unread and tag:spam" :key "us")
-     (:name "flagged" :query "tag:flagged" :key "f")
-     (:name "drafts" :query "tag:drafts" :key "d")))
+   '((:name "unread all" :query "tag:unread" :key
+            [117 97])
+     (:name "unread litkov" :query "tag:unread and tag:litkov" :key
+            [117 108])
+     (:name "unread polimi" :query "tag:unread and tag:polimi" :key
+            [117 112])
+     (:name "unread nonsolocodice" :query "tag:unread and tag:nonsolocodice" :key
+            [117 110])
+     (:name "inbox all" :query "tag:inbox" :key
+            [105 97])
+     (:name "inbox litkov" :query "tag:inbox and tag:litkov" :key
+            [105 108])
+     (:name "inbox polimi" :query "tag:polimi and tag:inbox" :key
+            [105 112])
+     (:name "inbox nonsolocodice" :query "tag:nonsolocodice and tag:inbox" :key
+            [105 110])
+     (:name "sent all" :query "tag:sent" :key
+            [115 97])
+     (:name "sent litkov" :query "tag:litkov and tag:sent" :key
+            [115 108])
+     (:name "sent polimi" :query "tag:polimi and tag:sent" :key
+            [115 112])
+     (:name "sent nonsolocodice" :query "tag:nonsolocodice and tag:sent" :key
+            [115 110])
+     (:name "archive all" :query "tag:archive" :key
+            [97 97])
+     (:name "archive litkov" :query "tag:litkov and tag:archive" :key
+            [97 108])
+     (:name "archive polimi" :query "tag:polimi and tag:archive" :key
+            [97 112])
+     (:name "archive nonsolocodice" :query "tag:nonsolocodice and tag:archive" :key
+            [97 110])
+     (:name "unread spam" :query "tag:unread and tag:spam" :key
+            [117 115])
+     (:name "flagged" :query "tag:flagged" :key
+            [102])
+     (:name "drafts" :query "tag:drafts" :key
+            [100])))
  '(notmuch-search-oldest-first nil)
  '(notmuch-show-all-multipart/alternative-parts t)
  '(notmuch-show-all-tags-list t)
