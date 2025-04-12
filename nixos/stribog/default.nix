@@ -27,6 +27,7 @@
   hardware = {
     keyboard.zsa.enable = true;
     nvidia.package = config.boot.kernelPackages.nvidiaPackages.legacy_470;
+    nvidia.powerManagement.enable = true;
     # pulseaudio.enable = true;
   };
 
@@ -88,7 +89,9 @@
         variant = "dvorak,ruu";
       };
       displayManager.startx.enable = true;
-      videoDrivers = ["modesetting" "nvidia"];
+      videoDrivers = [
+        "nvidia" # "modesetting"
+      ];
     };
   };
 
