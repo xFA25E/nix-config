@@ -59,6 +59,6 @@ in {
       url = "https://raw.githubusercontent.com/a13/emacs.d/master/init.el";
       hash = "sha256-wpsSNRN/BOK3dqBga6/spfbktKlVcBDvQ41JvLAZFp0=";
     };
-    package = final.emacs29;
+    package = final.emacs;
   };
 }

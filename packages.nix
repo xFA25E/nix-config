@@ -13,5 +13,5 @@ pkgs: let
 in
   filterSet pkgs packageNames
   // mapAttrs (name: recurseIntoAttrs) {
-    emacsPackages = filterSet (pkgs.emacsPackagesFor pkgs.emacs29) emacsPackageNames;
+    emacsPackages = filterSet (pkgs.emacsPackagesFor pkgs.emacs) emacsPackageNames;
   }

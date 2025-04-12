@@ -645,14 +645,14 @@
     "discord": {
       "flake": false,
       "locked": {
-        "lastModified": 1739902021,
-        "narHash": "sha256-704wvft9to1NlePphMT/H7gvohiYPehG2k1HjQZW3yc=",
+        "lastModified": 1743438471,
+        "narHash": "sha256-BJCjzRsH3Cd+q4/w3XKz8AqLEskYj0DmkWWx04TdyAw=",
         "type": "tarball",
-        "url": "https://dl.discordapp.net/apps/linux/0.0.86/discord-0.0.86.tar.gz"
+        "url": "https://dl.discordapp.net/apps/linux/0.0.90/discord-0.0.90.tar.gz"
       },
       "original": {
         "type": "tarball",
-        "url": "https://dl.discordapp.net/apps/linux/0.0.86/discord-0.0.86.tar.gz"
+        "url": "https://dl.discordapp.net/apps/linux/0.0.90/discord-0.0.90.tar.gz"
       }
     },
     "dmerge": {
@@ -1149,11 +1149,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1739930872,
-        "narHash": "sha256-nrzASJq/l+p63O5fCBgNb0qDxurnLkwz310VWuNlPZ4=",
+        "lastModified": 1742868798,
+        "narHash": "sha256-E165EvdRsgv9Kt/VMpf+qkqsU8ztNz9R8aPlmwQi3UE=",
         "owner": "nix-community",
         "repo": "emacs-overlay",
-        "rev": "ac68198cb33b20aaae32527d3810a86acb796bd6",
+        "rev": "19e1382e83aff8a36649951d1b31d7894f34d9b6",
         "type": "github"
       },
       "original": {
@@ -1727,6 +1727,22 @@
         "type": "github"
       }
     },
+    "grobi": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1614421550,
+        "narHash": "sha256-hD60AzcctTTujQTsAp0j/ip1gH9MFijVG395RXIq5xs=",
+        "owner": "fd0",
+        "repo": "grobi",
+        "rev": "620c3614d78bf01ca413ae7027b738c58c858174",
+        "type": "github"
+      },
+      "original": {
+        "owner": "fd0",
+        "repo": "grobi",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -1755,11 +1771,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1739757849,
-        "narHash": "sha256-Gs076ot1YuAAsYVcyidLKUMIc4ooOaRGO0PqTY7sBzA=",
+        "lastModified": 1742655702,
+        "narHash": "sha256-jbqlw4sPArFtNtA1s3kLg7/A4fzP4GLk9bGbtUJg0JQ=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "9d3d080aec2a35e05a15cedd281c2384767c2cfe",
+        "rev": "0948aeedc296f964140d9429223c7e4a0702a1ff",
         "type": "github"
       },
       "original": {
@@ -2712,11 +2728,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1739758141,
-        "narHash": "sha256-uq6A2L7o1/tR6VfmYhZWoVAwb3gTy7j4Jx30MIrH0rE=",
+        "lastModified": 1742751704,
+        "narHash": "sha256-rBfc+H1dDBUQ2mgVITMGBPI1PGuCznf9rcWX/XIULyE=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "c618e28f70257593de75a7044438efc1c1fc0791",
+        "rev": "f0946fa5f1fb876a9dc2e1850d9d3a4e3f914092",
         "type": "github"
       },
       "original": {
@@ -2728,11 +2744,11 @@
     },
     "nixpkgs_3": {
       "locked": {
-        "lastModified": 1739736696,
-        "narHash": "sha256-zON2GNBkzsIyALlOCFiEBcIjI4w38GYOb+P+R4S8Jsw=",
+        "lastModified": 1742669843,
+        "narHash": "sha256-G5n+FOXLXcRx+3hCJ6Rt6ZQyF1zqQ0DL0sWAMn2Nk0w=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "d74a2335ac9c133d6bbec9fc98d91a77f1604c1f",
+        "rev": "1e5b653dff12029333a6546c11e108ede13052eb",
         "type": "github"
       },
       "original": {
@@ -2914,11 +2930,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1739903703,
-        "narHash": "sha256-w2tTcjx39lJoPDaFbIxi+INIjAKE0jbIx9TNjj9ghmg=",
+        "lastModified": 1742886062,
+        "narHash": "sha256-WDRV3sDF72Y+Ztbw5/ZiwVhU28ivQ+D6xuEgLWWZhm8=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "2215ad5c4347f522523715e809f5f2022509f504",
+        "rev": "0f2b9c7d62d229664ef162da461789eba8ae1feb",
         "type": "github"
       },
       "original": {
@@ -3608,6 +3624,7 @@
         "epkg-tempo-extra": "epkg-tempo-extra",
         "epkg-xattr": "epkg-xattr",
         "fu": "fu",
+        "grobi": "grobi",
         "home-manager": "home-manager_2",
         "nix-colors": "nix-colors",
         "nixpkgs": "nixpkgs_2",

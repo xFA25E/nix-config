@@ -80,6 +80,6 @@
         web-mode
         wgrep
       ]);
-    package = pkgs.emacs29;
+    package = pkgs.emacs;
   };
 }
