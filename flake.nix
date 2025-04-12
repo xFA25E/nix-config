@@ -65,6 +65,9 @@
 
     fu.url = "github:numtide/flake-utils";
 
+    grobi.flake = false;
+    grobi.url = "github:fd0/grobi";
+
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager/release-24.11";
 

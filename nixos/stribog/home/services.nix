@@ -77,6 +77,14 @@ in {
       enable = true;
       rules = [
         {
+          name = "Dual Monitor Home";
+          outputs_connected = ["eDP-1" "HDMI-1-AUS-9432-16843009-VY249HGR-SALMRS002701"];
+          configure_row = ["HDMI-1@1920x1080@100" "eDP-1"];
+          atomic = true;
+          primary = "HDMI-1";
+          execute_after = ["xrandr --dpi 96"];
+        }
+        {
           name = "Dual Monitor";
           outputs_connected = ["eDP-1" "HDMI-1"];
           configure_row = ["HDMI-1" "eDP-1"];
