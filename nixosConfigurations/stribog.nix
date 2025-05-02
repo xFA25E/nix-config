@@ -67,13 +67,7 @@
     };
   };
 
-  nixpkgs = {
-    # config = {
-    #   nvidia.acceptLicense = true;
-    #   permittedInsecurePackages = ["python-2.7.18.6" "nix-2.15.3"];
-    # };
-    system = lib.mkDefault "x86_64-linux";
-  };
+  nixpkgs.system = lib.mkDefault "x86_64-linux";
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
 
