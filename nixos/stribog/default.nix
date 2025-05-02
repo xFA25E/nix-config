@@ -89,9 +89,7 @@
         variant = "dvorak,ruu";
       };
       displayManager.startx.enable = true;
-      videoDrivers = [
-        "nvidia" # "modesetting"
-      ];
+      videoDrivers = ["modesetting"];
     };
   };
 
