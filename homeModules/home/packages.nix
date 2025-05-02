@@ -103,7 +103,6 @@
       udiskie
       unzip
       video_seconds
-      wally-cli
       wget
       woof
       wormhole-william

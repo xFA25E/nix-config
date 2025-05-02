@@ -9,17 +9,7 @@
 }: {
   imports = [(modulesPath + "/installer/scan/not-detected.nix")];
 
-  boot = {
-    initrd = {
-      kernelModules = ["dm-snapshot"];
-      luks.devices.luks = {
-        device = "/dev/disk/by-label/luks";
-        preLVM = true;
-        allowDiscards = true;
-      };
-    };
-    tmp.cleanOnBoot = true;
-  };
+  boot.tmp.cleanOnBoot = true;
 
   console = {
     font = "Lat2-Terminus16";
@@ -27,17 +17,6 @@
   };
 
   documentation.man.generateCaches = true;
-
-  fileSystems = {
-    "/" = {
-      device = "/dev/disk/by-label/root";
-      fsType = "ext4";
-    };
-    "/boot" = {
-      device = "/dev/disk/by-label/boot";
-      fsType = "vfat";
-    };
-  };
 
   fonts = {
     enableGhostscriptFonts = true;
@@ -58,8 +37,6 @@
     ];
   };
 
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-
   i18n.defaultLocale = "en_US.UTF-8";
 
   networking = {
@@ -79,12 +56,6 @@
       enable = true;
       block = ["gambling"];
     };
-    useDHCP = lib.mkDefault true;
-    networkmanager.enable = true;
-    # wireless.iwd = {
-    #   enable = true;
-    #   settings.General.EnableNetworkConfiguration = true;
-    # };
   };
 
   nix = {
@@ -109,18 +80,23 @@
     };
   };
 
+  nixpkgs.config.allowUnfree = true;
+
   programs.bash.promptInit = ''
     PS1='\n$(e=$?;[[ $e != 0 ]]&&printf "%s " "$e")\u $(p=''${PWD#"$HOME"};[[ $PWD != "$p" ]]&&printf "~";IFS=/;for q in ''${p:1};do printf "/%s" "''${q:0:1}";[[ ''${q:0:1} = . ]]&&printf "%s" "''${q:1:1}";done;[[ ''${q:0:1} != . ]]&&printf "%s" "''${q:1:1}";printf "%s" "''${q:2}") \$ '
   '';
 
   services = {
+    locate = {
+      enable = true;
+      interval = "13:00";
+      package = pkgs.plocate;
+      localuser = null;
+    };
+
     nscd.enableNsncd = true;
     udisks2.enable = true;
   };
-
-  swapDevices = [{device = "/dev/disk/by-label/swap";}];
-
-  system.stateVersion = "22.05";
 
   systemd.services = {
     "loadkeys" = {
