@@ -23,6 +23,43 @@
 (add-hook 'nix-mode-hook 'abbrev-mode)
 (add-hook 'nix-ts-mode-hook 'abbrev-mode)
 
+;; (use-package ace-window
+;;   :ensure t
+;;   :bind ("M-o" . ace-window)
+
+;;   :custom
+;;   (aw-keys (string-to-list "htnsaoeuid"))
+;;   (aw-scope 'frame)
+;;   (aw-background t)
+;;   (aw-leading-char-style 'path)
+;;   (aw-dispatch-always t)
+;;   (aw-minibuffer-flag t)
+;;   (aw-fair-aspect-ratio 6)
+;;   (aw-dispatch-alist
+;;    '((?m aw-swap-window "Swap Windows")
+;;      (?M aw-move-window "Move Window")
+;;      (?r aw-flip-window)
+;;      (?f aw-find-file-in-window "Find File In Window")
+;;      (?F aw-find-file-other-window "Find File Other Window")
+;;      (?b aw-switch-buffer-in-window "Select Buffer")
+;;      (?B aw-switch-buffer-other-window "Switch Buffer Other Window")
+;;      (?w aw-split-window-fair "Split Fair Window")
+;;      (?k aw-delete-window "Delete Window")
+;;      (?K delete-other-windows "Delete Other Windows")
+;;      (?? aw-show-dispatch-help)))
+
+;;   :config
+;;   (defun aw-find-file-in-window (window)
+;;     "Find file in WINDOW."
+;;     (aw-switch-to-window window)
+;;     (call-interactively #'find-file))
+
+;;   (defun aw-find-file-other-window (window)
+;;     "Find file other WINDOW."
+;;     (aw-switch-to-window window)
+;;     (call-interactively #'find-file)
+;;     (aw-flip-window)))
+
 ;;; Affe
 
 (define-keymap :keymap search-map
@@ -58,11 +95,14 @@
 (require 'battery)
 (require 'notifications)
 
+;; TODO: handle absence of battery
 (defvar battery-previous-percentage
-  (thread-last battery-status-function
-    funcall
-    (alist-get ?p)
-    string-to-number))
+  (if battery-status-function
+      (thread-last battery-status-function
+        funcall
+        (alist-get ?p)
+        string-to-number)
+    100.0))
 
 (defun battery-alarm-on-low-level (data)
   "Alarm when battery DATA percentage is low."
