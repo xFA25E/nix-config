@@ -9,7 +9,6 @@
     ]
     ++ (with pkgs; [
       acpi
-      # addictionsTracker
       alsa-utils
       ascii
       aspell
@@ -54,10 +53,7 @@
       imagemagick
       interval_timer
       inxi
-      # iw
-      # iwgtk
       ledger
-      # lem
       libjpeg
       libnotify
       libreoffice

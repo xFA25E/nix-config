@@ -12,7 +12,6 @@
           "cyrillic-dvorak-im"
           "dired-atool-transient"
           "dired-tags"
-          "enwc-iwd"
           "pueue"
           "rx-widget"
           "sdcwoc"

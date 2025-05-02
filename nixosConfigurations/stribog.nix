@@ -68,17 +68,10 @@
   };
 
   nixpkgs = {
-    config = {
-      nvidia.acceptLicense = true;
-      permittedInsecurePackages = ["python-2.7.18.6" "nix-2.15.3"];
-    };
-    overlays = [
-      # inputs.lem-flake.overlays.default
-      inputs.addictions-tracker.overlays.default
-      inputs.nur.overlays.default
-      inputs.emacs-overlay.overlays.default
-      inputs.self.overlays.default
-    ];
+    # config = {
+    #   nvidia.acceptLicense = true;
+    #   permittedInsecurePackages = ["python-2.7.18.6" "nix-2.15.3"];
+    # };
     system = lib.mkDefault "x86_64-linux";
   };
 

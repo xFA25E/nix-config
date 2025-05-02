@@ -2,10 +2,6 @@
   description = "xFA25E various nix configurations";
 
   inputs = {
-    addictions-tracker.inputs.flake-utils.follows = "fu";
-    addictions-tracker.inputs.nixpkgs.follows = "nixpkgs";
-    addictions-tracker.url = "github:xFA25E/AddictionsTracker";
-
     agenix.inputs.nixpkgs.follows = "nixpkgs";
     agenix.url = "github:ryantm/agenix";
 
@@ -37,10 +33,6 @@
     epkg-dired-tags.inputs.epkg-xattr.follows = "epkg-xattr";
     epkg-dired-tags.inputs.nixpkgs.follows = "nixpkgs";
     epkg-dired-tags.url = "github:xFA25E/dired-tags";
-
-    epkg-enwc-iwd.inputs.emacs-overlay.follows = "emacs-overlay";
-    epkg-enwc-iwd.inputs.nixpkgs.follows = "nixpkgs";
-    epkg-enwc-iwd.url = "github:xFA25E/enwc-iwd";
 
     epkg-pueue.inputs.emacs-overlay.follows = "emacs-overlay";
     epkg-pueue.inputs.nixpkgs.follows = "nixpkgs";
@@ -83,9 +75,6 @@
 
     stumpwm.flake = false;
     stumpwm.url = "github:stumpwm/stumpwm/24.11";
-
-    # lem-flake.inputs.nixpkgs.follows = "nixpkgs";
-    # lem-flake.url = "github:dariof4/lem-flake";
   };
 
   outputs = inputs:

@@ -5,7 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(Man-notify-method 'pushy)
  '(abbrev-file-name
-   "~/Documents/projects/nix-config/nixos/stribog/home/xdg/emacs/abbrev_defs")
+   "~/Documents/projects/nix-config/homeModules/xdg/emacs/abbrev_defs")
  '(abbrev-suggest t)
  '(after-save-hook '(executable-make-buffer-file-executable-if-script-p))
  '(amded-editable-tags
@@ -151,7 +151,7 @@
  '(context-menu-mode t)
  '(create-lockfiles nil)
  '(custom-file
-   "~/Documents/projects/nix-config/nixos/stribog/home/xdg/emacs/custom.el")
+   "~/Documents/projects/nix-config/homeModules/xdg/emacs/custom.el")
  '(delete-old-versions t)
  '(delete-pair-blink-delay 0)
  '(describe-bindings-outline t)
@@ -234,7 +234,7 @@
  '(envrc-global-mode t)
  '(envrc-none-lighter nil)
  '(envrc-on-lighter '(" " (:propertize "envrc" face envrc-mode-line-on-face)))
- '(enwc-default-backend 'iwd)
+ '(enwc-default-backend 'nm)
  '(enwc-display-mode-line nil)
  '(enwc-wired-device "eno1")
  '(enwc-wireless-device "wlan0")
