@@ -92,7 +92,7 @@
     {
       nixosConfigurations = import ./nixosConfigurations inputs;
       nixosModules = import ./nixosModules;
-      # homeModules.base = import ./homeModule;
+      homeModules = import ./homeModules;
       overlays = import ./overlays inputs;
       templates = import ./templates;
     }

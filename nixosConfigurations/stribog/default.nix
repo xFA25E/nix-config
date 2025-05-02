@@ -35,7 +35,7 @@
     extraSpecialArgs = {inherit inputs;};
     useGlobalPkgs = true;
     useUserPackages = true;
-    users.${username} = import ./home;
+    users.${username} = inputs.self.homeModules.base;
   };
 
   networking = {
