@@ -91,7 +91,8 @@
   outputs = inputs:
     {
       nixosConfigurations = import ./nixos inputs;
-      nixosModules.base = import ./module;
+      nixosModules = import ./nixosModules;
+      # homeModules.base = import ./homeModule;
       overlays.default = import ./overlay inputs;
       templates = import ./templates;
     }
