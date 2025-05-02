@@ -12,94 +12,61 @@
    '("album" "artist" "genre" "track-number" "track-title" "year"))
  '(ange-ftp-netrc-filename "~/.authinfo.gpg")
  '(apheleia-formatters
-   '((alejandra "alejandra")
-     (xmllint "xmllint" "--format" "-" "--pretty" "2")
-     (bean-format "bean-format")
-     (black "black" "-")
-     (brittany "brittany")
+   '((alejandra "alejandra") (xmllint "xmllint" "--format" "-" "--pretty" "2")
+     (bean-format "bean-format") (black "black" "-") (brittany "brittany")
      (crystal-tool-format "crystal" "tool" "format" "-")
-     (dart-format "dart" "format")
-     (elm-format "elm-format" "--yes" "--stdin")
-     (fish-indent "fish_indent")
-     (gofmt "gofmt")
-     (gofumpt "gofumpt")
-     (goimports "goimports")
-     (google-java-format "google-java-format" "-")
-     (isort "isort" "-")
-     (lisp-indent . apheleia-indent-lisp-buffer)
+     (dart-format "dart" "format") (elm-format "elm-format" "--yes" "--stdin")
+     (fish-indent "fish_indent") (gofmt "gofmt") (gofumpt "gofumpt")
+     (goimports "goimports") (google-java-format "google-java-format" "-")
+     (isort "isort" "-") (lisp-indent . apheleia-indent-lisp-buffer)
      (ktlint "ktlint" "--stdin" "-F")
      (latexindent "latexindent" "--logfile=/dev/null")
-     (mix-format "mix" "format" "-")
-     (nixfmt "nixfmt")
-     (ocamlformat "ocamlformat" "-" "--name" filepath "--enable-outside-detected-project")
+     (mix-format "mix" "format" "-") (nixfmt "nixfmt")
+     (ocamlformat "ocamlformat" "-" "--name" filepath
+                  "--enable-outside-detected-project")
      (phpcs "apheleia-phpcs")
      (prettier npx "prettier" "--stdin-filepath" filepath)
      (prettier-css npx "prettier" "--stdin-filepath" filepath "--parser=css")
      (prettier-html npx "prettier" "--stdin-filepath" filepath "--parser=html")
-     (prettier-graphql npx "prettier" "--stdin-filepath" filepath "--parser=graphql")
-     (prettier-javascript npx "prettier" "--stdin-filepath" filepath "--parser=babel-flow")
+     (prettier-graphql npx "prettier" "--stdin-filepath" filepath
+                       "--parser=graphql")
+     (prettier-javascript npx "prettier" "--stdin-filepath" filepath
+                          "--parser=babel-flow")
      (prettier-json npx "prettier" "--stdin-filepath" filepath "--parser=json")
-     (prettier-markdown npx "prettier" "--stdin-filepath" filepath "--parser=markdown")
+     (prettier-markdown npx "prettier" "--stdin-filepath" filepath
+                        "--parser=markdown")
      (prettier-ruby npx "prettier" "--stdin-filepath" filepath "--parser=ruby")
      (prettier-scss npx "prettier" "--stdin-filepath" filepath "--parser=scss")
-     (prettier-typescript npx "prettier" "--stdin-filepath" filepath "--parser=typescript")
+     (prettier-typescript npx "prettier" "--stdin-filepath" filepath
+                          "--parser=typescript")
      (prettier-yaml npx "prettier" "--stdin-filepath" filepath "--parser=yaml")
-     (shfmt "shfmt" "-i" "4")
-     (stylua "stylua" "-")
+     (shfmt "shfmt" "-i" "4") (stylua "stylua" "-")
      (rustfmt "rustfmt" "--quiet" "--emit" "stdout")
      (terraform "terraform" "fmt" "-")))
  '(apheleia-mode-alist
-   '((nxml-mode . xmllint)
-     (php-mode . phpcs)
-     (json-mode . prettier-json)
-     (json-ts-mode . prettier-json)
-     (bash-ts-mode . shfmt)
-     (beancount-mode . bean-format)
-     (c++-ts-mode . clang-format)
-     (cc-mode . clang-format)
-     (c-mode . clang-format)
-     (c-ts-mode . clang-format)
-     (c++-mode . clang-format)
-     (caml-mode . ocamlformat)
-     (common-lisp-mode . lisp-indent)
-     (crystal-mode . crystal-tool-format)
-     (css-mode . prettier-css)
-     (css-ts-mode . prettier-css)
-     (dart-mode . dart-format)
-     (elixir-mode . mix-format)
-     (elm-mode . elm-format)
-     (fish-mode . fish-indent)
-     (go-mode . gofmt)
-     (graphql-mode . prettier-graphql)
-     (haskell-mode . brittany)
-     (html-mode . prettier-html)
-     (java-mode . google-java-format)
-     (java-ts-mode . google-java-format)
-     (js3-mode . prettier-javascript)
-     (js-mode . prettier-javascript)
-     (js-ts-mode . prettier-javascript)
-     (kotlin-mode . ktlint)
-     (latex-mode . latexindent)
-     (LaTeX-mode . latexindent)
-     (lua-mode . stylua)
-     (lisp-mode . lisp-indent)
-     (nix-ts-mode . alejandra)
-     (nix-mode . alejandra)
-     (python-mode . black)
-     (python-ts-mode . black)
-     (ruby-mode . prettier-ruby)
-     (rustic-mode . rustfmt)
-     (rust-mode . rustfmt)
-     (scss-mode . prettier-scss)
-     (sh-mode . shfmt)
-     (terraform-mode . terraform)
-     (TeX-latex-mode . latexindent)
-     (TeX-mode . latexindent)
-     (tsx-ts-mode . prettier-typescript)
-     (tuareg-mode . ocamlformat)
+   '((nxml-mode . xmllint) (php-mode . phpcs) (json-mode . prettier-json)
+     (json-ts-mode . prettier-json) (bash-ts-mode . shfmt)
+     (beancount-mode . bean-format) (c++-ts-mode . clang-format)
+     (cc-mode . clang-format) (c-mode . clang-format) (c-ts-mode . clang-format)
+     (c++-mode . clang-format) (caml-mode . ocamlformat)
+     (common-lisp-mode . lisp-indent) (crystal-mode . crystal-tool-format)
+     (css-mode . prettier-css) (css-ts-mode . prettier-css)
+     (dart-mode . dart-format) (elixir-mode . mix-format)
+     (elm-mode . elm-format) (fish-mode . fish-indent) (go-mode . gofmt)
+     (graphql-mode . prettier-graphql) (haskell-mode . brittany)
+     (html-mode . prettier-html) (java-mode . google-java-format)
+     (java-ts-mode . google-java-format) (js3-mode . prettier-javascript)
+     (js-mode . prettier-javascript) (js-ts-mode . prettier-javascript)
+     (kotlin-mode . ktlint) (latex-mode . latexindent)
+     (LaTeX-mode . latexindent) (lua-mode . stylua) (lisp-mode . lisp-indent)
+     (nix-ts-mode . alejandra) (nix-mode . alejandra) (python-mode . black)
+     (python-ts-mode . black) (ruby-mode . prettier-ruby)
+     (rustic-mode . rustfmt) (rust-mode . rustfmt) (scss-mode . prettier-scss)
+     (sh-mode . shfmt) (terraform-mode . terraform)
+     (TeX-latex-mode . latexindent) (TeX-mode . latexindent)
+     (tsx-ts-mode . prettier-typescript) (tuareg-mode . ocamlformat)
      (typescript-mode . prettier-typescript)
-     (typescript-ts-mode . prettier-typescript)
-     (web-mode . prettier)
+     (typescript-ts-mode . prettier-typescript) (web-mode . prettier)
      (yaml-mode . prettier-yaml)))
  '(apheleia-mode-lighter nil)
  '(apropos-sort-by-scores t)
@@ -109,14 +76,9 @@
  '(auto-revert-mode-text " AR")
  '(auto-revert-remote-files t)
  '(auto-save-file-name-transforms
-   (list
-    (list ".*"
-          (expand-file-name "emacs/auto-saves/"
-                            (xdg-cache-home))
-          t)))
+   (list (list ".*" (expand-file-name "emacs/auto-saves/" (xdg-cache-home)) t)))
  '(auto-save-list-file-prefix
-   (expand-file-name "emacs/auto-saves-list/.saves-"
-                     (xdg-cache-home)))
+   (expand-file-name "emacs/auto-saves-list/.saves-" (xdg-cache-home)))
  '(avy-background t)
  '(avy-goto-word-0-regexp "\\_<\\(\\sw\\|\\s_\\)")
  '(avy-keys '(97 111 101 117 104 116 110 115))
@@ -134,10 +96,8 @@
  '(browse-url-browser-function 'browse-url-choices)
  '(browse-url-generic-program "brave-incognito")
  '(browse-url-handlers
-   '(("\\.torrent\\'" lambda
-      (url &rest _)
-      (transmission-add url
-                        (read-directory-name "Target directory: ")))))
+   '(("\\.torrent\\'" lambda (url &rest _)
+      (transmission-add url (read-directory-name "Target directory: ")))))
  '(browse-url-secondary-browser-function 'browse-url)
  '(byte-count-to-string-function '(lambda (s) (file-size-human-readable s 'si)))
  '(c-default-style '((java-mode . "java") (other . "awk")))
@@ -159,14 +119,30 @@
  '(comint-input-ring-size 10000)
  '(compilation-always-kill t)
  '(compilation-error-regexp-alist
-   '(absoft ada aix ant bash borland python-tracebacks-and-caml cmake cmake-info comma msft edg-1 edg-2 epc ftnchek gradle-kotlin iar ibm irix
-            ("\\(?:^ +at[^/]+\\([^:]+\\):\\([[:digit:]]+\\):\\([[:digit:]]+\\)\\)" 1 2 3)
-            java javac jikes-file maven jikes-line clang-include gcc-include ruby-Test::Unit gmake gnu cucumber lcc makepp mips-1 mips-2 omake oracle perl php rxp shellcheck sparc-pascal-file sparc-pascal-line sparc-pascal-example sun sun-ada watcom 4bsd gcov-file gcov-header gcov-nomark gcov-called-line gcov-never-called perl--Pod::Checker perl--Test perl--Test2 perl--Test::Harness weblint guile-file guile-line))
+   '(absoft ada aix ant bash borland python-tracebacks-and-caml cmake cmake-info
+            comma msft edg-1 edg-2 epc ftnchek gradle-kotlin iar ibm irix
+            ("\\(?:^ +at[^/]+\\([^:]+\\):\\([[:digit:]]+\\):\\([[:digit:]]+\\)\\)"
+             1 2 3)
+            java javac jikes-file maven jikes-line clang-include gcc-include
+            ruby-Test::Unit gmake gnu cucumber lcc makepp mips-1 mips-2 omake
+            oracle perl php rxp shellcheck sparc-pascal-file sparc-pascal-line
+            sparc-pascal-example sun sun-ada watcom 4bsd gcov-file gcov-header
+            gcov-nomark gcov-called-line gcov-never-called perl--Pod::Checker
+            perl--Test perl--Test2 perl--Test::Harness weblint guile-file
+            guile-line))
  '(compilation-scroll-output t)
  '(completion-category-overrides '((file (styles basic partial-completion))))
  '(completion-cycle-threshold 2)
  '(completion-ignored-extensions
-   '(".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" "flake.lock" ".gitignore" ".eldev/" ".direnv/" ".envrc" "Eldev" "Eldev-local" "LICENSE" ".dir-locals.el" ".prettierignore" ".editorconfig"))
+   '(".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo"
+     ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/"
+     ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl"
+     ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl"
+     ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl"
+     ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn"
+     ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc"
+     ".pyo" "flake.lock" ".gitignore" ".eldev/" ".direnv/" ".envrc" "Eldev"
+     "Eldev-local" "LICENSE" ".dir-locals.el" ".prettierignore" ".editorconfig"))
  '(completion-show-help nil)
  '(completion-styles '(orderless partial-completion basic))
  '(completions-detailed t)
@@ -187,27 +163,29 @@
  '(dired-dwim-target t)
  '(dired-free-space 'separate)
  '(dired-guess-shell-alist-user
-   '(("\\.\\(?:csv\\|doc\\|docx\\|odp\\|ods\\|odt\\|ppt\\|pptx\\|xls\\|xlsx\\)\\'" "setsid -f libreoffice * >/dev/null 2>&1" "libreoffice --invisible --headless --convert-to pdf * &")
-     ("\\.\\(?:bmp\\|gif\\|jfif\\|jpeg\\|jpg\\|nef\\|png\\|thm\\|tif\\|webp\\|xpm\\)\\'" "setsid -f nsxiv * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
-     ("\\.\\(?:ai\\|eps\\)\\'" "setsid -f inkscape * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
+   '(("\\.\\(?:csv\\|doc\\|docx\\|odp\\|ods\\|odt\\|ppt\\|pptx\\|xls\\|xlsx\\)\\'"
+      "setsid -f libreoffice * >/dev/null 2>&1"
+      "libreoffice --invisible --headless --convert-to pdf * &")
+     ("\\.\\(?:bmp\\|gif\\|jfif\\|jpeg\\|jpg\\|nef\\|png\\|thm\\|tif\\|webp\\|xpm\\)\\'"
+      "setsid -f nsxiv * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
+     ("\\.\\(?:ai\\|eps\\)\\'" "setsid -f inkscape * >/dev/null 2>&1"
+      "setsid -f gimp * >/dev/null 2>&1")
      ("\\.\\(?:djvu\\|fb2\\)\\'" "ebook-convert ? .epub &")
-     ("\\.pdf\\'" "setsid -f libreoffice * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
-     ("\\.\\(?:3gp\\|aiff\\|avi\\|flac\\|flv\\|m4a\\|mkv\\|mov\\|mp3\\|mp4\\|mpg\\|ogg\\|ogv\\|opus\\|vob\\|wav\\|webm\\|wmv\\|mka\\|m4v\\)\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1" "for vid in * ; do dur=$(video_seconds \"$vid\"); sum=$((sum + dur)); done; format_seconds \"%02h:%02m:%02s\" \"$sum\"" "recode_video hevc * &"
+     ("\\.pdf\\'" "setsid -f libreoffice * >/dev/null 2>&1"
+      "setsid -f gimp * >/dev/null 2>&1")
+     ("\\.\\(?:3gp\\|aiff\\|avi\\|flac\\|flv\\|m4a\\|mkv\\|mov\\|mp3\\|mp4\\|mpg\\|ogg\\|ogv\\|opus\\|vob\\|wav\\|webm\\|wmv\\|mka\\|m4v\\)\\'"
+      "setsid -f mpv --profile=gui * >/dev/null 2>&1"
+      "for vid in * ; do dur=$(video_seconds \"$vid\"); sum=$((sum + dur)); done; format_seconds \"%02h:%02m:%02s\" \"$sum\""
+      "recode_video hevc * &"
       (pcase file
-        ((rx ".webm" eos)
-         "strip_video opus * &")
-        ((rx "."
-             (or "mp4" "m4v")
-             eos)
-         "strip_video m4a * &")
+        ((rx ".webm" eos) "strip_video opus * &")
+        ((rx "." (or "mp4" "m4v") eos) "strip_video m4a * &")
         (_ "strip_video mp3 * &"))
-      "resize_video 360 * &" "mediainfo" "mpv -vo=drm" "sort_videos_by_duration *")
+      "resize_video 360 * &" "mediainfo" "mpv -vo=drm"
+      "sort_videos_by_duration *")
      ("\\.cue\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1")
      ("\\.rar\\'"
-      (let
-          ((dir
-            (shell-quote-argument
-             (file-name-sans-extension file))))
+      (let ((dir (shell-quote-argument (file-name-sans-extension file))))
         (concat "mkdir " dir "; unrar x * " dir)))
      ("\\.torrent\\'" "transmission-show")
      ("\\.epub\\'" "ebook-convert ? .mobi &")))
@@ -219,29 +197,17 @@
  '(display-buffer-alist
    '(("\\(?:\\*Pueue\\*\\|\\*SDCWOC\\*\\)"
       (display-buffer-reuse-window display-buffer-same-window))
-     ("\\*org-roam\\*"
-      (display-buffer-in-direction)
-      (direction . right)
-      (window-width . 0.33)
-      (window-height . fit-window-to-buffer))))
+     ("\\*org-roam\\*" (display-buffer-in-direction) (direction . right)
+      (window-width . 0.33) (window-height . fit-window-to-buffer))))
  '(display-time-default-load-average nil)
  '(display-time-mail-function
    '(lambda nil
       (ignore-errors
-        (let
-            ((count
-              (car
-               (process-lines "notmuch" "count" "tag:unread"))))
-          (unless
-              (string= "0" count)
-            count)))))
+        (let ((count (car (process-lines "notmuch" "count" "tag:unread"))))
+          (unless (string= "0" count) count)))))
  '(display-time-mode t)
  '(display-time-string-forms
-   '((format-time-string "%a %b %e %H:%M" now)
-     (if mail
-         (concat " @" mail)
-       "")
-     " "))
+   '((format-time-string "%a %b %e %H:%M" now) (if mail (concat " @" mail) "") " "))
  '(ebdb-complete-mail nil)
  '(ebdb-complete-mail-allow-cycling nil)
  '(ebdb-completion-display-record nil)
@@ -251,9 +217,7 @@
  '(ede-project-placeholder-cache-file (expand-file-name "emacs/ede/projects.el" (xdg-cache-home)))
  '(ediff-autostore-merges nil)
  '(ediff-before-setup-hook
-   '((lambda
-       (&rest _)
-       (window-configuration-to-register 119))))
+   '((lambda (&rest _) (window-configuration-to-register 119))))
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
  '(eglot-autoshutdown t)
  '(eglot-confirm-server-initiated-edits nil)
@@ -266,8 +230,7 @@
  '(emacs-lisp-mode-hook '(flymake-mode abbrev-mode))
  '(enable-recursive-minibuffers t)
  '(envrc-error-lighter
-   '(" "
-     (:propertize "envrc" face envrc-mode-line-error-face)))
+   '(" " (:propertize "envrc" face envrc-mode-line-error-face)))
  '(envrc-global-mode t)
  '(envrc-none-lighter nil)
  '(envrc-on-lighter '(" " (:propertize "envrc" face envrc-mode-line-on-face)))
@@ -285,42 +248,31 @@
  '(find-ls-option
    '("-print0 | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
  '(find-sibling-rules
-   '(("\\([^/]+\\)\\.cs\\'" "\\1\\.axaml")
-     ("\\([^/]+\\)\\.axaml\\'" "\\1\\.cs")))
+   '(("\\([^/]+\\)\\.cs\\'" "\\1\\.axaml") ("\\([^/]+\\)\\.axaml\\'" "\\1\\.cs")))
  '(flymake-collection-hook-config
-   '(((python-mode python-ts-mode)
-      flymake-collection-pycodestyle
-      (flymake-mypy :disabled t)
-      (flymake-collection-pylint :disabled t)
+   '(((python-mode python-ts-mode) flymake-collection-pycodestyle
+      (flymake-mypy :disabled t) (flymake-collection-pylint :disabled t)
       (flymake-collection-flake8 :disabled t)
       (flymake-collection-ruff :disabled t))
      (awk-mode flymake-collection-awk-gawk)
-     ((c-mode c-ts-mode)
-      flymake-collection-clang
+     ((c-mode c-ts-mode) flymake-collection-clang
       (flymake-collection-gcc :disabled t))
-     ((c++-mode c++-ts-mode)
-      flymake-collection-clang
+     ((c++-mode c++-ts-mode) flymake-collection-clang
       (flymake-collection-gcc :disabled t))
      (haskell-mode flymake-collection-hlint)
      ((js-mode js2-mode typescript-mode typescript-ts-mode)
       flymake-collection-eslint)
-     ((json-mode json-ts-mode)
-      flymake-collection-jq
+     ((json-mode json-ts-mode) flymake-collection-jq
       (flymake-collection-jsonlint :disabled t))
      (less-mode flymake-collection-less)
      (markdown-mode flymake-collection-markdownlint flymake-collection-proselint)
-     (lua-mode flymake-collection-luacheck
-               (flymake-collection-lua :disabled t))
-     ((nix-mode nix-ts-mode)
-      flymake-collection-statix)
+     (lua-mode flymake-collection-luacheck (flymake-collection-lua :disabled t))
+     ((nix-mode nix-ts-mode) flymake-collection-statix)
      (sql-mode flymake-collection-sql-lint
                (flymake-collection-sqlint :disabled t))
-     ((ruby-mode ruby-ts-mode)
-      flymake-collection-rubocop)
-     ((yaml-mode yaml-ts-mode)
-      . flymake-collection-yamllint)
-     ((web-mode html-ts-mode)
-      flymake-collection-html-tidy)
+     ((ruby-mode ruby-ts-mode) flymake-collection-rubocop)
+     ((yaml-mode yaml-ts-mode) . flymake-collection-yamllint)
+     ((web-mode html-ts-mode) flymake-collection-html-tidy)
      (org-mode flymake-collection-proselint)
      (notmuch-message-mode flymake-collection-proselint)
      (nxml-mode flymake-collection-xmllint)))
@@ -331,25 +283,23 @@
  '(global-so-long-mode t)
  '(goto-line-history-local t)
  '(grep-files-aliases
-   '(("php" . "*.php *.phtml")
-     ("all" . "* .[!.]* ..?*")
-     ("el" . "*.el")
-     ("ch" . "*.[ch]")
-     ("c" . "*.c")
-     ("cc" . "*.cc *.cxx *.cpp *.C *.CC *.c++")
+   '(("php" . "*.php *.phtml") ("all" . "* .[!.]* ..?*") ("el" . "*.el")
+     ("ch" . "*.[ch]") ("c" . "*.c") ("cc" . "*.cc *.cxx *.cpp *.C *.CC *.c++")
      ("cchh" . "*.cc *.[ch]xx *.[ch]pp *.[CHh] *.CC *.HH *.[ch]++")
-     ("hh" . "*.hxx *.hpp *.[Hh] *.HH *.h++")
-     ("h" . "*.h")
-     ("l" . "[Cc]hange[Ll]og*")
-     ("m" . "[Mm]akefile*")
-     ("tex" . "*.tex")
-     ("texi" . "*.texi")
-     ("asm" . "*.[sS]")))
+     ("hh" . "*.hxx *.hpp *.[Hh] *.HH *.h++") ("h" . "*.h")
+     ("l" . "[Cc]hange[Ll]og*") ("m" . "[Mm]akefile*") ("tex" . "*.tex")
+     ("texi" . "*.texi") ("asm" . "*.[sS]")))
  '(help-enable-variable-value-editing t)
  '(help-window-keep-selected t)
  '(help-window-select t)
  '(hippie-expand-try-functions-list
-   '(try-complete-file-name-partially try-complete-file-name try-expand-list try-expand-line try-expand-dabbrev try-expand-dabbrev-all-buffers try-expand-dabbrev-from-kill try-complete-lisp-symbol-partially try-complete-lisp-symbol try-expand-all-abbrevs))
+   '(try-complete-file-name-partially try-complete-file-name try-expand-list
+                                      try-expand-line try-expand-dabbrev
+                                      try-expand-dabbrev-all-buffers
+                                      try-expand-dabbrev-from-kill
+                                      try-complete-lisp-symbol-partially
+                                      try-complete-lisp-symbol
+                                      try-expand-all-abbrevs))
  '(history-delete-duplicates t)
  '(history-length 1000)
  '(hscroll-step 1)
@@ -358,21 +308,18 @@
  '(ibuffer-show-empty-filter-groups nil)
  '(image-dired-db-file (expand-file-name "emacs/image-dired-db" (xdg-data-home)))
  '(image-dired-dir
-   (expand-file-name "emacs/image-dired/thumbnails/"
-                     (xdg-cache-home)))
+   (expand-file-name "emacs/image-dired/thumbnails/" (xdg-cache-home)))
  '(image-dired-external-viewer "image-dired-external-viewer")
  '(image-dired-gallery-dir
-   (expand-file-name "emacs/image-dired/gallery/"
-                     (xdg-cache-home)))
+   (expand-file-name "emacs/image-dired/gallery/" (xdg-cache-home)))
  '(image-dired-tags-db-file (expand-file-name "emacs/image-dired-db" (xdg-data-home)))
  '(image-dired-temp-image-file
-   (expand-file-name "emacs/image-dired/temp"
-                     (xdg-cache-home)))
+   (expand-file-name "emacs/image-dired/temp" (xdg-cache-home)))
  '(image-dired-temp-rotate-image-file
-   (expand-file-name "emacs/image-dired/rotate_temp"
-                     (xdg-cache-home)))
+   (expand-file-name "emacs/image-dired/rotate_temp" (xdg-cache-home)))
  '(image-file-name-extensions
-   '("mp4" "mkv" "png" "jpeg" "jpg" "gif" "tiff" "tif" "xbm" "xpm" "pbm" "pgm" "ppm" "pnm" "svg"))
+   '("mp4" "mkv" "png" "jpeg" "jpg" "gif" "tiff" "tif" "xbm" "xpm" "pbm" "pgm"
+     "ppm" "pnm" "svg"))
  '(image-use-external-converter t)
  '(imenu-auto-rescan t)
  '(imenu-level-separator "/")
@@ -399,22 +346,40 @@
  '(leaf-expand-minimally t)
  '(ledger-default-date-format "%Y-%m-%d")
  '(ledger-reports
-   '(("intex kilometers" "%(binary) -f %(ledger-file) balance 'Income:Job:Intex System:KR' --limit 'a < 0' ")
-     ("register" "%(binary) -f %(ledger-file) register --sort '-date' --period 'from 1 month ago' ")
-     ("expenses monthly" "%(binary) -f %(ledger-file) register '^Expenses' --monthly --empty --collapse --average --period 'from 2023-4'")
-     ("groceries weekly" "%(binary) -f %(ledger-file) register 'Expenses:Groceries' --period 'from 2023-7-24' --average --weekly")
-     ("intex trips" "%(binary) -f %(ledger-file) register 'Assets:Debt:Intex System' --limit 'amount > 0' --period %(month)")
-     ("account monthly collapsed" "%(binary) -f %(ledger-file) --monthly --empty --collapse register %(account)")
-     ("cash flow monthly" "%(binary) -f %(ledger-file) register ^Income ^Expenses --monthly --empty --collapse --average --period 'from 2023-4'")
+   '(("intex kilometers"
+      "%(binary) -f %(ledger-file) balance 'Income:Job:Intex System:KR' --limit 'a < 0' ")
+     ("register"
+      "%(binary) -f %(ledger-file) register --sort '-date' --period 'from 1 month ago' ")
+     ("expenses monthly"
+      "%(binary) -f %(ledger-file) register '^Expenses' --monthly --empty --collapse --average --period 'from 2023-4'")
+     ("groceries weekly"
+      "%(binary) -f %(ledger-file) register 'Expenses:Groceries' --period 'from 2023-7-24' --average --weekly")
+     ("intex trips"
+      "%(binary) -f %(ledger-file) register 'Liabilities:Intex System' --limit 'amount > 0' --period %(month)")
+     ("account monthly collapsed"
+      "%(binary) -f %(ledger-file) --monthly --empty --collapse register %(account)")
+     ("cash flow monthly"
+      "%(binary) -f %(ledger-file) register ^Income ^Expenses --monthly --empty --collapse --average --period 'from 2023-4'")
      ("cash flow" "%(binary) -f %(ledger-file) balance ^Income ^Expenses")
-     ("net worth monthly" "%(binary) -f %(ledger-file) register ^Assets ^Liabilities --monthly --empty --collapse --average --period 'from 2023-4'")
+     ("net worth monthly"
+      "%(binary) -f %(ledger-file) register ^Assets ^Liabilities --monthly --empty --collapse --average --period 'from 2023-4'")
      ("net worth" "%(binary) -f %(ledger-file) balance ^Assets ^Liabilities")
      ("balance" "%(binary) -f %(ledger-file) balance")
      ("payee" "%(binary) -f %(ledger-file) register @%(payee)")
      ("account" "%(binary) -f %(ledger-file) register %(account)")
-     ("account monthly" "%(binary) -f %(ledger-file) --monthly register %(account)")))
+     ("account monthly"
+      "%(binary) -f %(ledger-file) --monthly register %(account)")))
  '(link-hint-types
-   '(link-hint-shr-url link-hint-org-link link-hint-markdown-link link-hint-help-link link-hint-info-link link-hint-package-link link-hint-package-keyword-link link-hint-package-install-link link-hint-epkg-button link-hint-compilation-link link-hint-nov-link link-hint-customize-widget link-hint-notmuch-hello link-hint-button link-hint-completion-list-candidate link-hint-text-url link-hint-file-link link-hint-org-agenda-item link-hint-xref-item link-hint-man-button link-hint-dired-filename))
+   '(link-hint-shr-url link-hint-org-link link-hint-markdown-link
+                       link-hint-help-link link-hint-info-link
+                       link-hint-package-link link-hint-package-keyword-link
+                       link-hint-package-install-link link-hint-epkg-button
+                       link-hint-compilation-link link-hint-nov-link
+                       link-hint-customize-widget link-hint-notmuch-hello
+                       link-hint-button link-hint-completion-list-candidate
+                       link-hint-text-url link-hint-file-link
+                       link-hint-org-agenda-item link-hint-xref-item
+                       link-hint-man-button link-hint-dired-filename))
  '(lisp-mode-hook '(sly-editing-mode abbrev-mode))
  '(locate-update-command "systemctl --user start updatedb.service")
  '(magit-credential-cache-daemon-socket (expand-file-name "git/credential/socket" (xdg-cache-home)))
@@ -422,11 +387,8 @@
  '(mail-envelope-from 'header)
  '(mail-user-agent 'notmuch-user-agent)
  '(major-mode-remap-alist
-   '((nix-mode . nix-ts-mode)
-     (sh-mode . bash-ts-mode)
-     (css-mode . css-ts-mode)
-     (js-mode . js-ts-mode)
-     (javascript-mode . js-ts-mode)
+   '((nix-mode . nix-ts-mode) (sh-mode . bash-ts-mode) (css-mode . css-ts-mode)
+     (js-mode . js-ts-mode) (javascript-mode . js-ts-mode)
      (js-json-mode . json-ts-mode)))
  '(marginalia-mode t)
  '(max-mini-window-height 0.5)
@@ -457,44 +419,94 @@
  '(newsticker-treeview-listwindow-height 6)
  '(newsticker-treeview-treewindow-width 30)
  '(newsticker-url-list
-   '(("The Alternative Hypothesis Substack" "https://thealternativehypothesis.substack.com/feed" nil nil nil)
-     ("Информационное насилие" "https://www.youtube.com/feeds/videos.xml?channel_id=UCwpF2sTk7VLnCImJtYr45oQ" nil nil nil)
-     ("the way i see things" "https://www.youtube.com/feeds/videos.xml?channel_id=UCFQYVdJHRHxmzffGKCqeZgQ" nil nil nil)
+   '(("The Alternative Hypothesis Substack"
+      "https://thealternativehypothesis.substack.com/feed" nil nil nil)
+     ("Информационное насилие"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UCwpF2sTk7VLnCImJtYr45oQ"
+      nil nil nil)
+     ("the way i see things"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UCFQYVdJHRHxmzffGKCqeZgQ"
+      nil nil nil)
      ("Ideas and Data Substack" "https://seanlast.substack.com/feed" nil nil nil)
-     ("Uebermarginal Twitch" "https://twitchrss.appspot.com/vod/uebermarginal" nil nil nil)
-     ("uebermarginal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ10M7ftQN7ylM6NaPiEB6w" nil nil nil)
-     ("Dysphorra" "https://www.youtube.com/feeds/videos.xml?channel_id=UCsfHjT6FKyJHm39qWIO3rVg" nil nil nil)
-     ("Неотеник" "https://www.youtube.com/feeds/videos.xml?channel_id=UC_4kLff8VIDAZ8NmUAIa_4w" nil nil nil)
-     ("Лучшее с Алиповым" "https://www.youtube.com/feeds/videos.xml?channel_id=UCC4ImDJs7sSxlMVytsE09Qw" nil nil nil)
-     ("Нейронаука с Владимиром Алиповым" "https://www.youtube.com/feeds/videos.xml?channel_id=UCmEG9pKNZaE6QG_SaBBt93Q" nil nil nil)
-     ("itpedia" "https://www.youtube.com/feeds/videos.xml?channel_id=UC6bTF68IAV1okfRfwXIP1Cg" nil nil nil)
-     ("Joseph Bronski YouTube" "https://www.youtube.com/feeds/videos.xml?channel_id=UCiMwMDPJBB_mcBPknjPrfGA" nil nil nil)
-     ("Joseph Bronski Substack" "https://josephbronski.substack.com/feed" nil nil nil)
-     ("Максим Вердикт" "https://www.youtube.com/feeds/videos.xml?channel_id=UC44oy3QadzoUZt7G0DDf5DQ" nil nil nil)
+     ("Uebermarginal Twitch" "https://twitchrss.appspot.com/vod/uebermarginal"
+      nil nil nil)
+     ("uebermarginal"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ10M7ftQN7ylM6NaPiEB6w"
+      nil nil nil)
+     ("Dysphorra"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UCsfHjT6FKyJHm39qWIO3rVg"
+      nil nil nil)
+     ("Неотеник"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UC_4kLff8VIDAZ8NmUAIa_4w"
+      nil nil nil)
+     ("Лучшее с Алиповым"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UCC4ImDJs7sSxlMVytsE09Qw"
+      nil nil nil)
+     ("Нейронаука с Владимиром Алиповым"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UCmEG9pKNZaE6QG_SaBBt93Q"
+      nil nil nil)
+     ("itpedia"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UC6bTF68IAV1okfRfwXIP1Cg"
+      nil nil nil)
+     ("Joseph Bronski YouTube"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UCiMwMDPJBB_mcBPknjPrfGA"
+      nil nil nil)
+     ("Joseph Bronski Substack" "https://josephbronski.substack.com/feed" nil
+      nil nil)
+     ("Максим Вердикт"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UC44oy3QadzoUZt7G0DDf5DQ"
+      nil nil nil)
      ("Biopolitics" "https://biopolitics.substack.com/feed" nil nil nil)
-     ("AltHype Cozy" "https://cozysounds.kanyecode.repl.co/feed/althype" nil nil nil)
-     ("dickmao" "https://www.youtube.com/feeds/videos.xml?channel_id=UCyf-xqc0ovYSDgaCcB3CUoA" nil nil nil)
-     ("Joseph Everett’s Newsletter" "https://josepheverettwil.substack.com/feed" nil nil nil)
-     ("Just Emil Kirkegaard Things" "https://www.emilkirkegaard.com/feed" nil nil nil)
-     ("UBERSOY" "https://www.youtube.com/feeds/videos.xml?channel_id=UCqBN8cSd6hfwqq0BM2biXOg" nil nil nil)
-     ("Wags" "https://www.youtube.com/feeds/videos.xml?channel_id=UCA5Zo2kmdP9ig4f9fsvyRgg" nil nil nil)
+     ("AltHype Cozy" "https://cozysounds.kanyecode.repl.co/feed/althype" nil nil
+      nil)
+     ("dickmao"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UCyf-xqc0ovYSDgaCcB3CUoA"
+      nil nil nil)
+     ("Joseph Everett’s Newsletter" "https://josepheverettwil.substack.com/feed"
+      nil nil nil)
+     ("Just Emil Kirkegaard Things" "https://www.emilkirkegaard.com/feed" nil
+      nil nil)
+     ("UBERSOY"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UCqBN8cSd6hfwqq0BM2biXOg"
+      nil nil nil)
+     ("Wags"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UCA5Zo2kmdP9ig4f9fsvyRgg"
+      nil nil nil)
      ("thuletide" "https://thuletide.wordpress.com/feed/" nil nil nil)
-     ("Алексей Шевцов" "https://www.youtube.com/feeds/videos.xml?channel_id=UCM7-8EfoIv0T9cCI4FhHbKQ" nil nil nil)
-     ("White Mage" "https://www.youtube.com/feeds/videos.xml?channel_id=UC1k29QaI7FKn5wki72Lyy7w" nil nil nil)
-     ("What I've Learned" "https://www.youtube.com/feeds/videos.xml?channel_id=UCqYPhGiB9tkShZorfgcL2lA" nil nil nil)
-     ("The Alternative Hypothesis YouTube" "https://www.youtube.com/feeds/videos.xml?user=fringeelements" nil nil nil)
-     ("The Alternative Hypothesis Website" "http://thealternativehypothesis.org/index.php/feed" nil nil nil)
-     ("The Alt Hype Bitchute" "https://www.bitchute.com/feeds/rss/channel/thealthype" nil nil nil)
-     ("Sean Last YouTube" "https://www.youtube.com/feeds/videos.xml?channel_id=UCK1Uk2f36aglexxLkfOWnEQ" nil nil nil)
-     ("Sacha Chua Emacs News" "https://sachachua.com/blog/category/emacs-news/feed/atom/" nil nil nil)
-     ("Luke Smith YouTube" "https://youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA" nil nil nil)
+     ("Алексей Шевцов"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UCM7-8EfoIv0T9cCI4FhHbKQ"
+      nil nil nil)
+     ("White Mage"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UC1k29QaI7FKn5wki72Lyy7w"
+      nil nil nil)
+     ("What I've Learned"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UCqYPhGiB9tkShZorfgcL2lA"
+      nil nil nil)
+     ("The Alternative Hypothesis YouTube"
+      "https://www.youtube.com/feeds/videos.xml?user=fringeelements" nil nil nil)
+     ("The Alternative Hypothesis Website"
+      "http://thealternativehypothesis.org/index.php/feed" nil nil nil)
+     ("The Alt Hype Bitchute"
+      "https://www.bitchute.com/feeds/rss/channel/thealthype" nil nil nil)
+     ("Sean Last YouTube"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UCK1Uk2f36aglexxLkfOWnEQ"
+      nil nil nil)
+     ("Sacha Chua Emacs News"
+      "https://sachachua.com/blog/category/emacs-news/feed/atom/" nil nil nil)
+     ("Luke Smith YouTube"
+      "https://youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA"
+      nil nil nil)
      ("Luke Smith PeerTube" "https://lukesmith.xyz/peertube" nil nil nil)
      ("Luke Smith Blog" "https://lukesmith.xyz/rss.xml" nil nil nil)
-     ("Knight's Move" "https://www.youtube.com/feeds/videos.xml?channel_id=UC63HcOlghFQ3pcursLUp3NQ" nil nil nil)
+     ("Knight's Move"
+      "https://www.youtube.com/feeds/videos.xml?channel_id=UC63HcOlghFQ3pcursLUp3NQ"
+      nil nil nil)
      ("Ideas And Data" "https://ideasanddata.wordpress.com/feed/" nil nil nil)
      ("Fringe Elements" "https://odysee.com/$/rss/@TheAltHype:6" nil nil nil)
-     ("American Renaissance" "https://odysee.com/$/rss/@AmericanRenaissance:7" nil nil nil)
-     ("Alt Hype Livestream Archive" "https://odysee.com/$/rss/@AltHypeLiveArchive:9" nil nil nil)))
+     ("American Renaissance" "https://odysee.com/$/rss/@AmericanRenaissance:7"
+      nil nil nil)
+     ("Alt Hype Livestream Archive"
+      "https://odysee.com/$/rss/@AltHypeLiveArchive:9" nil nil nil)))
  '(newsticker-url-list-defaults nil)
  '(next-error-found-function 'next-error-quit-window)
  '(next-error-message-highlight t)
@@ -513,76 +525,47 @@
  '(notmuch-mua-cite-function 'message-cite-original-without-signature)
  '(notmuch-mua-user-agent-function 'notmuch-mua-user-agent-full)
  '(notmuch-saved-searches
-   '((:name "unread all" :query "tag:unread" :key
-            [117 97])
-     (:name "unread litkov" :query "tag:unread and tag:litkov" :key
-            [117 108])
-     (:name "unread polimi" :query "tag:unread and tag:polimi" :key
-            [117 112])
-     (:name "unread nonsolocodice" :query "tag:unread and tag:nonsolocodice" :key
-            [117 110])
-     (:name "inbox all" :query "tag:inbox" :key
-            [105 97])
-     (:name "inbox litkov" :query "tag:inbox and tag:litkov" :key
-            [105 108])
-     (:name "inbox polimi" :query "tag:polimi and tag:inbox" :key
-            [105 112])
+   '((:name "unread all" :query "tag:unread" :key [117 97])
+     (:name "unread litkov" :query "tag:unread and tag:litkov" :key [117 108])
+     (:name "unread polimi" :query "tag:unread and tag:polimi" :key [117 112])
+     (:name "unread nonsolocodice" :query "tag:unread and tag:nonsolocodice"
+            :key [117 110])
+     (:name "inbox all" :query "tag:inbox" :key [105 97])
+     (:name "inbox litkov" :query "tag:inbox and tag:litkov" :key [105 108])
+     (:name "inbox polimi" :query "tag:polimi and tag:inbox" :key [105 112])
      (:name "inbox nonsolocodice" :query "tag:nonsolocodice and tag:inbox" :key
             [105 110])
-     (:name "sent all" :query "tag:sent" :key
-            [115 97])
-     (:name "sent litkov" :query "tag:litkov and tag:sent" :key
-            [115 108])
-     (:name "sent polimi" :query "tag:polimi and tag:sent" :key
-            [115 112])
+     (:name "sent all" :query "tag:sent" :key [115 97])
+     (:name "sent litkov" :query "tag:litkov and tag:sent" :key [115 108])
+     (:name "sent polimi" :query "tag:polimi and tag:sent" :key [115 112])
      (:name "sent nonsolocodice" :query "tag:nonsolocodice and tag:sent" :key
             [115 110])
-     (:name "archive all" :query "tag:archive" :key
-            [97 97])
-     (:name "archive litkov" :query "tag:litkov and tag:archive" :key
-            [97 108])
-     (:name "archive polimi" :query "tag:polimi and tag:archive" :key
-            [97 112])
-     (:name "archive nonsolocodice" :query "tag:nonsolocodice and tag:archive" :key
-            [97 110])
-     (:name "unread spam" :query "tag:unread and tag:spam" :key
-            [117 115])
-     (:name "flagged" :query "tag:flagged" :key
-            [102])
-     (:name "drafts" :query "tag:drafts" :key
-            [100])))
+     (:name "archive all" :query "tag:archive" :key [97 97])
+     (:name "archive litkov" :query "tag:litkov and tag:archive" :key [97 108])
+     (:name "archive polimi" :query "tag:polimi and tag:archive" :key [97 112])
+     (:name "archive nonsolocodice" :query "tag:nonsolocodice and tag:archive"
+            :key [97 110])
+     (:name "unread spam" :query "tag:unread and tag:spam" :key [117 115])
+     (:name "flagged" :query "tag:flagged" :key [102])
+     (:name "drafts" :query "tag:drafts" :key [100])))
  '(notmuch-search-oldest-first nil)
  '(notmuch-show-all-multipart/alternative-parts t)
  '(notmuch-show-all-tags-list t)
  '(notmuch-show-empty-saved-searches t)
  '(notmuch-tagging-keys
-   '(([97]
-      notmuch-archive-tags "Archive")
-     ([117]
-      notmuch-show-mark-read-tags "Mark read")
-     ([102]
-      ("-archive" "+flagged" "-inbox" "-spam" "-trash" "-deleted")
-      "Flag")
-     ([115]
-      ("-archive" "-flagged" "-inbox" "+spam" "-trash" "-deleted")
+   '(([97] notmuch-archive-tags "Archive")
+     ([117] notmuch-show-mark-read-tags "Mark read")
+     ([102] ("-archive" "+flagged" "-inbox" "-spam" "-trash" "-deleted") "Flag")
+     ([115] ("-archive" "-flagged" "-inbox" "+spam" "-trash" "-deleted")
       "Mark as spam")
-     ([116]
-      ("-archive" "-flagged" "-inbox" "-spam" "+trash" "-deleted")
-      "Trash")
-     ([100]
-      ("+deleted")
-      "Delete")
-     ([105]
-      ("-archive" "-flagged" "+inbox" "-spam" "-trash" "-deleted")
-      "Inbox")
-     ([112]
-      ("-litkov" "+polimi")
-      "Polimi")))
+     ([116] ("-archive" "-flagged" "-inbox" "-spam" "+trash" "-deleted") "Trash")
+     ([100] ("+deleted") "Delete")
+     ([105] ("-archive" "-flagged" "+inbox" "-spam" "-trash" "-deleted") "Inbox")
+     ([112] ("-litkov" "+polimi") "Polimi")))
  '(nov-save-place-file (expand-file-name "emacs/nov-places" (xdg-cache-home)))
  '(nov-text-width 80)
  '(nsm-settings-file
-   (expand-file-name "emacs/network-security.data"
-                     (xdg-cache-home)))
+   (expand-file-name "emacs/network-security.data" (xdg-cache-home)))
  '(orderless-component-separator 'orderless-escapable-split-on-space)
  '(orderless-matching-styles '(orderless-regexp orderless-literal orderless-prefixes))
  '(org-adapt-indentation nil)
@@ -593,9 +576,7 @@
  '(org-agenda-start-on-weekday nil)
  '(org-babel-load-languages '((calc . t) (emacs-lisp . t) (sql . t) (shell . t)))
  '(org-capture-templates
-   '(("r" "Remember" entry
-      (file+headline "~/org/life.org" "Remember")
-      "* %?")))
+   '(("r" "Remember" entry (file+headline "~/org/life.org" "Remember") "* %?")))
  '(org-clock-display-default-range 'untilnow)
  '(org-duration-format 'h:mm)
  '(org-edit-src-content-indentation 0)
@@ -606,12 +587,15 @@
  '(org-log-into-drawer t)
  '(org-log-reschedule 'note)
  '(org-modules
-   '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m org-checklist))
+   '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe
+             ol-rmail ol-w3m org-checklist))
  '(org-refile-allow-creating-parent-nodes 'confirm)
  '(org-refile-targets '((org-agenda-files :level . 1)))
  '(org-refile-use-outline-path 'file)
  '(org-roam-capture-templates
-   '(("l" "Library" entry "* TODO ${title}%? %^g\12:PROPERTIES:\12:AUTHOR: %^{AUTHOR}\12:YEAR: %^{YEAR}\12:ID: %(org-id-uuid)\12:END:" :prepend t :empty-lines 1 :target
+   '(("l" "Library" entry
+      "* TODO ${title}%? %^g\12:PROPERTIES:\12:AUTHOR: %^{AUTHOR}\12:YEAR: %^{YEAR}\12:ID: %(org-id-uuid)\12:END:"
+      :prepend t :empty-lines 1 :target
       (node "d97e3562-627c-4e0e-906b-e9f1958937a9"))
      ("d" "default" plain "%?" :target
       (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\12")
@@ -628,12 +612,9 @@
  '(project-compilation-buffer-name-function 'project-prefixed-buffer-name)
  '(project-list-file (expand-file-name "emacs/project.list" (xdg-cache-home)))
  '(project-switch-commands
-   '((magit-project-status "Magit" nil)
-     (project-find-file "Find file" nil)
-     (project-dired "Dired" nil)
-     (nix-flake-project "Nix flake" nil)
-     (project-find-dir "Find directory" nil)
-     (project-vc-dir "VC-Dir" nil)
+   '((magit-project-status "Magit" nil) (project-find-file "Find file" nil)
+     (project-dired "Dired" nil) (nix-flake-project "Nix flake" nil)
+     (project-find-dir "Find directory" nil) (project-vc-dir "VC-Dir" nil)
      (project-find-regexp "Find regexp" nil)))
  '(read-buffer-completion-ignore-case t)
  '(read-extended-command-predicate 'command-completion-default-include-p)
@@ -652,14 +633,11 @@
      (add-hook 'before-save-hook 'time-stamp nil t)
      (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
      (add-hook 'after-save-hook
-               (lambda nil
-                 (org-babel-tangle)
-                 (byte-recompile-directory
-                  (expand-file-name "./")))
+               (lambda nil (org-babel-tangle)
+                 (byte-recompile-directory (expand-file-name "./")))
                nil t)))
  '(safe-local-variable-values
-   '((diff-add-log-use-relative-names . t)
-     (vc-git-annotate-switches . "-w")))
+   '((diff-add-log-use-relative-names . t) (vc-git-annotate-switches . "-w")))
  '(save-interprogram-paste-before-kill t)
  '(save-place-abbreviate-file-names t)
  '(save-place-file (expand-file-name "emacs/saveplace" (xdg-cache-home)))
@@ -674,15 +652,113 @@
  '(scroll-conservatively 10000)
  '(scroll-step 1)
  '(sdcwoc-categories
-   '(("english" "Accounting (En-Ru)" "American Heritage Dictionary 4th Ed. (En-En)" "American_Idioms 2nd Ed" "Americana (En-Ru)" "Apresyan (En-Ru)" "Auto (En-Ru)" "Biology (En-Ru)" "Building (En-Ru)" "CMU American English spelling" "Cambridge Advanced Learners Dictionary 3th Ed. (En-En)" "Cambridge Dictionary of American Idioms (En-En)" "Chambers Dictionary 11th Ed. (En-En)" "Civil Aviation (En-Ru) LE" "Collins Cobuild 5" "Collins Cobuild English Dictionary" "Collins Thesaurus (En-En)" "Computers (En-Ru)" "Concise Oxford English Dictionary (En-En)" "Concise Oxford Thesaurus 2nd Ed. (Eng-Eng)" "Electrical (En-Ru) LE" "Engineering (En-Ru)" "English - Italian" "English - Russian" "English Etymology" "English Thesaurus" "English-Italian" "English-Russian" "Essential (En-Ru)" "FinancialManagement (En-Ru)" "FinancialMarkets (En-Ru)" "Free On-Line Dictionary of Computing" "Full English-Russian" "GNU Collaborative International Dictionary of English" "GNU/Linux English-English Dictionary" "GreatBritain (En-Ru)" "Informal (En-Ru)" "Jargon File" "Law (En-Ru)" "LingvoComputer (En-Ru)" "LingvoEconomics (En-Ru)" "LingvoGrammar (En-Ru)" "LingvoScience (En-Ru)" "LingvoUniversal (En-Ru)" "Longman Dictionary of Common Errors (En-En)" "Longman Dictionary of Contemporary English 5th Ed. (En-En)" "Longman Dictionary of Contemporary English Extras 5th Ed. (En-En)" "Longman Dictionary of Contemporary English" "Longman Language Activator 2nd Ed. (En-En)" "Macmillan English Dictionary (En-En)" "Macmillan English Thesaurus (En-En)" "Management (En-Ru)" "Maritime Technical (En-Ru) LE" "Marketing (En-Ru)" "MechanicalEngineering (En-Ru)" "Medical (En-Ru)" "Merriam-Webster's Advanced Learner's Dictionary (En-En)" "Merriam-Webster's Collegiate 11th Ed. (En-En)" "Merriam-Webster's Collegiate Thesaurus (En-En)" "Merrian Webster 10th dictionary" "Military (En-Ru) LE" "Moby Thesaurus II" "Naval (En-Ru) LE" "Obscene language (En-Ru)" "OilAndGas (En-Ru)" "Oxford Advanced Learner's Dictionary 8th Ed." "Oxford Advanced Learner's Dictionary" "Oxford English Dictionary 2nd Ed. P1" "Oxford English Dictionary 2nd Ed. P2" "Oxford Guide to British and American Culture (En-En)" "Patents (En-Ru)" "Physics (En-Ru)" "Polytechnical (En-Ru)" "Random House Webster's Unabridged Dictionary (En-En)" "Refrence Dictionary for Linux Enviroment Translation" "Roget's II The New Thesaurus 3th Ed. (En-En)" "Soule's Dictionary of English Synonyms (En-En)" "Telecoms (En-Ru)" "The BBI Combinatory Dictionary of English (En-En)" "The Britannica Concise" "The Chambers Thesaurus (En-En)" "The Idiom Connection (En-En)" "Urban Dictionary P1 (En-En)" "Urban Dictionary P2 (En-En)" "Virtual Entity of Relevant Acronyms" "Webster's Revised Unabridged Dictionary (1913)" "Webster's Third New International Dictionary, Unabridged (En-En)" "Wine (En-Ru)" "computer-dictionary" "dictd_www.dict.org_devils" "dictd_www.dict.org_gcide" "dictd_www.mova.org_geology_enru" "dictd_www.mova.org_korolew_enru" "dictd_www.mova.org_slovnyk_en-ru" "dictd_www.mova.org_sokrat_enru" "en-ru-bars" "pc-user-dictionary" "quick_english-italian" "quick_english-russian" "wtf (acronyms)" "Современный свободный словарь компьютерных терминов.")
-     ("english->russian" "Accounting (En-Ru)" "Americana (En-Ru)" "Apresyan (En-Ru)" "Auto (En-Ru)" "Biology (En-Ru)" "Building (En-Ru)" "Civil Aviation (En-Ru) LE" "Computers (En-Ru)" "Electrical (En-Ru) LE" "Engineering (En-Ru)" "English - Russian" "English-Russian" "Essential (En-Ru)" "FinancialManagement (En-Ru)" "FinancialMarkets (En-Ru)" "Full English-Russian" "GreatBritain (En-Ru)" "Informal (En-Ru)" "Law (En-Ru)" "LingvoComputer (En-Ru)" "LingvoEconomics (En-Ru)" "LingvoGrammar (En-Ru)" "LingvoScience (En-Ru)" "LingvoUniversal (En-Ru)" "Management (En-Ru)" "Maritime Technical (En-Ru) LE" "Marketing (En-Ru)" "MechanicalEngineering (En-Ru)" "Medical (En-Ru)" "Military (En-Ru) LE" "Naval (En-Ru) LE" "Obscene language (En-Ru)" "OilAndGas (En-Ru)" "Patents (En-Ru)" "Physics (En-Ru)" "Polytechnical (En-Ru)" "Telecoms (En-Ru)" "Wine (En-Ru)" "computer-dictionary" "dictd_www.mova.org_geology_enru" "dictd_www.mova.org_korolew_enru" "dictd_www.mova.org_slovnyk_en-ru" "dictd_www.mova.org_sokrat_enru" "en-ru-bars" "pc-user-dictionary" "quick_english-russian" "Современный свободный словарь компьютерных терминов.")
-     ("english->italian" "English - Italian" "English-Italian" "quick_english-italian")
-     ("russian" "Auto (Ru-En)" "Auto (Ru-It)" "Biology (Ru-En)" "Building (Ru-En)" "Computers (Ru-En)" "Economics (Ru-It)" "Engineering (Ru-En)" "Essential (Ru-En)" "Full Russian-English" "Law (Ru-En)" "LingvoComputer (Ru-En)" "LingvoEconomics (Ru-En)" "LingvoScience (Ru-En)" "LingvoUniversal (Ru-En)" "MechanicalEngineering (Ru-En)" "Medical (Ru-En)" "Medical (Ru-It)" "OilAndGas (Ru-En)" "Ozhegov Shvedova (Ru-Ru)" "Patents (Ru-En)" "PhraseBook (Ru-En)" "PhraseBook (Ru-It)" "Physics (Ru-En)" "Polytechnical (Ru-En)" "Polytechnical (Ru-It)" "Russian-English" "Telecoms (Ru-En)" "Ushakov's Dictionary (Ru-Ru)" "Vasmer (Ru-Ru)" "dictd_www.mova.org_geology_ruen" "dictd_www.mova.org_korolew_ruen" "dictd_www.mova.org_slovnyk_ru-en" "dictd_www.mova.org_sokrat_ruen" "myspell Russian grammar forms" "quick_russian-english" "Словарь Даля")
-     ("russian->english" "Auto (Ru-En)" "Biology (Ru-En)" "Building (Ru-En)" "Computers (Ru-En)" "Engineering (Ru-En)" "Essential (Ru-En)" "Full Russian-English" "Law (Ru-En)" "LingvoComputer (Ru-En)" "LingvoEconomics (Ru-En)" "LingvoScience (Ru-En)" "LingvoUniversal (Ru-En)" "MechanicalEngineering (Ru-En)" "Medical (Ru-En)" "OilAndGas (Ru-En)" "Patents (Ru-En)" "PhraseBook (Ru-En)" "Physics (Ru-En)" "Polytechnical (Ru-En)" "Russian-English" "Telecoms (Ru-En)" "dictd_www.mova.org_geology_ruen" "dictd_www.mova.org_korolew_ruen" "dictd_www.mova.org_slovnyk_ru-en" "dictd_www.mova.org_sokrat_ruen" "quick_russian-english")
-     ("russian->italian" "Auto (Ru-It)" "Economics (Ru-It)" "Medical (Ru-It)" "PhraseBook (Ru-It)" "Polytechnical (Ru-It)")
-     ("italian" "Auto (It-Ru)" "Economics (It-Ru)" "Essential (It-Ru)" "Italian-English" "Medical (It-Ru)" "Polytechnical (It-Ru)" "Universal (It-Ru)" "quick_italian-english")
+   '(("english" "Accounting (En-Ru)" "American Heritage Dictionary 4th Ed. (En-En)"
+      "American_Idioms 2nd Ed" "Americana (En-Ru)" "Apresyan (En-Ru)"
+      "Auto (En-Ru)" "Biology (En-Ru)" "Building (En-Ru)"
+      "CMU American English spelling"
+      "Cambridge Advanced Learners Dictionary 3th Ed. (En-En)"
+      "Cambridge Dictionary of American Idioms (En-En)"
+      "Chambers Dictionary 11th Ed. (En-En)" "Civil Aviation (En-Ru) LE"
+      "Collins Cobuild 5" "Collins Cobuild English Dictionary"
+      "Collins Thesaurus (En-En)" "Computers (En-Ru)"
+      "Concise Oxford English Dictionary (En-En)"
+      "Concise Oxford Thesaurus 2nd Ed. (Eng-Eng)" "Electrical (En-Ru) LE"
+      "Engineering (En-Ru)" "English - Italian" "English - Russian"
+      "English Etymology" "English Thesaurus" "English-Italian"
+      "English-Russian" "Essential (En-Ru)" "FinancialManagement (En-Ru)"
+      "FinancialMarkets (En-Ru)" "Free On-Line Dictionary of Computing"
+      "Full English-Russian"
+      "GNU Collaborative International Dictionary of English"
+      "GNU/Linux English-English Dictionary" "GreatBritain (En-Ru)"
+      "Informal (En-Ru)" "Jargon File" "Law (En-Ru)" "LingvoComputer (En-Ru)"
+      "LingvoEconomics (En-Ru)" "LingvoGrammar (En-Ru)" "LingvoScience (En-Ru)"
+      "LingvoUniversal (En-Ru)" "Longman Dictionary of Common Errors (En-En)"
+      "Longman Dictionary of Contemporary English 5th Ed. (En-En)"
+      "Longman Dictionary of Contemporary English Extras 5th Ed. (En-En)"
+      "Longman Dictionary of Contemporary English"
+      "Longman Language Activator 2nd Ed. (En-En)"
+      "Macmillan English Dictionary (En-En)"
+      "Macmillan English Thesaurus (En-En)" "Management (En-Ru)"
+      "Maritime Technical (En-Ru) LE" "Marketing (En-Ru)"
+      "MechanicalEngineering (En-Ru)" "Medical (En-Ru)"
+      "Merriam-Webster's Advanced Learner's Dictionary (En-En)"
+      "Merriam-Webster's Collegiate 11th Ed. (En-En)"
+      "Merriam-Webster's Collegiate Thesaurus (En-En)"
+      "Merrian Webster 10th dictionary" "Military (En-Ru) LE"
+      "Moby Thesaurus II" "Naval (En-Ru) LE" "Obscene language (En-Ru)"
+      "OilAndGas (En-Ru)" "Oxford Advanced Learner's Dictionary 8th Ed."
+      "Oxford Advanced Learner's Dictionary"
+      "Oxford English Dictionary 2nd Ed. P1"
+      "Oxford English Dictionary 2nd Ed. P2"
+      "Oxford Guide to British and American Culture (En-En)" "Patents (En-Ru)"
+      "Physics (En-Ru)" "Polytechnical (En-Ru)"
+      "Random House Webster's Unabridged Dictionary (En-En)"
+      "Refrence Dictionary for Linux Enviroment Translation"
+      "Roget's II The New Thesaurus 3th Ed. (En-En)"
+      "Soule's Dictionary of English Synonyms (En-En)" "Telecoms (En-Ru)"
+      "The BBI Combinatory Dictionary of English (En-En)"
+      "The Britannica Concise" "The Chambers Thesaurus (En-En)"
+      "The Idiom Connection (En-En)" "Urban Dictionary P1 (En-En)"
+      "Urban Dictionary P2 (En-En)" "Virtual Entity of Relevant Acronyms"
+      "Webster's Revised Unabridged Dictionary (1913)"
+      "Webster's Third New International Dictionary, Unabridged (En-En)"
+      "Wine (En-Ru)" "computer-dictionary" "dictd_www.dict.org_devils"
+      "dictd_www.dict.org_gcide" "dictd_www.mova.org_geology_enru"
+      "dictd_www.mova.org_korolew_enru" "dictd_www.mova.org_slovnyk_en-ru"
+      "dictd_www.mova.org_sokrat_enru" "en-ru-bars" "pc-user-dictionary"
+      "quick_english-italian" "quick_english-russian" "wtf (acronyms)"
+      "Современный свободный словарь компьютерных терминов.")
+     ("english->russian" "Accounting (En-Ru)" "Americana (En-Ru)"
+      "Apresyan (En-Ru)" "Auto (En-Ru)" "Biology (En-Ru)" "Building (En-Ru)"
+      "Civil Aviation (En-Ru) LE" "Computers (En-Ru)" "Electrical (En-Ru) LE"
+      "Engineering (En-Ru)" "English - Russian" "English-Russian"
+      "Essential (En-Ru)" "FinancialManagement (En-Ru)"
+      "FinancialMarkets (En-Ru)" "Full English-Russian" "GreatBritain (En-Ru)"
+      "Informal (En-Ru)" "Law (En-Ru)" "LingvoComputer (En-Ru)"
+      "LingvoEconomics (En-Ru)" "LingvoGrammar (En-Ru)" "LingvoScience (En-Ru)"
+      "LingvoUniversal (En-Ru)" "Management (En-Ru)"
+      "Maritime Technical (En-Ru) LE" "Marketing (En-Ru)"
+      "MechanicalEngineering (En-Ru)" "Medical (En-Ru)" "Military (En-Ru) LE"
+      "Naval (En-Ru) LE" "Obscene language (En-Ru)" "OilAndGas (En-Ru)"
+      "Patents (En-Ru)" "Physics (En-Ru)" "Polytechnical (En-Ru)"
+      "Telecoms (En-Ru)" "Wine (En-Ru)" "computer-dictionary"
+      "dictd_www.mova.org_geology_enru" "dictd_www.mova.org_korolew_enru"
+      "dictd_www.mova.org_slovnyk_en-ru" "dictd_www.mova.org_sokrat_enru"
+      "en-ru-bars" "pc-user-dictionary" "quick_english-russian"
+      "Современный свободный словарь компьютерных терминов.")
+     ("english->italian" "English - Italian" "English-Italian"
+      "quick_english-italian")
+     ("russian" "Auto (Ru-En)" "Auto (Ru-It)" "Biology (Ru-En)"
+      "Building (Ru-En)" "Computers (Ru-En)" "Economics (Ru-It)"
+      "Engineering (Ru-En)" "Essential (Ru-En)" "Full Russian-English"
+      "Law (Ru-En)" "LingvoComputer (Ru-En)" "LingvoEconomics (Ru-En)"
+      "LingvoScience (Ru-En)" "LingvoUniversal (Ru-En)"
+      "MechanicalEngineering (Ru-En)" "Medical (Ru-En)" "Medical (Ru-It)"
+      "OilAndGas (Ru-En)" "Ozhegov Shvedova (Ru-Ru)" "Patents (Ru-En)"
+      "PhraseBook (Ru-En)" "PhraseBook (Ru-It)" "Physics (Ru-En)"
+      "Polytechnical (Ru-En)" "Polytechnical (Ru-It)" "Russian-English"
+      "Telecoms (Ru-En)" "Ushakov's Dictionary (Ru-Ru)" "Vasmer (Ru-Ru)"
+      "dictd_www.mova.org_geology_ruen" "dictd_www.mova.org_korolew_ruen"
+      "dictd_www.mova.org_slovnyk_ru-en" "dictd_www.mova.org_sokrat_ruen"
+      "myspell Russian grammar forms" "quick_russian-english" "Словарь Даля")
+     ("russian->english" "Auto (Ru-En)" "Biology (Ru-En)" "Building (Ru-En)"
+      "Computers (Ru-En)" "Engineering (Ru-En)" "Essential (Ru-En)"
+      "Full Russian-English" "Law (Ru-En)" "LingvoComputer (Ru-En)"
+      "LingvoEconomics (Ru-En)" "LingvoScience (Ru-En)"
+      "LingvoUniversal (Ru-En)" "MechanicalEngineering (Ru-En)"
+      "Medical (Ru-En)" "OilAndGas (Ru-En)" "Patents (Ru-En)"
+      "PhraseBook (Ru-En)" "Physics (Ru-En)" "Polytechnical (Ru-En)"
+      "Russian-English" "Telecoms (Ru-En)" "dictd_www.mova.org_geology_ruen"
+      "dictd_www.mova.org_korolew_ruen" "dictd_www.mova.org_slovnyk_ru-en"
+      "dictd_www.mova.org_sokrat_ruen" "quick_russian-english")
+     ("russian->italian" "Auto (Ru-It)" "Economics (Ru-It)" "Medical (Ru-It)"
+      "PhraseBook (Ru-It)" "Polytechnical (Ru-It)")
+     ("italian" "Auto (It-Ru)" "Economics (It-Ru)" "Essential (It-Ru)"
+      "Italian-English" "Medical (It-Ru)" "Polytechnical (It-Ru)"
+      "Universal (It-Ru)" "quick_italian-english")
      ("italian->english" "Italian-English" "quick_italian-english")
-     ("italian->russian" "Auto (It-Ru)" "Economics (It-Ru)" "Essential (It-Ru)" "Medical (It-Ru)" "Polytechnical (It-Ru)" "Universal (It-Ru)")))
+     ("italian->russian" "Auto (It-Ru)" "Economics (It-Ru)" "Essential (It-Ru)"
+      "Medical (It-Ru)" "Polytechnical (It-Ru)" "Universal (It-Ru)")))
  '(search-whitespace-regexp ".*?")
  '(send-mail-function 'message-send-mail-with-sendmail)
  '(sendmail-program "msmtp")
@@ -696,16 +772,7 @@
  '(size-indication-mode t)
  '(sly-default-lisp 'sbcl)
  '(sly-lisp-implementations
-   '((sbcl
-      ("sbcl"))
-     (ecl
-      ("ecl"))
-     (ccl
-      ("ccl"))
-     (clisp
-      ("clisp"))
-     (abcl
-      ("abcl"))))
+   '((sbcl ("sbcl")) (ecl ("ecl")) (ccl ("ccl")) (clisp ("clisp")) (abcl ("abcl"))))
  '(small-temporary-file-directory "/dev/shm/")
  '(sql-input-ring-file-name (expand-file-name "emacs/sql_history" (xdg-cache-home)))
  '(sql-interactive-mode-hook '(sql-indent-enable))
@@ -728,19 +795,20 @@
  '(tramp-default-method "ssh")
  '(tramp-persistency-file-name (expand-file-name "emacs/tramp" (xdg-cache-home)))
  '(tramp-remote-path
-   '("/run/wrappers/bin" "/run/current-system/sw/bin" tramp-default-remote-path "/bin" "/usr/bin" "/sbin" "/usr/sbin" "/usr/local/bin" "/usr/local/sbin" "/local/bin" "/local/freeware/bin" "/local/gnu/bin" "/usr/freeware/bin" "/usr/pkg/bin" "/usr/contrib/bin" "/opt/bin" "/opt/sbin" "/opt/local/bin"))
+   '("/run/wrappers/bin" "/run/current-system/sw/bin" tramp-default-remote-path
+     "/bin" "/usr/bin" "/sbin" "/usr/sbin" "/usr/local/bin" "/usr/local/sbin"
+     "/local/bin" "/local/freeware/bin" "/local/gnu/bin" "/usr/freeware/bin"
+     "/usr/pkg/bin" "/usr/contrib/bin" "/opt/bin" "/opt/sbin" "/opt/local/bin"))
  '(tramp-remote-process-environment
-   '("ENV=~/.profile" "TMOUT=0" "LC_CTYPE=''" "CDPATH=" "HISTORY=" "MAIL=" "MAILCHECK=" "MAILPATH=" "PAGER=cat" "autocorrect=" "correct="))
+   '("ENV=~/.profile" "TMOUT=0" "LC_CTYPE=''" "CDPATH=" "HISTORY=" "MAIL="
+     "MAILCHECK=" "MAILPATH=" "PAGER=cat" "autocorrect=" "correct="))
  '(transient-enable-popup-navigation t)
  '(transient-history-file
-   (expand-file-name "emacs/transient/history.el"
-                     (xdg-cache-home)))
+   (expand-file-name "emacs/transient/history.el" (xdg-cache-home)))
  '(transient-levels-file
-   (expand-file-name "emacs/transient-levels.el"
-                     (xdg-data-home)))
+   (expand-file-name "emacs/transient-levels.el" (xdg-data-home)))
  '(transient-values-file
-   (expand-file-name "emacs/transient/values.el"
-                     (xdg-cache-home)))
+   (expand-file-name "emacs/transient/values.el" (xdg-cache-home)))
  '(translate-upper-case-key-bindings nil)
  '(transmission-pieces-function 'transmission-format-pieces-brief)
  '(transmission-units 'si)
@@ -755,7 +823,8 @@
  '(use-system-tooltips nil)
  '(user-full-name "Valeriy Litkovskyy")
  '(vc-directory-exclusion-list
-   '("SCCS" "RCS" "CVS" "MCVS" ".src" ".svn" ".git" ".hg" ".bzr" "_MTN" "_darcs" "{arch}" ".eldev"))
+   '("SCCS" "RCS" "CVS" "MCVS" ".src" ".svn" ".git" ".hg" ".bzr" "_MTN" "_darcs"
+     "{arch}" ".eldev"))
  '(vc-handled-backends '(Git))
  '(version-control t)
  '(vertico-mode t)
