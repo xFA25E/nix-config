@@ -7,7 +7,8 @@ inputs: let
       system = null;
     };
 in {
-  stribog = mkNixos ./stribog;
-  perun = mkNixos ./perun.nix;
   khors = mkNixos ./khors;
+  perun = mkNixos ./perun.nix;
+  stribog = mkNixos ./stribog;
+  svarog = mkNixos ./svarog;
 }
