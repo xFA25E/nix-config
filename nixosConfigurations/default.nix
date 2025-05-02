@@ -8,7 +8,6 @@ inputs: let
     };
 in {
   khors = mkNixos ./khors;
-  perun = mkNixos ./perun.nix;
   stribog = mkNixos ./stribog;
   svarog = mkNixos ./svarog;
 }

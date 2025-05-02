@@ -13,19 +13,11 @@ pkgs: {
       sudo -A nixos-rebuild switch --print-build-logs --flake ~/Documents/projects/nix-config
     '');
   };
-  deployPerun = {
-    type = "app";
-    program = toString (pkgs.writeShellScript "deployPerun" ''
-      export NIX_SSHOPTS=-t
-      nixos-rebuild -L switch --flake .#perun --target-host perun \
-                              --use-remote-sudo --print-build-logs
-    '');
-  };
   deploySvarog = {
     type = "app";
-    program = toString (pkgs.writeShellScript "deployPerun" ''
+    program = toString (pkgs.writeShellScript "deploySvarog" ''
       export NIX_SSHOPTS=-t
-      nixos-rebuild -L switch --flake .#svarog --target-host perun \
+      nixos-rebuild -L switch --flake .#svarog --target-host svarog \
                               --use-remote-sudo --print-build-logs
     '');
   };
