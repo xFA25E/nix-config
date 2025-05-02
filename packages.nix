@@ -7,9 +7,9 @@ pkgs: let
   dirNames = dir: map (removeSuffix ".nix") (dirFiles dir);
   filterSet = set: names: filterAttrs (name: _: elem name names) set;
 
-  packageNames = attrNames (import ./overlay null null null);
-  emacsPackageNames = dirNames ./overlay/emacsPackages;
-  mpvScriptNames = dirNames ./overlay/mpvScripts;
+  packageNames = attrNames ((import ./overlays null).default null null);
+  emacsPackageNames = dirNames ./overlays/emacsPackages;
+  mpvScriptNames = dirNames ./overlays/mpvScripts;
 in
   filterSet pkgs packageNames
   // mapAttrs (name: recurseIntoAttrs) {

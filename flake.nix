@@ -93,7 +93,7 @@
       nixosConfigurations = import ./nixosConfigurations inputs;
       nixosModules = import ./nixosModules;
       # homeModules.base = import ./homeModule;
-      overlays.default = import ./overlay inputs;
+      overlays = import ./overlays inputs;
       templates = import ./templates;
     }
     // inputs.fu.lib.eachSystem [inputs.fu.lib.system.x86_64-linux] (system: let
