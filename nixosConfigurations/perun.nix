@@ -12,7 +12,6 @@
 
     loader.grub = {
       enable = true;
-      version = 2;
       device = "/dev/sda";
     };
   };
@@ -35,8 +34,10 @@
 
   services.openssh = {
     enable = true;
-    permitRootLogin = "no";
-    passwordAuthentication = false;
+    settings = {
+      PermitRootLogin = "no";
+      PasswordAuthentication = false;
+    };
   };
 
   users.users.${username} = {
@@ -51,8 +52,8 @@
   };
 
   security.polkit.enable = true;
-  hardware.opengl.enable = true;
-  fonts.enableDefaultFonts = true;
+  hardware.graphics.enable = true;
+  fonts.enableDefaultPackages = true;
   programs.dconf.enable = true;
   programs.xwayland.enable = true;
   xdg.portal.extraPortals = [pkgs.xdg-desktop-protal-wlr];
