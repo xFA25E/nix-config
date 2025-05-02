@@ -21,6 +21,14 @@ pkgs: {
                               --use-remote-sudo --print-build-logs
     '');
   };
+  deploySvarog = {
+    type = "app";
+    program = toString (pkgs.writeShellScript "deployPerun" ''
+      export NIX_SSHOPTS=-t
+      nixos-rebuild -L switch --flake .#svarog --target-host perun \
+                              --use-remote-sudo --print-build-logs
+    '');
+  };
   deployKhors = {
     type = "app";
     program = toString (pkgs.writeShellScript "deployKhors" ''
