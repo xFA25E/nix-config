@@ -77,5 +77,17 @@
         blink-matching-paren = true;
       };
     };
+
+    ssh = {
+      addKeysToAgent = "yes";
+      controlMaster = "auto";
+      controlPath = "~/.ssh/controlmasters/%r@%h:%p";
+      controlPersist = "1000m";
+      enable = true;
+      extraOptionOverrides."StrictHostKeyChecking" = "accept-new";
+      includes = ["config.d/config"];
+      serverAliveCountMax = 30;
+      serverAliveInterval = 5;
+    };
   };
 }
