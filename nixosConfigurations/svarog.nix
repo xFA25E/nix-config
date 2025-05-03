@@ -64,6 +64,6 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
-  swapDevices = [];
+  swapDevices = [{device = "/swap/swapfile";}];
   system.stateVersion = "24.11";
 }
