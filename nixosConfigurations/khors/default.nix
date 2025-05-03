@@ -143,6 +143,8 @@
     system = "x86_64-linux";
   };
 
+  programs.git.enable = true;
+
   security.acme = {
     acceptTerms = true;
     defaults.email = "vlr.ltkvsk@protonmail.com";
@@ -156,6 +158,9 @@
         PasswordAuthentication = false;
       };
     };
+
+    syncthing.enable = true;
+
     udev.extraRules = ''
       ATTR{address}=="52:54:82:2c:a4:90", NAME="enp3s0"
     '';
