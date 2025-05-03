@@ -69,6 +69,7 @@
       p7zip
       pandoc
       parted
+      pciutils
       pdftk
       perlPackages.JSONPP
       pinentry

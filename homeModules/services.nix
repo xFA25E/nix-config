@@ -77,6 +77,13 @@ in {
       enable = true;
       rules = [
         {
+          name = "Svarog Single Monitor";
+          outputs_connected = ["HDMI-0"];
+          configure_single = "HDMI-0";
+          atomic = true;
+          primary = "HDMI-0";
+        }
+        {
           name = "Dual Monitor Home";
           outputs_connected = ["eDP-1" "HDMI-1-AUS-9432-16843009-VY249HGR-SALMRS002701"];
           configure_row = ["HDMI-1@1920x1080@100" "eDP-1"];
