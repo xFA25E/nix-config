@@ -77,35 +77,25 @@ in {
       enable = true;
       rules = [
         {
-          name = "Svarog Single Monitor";
-          outputs_connected = ["HDMI-0"];
-          configure_single = "HDMI-0";
-          atomic = true;
-          primary = "HDMI-0";
-        }
-        {
-          name = "Dual Monitor Home";
-          outputs_connected = ["eDP-1" "HDMI-1-AUS-9432-16843009-VY249HGR-SALMRS002701"];
-          configure_row = ["HDMI-1@1920x1080@100" "eDP-1"];
-          atomic = true;
-          primary = "HDMI-1";
-          execute_after = ["xrandr --dpi 96"];
-        }
-        {
-          name = "Dual Monitor";
+          name = "Laptop Dual Monitor";
           outputs_connected = ["eDP-1" "HDMI-1"];
-          configure_row = ["HDMI-1" "eDP-1"];
+          configure_row = ["eDP-1" "HDMI-1"];
           atomic = true;
           primary = "HDMI-1";
-          execute_after = ["xrandr --dpi 96"];
         }
         {
-          name = "Default";
+          name = "Laptop Single Monitor";
           outputs_connected = ["eDP-1"];
           configure_single = "eDP-1";
           atomic = true;
           primary = "eDP-1";
-          execute_after = ["xrandr --dpi 96"];
+        }
+        {
+          name = "Desktop Single Monitor";
+          outputs_connected = ["HDMI-0"];
+          configure_single = "HDMI-0";
+          atomic = true;
+          primary = "HDMI-0";
         }
       ];
     };

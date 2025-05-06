@@ -10,4 +10,5 @@ in {
   khors = mkNixos ./khors;
   stribog = mkNixos ./stribog.nix;
   svarog = mkNixos ./svarog.nix;
+  veles = mkNixos ./veles.nix;
 }
