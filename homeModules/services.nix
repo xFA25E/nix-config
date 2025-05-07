@@ -82,13 +82,7 @@ in {
           configure_row = ["HDMI-2" "eDP-1"];
           atomic = true;
           primary = "HDMI-2";
-        }
-        {
-          name = "Laptop Dual Monitor";
-          outputs_connected = ["eDP-1" "HDMI-1"];
-          configure_row = ["eDP-1" "HDMI-1"];
-          atomic = true;
-          primary = "HDMI-1";
+          execute_after = ["xrandr --dpi 96"];
         }
         {
           name = "Laptop Single Monitor";
@@ -96,6 +90,7 @@ in {
           configure_single = "eDP-1";
           atomic = true;
           primary = "eDP-1";
+          execute_after = ["xrandr --dpi 96"];
         }
         {
           name = "Desktop Single Monitor";
