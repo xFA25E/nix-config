@@ -77,6 +77,13 @@ in {
       enable = true;
       rules = [
         {
+          name = "Veles Dual Monitor";
+          outputs_connected = ["eDP-1" "HDMI-2"];
+          configure_row = ["HDMI-2" "eDP-1"];
+          atomic = true;
+          primary = "HDMI-2";
+        }
+        {
           name = "Laptop Dual Monitor";
           outputs_connected = ["eDP-1" "HDMI-1"];
           configure_row = ["eDP-1" "HDMI-1"];
