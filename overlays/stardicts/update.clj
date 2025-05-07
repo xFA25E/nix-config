@@ -23,6 +23,6 @@
 (defn write-url-objects [input-file output-file]
   (let [urls (str/split-lines (slurp input-file))
         url-objects (npmap threads url-object urls)]
-    (json/generate-stream url-objects (io/writer output-file))))
+    (json/generate-stream url-objects (io/writer output-file) {:pretty true})))
 
 (write-url-objects "./urls.txt" "./urls.json")

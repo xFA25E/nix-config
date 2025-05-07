@@ -79,6 +79,7 @@
     };
     dhcpcd.enable = false;
     domain = "";
+    firewall.allowedTCPPorts = [17171];
     hostName = "khors";
     interfaces = {
       enp3s0 = {
@@ -157,6 +158,13 @@
         PermitRootLogin = "no";
         PasswordAuthentication = false;
       };
+    };
+
+    static-web-server = {
+      enable = true;
+      listen = "[::]:17171";
+      root = "/home/${username}/static-web-server";
+      configuration.general.directory-listing = true;
     };
 
     syncthing.enable = true;
