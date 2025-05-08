@@ -1,6 +1,8 @@
-;;; init --- Config -*- lexical-binding: t; outline-regexp: ";;;\\(;*\\)"; -*-
+;;; init --- Config -*- lexical-binding: t; -*-
 
 ;;; Commentary:
+
+;; outline-regexp: ";;;\\(;*\\)";
 
 ;; Config
 
@@ -20,8 +22,11 @@
 ;;; Abbrev
 
 (add-hook 'js-ts-mode-hook 'abbrev-mode)
+(add-hook 'csharp-ts-mode-hook 'abbrev-mode)
+(add-hook 'csharp-mode-hook 'abbrev-mode)
 (add-hook 'nix-mode-hook 'abbrev-mode)
 (add-hook 'nix-ts-mode-hook 'abbrev-mode)
+
 
 ;; (use-package ace-window
 ;;   :ensure t
@@ -83,6 +88,8 @@
 (add-hook 'nix-ts-mode-hook 'apheleia-mode)
 (add-hook 'nxml-mode-hook 'apheleia-mode)
 (add-hook 'web-mode-hook 'apheleia-mode)
+(add-hook 'csharp-mode-hook 'apheleia-mode)
+(add-hook 'csharp-ts-mode-hook 'apheleia-mode)
 
 ;;; Avy
 
@@ -165,6 +172,11 @@ See `browse-url' for URL and ARGS."
   (switch-to-buffer
    (make-comint name shell-file-name nil shell-command-switch command))
   (run-hooks (intern-soft (concat "comint-" name "-hook"))))
+
+(defun comint-set-local-buffer-maximum-size (n)
+  "Set locally `comint-buffer-maximum-size' to N."
+  (interactive (list (read-number "Buffer maximum size: " 1024)) comint-mode)
+  (setq-local comint-buffer-maximum-size n))
 
 ;;; Compile
 
@@ -282,6 +294,23 @@ For EDIT-COMMAND see `recompile'."
   (let ((consult--buffer-display #'switch-to-buffer-other-tab))
     (consult-buffer)))
 
+;;; Csharp Mode
+
+(defun csharp-ts-mode-clean-RETs ()
+  "Clean ^M."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (search-forward "\n" nil t)
+      (replace-match "\n"))))
+
+(defun csharp-ts-mode-enable-clean-RETs ()
+  "Enable by buffer-local before-save hook."
+  (add-hook 'before-save-hook 'csharp-ts-mode-clean-RETs nil t))
+
+(add-hook 'csharp-ts-mode-hook 'csharp-ts-mode-enable-clean-RETs)
+(add-hook 'csharp-ts-mode-hook 'dotnet-mode)
+
 ;;; Custom
 
 (define-keymap :prefix 'cus-edit-map
@@ -296,6 +325,10 @@ For EDIT-COMMAND see `recompile'."
 ;;; Cyrillic Dvorak Im
 
 (require 'cyrillic-dvorak-im)
+
+;; Dabbrev
+
+(keymap-set ctl-x-map "C-/" 'dabbrev-expand)
 
 ;;; Dictionary
 
@@ -1304,10 +1337,119 @@ ARG as in `move-beginning-of-line'."
 
 ;;; Tempo Extra
 
+(declare-function tempo-define-template "tempo")
+(declare-function tempo-extra-custom-user-elements "csharp-mode")
+(declare-function tempo-extra-define "tempo-extra")
+(declare-function treesit-node-at "treesit")
+(declare-function treesit-node-text "treesit")
+(declare-function treesit-parent-until "treesit")
+
 (with-eval-after-load 'abbrev-hook
   (keymap-global-set "C-z" 'abbrev-hook-call))
 
-(with-eval-after-load 'csharp-mode (require 'tempo-extra-csharp))
+(with-eval-after-load 'csharp-mode
+  (require 'tempo-extra)
+  (require 'tempo-extra-csharp)
+
+  (defun tempo-extra-custom-user-elements (element)
+    "Additional custom elements.
+For ELEMENT see `tempo-define-template'."
+    (pcase element
+      (:csharp-file-class
+       (thread-last (if-let ((bfn (buffer-file-name)))
+                        (file-name-nondirectory bfn)
+                      (buffer-name))
+         (string-remove-suffix ".cs")
+         (string-remove-suffix ".xaml")))
+      (:csharp-current-class
+       (when-let ((node (treesit-parent-until
+                         (treesit-node-at (point) 'c-sharp)
+                         (lambda (node)
+                           (member
+                            (treesit-node-type node)
+                            '("class_declaration" "record_declaration"))))))
+
+         (treesit-node-text (treesit-node-child-by-field-name node "name") t)))))
+
+  (add-hook 'tempo-user-elements #'tempo-extra-custom-user-elements)
+
+  (tempo-extra-define "ctor" 'csharp-ts-mode
+    '("public " :csharp-current-class "(" p ")" > n
+      "{" > n
+      p > n
+      "}">))
+
+  (dolist (mode '(csharp-mode csharp-ts-mode))
+
+    (tempo-extra-define "wl" mode
+      '("Console.WriteLine(\"{0}\", " p ");" >))
+
+    (tempo-extra-define "puc" mode
+      '("public static class " p :csharp-file-class > n
+        "{" > n
+        p > n
+        "}" >))
+
+    (tempo-extra-define "pur" mode
+      '("public record class " p :csharp-file-class "();"))
+
+    (tempo-extra-define "prm" mode
+      '("private static async Task " p "M()" > n
+        "{" > n
+        p > n
+        "}" >))
+
+    (tempo-extra-define "namespace" mode
+      '("namespace "
+        (if-let* ((project (project-current))
+                  (project-root (expand-file-name (project-root project)))
+                  (file-path (string-remove-prefix project-root (buffer-file-name)))
+                  (dir-path (file-name-directory file-path)))
+            (thread-last dir-path
+              (string-remove-prefix "trunk/")
+              (string-remove-suffix "/")
+              (string-replace "/" "."))
+          (file-name-sans-extension (buffer-name)))
+        ";"))
+
+    (tempo-extra-define "if" mode
+      '("if (" p ")" > n
+        "{" > n
+        p r > n
+        "}" >))
+
+    (tempo-extra-define "foreach" mode
+      '("foreach (var " p " in " p ")" > n
+        "{" > n
+        p > n
+        "}" >))
+
+    (tempo-extra-define "try" mode
+      '("try" > n
+        "{" > n
+        p r > n
+        "} catch {" p "}" >))
+
+    (tempo-extra-define "vmp" mode
+      '((P "Type: " property-type noinsert)
+        (P "Property name: " property-name noinsert)
+
+        (ignore
+         (let ((property-name (tempo-lookup-named 'property-name)))
+           (tempo-save-named
+            'field-name
+            (if (zerop (length property-name))
+                property-name
+              (concat "_" (downcase (substring property-name 0 1))
+                      (substring property-name 1))))))
+
+        "private " (s property-type) " " (s field-name) p ";" > n
+        "public " (s property-type) " " (s property-name) > n
+        "    {" > n
+        (l "        get => " (s field-name) ";" > n
+           "        private set => SetField(ref " (s field-name) ", value);" > n)
+        "    }" >))))
+
 (with-eval-after-load 'elisp-mode (require 'tempo-extra-elisp))
 (with-eval-after-load 'js (require 'tempo-extra-js))
 (with-eval-after-load 'lisp-mode (require 'tempo-extra-lisp))
@@ -1395,6 +1537,35 @@ ARG as in `move-beginning-of-line'."
 
 (define-advice url-generic-parse-url (:around (fn &rest args) save-match-data)
   (save-match-data (apply fn args)))
+
+;;; Vc Dir
+
+(defvar vc-ewoc)
+(defvar vc-dir-mode-map)
+(declare-function ewoc-filter "ewoc")
+(declare-function vc-dir-fileinfo->marked "vc-dir")
+(declare-function vc-dir-mark-state-files "vc-dir")
+
+(with-eval-after-load 'vc-dir
+  (defun vc-dir-kill-marked-files ()
+    "Kill marked files."
+    (interactive)
+    (ewoc-filter vc-ewoc (lambda (data) (not (vc-dir-fileinfo->marked data)))))
+
+  (defun vc-dir-mark-needs-update-files ()
+    "Mark files that are in needs-update state."
+    (interactive)
+    (vc-dir-mark-state-files 'needs-update))
+
+  (defun vc-dir-mark-needs-merge-files ()
+    "Mark files that are in needs-merge state."
+    (interactive)
+    (vc-dir-mark-state-files 'needs-merge))
+
+  (define-keymap :keymap vc-dir-mode-map
+    "* u" 'vc-dir-mark-needs-update-files
+    "* m" 'vc-dir-mark-needs-merge-files
+    "K" 'vc-dir-kill-marked-files))
 
 ;;; Vertico
 

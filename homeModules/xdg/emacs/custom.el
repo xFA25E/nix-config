@@ -13,7 +13,8 @@
  '(ange-ftp-netrc-filename "~/.authinfo.gpg")
  '(apheleia-formatters
    '((alejandra "alejandra") (xmllint "xmllint" "--format" "-" "--pretty" "2")
-     (bean-format "bean-format") (black "black" "-") (brittany "brittany")
+     (csharpier "dotnet-csharpier") (bean-format "bean-format")
+     (black "black" "-") (brittany "brittany")
      (crystal-tool-format "crystal" "tool" "format" "-")
      (dart-format "dart" "format") (elm-format "elm-format" "--yes" "--stdin")
      (fish-indent "fish_indent") (gofmt "gofmt") (gofumpt "gofumpt")
@@ -44,7 +45,8 @@
      (rustfmt "rustfmt" "--quiet" "--emit" "stdout")
      (terraform "terraform" "fmt" "-")))
  '(apheleia-mode-alist
-   '((nxml-mode . xmllint) (php-mode . phpcs) (json-mode . prettier-json)
+   '((nxml-mode . xmllint) (csharp-mode . csharpier) (csharp-ts-mode . csharpier)
+     (php-mode . phpcs) (json-mode . prettier-json)
      (json-ts-mode . prettier-json) (bash-ts-mode . shfmt)
      (beancount-mode . bean-format) (c++-ts-mode . clang-format)
      (cc-mode . clang-format) (c-mode . clang-format) (c-ts-mode . clang-format)
@@ -220,8 +222,10 @@
    '((lambda (&rest _) (window-configuration-to-register 119))))
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
  '(eglot-autoshutdown t)
+ '(eglot-confirm-server-edits nil)
  '(eglot-confirm-server-initiated-edits nil)
  '(eglot-connect-timeout 60)
+ '(eglot-ignored-server-capabilities '(:documentOnTypeFormattingProvider :inlayHintProvider))
  '(eglot-sync-connect nil)
  '(eldoc-documentation-strategy 'eldoc-documentation-compose)
  '(eldoc-echo-area-use-multiline-p t)
@@ -248,7 +252,16 @@
  '(find-ls-option
    '("-print0 | xargs -0 ls -ldF --si --quoting-style=literal" . "-ldhF"))
  '(find-sibling-rules
-   '(("\\([^/]+\\)\\.cs\\'" "\\1\\.axaml") ("\\([^/]+\\)\\.axaml\\'" "\\1\\.cs")))
+   '(("\\([^/]+\\)\\.cs\\'" "\\1\\.axaml") ("\\([^/]+\\)\\.axaml\\'" "\\1\\.cs")
+     ("UserControls/Dialog/\\([^/]+\\)\\.xaml\\'" "ViewModels/\\1ViewModel.cs")
+     ("UserControls/\\([^/]+\\)View\\.xaml\\'" "ViewModels/\\1ViewModel.cs")
+     ("ViewModels/\\([^/]+\\)ViewModel\\.cs\\'" "UserControls/\\1View.xaml"
+      "UserControls/\\1.xaml" "UserControls/Dialog/\\1.xaml")
+     ("\\([^/]+\\)\\.xaml\\.cs\\'" "\\1.xaml")
+     ("\\([^/]+\\)ViewModel\\.cs\\'" "\\1View.xaml")
+     ("\\([^/]+\\)\\.xaml\\.cs\\'" "\\1.xaml")
+     ("\\([^/]+\\)View\\.xaml\\'" "\\1ViewModel.cs" "\\1View.xaml.cs")
+     ("\\([^/]+\\)\\.xaml\\'" "\\1ViewModel.cs" "\\1.xaml.cs")))
  '(flymake-collection-hook-config
    '(((python-mode python-ts-mode) flymake-collection-pycodestyle
       (flymake-mypy :disabled t) (flymake-collection-pylint :disabled t)
@@ -280,6 +293,7 @@
    '(" " flymake-mode-line-exception flymake-mode-line-counters))
  '(gdb-many-windows t)
  '(gdb-show-main t)
+ '(global-auto-revert-mode t)
  '(global-so-long-mode t)
  '(goto-line-history-local t)
  '(grep-files-aliases
@@ -387,9 +401,9 @@
  '(mail-envelope-from 'header)
  '(mail-user-agent 'notmuch-user-agent)
  '(major-mode-remap-alist
-   '((nix-mode . nix-ts-mode) (sh-mode . bash-ts-mode) (css-mode . css-ts-mode)
-     (js-mode . js-ts-mode) (javascript-mode . js-ts-mode)
-     (js-json-mode . json-ts-mode)))
+   '((csharp-mode . csharp-ts-mode) (nix-mode . nix-ts-mode)
+     (sh-mode . bash-ts-mode) (css-mode . css-ts-mode) (js-mode . js-ts-mode)
+     (javascript-mode . js-ts-mode) (js-json-mode . json-ts-mode)))
  '(marginalia-mode t)
  '(max-mini-window-height 0.5)
  '(menu-bar-mode nil)
@@ -616,6 +630,7 @@
      (project-dired "Dired" nil) (nix-flake-project "Nix flake" nil)
      (project-find-dir "Find directory" nil) (project-vc-dir "VC-Dir" nil)
      (project-find-regexp "Find regexp" nil)))
+ '(project-vc-ignores '("bin/" "obj/" ".vs/"))
  '(read-buffer-completion-ignore-case t)
  '(read-extended-command-predicate 'command-completion-default-include-p)
  '(read-file-name-completion-ignore-case t)
