@@ -516,14 +516,14 @@
     "discord": {
       "flake": false,
       "locked": {
-        "lastModified": 1743438471,
-        "narHash": "sha256-BJCjzRsH3Cd+q4/w3XKz8AqLEskYj0DmkWWx04TdyAw=",
+        "lastModified": 1746463844,
+        "narHash": "sha256-CM8rKMYNXm1jGtAutByOK4mNwuXNU9l/Z4YwjnrHhNU=",
         "type": "tarball",
-        "url": "https://dl.discordapp.net/apps/linux/0.0.90/discord-0.0.90.tar.gz"
+        "url": "https://stable.dl2.discordapp.net/apps/linux/0.0.94/discord-0.0.94.tar.gz"
       },
       "original": {
         "type": "tarball",
-        "url": "https://dl.discordapp.net/apps/linux/0.0.90/discord-0.0.90.tar.gz"
+        "url": "https://stable.dl2.discordapp.net/apps/linux/0.0.94/discord-0.0.94.tar.gz"
       }
     },
     "dmerge": {

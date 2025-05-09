@@ -6,7 +6,8 @@
     agenix.url = "github:ryantm/agenix";
 
     discord.flake = false;
-    discord.url = "https://dl.discordapp.net/apps/linux/0.0.90/discord-0.0.90.tar.gz";
+    discord.url = "https://stable.dl2.discordapp.net/apps/linux/0.0.94/discord-0.0.94.tar.gz";
+    # discord.url = "https://dl.discordapp.net/apps/linux/0.0.90/discord-0.0.90.tar.gz";
 
     # emacs-overlay.inputs.flake-utils.follows = "fu";
     emacs-overlay.inputs.nixpkgs-stable.follows = "nixpkgs";
