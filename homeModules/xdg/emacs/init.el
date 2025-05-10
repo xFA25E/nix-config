@@ -3,7 +3,7 @@
 ;;; Commentary:
 
 ;; TODO: you can conditionally load packages if binaries are present
-;; TODO: maybe we should defer by default
+;; TODO: use conditional loading with libraries (:requires)
 ;; TODO: deal intelligently with faces
 ;; TODO: see if you can parametrize image/video extensions
 ;; TODO: see what org modules are useful
@@ -51,6 +51,7 @@
 
 (setq package-archives nil)
 (setq package-selected-packages nil)
+(setq use-package-always-defer t)
 
 (when (eq 'windows-nt system-type)
   (setq package-archives
@@ -130,13 +131,9 @@
 
 (use-package amded
   :vc "https://github.com/xFA25E/amded"
-  :defer t
-  :custom
-  (amded-editable-tags '("album" "artist" "genre" "track-number" "track-title" "year")))
+  :custom (amded-editable-tags '("album" "artist" "genre" "track-number" "track-title" "year")))
 
-(use-package ange-ftp
-  :defer t
-  :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
+(use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
 
 (use-package ansi-color
   :hook
@@ -161,7 +158,6 @@
 
 (use-package apheleia-formatters
   :ensure apheleia
-  :defer t
   :custom (apheleia-mode-lighter nil)
   :config
   (setf (alist-get 'alejandra apheleia-formatters) (list "alejandra"))
@@ -175,20 +171,13 @@
   (setf (alist-get 'nix-ts-mode apheleia-mode-alist) 'alejandra)
   (setf (alist-get 'sh-mode apheleia-mode-alist) 'shfmt))
 
-(use-package apropos
-  :defer t
-  :custom (apropos-sort-by-scores t))
+(use-package apropos :custom (apropos-sort-by-scores t))
 
-(use-package autoinsert
-  :defer t
-  :custom (auto-insert-mode t))
+(use-package autoinsert :custom (auto-insert-mode t))
 
-(use-package auth-source
-  :defer t
-  :custom (auth-sources '("~/.authinfo.gpg" "~/.netrc" "~/.authinfo")))
+(use-package auth-source :custom (auth-sources '("~/.authinfo.gpg" "~/.netrc" "~/.authinfo")))
 
 (use-package autorevert
-  :defer t
   :custom
   (auto-revert-avoid-polling t)
   (auto-revert-mode-text " AR")
@@ -208,12 +197,11 @@
   (avy-style 'words)
   (avy-timeout-seconds 0.3))
 
-(use-package avy-embark-collect
-  :ensure t
-  :defer t)
+(use-package avy-embark-collect :ensure t)
 
 ;; TODO: handle absence of battery
 (use-package battery
+  :demand t
   :preface
   (require 'notifications)
   (defun battery-alarm-on-low-level (data)
@@ -243,7 +231,6 @@
       100.0)))
 
 (use-package bindings
-  :defer t
   :init
   (keymap-unset esc-map "&" t)
   (add-to-list 'completion-ignored-extensions ".dir-locals.el")
@@ -259,7 +246,6 @@
   (add-to-list 'completion-ignored-extensions "flake.lock"))
 
 (use-package bookmark
-  :defer t
   :custom
   (bookmark-default-file (expand-file-name "emacs/bookmarks" (xdg-data-home)))
   (bookmark-fontify nil)
@@ -290,7 +276,6 @@ See `browse-url' for URL and ARGS."
       (apply (nth 3 (assoc answer answers)) url args))))
 
 (use-package buffer
-  :defer t
   :custom
   (fill-column 80)
   (indicate-buffer-boundaries 'left)
@@ -307,6 +292,7 @@ See `browse-url' for URL and ARGS."
 (use-package async-bytecomp
   :ensure async
   :after bytecomp
+  :demand t
   :config (async-bytecomp-package-mode))
 
 (use-package cargo
@@ -323,22 +309,15 @@ See `browse-url' for URL and ARGS."
   (cargo-process--command-test "test --color never"))
 
 (use-package calendar
-  :defer t
   :custom
   (calendar-time-zone-style 'numeric)
   (calendar-week-start-day 1))
 
-(use-package cc-vars
-  :defer t
-  :custom (c-default-style '((java-mode . "java") (other . "awk"))))
+(use-package cc-vars :custom (c-default-style '((java-mode . "java") (other . "awk"))))
 
-(use-package cider
-  :ensure t
-  :defer t)
+(use-package cider :ensure t)
 
-(use-package clojure-mode
-  :ensure t
-  :defer t)
+(use-package clojure-mode :ensure t)
 
 (use-package comint
   :bind (:map mode-specific-map ("c" . comint-run))
@@ -470,11 +449,9 @@ For EDIT-COMMAND see `recompile'."
 (use-package consult
   :ensure t
   :when (eq 'windows-nt system-type)
-  :defer t
   :custom (consult-find-args '(find-program "." "-not" "(" "-path" "*/.[A-Za-z]*" "-prune" ")")))
 
 (use-package consult-register
-  :defer t
   :init
   (setq register-preview-function 'consult-register-format)
   (advice-add 'register-preview :override 'consult-register-window))
@@ -517,7 +494,6 @@ For EDIT-COMMAND see `recompile'."
 
 (use-package csharp-mode
   :disabled t
-  :defer t
   :config
   (setq csharp-ts-mode--font-lock-settings
         (treesit-font-lock-rules
@@ -711,17 +687,11 @@ For EDIT-COMMAND see `recompile'."
            (endregion_directive
             (preproc_message) @font-lock-variable-use-face)))))
 
-(use-package csproj-mode
-  :ensure t
-  :defer t)
+(use-package csproj-mode :ensure t)
 
-(use-package csv-mode
-  :ensure t
-  :defer t)
+(use-package csv-mode :ensure t)
 
-(use-package cus-edit
-  :defer t
-  :custom (custom-file null-device))
+(use-package cus-edit :custom (custom-file null-device))
 
 (use-package custom
   :bind
@@ -732,7 +702,9 @@ For EDIT-COMMAND see `recompile'."
         ("c s" . customize-saved)
         ("c u" . customize-unsaved)))
 
-(use-package cyrillic-dvorak-im)
+(use-package cyrillic-dvorak-im
+  :vc "https://github.com/xFA25E/cyrillic-dvorak-im"
+  :demand t)
 
 (use-package dabbrev :bind (:map ctl-x-map ("C-/" . dabbrev-expand)))
 
@@ -740,9 +712,7 @@ For EDIT-COMMAND see `recompile'."
   :bind (:map mode-specific-map ("o T" . dictionary-search))
   :custom (dictionary-use-single-buffer t))
 
-(use-package diff-mode
-  :defer t
-  :config (keymap-unset diff-mode-map "M-o" t))
+(use-package diff-mode :config (keymap-unset diff-mode-map "M-o" t))
 
 (use-package dired
   :hook (dired-mode . dired-hide-details-mode)
@@ -791,7 +761,6 @@ For EDIT-COMMAND see `recompile'."
 
 (use-package dired
   :when (eq 'windows-nt system-type)
-  :defer t
   :custom (dired-listing-switches "-lFAvh"))
 
 (use-package dired-atool-transient
@@ -804,7 +773,6 @@ For EDIT-COMMAND see `recompile'."
 
 (use-package dired-async
   :ensure async
-  :defer t
   :custom (dired-async-mode-lighter "")
   :custom-face
   (dired-async-message ((t (:foreground "dark orange"))))
@@ -870,13 +838,9 @@ For MARKER-CHAR see `dired-mark-extension'."
   (:map emacs-lisp-mode-map ("C-c C-d" . disassemble))
   (:map lisp-interaction-mode-map ("C-c C-d" . disassemble)))
 
-(use-package discomfort
-  :ensure t
-  :defer t)
+(use-package discomfort :ensure t)
 
-(use-package djvu
-  :ensure t
-  :defer t)
+(use-package djvu :ensure t)
 
 (use-package dotnet
   :ensure t
@@ -885,7 +849,6 @@ For MARKER-CHAR see `dired-mark-extension'."
 (use-package dumb-jump
   :ensure t
   :after xref
-  :defer t
   :init (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 (use-package ebdb
@@ -913,7 +876,6 @@ For MARKER-CHAR see `dired-mark-extension'."
   :bind (:map message-mode-map ("C-c e" . ebdb-complete)))
 
 (use-package ede/base
-  :defer t
   :custom (ede-project-placeholder-cache-file (expand-file-name "emacs/ede/projects.el" (xdg-cache-home))))
 
 (use-package ediff
@@ -947,21 +909,15 @@ For MARKER-CHAR see `dired-mark-extension'."
       ("vdd" "Directory" ediff-directory-revisions)
       ("vdm" "Merge directory" ediff-merge-directory-revisions)]]))
 
-(use-package ediff-init
-  :defer t
-  :custom (ediff-autostore-merges nil))
+(use-package ediff-init :custom (ediff-autostore-merges nil))
 
-(use-package ediff-wind
-  :defer t
-  :custom (ediff-window-setup-function #'ediff-setup-windows-plain))
+(use-package ediff-wind :custom (ediff-window-setup-function #'ediff-setup-windows-plain))
 
 (use-package edit-indirect
   :ensure t
   :bind (:map ctl-x-map ("E" . edit-indirect-region)))
 
-(use-package editfns
-  :defer t
-  :custom (user-full-name "Valeriy Litkovskyy"))
+(use-package editfns :custom (user-full-name "Valeriy Litkovskyy"))
 
 (use-package eglot
   :bind (:map eglot-mode-map ("C-c C-l" . eglot-code-actions))
@@ -1028,9 +984,7 @@ See `xref-backend-apropos' docs for PATTERN."
   (eldoc-echo-area-use-multiline-p t)
   (eldoc-minor-mode-string ""))
 
-(use-package elec-pair
-  :defer t
-  :custom (electric-pair-mode t))
+(use-package elec-pair :custom (electric-pair-mode t))
 
 (use-package elisp-mode
   :bind
@@ -1048,9 +1002,7 @@ See `xref-backend-apropos' docs for PATTERN."
   :ensure t
   :bind ("C-." . embark-act))
 
-(use-package embark-consult
-  :ensure t
-  :defer t)
+(use-package embark-consult :ensure t)
 
 (use-package emmet-mode
   :ensure t
@@ -1073,12 +1025,10 @@ See `xref-backend-apropos' docs for PATTERN."
 
 (use-package enwc
   :ensure t
-  :defer t
   :custom (enwc-display-mode-line nil))
 
 (use-package enwc
   :ensure t
-  :defer t
   :when (string= "stribog" (nth 0 (process-lines "hostname")))
   :custom
   (enwc-wired-device "eno1")
@@ -1086,7 +1036,6 @@ See `xref-backend-apropos' docs for PATTERN."
 
 (use-package enwc
   :ensure t
-  :defer t
   :when (string= "veles" (nth 0 (process-lines "hostname")))
   :custom
   (enwc-wired-device "enp0s31f6")
@@ -1094,12 +1043,9 @@ See `xref-backend-apropos' docs for PATTERN."
 
 (use-package enwc-backend
   :ensure enwc
-  :defer t
   :custom (enwc-default-backend 'nm))
 
-(use-package esh-mode
-  :defer t
-  :custom (eshell-directory-name (expand-file-name "emacs/eshell/" (xdg-cache-home))))
+(use-package esh-mode :custom (eshell-directory-name (expand-file-name "emacs/eshell/" (xdg-cache-home))))
 
 (use-package eww
   :hook (eww-mode . eww-restore-browse-url-browser-function)
@@ -1116,7 +1062,6 @@ See `xref-backend-apropos' docs for PATTERN."
   :custom (executable-chmod 64))
 
 (use-package faces
-  :defer t
   :custom-face
   (default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 98 :width normal :foundry "UKWN" :family "Iosevka"))))
   (header-line ((t (:inherit default :background "grey90" :foreground "grey20"))))
@@ -1343,17 +1288,15 @@ See `xref-backend-apropos' docs for PATTERN."
   :custom
   (flymake-mode-line-format '(" " flymake-mode-line-exception flymake-mode-line-counters)))
 
-(use-package flymake-proc
-  :defer t
-  :config (remove-hook 'flymake-diagnostic-functions #'flymake-proc-legacy-flymake))
+(use-package flymake-proc :config (remove-hook 'flymake-diagnostic-functions #'flymake-proc-legacy-flymake))
 
 (use-package flymake-collection
   :ensure t
-  :init (flymake-collection-hook-setup))
+  :demand t
+  :config (flymake-collection-hook-setup))
 
 (use-package flymake-collection-hook
   :ensure flymake-collection
-  :defer t
   :config (cl-pushnew #'flymake-collection-statix (alist-get 'nix-ts-mode flymake-collection-hook-config)))
 
 (use-package flymake-collection-statix
@@ -1366,12 +1309,9 @@ See `xref-backend-apropos' docs for PATTERN."
   :after nix-ts-mode
   :bind (:map nix-ts-mode-map ("C-c C-x" . flymake-collection-statix-fix)))
 
-(use-package fns
-  :defer t
-  :custom (use-dialog-box nil))
+(use-package fns :custom (use-dialog-box nil))
 
 (use-package frame
-  :defer t
   :custom
   (blink-cursor-mode nil)
   (menu-bar-mode nil)
@@ -1379,7 +1319,6 @@ See `xref-backend-apropos' docs for PATTERN."
   (use-system-tooltips nil))
 
 (use-package gdb-mi
-  :defer t
   :custom
   (gdb-many-windows t)
   (gdb-show-main t))
@@ -1395,7 +1334,6 @@ See `xref-backend-apropos' docs for PATTERN."
 
 (use-package grep
   :when (eq 'windows-nt system-type)
-  :defer t
   :custom (find-program "C:\\ProgramData\\chocolatey\\bin\\find.exe"))
 
 (use-package help
@@ -1440,21 +1378,15 @@ See `xref-backend-apropos' docs for PATTERN."
   transmission-mode
   transmission-peers-mode)
 
-(use-package htmlize
-  :ensure t
-  :defer t)
+(use-package htmlize :ensure t)
 
 (use-package ibuffer
-  :defer t
   :custom (ibuffer-default-sorting-mode 'major-mode)
   :config (keymap-unset ibuffer-mode-map "M-o" t))
 
-(use-package ibuf-ext
-  :defer t
-  :custom (ibuffer-show-empty-filter-groups nil))
+(use-package ibuf-ext :custom (ibuffer-show-empty-filter-groups nil))
 
 (use-package image-dired
-  :defer t
   :custom
   (image-dired-db-file (expand-file-name "emacs/image-dired-db" (xdg-data-home)))
   (image-dired-dir (expand-file-name "emacs/image-dired/thumbnails/" (xdg-cache-home)))
@@ -1463,36 +1395,27 @@ See `xref-backend-apropos' docs for PATTERN."
   (image-dired-tags-db-file (expand-file-name "emacs/image-dired-db" (xdg-data-home)))
   (image-dired-temp-image-file (expand-file-name "emacs/image-dired/temp" (xdg-cache-home))))
 
-(use-package image
-  :defer t
-  :custom (image-use-external-converter t))
+(use-package image :custom (image-use-external-converter t))
 
 (use-package image-dired-external
-  :defer t
   :custom
   (image-dired-temp-rotate-image-file (expand-file-name "emacs/image-dired/rotate_temp" (xdg-cache-home))))
 
 (use-package image-file
-  :defer t
   :custom
   (image-file-name-extensions
    '("mp4" "mkv" "png" "jpeg" "jpg" "gif" "tiff" "tif" "xbm" "xpm" "pbm" "pgm" "ppm" "pnm" "svg")))
 
 (use-package imenu
-  :defer t
   :custom
   (imenu-auto-rescan t)
   (imenu-level-separator "/")
   (imenu-space-replacement " ")
   (imenu-use-popup-menu nil))
 
-(use-package inf-lisp
-  :defer t
-  :custom (inferior-lisp-program "nix-shell -p sbcl --run sbcl"))
+(use-package inf-lisp :custom (inferior-lisp-program "nix-shell -p sbcl --run sbcl"))
 
-(use-package inspector
-  :ensure t
-  :defer t)
+(use-package inspector :ensure t)
 
 (use-package ipretty
   :ensure t
@@ -1516,32 +1439,25 @@ See `xref-backend-apropos' docs for PATTERN."
   :hook (tex-mode . (lambda () (setq-local ispell-parser 'tex)))
   :custom (ispell-program-name "enchant-2"))
 
-(use-package keyboard
-  :defer t
-  :custom (translate-upper-case-key-bindings nil))
+(use-package keyboard :custom (translate-upper-case-key-bindings nil))
 
 (use-package js
-  :defer t
   :custom
   (js-indent-level 2)
   (js-switch-indent-offset 2)
   :config
   (keymap-unset js-ts-mode-map "M-." t))
 
-(use-package json-navigator
-  :ensure t
-  :defer t)
+(use-package json-navigator :ensure t)
 
 (use-package json-ts-mode :mode (rx "flake.lock" eos))
 
 (use-package ledger-init
   :ensure ledger-mode
-  :defer t
   :custom (ledger-default-date-format "%Y-%m-%d"))
 
 (use-package ledger-report
   :ensure ledger-mode
-  :defer t
   :custom
   (ledger-reports
    '(("intex kilometers"
@@ -1621,22 +1537,16 @@ See `xref-backend-apropos' docs for PATTERN."
 
 (use-package loadhist :bind (:map load-command-map ("C-u" . unload-feature)))
 
-(use-package locate
-  :defer t
-  :custom (locate-update-command "systemctl --user start updatedb.service"))
+(use-package locate :custom (locate-update-command "systemctl --user start updatedb.service"))
 
-(use-package man
-  :defer t
-  :custom (Man-notify-method 'pushy))
+(use-package man :custom (Man-notify-method 'pushy))
 
 (use-package magit
   :ensure t
-  :defer t
   :custom (magit-define-global-key-bindings 'recommended))
 
 (use-package magit-diff
   :ensure magit
-  :defer t
   :custom-face
   (magit-diff-revision-summary-highlight ((t (:inherit magit-diff-hunk-heading-highlight :background "misty rose" :underline t)))))
 
@@ -1646,22 +1556,17 @@ See `xref-backend-apropos' docs for PATTERN."
 
 (use-package magit-process
   :ensure magit
-  :defer t
   :custom (magit-credential-cache-daemon-socket (expand-file-name "git/credential/socket" (xdg-cache-home))))
 
 (use-package marginalia
   :ensure t
-  :defer t
   :custom (marginalia-mode t))
 
-(use-package mb-depth
-  :defer t
-  :custom (minibuffer-depth-indicate-mode t))
+(use-package mb-depth :custom (minibuffer-depth-indicate-mode t))
 
 (use-package menu-bar :bind (:map ctl-x-map ("`" . toggle-debug-on-error)))
 
 (use-package message
-  :defer t
   :custom
   (message-directory "~/.mail/")
   (message-kill-buffer-on-exit t)
@@ -1673,7 +1578,6 @@ See `xref-backend-apropos' docs for PATTERN."
           (? " ") ":" (* blank)))))
 
 (use-package minibuf
-  :defer t
   :custom
   (enable-recursive-minibuffers t)
   (history-delete-duplicates t)
@@ -1683,8 +1587,6 @@ See `xref-backend-apropos' docs for PATTERN."
   (read-minibuffer-restore-windows nil))
 
 (use-package minibuffer
-  :defer t
-
   :init
   (setq completion-category-defaults nil)
   (setq completion-in-region-function 'consult-completion-in-region)
@@ -1708,18 +1610,14 @@ See `xref-backend-apropos' docs for PATTERN."
   :config
   (keymap-unset minibuffer-local-completion-map "SPC" t))
 
-(use-package minibuf-eldef
-  :defer t
-  :custom (minibuffer-electric-default-mode t))
+(use-package minibuf-eldef :custom (minibuffer-electric-default-mode t))
 
 (use-package misc
   :bind
   (:map ctl-x-map ("o" . duplicate-dwim))
   (:repeat-map duplicate-dwim-repeat-map ("o" . duplicate-dwim)))
 
-(use-package mouse
-  :defer t
-  :custom (context-menu-mode t))
+(use-package mouse :custom (context-menu-mode t))
 
 (use-package mpc
   :bind
@@ -1802,7 +1700,6 @@ See its documentiation for N."
 (use-package newsticker :bind (:map mode-specific-map ("o n" . newsticker-show-news)))
 
 (use-package newst-backend
-  :defer t
   :custom
   (newsticker-automatically-mark-items-as-old nil)
   (newsticker-automatically-mark-visited-items-as-old nil)
@@ -1852,7 +1749,6 @@ See its documentiation for N."
   (newsticker-url-list-defaults nil))
 
 (use-package newst-treeview
-  :defer t
   :custom
   (newsticker-treeview-automatically-mark-displayed-items-as-old nil)
   (newsticker-treeview-listwindow-height 6)
@@ -1861,7 +1757,6 @@ See its documentiation for N."
   (newsticker-treeview-new-face ((t (:underline t :weight bold)))))
 
 (use-package mule-cmds
-  :defer t
   :when (eq 'windows-nt system-type)
   :init (prefer-coding-system 'utf-8-unix))
 
@@ -2014,9 +1909,7 @@ build."
   :ensure nix-mode
   :bind (:map mode-specific-map ("T" . nix-store-show-path)))
 
-(use-package nix-ts-mode
-  :ensure t
-  :defer t)
+(use-package nix-ts-mode :ensure t)
 
 (use-package notmuch
   :ensure t
@@ -2024,19 +1917,16 @@ build."
 
 (use-package notmuch-address
   :ensure notmuch
-  :defer t
   :custom
   (notmuch-address-internal-completion '(received nil))
   (notmuch-address-use-company nil))
 
 (use-package notmuch-draft
   :ensure notmuch
-  :defer t
   :custom (notmuch-draft-tags '("+drafts")))
 
 (use-package notmuch-hello
   :ensure notmuch
-  :defer t
   :custom
   (notmuch-saved-searches
    '((:name "unread all" :query "tag:unread" :key [117 97])
@@ -2067,14 +1957,12 @@ build."
 
 (use-package notmuch-lib
   :ensure notmuch
-  :defer t
   :custom
   (notmuch-archive-tags '("+archive" "-flagged" "-inbox" "-spam" "-trash" "-deleted"))
   (notmuch-search-oldest-first nil))
 
  (use-package notmuch-maildir-fcc
   :ensure notmuch
-  :defer t
   :custom
   (notmuch-fcc-dirs
    '(("polimi\\.it" . "polimi/sent +sent +polimi")
@@ -2097,12 +1985,10 @@ build."
 
 (use-package notmuch-show
   :ensure notmuch
-  :defer t
   :custom (notmuch-show-all-multipart/alternative-parts t))
 
 (use-package notmuch-tag
   :ensure notmuch
-  :defer t
   :custom
   (notmuch-tagging-keys
    '(([?a] notmuch-archive-tags "Archive")
@@ -2121,13 +2007,9 @@ build."
   (nov-save-place-file (expand-file-name "emacs/nov-places" (xdg-cache-home)))
   (nov-text-width 80))
 
-(use-package novice
-  :defer t
-  :init (setq disabled-command-function nil))
+(use-package novice :init (setq disabled-command-function nil))
 
-(use-package nsm
-  :defer t
-  :custom (nsm-settings-file (expand-file-name "emacs/network-security.data" (xdg-cache-home))))
+(use-package nsm :custom (nsm-settings-file (expand-file-name "emacs/network-security.data" (xdg-cache-home))))
 
 (use-package nxml-mode
   :mode (rx ".axaml" eos) (rx ".xaml" eos)
@@ -2135,7 +2017,6 @@ build."
 
 (use-package orderless
   :ensure t
-  :defer t
   :init
   (cl-pushnew '(const orderless)
               (cdr (nth 3 (get 'completion-styles 'custom-type)))
@@ -2205,8 +2086,8 @@ build."
   (org-agenda-start-on-weekday nil))
 
 (use-package org-annotate-file
-  :defer t
-  :custom (org-annotate-file-storage-file (expand-file-name "emacs/org-annotate-file.org" (xdg-data-home))))
+  :custom
+  (org-annotate-file-storage-file (expand-file-name "emacs/org-annotate-file.org" (xdg-data-home))))
 
 (use-package org-capture
   :bind (:map mode-specific-map ("G c" . org-capture))
@@ -2215,28 +2096,21 @@ build."
    '(("r" "Remember" entry (file+headline "~/org/life.org" "Remember") "* %?"))))
 
 (use-package org-clock
-  :defer t
   :custom (org-clock-display-default-range 'untilnow)
   :config
   (define-advice org-show-notification (:after (&rest _) sound)
     (call-process "notify_ding" nil 0 nil)))
 
-(use-package org-duration
-  :defer t
-  :custom (org-duration-format 'h:mm))
+(use-package org-duration :custom (org-duration-format 'h:mm))
 
 (use-package org-faces
-  :defer t
   :custom-face
   (org-mode-line-clock ((t nil)))
   (org-mode-line-clock-overrun ((t (:background "red")))))
 
-(use-package org-id
-  :defer t
-  :custom (org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home))))
+(use-package org-id :custom (org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home))))
 
 (use-package org-habit
-  :defer t
   :custom
   (org-habit-graph-column 54)
   (org-habit-show-done-always-green t))
@@ -2251,7 +2125,6 @@ build."
         ("C-c M-t" . org-mime-revert-to-plain-text-mail)))
 
 (use-package org-refile
-  :defer t
   :custom
   (org-refile-allow-creating-parent-nodes 'confirm)
   (org-refile-targets '((org-agenda-files :level . 1)))
@@ -2272,7 +2145,6 @@ build."
 
 (use-package org-roam-capture
   :ensure org-roam
-  :defer t
   :custom
   (org-roam-capture-templates
    '(("l" "Library" entry
@@ -2287,20 +2159,14 @@ build."
 
 (use-package org-roam-db
   :ensure org-roam
-  :defer t
   :custom (org-roam-db-location (expand-file-name "emacs/org-roam.db" (xdg-cache-home))))
 
-(use-package org-src
-  :defer t
-  :custom (org-edit-src-content-indentation 0))
+(use-package org-src :custom (org-edit-src-content-indentation 0))
 
-(use-package ox-html
-  :defer t
-  :custom (org-html-htmlize-output-type 'css))
+(use-package ox-html :custom (org-html-htmlize-output-type 'css))
 
 (use-package ox-odt
   :disabled
-  :defer t
   :config
   (define-advice org-odt-export-to-odt (:around (fn &rest args) ignore-errors)
     (let ((dfn (symbol-function 'delete-directory)))
@@ -2310,22 +2176,16 @@ build."
 
 (use-package paragraphs :bind ("C-M-S-t" . transpose-paragraphs))
 
-(use-package paren
-  :defer t
-  :custom (show-paren-context-when-offscreen 'overlay))
+(use-package paren :custom (show-paren-context-when-offscreen 'overlay))
 
-(use-package pcmpl-args
-  :ensure t
-  :defer t)
+(use-package pcmpl-args :ensure t)
 
 (use-package pdf-loader
   :ensure pdf-tools
-  :defer t
   :init (pdf-loader-install t t))
 
 (use-package php-mode
   :ensure t
-  :defer t
   :custom (php-mode-coding-style 'php))
 
 (use-package pp
@@ -2341,7 +2201,6 @@ build."
   (proced-tree-flag t))
 
 (use-package project
-  :defer t
   :custom
   (project-compilation-buffer-name-function #'project-prefixed-buffer-name)
   (project-list-file (expand-file-name "emacs/project.list" (xdg-cache-home)))
@@ -2361,9 +2220,7 @@ build."
   :ensure t
   :bind (:map mode-specific-map ("o u" . pueue)))
 
-(use-package rainbow-mode
-  :ensure t
-  :defer t)
+(use-package rainbow-mode :ensure t)
 
 (use-package re-builder
   :after elisp-mode
@@ -2372,7 +2229,6 @@ build."
   (:map lisp-interaction-mode-map ("C-c C-r" . re-builder)))
 
 (use-package recentf
-  :defer t
   :custom
   (recentf-mode t)
   (recentf-save-file (expand-file-name "emacs/recentf" (xdg-cache-home))))
@@ -2392,13 +2248,12 @@ build."
   (register-preview-delay 0.5)
   (register-separator 43))
 
-(use-package repeat
-  :defer t
-  :custom (repeat-mode t))
+(use-package repeat :custom (repeat-mode t))
 
 (use-package reverse-im
   :ensure t
   :requires cyrillic-dvorak-im
+  :demand t
   :config (reverse-im-activate "cyrillic-dvorak"))
 
 (use-package rg-menu
@@ -2410,10 +2265,10 @@ build."
 (use-package rx-widget
   :vc "https://github.com/xFA25E/rx-widget"
   :after wid-edit
+  :demand t
   :config (define-widget 'regexp 'rx-widget "A regular expression in rx form."))
 
 (use-package savehist
-  :defer t
   :init
   (defun savehist-cleanup-histories ()
     "Cleanup savehist histories.
@@ -2429,7 +2284,6 @@ Remove duplicates.  Remove inexistent files from
   (savehist-mode t))
 
 (use-package saveplace
-  :defer t
   :custom
   (save-place-abbreviate-file-names t)
   (ansave-place-file (expand-file-name "emacs/saveplace" (xdg-cache-home)))
@@ -2438,13 +2292,9 @@ Remove duplicates.  Remove inexistent files from
   (save-place-skip-check-regexp
    "\\`\\(?:http\\|/\\(?:cdrom\\|floppy\\|mnt\\|\\(?:[^/:@]*@\\)?[^/:@]*[^./:@]:\\)\\)"))
 
-(use-package scheme
-  :defer t
-  :custom (scheme-program-name "guile"))
+(use-package scheme :custom (scheme-program-name "guile"))
 
-(use-package scroll-bar
-  :defer t
-  :custom (scroll-bar-mode nil))
+(use-package scroll-bar :custom (scroll-bar-mode nil))
 
 (use-package sdcwoc
   :vc "https://github.com/xFA25E/sdcwoc"
@@ -2560,12 +2410,10 @@ Remove duplicates.  Remove inexistent files from
       "Medical (It-Ru)" "Polytechnical (It-Ru)" "Universal (It-Ru)"))))
 
 (use-package semantic/symref/grep
-  :defer t
   :config
   (setf (alist-get 'go-ts-mode semantic-symref-filepattern-alist) (list "*.go")))
 
 (use-package sendmail
-  :defer t
   :custom
   (mail-envelope-from 'header)
   (send-mail-function #'message-send-mail-with-sendmail)
@@ -2607,7 +2455,6 @@ Remove duplicates.  Remove inexistent files from
         (hl-line-mode t)))))
 
 (use-package shr
-  :defer t
   :custom
   (shr-max-image-proportion 0.7)
   (shr-use-fonts nil))
@@ -2690,41 +2537,30 @@ ARG as in `move-beginning-of-line'."
      (clisp ("clisp"))
      (abcl ("abcl")))))
 
-(use-package sly-asdf
-  :ensure t
-  :defer t)
+(use-package sly-asdf :ensure t)
 
-(use-package sly-quicklisp
-  :ensure t
-  :defer t)
+(use-package sly-quicklisp :ensure t)
 
-(use-package so-long
-  :defer t
-  :custom (global-so-long-mode t))
+(use-package so-long :custom (global-so-long-mode t))
 
 (use-package solar
-  :defer t
   :custom
   (calendar-latitude 45.724458)
   (calendar-longitude 9.038057))
 
 (use-package sql
-  :defer t
   :custom
   (sql-input-ring-file-name (expand-file-name "emacs/sql_history" (xdg-cache-home)))
   (sql-sqlite-options '("-column" "-header" "-cmd" "PRAGMA foreign_keys = ON;"))
   (sql-sqlite-program "sqlite3"))
 
-(use-package sql-indent
-  :ensure t
-  :defer t)
+(use-package sql-indent :ensure t)
 
 (use-package sqlup-mode
   :ensure t
   :hook sql-mode)
 
 (use-package startup
-  :defer t
   :custom
   (auto-save-list-file-prefix
    (expand-file-name "emacs/auto-saves-list/.saves-" (xdg-cache-home)))
@@ -2734,7 +2570,6 @@ ARG as in `move-beginning-of-line'."
   (initial-scratch-message nil))
 
 (use-package subr-x
-  :defer t
   :init
   (put 'thread-first 'lisp-indent-function 1)
   (put 'thread-last 'lisp-indent-function 1))
@@ -2786,7 +2621,6 @@ ARG as in `move-beginning-of-line'."
 (use-package tempo-extra
   :vc "https://github.com/xFA25E/tempo-extra"
   :after csharp-mode
-  :defer t
   :init
   (require 'tempo-extra)
   (require 'tempo-extra-csharp)
@@ -2893,37 +2727,31 @@ For ELEMENT see `tempo-define-template'."
 (use-package tempo-extra
   :vc "https://github.com/xFA25E/tempo-extra"
   :after elisp-mode
-  :defer t
   :init (require 'tempo-extra-elisp))
 
 (use-package tempo-extra
   :vc "https://github.com/xFA25E/tempo-extra"
   :after js
-  :defer t
   :init (require 'tempo-extra-js))
 
 (use-package tempo-extra
   :vc "https://github.com/xFA25E/tempo-extra"
   :after lisp-mode
-  :defer t
   :init (require 'tempo-extra-lisp))
 
 (use-package tempo-extra
   :vc "https://github.com/xFA25E/tempo-extra"
   :after nix-mode
-  :defer t
   :init (require 'tempo-extra-nix))
 
 (use-package tempo-extra
   :vc "https://github.com/xFA25E/tempo-extra"
   :after org
-  :defer t
   :init (require 'tempo-extra-org))
 
 (use-package tempo-extra
   :vc "https://github.com/xFA25E/tempo-extra"
   :after nix-ts-mode
-  :defer t
   :init
   (require 'tempo-extra)
 
@@ -2961,7 +2789,6 @@ For ELEMENT see `tempo-define-template'."
 (use-package term :bind (:map mode-specific-map ("t" . term)))
 
 (use-package time
-  :defer t
   :custom
   (display-time-default-load-average nil)
   (display-time-mail-function
@@ -2989,13 +2816,10 @@ For ELEMENT see `tempo-define-template'."
    (cons "ENV=~/.profile" (cl-remove "ENV=" tramp-remote-process-environment :test #'string-prefix-p))))
 
 (use-package tramp-cache
-  :defer t
   :custom
   (tramp-persistency-file-name (expand-file-name "emacs/tramp" (xdg-cache-home))))
 
-(use-package tramp-message
-  :defer t
-  :custom (tramp-debug-to-file t))
+(use-package tramp-message :custom (tramp-debug-to-file t))
 
 (use-package transient
   :bind (:map ctl-x-map ("C-r" . region-commands))
@@ -3035,45 +2859,34 @@ For ELEMENT see `tempo-define-template'."
 
 (use-package transmission
   :ensure t
-  :defer t
   :after browse-url
   :init
   (setf
    (alist-get (rx ".torrent" eos) browse-url-handlers nil nil #'equal)
    (lambda (url &rest _) (transmission-add url (read-directory-name "Target directory: ")))))
 
-(use-package treesit
-  :defer t
-  :custom (treesit-font-lock-level 4))
+(use-package treesit :custom (treesit-font-lock-level 4))
 
 (use-package treesit
   :when (eq 'windows-nt system-type)
-  :defer t
   :config
   (setf (alist-get 'c-sharp treesit-language-source-alist) '("https://github.com/tree-sitter/tree-sitter-c-sharp"))
   (setf (alist-get 'json treesit-language-source-alist) '("https://github.com/tree-sitter/tree-sitter-json")))
 
 (use-package undo
-  :defer t
   :custom
   (undo-limit 200000)
   (undo-strong-limit 300000))
 
-(use-package uniquify
-  :defer t
-  :custom (uniquify-ignore-buffers-re (rx bol "*")))
+(use-package uniquify :custom (uniquify-ignore-buffers-re (rx bol "*")))
 
 (use-package url
-  :defer t
   :custom
   (url-configuration-directory (expand-file-name "emacs/url/" (xdg-cache-home))))
 
-(use-package url-handles
-  :defer t
-  :custom (url-handler-mode t))
+(use-package url-handles :custom (url-handler-mode t))
 
 (use-package url-parse
-  :defer t
   :config
   (define-advice url-generic-parse-url (:around (fn &rest args) save-match-data)
     (save-match-data (apply fn args))))
@@ -3101,16 +2914,13 @@ For ELEMENT see `tempo-define-template'."
     (vc-dir-mark-state-files 'needs-merge)))
 
 (use-package vc-hooks
-  :defer t
   :custom (vc-handled-backends '(Git))
   :config
   (customize-set-variable
    'vc-directory-exclusion-list
    (cons ".eldev" (cl-remove ".eldev" vc-directory-exclusion-list :test #'equal))))
 
-(use-package verb
-  :ensure t
-  :defer t)
+(use-package verb :ensure t)
 
 (use-package vertico
   :ensure t
@@ -3128,9 +2938,7 @@ For ELEMENT see `tempo-define-template'."
   :ensure vertico
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
-(use-package vlf
-  :ensure t
-  :defer t)
+(use-package vlf :ensure t)
 
 (use-package web-mode
   :ensure t
@@ -3139,7 +2947,6 @@ For ELEMENT see `tempo-define-template'."
 
 (use-package wgrep
   :ensure t
-  :defer t
   :custom (wgrep-auto-save-buffer t))
 
 (use-package whitespace
@@ -3186,7 +2993,6 @@ For ELEMENT see `tempo-define-template'."
     (cons (concat "WE " (car args)) (cdr args))))
 
 (use-package xdisp
-  :defer t
   :custom
   (hscroll-step 1)
   (max-mini-window-height 0.5)
