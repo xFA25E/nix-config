@@ -55,7 +55,10 @@
     };
   };
 
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware = {
+    cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+    bluetooth.enable = true;
+  };
 
   networking = {
     hostName = "svarog";
@@ -64,7 +67,7 @@
   };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-
+  services.blueman.enable = true;
   swapDevices = [{device = "/swap/swapfile";}];
   system.stateVersion = "24.11";
 }
