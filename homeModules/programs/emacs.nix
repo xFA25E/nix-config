@@ -5,8 +5,10 @@
 }: {
   programs.emacs = {
     enable = true;
-    extraPackages = epkgs:
-      (
+    package = pkgs.emacsWithPackagesFromUsePackage {
+      config = ./../xdg/emacs/init.el;
+      package = pkgs.emacs;
+      extraEmacsPackages = epkgs:
         map (flake: inputs."epkg-${flake}".packages.${pkgs.system}.default) [
           "amded"
           "cyrillic-dvorak-im"
@@ -16,69 +18,7 @@
           "rx-widget"
           "sdcwoc"
           "tempo-extra"
-        ]
-      )
-      ++ (with epkgs; [
-        affe
-        apheleia
-        async
-        avy
-        avy-embark-collect
-        cargo
-        cider
-        clojure-mode
-        consult
-        csproj-mode
-        csv-mode
-        discomfort
-        djvu
-        dotnet
-        dumb-jump
-        ebdb
-        edit-indirect
-        eglot
-        embark
-        embark-consult
-        emmet-mode
-        envrc
-        enwc
-        flymake-collection
-        htmlize
-        inspector
-        ipretty
-        json-navigator
-        ledger-mode
-        link-hint
-        magit
-        marginalia
-        nix-mode
-        nix-ts-mode
-        notmuch
-        nov
-        orderless
-        org
-        org-contrib
-        org-mime
-        org-roam
-        pcmpl-args
-        pdf-tools
-        php-mode
-        rainbow-mode
-        reverse-im
-        rg
-        sly
-        sly-asdf
-        sly-quicklisp
-        sql-indent
-        sqlup-mode
-        transmission
-        treesit-grammars.with-all-grammars
-        verb
-        vertico
-        vlf
-        web-mode
-        wgrep
-      ]);
-    package = pkgs.emacs;
+        ];
+    };
   };
 }

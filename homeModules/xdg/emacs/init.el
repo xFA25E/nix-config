@@ -49,9 +49,14 @@
 (define-keymap :prefix 'load-command-map)
 (keymap-set ctl-x-map "C-l" 'load-command-map)
 
+(setq custom-file
+      (expand-file-name
+       (format-time-string "custom-garbage/%Y-%m-%d-%H-%M-%S.el")
+       (temporary-file-directory)))
+(setq use-package-always-defer t)
+(setq project-list-file (expand-file-name "emacs/project.list" (xdg-cache-home)))
 (setq package-archives nil)
 (setq package-selected-packages nil)
-(setq use-package-always-defer t)
 
 (when (eq 'windows-nt system-type)
   (setq package-archives
@@ -59,11 +64,6 @@
           ("nongnu" . "https://elpa.nongnu.org/nongnu/")
           ("melpa" . "https://melpa.org/packages/")
           ("jcs-emacs" . "https://jcs-emacs.github.io/jcs-elpa/packages/")))
-
-  (setq package-vc-selected-packages
-        '((tempo-extra :vc-backend Git :url "https://github.com/xFA25E/tempo-extra")
-          (abbrev-hook :vc-backend Git :url "https://github.com/xFA25E/abbrev-hook")
-          (rx-widget :vc-backend Git :url "https://github.com/xFA25E/rx-widget")))
 
   (when-let ((font (cl-first (member "Segoe UI Emoji" (font-family-list)))))
     (set-fontset-font t 'symbol (font-spec :family font) nil 'prepend)))
@@ -82,7 +82,7 @@
   (abbrev-suggest t))
 
 (use-package abbrev-hook
-  :vc "https://github.com/xFA25E/abbrev-hook"
+  :vc (:url "https://github.com/xFA25E/abbrev-hook" :rev :newest)
   :bind ("C-z" . abbrev-hook-call))
 
 ;; (use-package ace-window
@@ -130,7 +130,7 @@
         ("M-f M-z" . affe-find)))
 
 (use-package amded
-  :vc "https://github.com/xFA25E/amded"
+  :vc (:url "https://github.com/xFA25E/amded" :rev :newest)
   :custom (amded-editable-tags '("album" "artist" "genre" "track-number" "track-title" "year")))
 
 (use-package ange-ftp :custom (ange-ftp-netrc-filename "~/.authinfo.gpg"))
@@ -691,8 +691,6 @@ For EDIT-COMMAND see `recompile'."
 
 (use-package csv-mode :ensure t)
 
-(use-package cus-edit :custom (custom-file null-device))
-
 (use-package custom
   :bind
   (:map ctl-x-map
@@ -703,7 +701,7 @@ For EDIT-COMMAND see `recompile'."
         ("c u" . customize-unsaved)))
 
 (use-package cyrillic-dvorak-im
-  :vc "https://github.com/xFA25E/cyrillic-dvorak-im"
+  :vc (:url "https://github.com/xFA25E/cyrillic-dvorak-im" :rev :newest)
   :demand t)
 
 (use-package dabbrev :bind (:map ctl-x-map ("C-/" . dabbrev-expand)))
@@ -764,8 +762,7 @@ For EDIT-COMMAND see `recompile'."
   :custom (dired-listing-switches "-lFAvh"))
 
 (use-package dired-atool-transient
-  :ensure t
-  :vc "https://github.com/xFA25E/dired-atool-transient"
+  :vc (:url "https://github.com/xFA25E/dired-atool-transient" :rev :newest)
   :bind
   (:map dired-mode-map
         ("c" . dired-atool-transient-pack)
@@ -786,7 +783,7 @@ For EDIT-COMMAND see `recompile'."
   (dired-create-destination-dirs 'ask))
 
 (use-package dired-tags
-  :vc "https://github.com/xFA25E/dired-tags"
+  :vc (:url "https://github.com/xFA25E/dired-tags" :rev :newest)
   :bind (:map dired-mode-map ("C-c C-t" . dired-tags-prefix-map)))
 
 (use-package dired-x
@@ -920,6 +917,7 @@ For MARKER-CHAR see `dired-mark-extension'."
 (use-package editfns :custom (user-full-name "Valeriy Litkovskyy"))
 
 (use-package eglot
+  :ensure t
   :bind (:map eglot-mode-map ("C-c C-l" . eglot-code-actions))
 
   :custom
@@ -2026,6 +2024,7 @@ build."
   (orderless-matching-styles '(orderless-regexp orderless-literal orderless-prefixes)))
 
 (use-package org
+  :ensure t
   :bind (:map org-mode-map ("C-c C-S-t" . org-todo-yesterday))
   :custom
   (org-adapt-indentation nil)
@@ -2075,6 +2074,7 @@ build."
   (org-tags-column 0))
 
 (use-package org-agenda
+  :ensure org
   :bind
   (:map mode-specific-map ("G a" . org-agenda))
   (:map org-agenda-mode-map ("T" . org-agenda-todo-yesterday))
@@ -2086,31 +2086,42 @@ build."
   (org-agenda-start-on-weekday nil))
 
 (use-package org-annotate-file
+  :ensure org-contrib
   :custom
   (org-annotate-file-storage-file (expand-file-name "emacs/org-annotate-file.org" (xdg-data-home))))
 
 (use-package org-capture
+  :ensure org
   :bind (:map mode-specific-map ("G c" . org-capture))
   :custom
   (org-capture-templates
    '(("r" "Remember" entry (file+headline "~/org/life.org" "Remember") "* %?"))))
 
 (use-package org-clock
+  :ensure org
   :custom (org-clock-display-default-range 'untilnow)
   :config
   (define-advice org-show-notification (:after (&rest _) sound)
     (call-process "notify_ding" nil 0 nil)))
 
-(use-package org-duration :custom (org-duration-format 'h:mm))
+(use-package org-contrib :ensure t)
+
+(use-package org-duration
+  :ensure org
+  :custom (org-duration-format 'h:mm))
 
 (use-package org-faces
+  :ensure org
   :custom-face
   (org-mode-line-clock ((t nil)))
   (org-mode-line-clock-overrun ((t (:background "red")))))
 
-(use-package org-id :custom (org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home))))
+(use-package org-id
+  :ensure org
+  :custom (org-id-locations-file (expand-file-name "emacs/org-id-locations" (xdg-data-home))))
 
 (use-package org-habit
+  :ensure org
   :custom
   (org-habit-graph-column 54)
   (org-habit-show-done-always-green t))
@@ -2125,6 +2136,7 @@ build."
         ("C-c M-t" . org-mime-revert-to-plain-text-mail)))
 
 (use-package org-refile
+  :ensure org
   :custom
   (org-refile-allow-creating-parent-nodes 'confirm)
   (org-refile-targets '((org-agenda-files :level . 1)))
@@ -2161,12 +2173,17 @@ build."
   :ensure org-roam
   :custom (org-roam-db-location (expand-file-name "emacs/org-roam.db" (xdg-cache-home))))
 
-(use-package org-src :custom (org-edit-src-content-indentation 0))
+(use-package org-src
+  :ensure org
+  :custom (org-edit-src-content-indentation 0))
 
-(use-package ox-html :custom (org-html-htmlize-output-type 'css))
+(use-package ox-html
+  :ensure org
+  :custom (org-html-htmlize-output-type 'css))
 
 (use-package ox-odt
-  :disabled
+  :disabled t
+  :ensure org
   :config
   (define-advice org-odt-export-to-odt (:around (fn &rest args) ignore-errors)
     (let ((dfn (symbol-function 'delete-directory)))
@@ -2203,7 +2220,6 @@ build."
 (use-package project
   :custom
   (project-compilation-buffer-name-function #'project-prefixed-buffer-name)
-  (project-list-file (expand-file-name "emacs/project.list" (xdg-cache-home)))
   (project-switch-commands
    '((magit-project-status "Magit" nil)
      (project-find-file "Find file" nil)
@@ -2263,7 +2279,7 @@ build."
 (use-package rust-ts-mode :mode (rx ".rs" eos))
 
 (use-package rx-widget
-  :vc "https://github.com/xFA25E/rx-widget"
+  :vc (:url "https://github.com/xFA25E/rx-widget" :rev :newest)
   :after wid-edit
   :demand t
   :config (define-widget 'regexp 'rx-widget "A regular expression in rx form."))
@@ -2286,7 +2302,7 @@ Remove duplicates.  Remove inexistent files from
 (use-package saveplace
   :custom
   (save-place-abbreviate-file-names t)
-  (ansave-place-file (expand-file-name "emacs/saveplace" (xdg-cache-home)))
+  (save-place-file (expand-file-name "emacs/saveplace" (xdg-cache-home)))
   (save-place-limit 1000)
   (save-place-mode t)
   (save-place-skip-check-regexp
@@ -2297,7 +2313,7 @@ Remove duplicates.  Remove inexistent files from
 (use-package scroll-bar :custom (scroll-bar-mode nil))
 
 (use-package sdcwoc
-  :vc "https://github.com/xFA25E/sdcwoc"
+  :vc (:url "https://github.com/xFA25E/sdcwoc" :rev :newest)
   :bind (:map mode-specific-map ("o t" . sdcwoc))
   :custom
   (sdcwoc-categories
@@ -2619,7 +2635,7 @@ ARG as in `move-beginning-of-line'."
         ("M-a" . tempo-backward-mark)))
 
 (use-package tempo-extra
-  :vc "https://github.com/xFA25E/tempo-extra"
+  :vc (:url "https://github.com/xFA25E/tempo-extra" :rev :newest)
   :after csharp-mode
   :init
   (require 'tempo-extra)
@@ -2725,32 +2741,32 @@ For ELEMENT see `tempo-define-template'."
         "    }" >))))
 
 (use-package tempo-extra
-  :vc "https://github.com/xFA25E/tempo-extra"
+  :vc (:url "https://github.com/xFA25E/tempo-extra" :rev :newest)
   :after elisp-mode
   :init (require 'tempo-extra-elisp))
 
 (use-package tempo-extra
-  :vc "https://github.com/xFA25E/tempo-extra"
+  :vc (:url "https://github.com/xFA25E/tempo-extra" :rev :newest)
   :after js
   :init (require 'tempo-extra-js))
 
 (use-package tempo-extra
-  :vc "https://github.com/xFA25E/tempo-extra"
+  :vc (:url "https://github.com/xFA25E/tempo-extra" :rev :newest)
   :after lisp-mode
   :init (require 'tempo-extra-lisp))
 
 (use-package tempo-extra
-  :vc "https://github.com/xFA25E/tempo-extra"
+  :vc (:url "https://github.com/xFA25E/tempo-extra" :rev :newest)
   :after nix-mode
   :init (require 'tempo-extra-nix))
 
 (use-package tempo-extra
-  :vc "https://github.com/xFA25E/tempo-extra"
+  :vc (:url "https://github.com/xFA25E/tempo-extra" :rev :newest)
   :after org
   :init (require 'tempo-extra-org))
 
 (use-package tempo-extra
-  :vc "https://github.com/xFA25E/tempo-extra"
+  :vc (:url "https://github.com/xFA25E/tempo-extra" :rev :newest)
   :after nix-ts-mode
   :init
   (require 'tempo-extra)
@@ -2991,6 +3007,8 @@ For ELEMENT see `tempo-define-template'."
   (define-advice with-editor-shell-command-read-args
       (:filter-args (args) prefix-prompt)
     (cons (concat "WE " (car args)) (cdr args))))
+
+(use-package xattr :vc (:url "https://github.com/xFA25E/xattr" :rev :newest))
 
 (use-package xdisp
   :custom

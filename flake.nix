@@ -90,7 +90,11 @@
       pkgs = import inputs.nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = [inputs.agenix.overlays.default inputs.self.overlays.default];
+        overlays = [
+          inputs.agenix.overlays.default
+          inputs.emacs-overlay.overlays.default
+          inputs.self.overlays.default
+        ];
       };
     in {
       apps = import ./apps.nix pkgs;
