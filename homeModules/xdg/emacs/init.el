@@ -7,6 +7,7 @@
 ;; TODO: deal intelligently with faces
 ;; TODO: see if you can parametrize image/video extensions
 ;; TODO: see what org modules are useful
+;; TODO: find a way to parse :vc packages
 
 ;;;; WINDOWS
 
