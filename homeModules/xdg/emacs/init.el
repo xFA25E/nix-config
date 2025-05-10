@@ -49,14 +49,16 @@
 (define-keymap :prefix 'load-command-map)
 (keymap-set ctl-x-map "C-l" 'load-command-map)
 
-(setq custom-file
-      (expand-file-name
-       (format-time-string "custom-garbage/%Y-%m-%d-%H-%M-%S.el")
-       (temporary-file-directory)))
-(setq use-package-always-defer t)
-(setq project-list-file (expand-file-name "emacs/project.list" (xdg-cache-home)))
-(setq package-archives nil)
-(setq package-selected-packages nil)
+(eval-and-compile
+  (setq custom-file
+        (expand-file-name
+         (format-time-string "custom-garbage/%Y-%m-%d-%H-%M-%S.el")
+         (temporary-file-directory)))
+  (setq use-package-always-defer t)
+  (setq project-list-file (expand-file-name "emacs/project.list" (xdg-cache-home)))
+  (setq package-archives nil)
+  (put 'package-archives 'standard-value '(nil))
+  (setq package-selected-packages nil))
 
 (when (eq 'windows-nt system-type)
   (setq package-archives
