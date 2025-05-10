@@ -513,19 +513,6 @@
         "type": "github"
       }
     },
-    "discord": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1746463844,
-        "narHash": "sha256-CM8rKMYNXm1jGtAutByOK4mNwuXNU9l/Z4YwjnrHhNU=",
-        "type": "tarball",
-        "url": "https://stable.dl2.discordapp.net/apps/linux/0.0.94/discord-0.0.94.tar.gz"
-      },
-      "original": {
-        "type": "tarball",
-        "url": "https://stable.dl2.discordapp.net/apps/linux/0.0.94/discord-0.0.94.tar.gz"
-      }
-    },
     "dmerge": {
       "inputs": {
         "nixlib": [
@@ -3111,7 +3098,6 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
-        "discord": "discord",
         "emacs-overlay": "emacs-overlay",
         "epkg-abbrev-hook": "epkg-abbrev-hook",
         "epkg-amded": "epkg-amded",

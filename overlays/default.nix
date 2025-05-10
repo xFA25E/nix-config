@@ -1,12 +1,11 @@
 inputs: {
   default = final: prev: let
     inherit (final) callPackage;
-    inherit (inputs) discord stumpwm grobi;
+    inherit (inputs) stumpwm grobi;
   in {
     brave-incognito = callPackage ./brave-incognito.nix {};
     browser = callPackage ./browser.nix {};
     cl-hyperspec = callPackage ./cl-hyperspec.nix {};
-    discord = prev.discord.override {src = discord;};
     dmenu = import ./dmenu.nix final prev;
     emacsPackagesFor = import ./emacsPackages final prev;
     extract_eml = callPackage ./extract_eml.nix {};
