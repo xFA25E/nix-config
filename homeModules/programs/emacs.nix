@@ -9,7 +9,8 @@
       config = ./../xdg/emacs/init.el;
       package = pkgs.emacs;
       extraEmacsPackages = epkgs:
-        map (flake: inputs."epkg-${flake}".packages.${pkgs.system}.default) [
+        [epkgs.treesit-grammars.with-all-grammars]
+        ++ map (flake: inputs."epkg-${flake}".packages.${pkgs.system}.default) [
           "amded"
           "cyrillic-dvorak-im"
           "dired-atool-transient"
