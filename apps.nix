@@ -13,11 +13,11 @@ pkgs: {
       sudo -A nixos-rebuild switch --print-build-logs --flake ~/Documents/projects/nix-config
     '');
   };
-  deploySvarog = {
+  deployVeles = {
     type = "app";
-    program = toString (pkgs.writeShellScript "deploySvarog" ''
+    program = toString (pkgs.writeShellScript "deployVeles" ''
       export NIX_SSHOPTS=-t
-      nixos-rebuild -L switch --flake .#svarog --target-host svarog \
+      nixos-rebuild -L switch --flake .#veles --target-host veles \
                               --use-remote-sudo --print-build-logs
     '');
   };
