@@ -278,20 +278,6 @@ See `browse-url' for URL and ARGS."
            (answer (read-answer (concat url " ") answers)))
       (apply (nth 3 (assoc answer answers)) url args))))
 
-(use-package buffer
-  :custom
-  (fill-column 80)
-  (indicate-buffer-boundaries 'left)
-  (indicate-empty-lines t)
-  (tab-width 4)
-  (truncate-lines t)
-
-  :hook ((csharp-mode csharp-ts-mode) . set-fill-column-in-csharp)
-  :config
-  (defun set-fill-column-in-csharp ()
-    "Set `fill-column'."
-    (setq-local fill-column 120)))
-
 (use-package async-bytecomp
   :ensure async
   :after bytecomp
@@ -493,11 +479,8 @@ For EDIT-COMMAND see `recompile'."
 
   (defun csharp-ts-mode-enable-clean-RETs ()
     "Enable by buffer-local before-save hook."
-    (add-hook 'before-save-hook 'csharp-ts-mode-clean-RETs nil t)))
+    (add-hook 'before-save-hook 'csharp-ts-mode-clean-RETs nil t))
 
-(use-package csharp-mode
-  :disabled t
-  :config
   (setq csharp-ts-mode--font-lock-settings
         (treesit-font-lock-rules
          :language 'c-sharp
@@ -917,8 +900,6 @@ For MARKER-CHAR see `dired-mark-extension'."
   :ensure t
   :bind (:map ctl-x-map ("E" . edit-indirect-region)))
 
-(use-package editfns :custom (user-full-name "Valeriy Litkovskyy"))
-
 (use-package eglot
   :ensure t
   :bind (:map eglot-mode-map ("C-c C-l" . eglot-code-actions))
@@ -995,9 +976,39 @@ See `xref-backend-apropos' docs for PATTERN."
   (setq elisp-flymake-byte-compile-load-path (cons "./" load-path)))
 
 (use-package emacs
-  :bind (:map ctl-x-map ("C-M-t" . transpose-regions))
-  :init (setq completion-ignore-case t)
-  :custom (create-lockfiles nil))
+  :bind
+  (:map ctl-x-map ("C-M-t" . transpose-regions))
+
+  :init
+  (setq completion-ignore-case t)
+
+  :hook
+  ((csharp-mode csharp-ts-mode) . (lambda () (setq-local fill-column 100)))
+
+  :custom
+  (create-lockfiles nil)
+  (enable-recursive-minibuffers t)
+  (fill-column 80)
+  (history-delete-duplicates t)
+  (history-length 1000)
+  (hscroll-step 1)
+  (indicate-buffer-boundaries 'left)
+  (indicate-empty-lines t)
+  (max-mini-window-height 0.5)
+  (minibuffer-prompt-properties '(read-only t cursor-intangible t face minibuffer-prompt))
+  (mode-line-compact 'long)
+  (read-buffer-completion-ignore-case t)
+  (read-minibuffer-restore-windows nil)
+  (scroll-conservatively 10000)
+  (scroll-step 1)
+  (tab-width 4)
+  (translate-upper-case-key-bindings nil)
+  (truncate-lines t)
+  (undo-limit 200000)
+  (undo-strong-limit 300000)
+  (use-dialog-box nil)
+  (user-full-name "Valeriy Litkovskyy")
+  (x-stretch-cursor t))
 
 (use-package embark
   :ensure t
@@ -1076,7 +1087,7 @@ See `xref-backend-apropos' docs for PATTERN."
   (:map load-command-map
         ("C-f" . load-file)
         ("C-l" . load-library))
-  (:map ctl-x-map ("C-z" . find-sibling-file))
+  (:map ctl-x-map ("C-u" . find-sibling-file))
   (:map ctl-x-x-map ("R" . rename-visited-file))
 
   :custom
@@ -1310,14 +1321,15 @@ See `xref-backend-apropos' docs for PATTERN."
   :after nix-ts-mode
   :bind (:map nix-ts-mode-map ("C-c C-x" . flymake-collection-statix-fix)))
 
-(use-package fns :custom (use-dialog-box nil))
-
 (use-package frame
   :custom
   (blink-cursor-mode nil)
   (menu-bar-mode nil)
   (tool-bar-mode nil)
-  (use-system-tooltips nil))
+  (use-system-tooltips nil)
+
+  :config
+  (keymap-unset  ctl-x-map "C-z" t))
 
 (use-package gdb-mi
   :custom
@@ -1439,8 +1451,6 @@ See `xref-backend-apropos' docs for PATTERN."
 (use-package ispell
   :hook (tex-mode . (lambda () (setq-local ispell-parser 'tex)))
   :custom (ispell-program-name "enchant-2"))
-
-(use-package keyboard :custom (translate-upper-case-key-bindings nil))
 
 (use-package js
   :custom
@@ -1577,15 +1587,6 @@ See `xref-backend-apropos' docs for PATTERN."
        (* (or "R" "RE" "Re" "Ris")
           (* "[" (* digit) "]")
           (? " ") ":" (* blank)))))
-
-(use-package minibuf
-  :custom
-  (enable-recursive-minibuffers t)
-  (history-delete-duplicates t)
-  (history-length 1000)
-  (minibuffer-prompt-properties '(read-only t cursor-intangible t face minibuffer-prompt))
-  (read-buffer-completion-ignore-case t)
-  (read-minibuffer-restore-windows nil))
 
 (use-package minibuffer
   :init
@@ -2180,7 +2181,7 @@ build."
   :custom (org-html-htmlize-output-type 'css))
 
 (use-package ox-odt
-  :disabled t
+  :disabled
   :ensure org
   :config
   (define-advice org-odt-export-to-odt (:around (fn &rest args) ignore-errors)
@@ -2575,6 +2576,7 @@ ARG as in `move-beginning-of-line'."
   :hook sql-mode)
 
 (use-package startup
+  :init (provide 'startup)
   :custom
   (auto-save-list-file-prefix
    (expand-file-name "emacs/auto-saves-list/.saves-" (xdg-cache-home)))
@@ -2887,18 +2889,13 @@ For ELEMENT see `tempo-define-template'."
   (setf (alist-get 'c-sharp treesit-language-source-alist) '("https://github.com/tree-sitter/tree-sitter-c-sharp"))
   (setf (alist-get 'json treesit-language-source-alist) '("https://github.com/tree-sitter/tree-sitter-json")))
 
-(use-package undo
-  :custom
-  (undo-limit 200000)
-  (undo-strong-limit 300000))
-
 (use-package uniquify :custom (uniquify-ignore-buffers-re (rx bol "*")))
 
 (use-package url
   :custom
   (url-configuration-directory (expand-file-name "emacs/url/" (xdg-cache-home))))
 
-(use-package url-handles :custom (url-handler-mode t))
+(use-package url-handlers :custom (url-handler-mode t))
 
 (use-package url-parse
   :config
@@ -3007,15 +3004,6 @@ For ELEMENT see `tempo-define-template'."
     (cons (concat "WE " (car args)) (cdr args))))
 
 (use-package xattr :vc (:url "https://github.com/xFA25E/xattr" :rev :newest))
-
-(use-package xdisp
-  :custom
-  (hscroll-step 1)
-  (max-mini-window-height 0.5)
-  (mode-line-compact 'long)
-  (scroll-conservatively 10000)
-  (scroll-step 1)
-  (x-stretch-cursor t))
 
 (use-package xref
   :bind
