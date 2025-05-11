@@ -1966,8 +1966,7 @@ build."
   :ensure notmuch
   :custom
   (notmuch-fcc-dirs
-   '(("polimi\\.it" . "polimi/sent +sent +polimi")
-     ("litkov\\.one" . "litkov/sent +sent +litkov")
+   '(("litkov\\.one" . "litkov/sent +sent +litkov")
      ("nonsolocodice\\.it" . "nonsolocodice/sent +sent +nonsolocodice"))))
 
 (use-package notmuch-mua

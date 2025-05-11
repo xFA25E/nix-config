@@ -41,6 +41,10 @@
         aliases = ["postmaster@litkov.one" "valery@litkov.one"];
         hashedPasswordFile = config.age.secrets."mail".path;
       };
+      "polimi@litkov.one" = {
+        aliases = [];
+        hashedPasswordFile = config.age.secrets."mail".path;
+      };
     };
 
     mailboxes = {

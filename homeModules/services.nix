@@ -21,7 +21,7 @@
     export PATH="${mailPaths}''${PATH:+:}$PATH"
     export NOTMUCH_CONFIG=${escapeShellArg NOTMUCH_CONFIG}
     notmuch new
-    count="$(notmuch search --output=files tag:unread | wc -l)"
+    count="$(notmuch search tag:unread | wc -l)"
     if test 0 -ne "$count"; then
       notify-send "eMail" "You have $count new emails."
     fi

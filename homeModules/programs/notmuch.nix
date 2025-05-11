@@ -51,8 +51,13 @@ in {
 
         # polimi rules
         notmuch tag +polimi -- 'path:polimi/**'
-        notmuch tag +inbox -- 'path:polimi/inbox/**'
-        notmuch tag +sent  -- 'path:polimi/sent/**'
+        notmuch tag +archive -- 'path:polimi/archive/**'
+        notmuch tag +drafts  -- 'path:polimi/drafts/**'
+        notmuch tag +flagged -- 'path:polimi/flagged/**'
+        notmuch tag +inbox  -- 'path:polimi/inbox/**'
+        notmuch tag +sent -- 'path:polimi/sent/**'
+        notmuch tag +spam  -- 'path:polimi/spam/**'
+        notmuch tag +trash  -- 'path:polimi/trash/**'
 
         ## spam rules
         notmuch tag +spam -inbox -- tag:new AND tag:polimi AND subject:politamtam

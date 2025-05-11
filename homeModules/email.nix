@@ -61,20 +61,25 @@ in {
       };
 
       "polimi" = {
-        address = "valeriy.litkovskyy@mail.polimi.it";
-        aliases = ["10622800@polimi.it"];
+        address = "polimi@litkov.one";
+        aliases = ["valeriy.litkovskyy@mail.polimi.it" "10622800@polimi.it"];
 
         imap = {
-          host = "outlook.office365.com";
+          host = "mail.litkov.one";
           tls.enable = true;
         };
 
         mbsync = {
-          enable = false;
+          enable = true;
           groups."polimi" = {
             channels = {
+              "archive" = makeChannel "Archive" "archive";
+              "drafts" = makeChannel "Drafts" "drafts";
+              "flagged" = makeChannel "Flagged" "flagged";
               "inbox" = makeChannel "INBOX" "inbox";
-              "sent" = makeChannel "Sent Items" "sent";
+              "sent" = makeChannel "Sent" "sent";
+              "spam" = makeChannel "Junk" "spam";
+              "trash" = makeChannel "Trash" "trash";
             };
           };
         };
@@ -85,19 +90,16 @@ in {
         };
 
         notmuch.enable = true;
-        passwordCommand = "${pass} show mail/polimi | ${head} -n1";
+        passwordCommand = "${pass} show khors/val";
 
         realName = "Valeriy Litkovskyy";
 
         smtp = {
-          host = "smtp.office365.com";
-          tls = {
-            enable = true;
-            useStartTls = true;
-          };
+          host = "mail.litkov.one";
+          tls.enable = true;
         };
 
-        userName = "10622800@polimi.it";
+        userName = "polimi@litkov.one";
       };
 
       "nonsolocodice" = {
