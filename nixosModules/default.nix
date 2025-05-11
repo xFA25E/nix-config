@@ -1,5 +1,6 @@
 {
   base = import ./base.nix;
+  bluetooth = import ./bluetooth.nix;
   home = import ./home.nix;
   nvidia = import ./nvidia.nix;
   sshd = import ./sshd.nix;

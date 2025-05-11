@@ -9,6 +9,7 @@
 }: {
   imports = [
     inputs.self.nixosModules.base
+    inputs.self.nixosModules.bluetooth
     inputs.self.nixosModules.home
     inputs.self.nixosModules.x
     inputs.self.nixosModules.zsa
@@ -55,10 +56,7 @@
     };
   };
 
-  hardware = {
-    cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-    bluetooth.enable = true;
-  };
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   networking = {
     hostName = "svarog";
@@ -67,7 +65,7 @@
   };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  services.blueman.enable = true;
+
   swapDevices = [{device = "/swap/swapfile";}];
   system.stateVersion = "24.11";
 }
