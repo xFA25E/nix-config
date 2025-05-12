@@ -167,7 +167,7 @@
   (setf (alist-get 'csharpier apheleia-formatters) (list "dotnet-csharpier"))
   (setf (alist-get 'xmllint apheleia-formatters) (list "xmllint" "--format" "-" "--pretty" "2"))
 
-  (setf (alist-get 'nxml-mode apheleia-mode-alist) 'xmllint)
+  ;; (setf (alist-get 'nxml-mode apheleia-mode-alist) 'xmllint)
   (setf (alist-get 'csharp-mode apheleia-mode-alist) 'csharpier)
   (setf (alist-get 'csharp-ts-mode apheleia-mode-alist) 'csharpier)
   (setf (alist-get 'nix-mode apheleia-mode-alist) 'alejandra)
@@ -913,17 +913,19 @@ For MARKER-CHAR see `dired-mark-extension'."
   (eglot-sync-connect nil)
 
   :config
-  (defun eglot-csharp-server-program (_)
-    "Return a command for csharp language server."
-    (let* ((files (project-files (project-current)))
-           (slns (cl-remove (rx ".sln" eos) files :test-not #'string-match-p))
-           (sln (if (cdr slns)
-                    (completing-read "Select solution: " slns nil t)
-                  (car slns))))
-      (list "CSharpLanguageServer" "-s" sln)))
+  ;; (defun eglot-csharp-server-program (_)
+  ;;   "Return a command for csharp language server."
+  ;;   (let* ((files (project-files (project-current)))
+  ;;          (slns (cl-remove (rx ".sln" eos) files :test-not #'string-match-p))
+  ;;          (sln (if (cdr slns)
+  ;;                   (completing-read "Select solution: " slns nil t)
+  ;;                 (car slns))))
+  ;;     (list "csharp-ls" "-s" sln)))
 
   (add-to-list 'eglot-server-programs '(js-ts-mode . ("typescript-language-server" "--tsserver-path" "tsserver" "--stdio")))
-  (add-to-list 'eglot-server-programs '(csharp-mode . eglot-csharp-server-program))
+  ;; (add-to-list 'eglot-server-programs '(csharp-ts-mode . eglot-csharp-server-program))
+  (add-to-list 'eglot-server-programs '(csharp-ts-mode . ("OmniSharp" "-lsp")))
+  ;; (add-to-list 'eglot-server-programs '(csharp-ts-mode . ("csharp-ls")))
   (add-to-list 'eglot-stay-out-of 'eldoc-documentation-strategy)
 
   (define-advice eglot-xref-backend (:override () dumb) 'eglot+dumb)
@@ -1104,6 +1106,10 @@ See `xref-backend-apropos' docs for PATTERN."
             (rx (backref 1) ".axaml"))
       (list (rx (group file-name) ".axaml" eos)
             (rx (backref 1) ".axaml.cs"))
+      (list (rx "ViewModels/" (group file-name) "ViewModel.cs" eos)
+            (rx "Views/" (backref 1) ".axaml"))
+      (list (rx "Views/" (group file-name) ".axaml" eos)
+            (rx "ViewModels/" (backref 1) "ViewModel.cs"))
       (list (rx "UserControls/Dialog/" (group file-name) ".xaml" eos)
             (rx "ViewModels/" (backref 1) "ViewModel.cs"))
       (list (rx "UserControls/" (group file-name) "View.xaml" eos)
@@ -2597,7 +2603,8 @@ ARG as in `move-beginning-of-line'."
   js-ts-mode
   nix-mode nix-ts-mode
   php-mode
-  rust-ts-mode)
+  rust-ts-mode
+  nxml-mode)
 
 (use-package tab-bar
   :bind
