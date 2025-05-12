@@ -2,7 +2,7 @@
   hardware = {
     graphics = {
       enable = true;
-      extraPackages = with pkgs; [nvidia-vaapi-driver];
+      # extraPackages = with pkgs; [nvidia-vaapi-driver];
     };
     nvidia = {
       open = true;
