@@ -7,6 +7,7 @@
   ...
 }: {
   imports = [
+    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480
     inputs.self.nixosModules.base
     inputs.self.nixosModules.bluetooth
     inputs.self.nixosModules.home

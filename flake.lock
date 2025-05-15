@@ -2338,6 +2338,22 @@
         "type": "github"
       }
     },
+    "nixos-hardware": {
+      "locked": {
+        "lastModified": 1747129300,
+        "narHash": "sha256-L3clA5YGeYCF47ghsI7Tcex+DnaaN/BbQ4dR2wzoiKg=",
+        "owner": "NixOS",
+        "repo": "nixos-hardware",
+        "rev": "e81fd167b33121269149c57806599045fd33eeed",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "master",
+        "repo": "nixos-hardware",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1746557022,
@@ -3113,6 +3129,7 @@
         "grobi": "grobi",
         "home-manager": "home-manager_2",
         "nix-colors": "nix-colors",
+        "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
         "nur": "nur",
         "simple-nixos-mailserver": "simple-nixos-mailserver",

@@ -64,6 +64,8 @@
 
     nix-colors.url = "github:Misterio77/nix-colors";
 
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
     nur.url = "github:nix-community/NUR";
 
     simple-nixos-mailserver.inputs.nixpkgs.follows = "nixpkgs";
