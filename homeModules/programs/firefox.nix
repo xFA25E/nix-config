@@ -15,6 +15,11 @@
             url = "https://duckduckgo.com/?q=%s&kk=-1&kah=it-it&kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&kak=-1&kax=-1&km=l";
           }
           {
+            keyword = ":dotnet";
+            name = "dotnet";
+            url = "https://learn.microsoft.com/en-us/dotnet/api/?term=%s";
+          }
+          {
             keyword = ":gh";
             name = "github";
             url = "https://github.com/search?q=%s";
@@ -58,6 +63,11 @@
             keyword = ":nsp";
             name = "nixpkgs-search-packages";
             url = "https://search.nixos.org/packages?query=%s";
+          }
+          {
+            keyword = ":nuget";
+            name = "nuget";
+            url = "https://www.nuget.org/packages?q=%s";
           }
           {
             keyword = ":os";
