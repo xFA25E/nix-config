@@ -1102,14 +1102,14 @@ See `xref-backend-apropos' docs for PATTERN."
   (find-sibling-rules
    (rx-let ((file-name (+ (not "/"))))
      (list
-      (list (rx (group file-name) ".axaml.cs" eos)
-            (rx (backref 1) ".axaml"))
-      (list (rx (group file-name) ".axaml" eos)
-            (rx (backref 1) ".axaml.cs"))
       (list (rx "ViewModels/" (group file-name) "ViewModel.cs" eos)
             (rx "Views/" (backref 1) ".axaml"))
       (list (rx "Views/" (group file-name) ".axaml" eos)
             (rx "ViewModels/" (backref 1) "ViewModel.cs"))
+      (list (rx (group file-name) ".axaml.cs" eos)
+            (rx (backref 1) ".axaml"))
+      (list (rx (group file-name) ".axaml" eos)
+            (rx (backref 1) ".axaml.cs"))
       (list (rx "UserControls/Dialog/" (group file-name) ".xaml" eos)
             (rx "ViewModels/" (backref 1) "ViewModel.cs"))
       (list (rx "UserControls/" (group file-name) "View.xaml" eos)
@@ -1624,6 +1624,22 @@ See `xref-backend-apropos' docs for PATTERN."
   :bind
   (:map ctl-x-map ("o" . duplicate-dwim))
   (:repeat-map duplicate-dwim-repeat-map ("o" . duplicate-dwim)))
+
+(use-package misearch
+  :config
+  (define-advice multi-isearch-read-files (:override () files-equal)
+    (let* ((files (list (read-file-name "First file to search: "
+                                        default-directory
+                                        buffer-file-name)))
+           (file nil))
+      (while (not (file-equal-p
+                   (setq file (read-file-name
+                               "Next file to search (RET to end): "
+                               default-directory
+                               default-directory))
+                   default-directory))
+        (cl-pushnew file files :test #'file-equal-p))
+      (nreverse files))))
 
 (use-package mouse :custom (context-menu-mode t))
 
@@ -2598,7 +2614,7 @@ ARG as in `move-beginning-of-line'."
 
 (use-package subword
   :hook
-  csharp-mode
+  csharp-mode csharp-ts-mode
   java-mode
   js-ts-mode
   nix-mode nix-ts-mode
