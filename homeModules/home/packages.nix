@@ -28,7 +28,6 @@
       calibre
       cloc
       cpulimit
-      discord
       djvulibre
       dmenu
       enchant
@@ -99,6 +98,7 @@
       transmission_3
       udiskie
       unzip
+      vesktop
       video_seconds
       wget
       woof

@@ -924,8 +924,6 @@ For MARKER-CHAR see `dired-mark-extension'."
 
   (add-to-list 'eglot-server-programs '(js-ts-mode . ("typescript-language-server" "--tsserver-path" "tsserver" "--stdio")))
   ;; (add-to-list 'eglot-server-programs '(csharp-ts-mode . eglot-csharp-server-program))
-  (add-to-list 'eglot-server-programs '(csharp-ts-mode . ("OmniSharp" "-lsp")))
-  ;; (add-to-list 'eglot-server-programs '(csharp-ts-mode . ("csharp-ls")))
   (add-to-list 'eglot-stay-out-of 'eldoc-documentation-strategy)
 
   (define-advice eglot-xref-backend (:override () dumb) 'eglot+dumb)
@@ -1077,7 +1075,7 @@ See `xref-backend-apropos' docs for PATTERN."
 
 (use-package faces
   :custom-face
-  (default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 98 :width normal :foundry "UKWN" :family "Iosevka"))))
+  (default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 100 :width normal :foundry "UKWN" :family "Iosevka"))))
   (header-line ((t (:inherit default :background "grey90" :foreground "grey20"))))
   (mode-line ((t (:inherit default :background "white smoke" :foreground "black" :box (:line-width (1 . 1) :color "grey75") :height 0.83))))
   (mode-line-inactive ((t (:inherit mode-line :background "dark gray" :foreground "grey20" :weight light))))

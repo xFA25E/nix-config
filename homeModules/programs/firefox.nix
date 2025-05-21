@@ -103,6 +103,7 @@
 
         extensions = with pkgs.nur.repos.rycee.firefox-addons; [
           i-dont-care-about-cookies
+          keepa
           ublock-origin
           youtube-recommended-videos
           tab-session-manager
