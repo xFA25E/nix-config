@@ -68,6 +68,7 @@
       p7zip
       pandoc
       parted
+      pavucontrol
       pciutils
       pdftk
       perlPackages.JSONPP
