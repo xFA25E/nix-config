@@ -673,7 +673,15 @@ For EDIT-COMMAND see `recompile'."
            (endregion_directive
             (preproc_message) @font-lock-variable-use-face)))))
 
+(use-package csharp-mode
+  :after files
+  :init (setf (alist-get 'csharp-mode major-mode-remap-alist) 'csharp-ts-mode))
+
 (use-package csproj-mode :ensure t)
+
+(use-package css-mode
+  :after files
+  :init (setf (alist-get 'css-mode major-mode-remap-alist) 'css-ts-mode))
 
 (use-package csv-mode :ensure t)
 
@@ -1129,14 +1137,6 @@ See `xref-backend-apropos' docs for PATTERN."
             (rx (backref 1) "ViewModel.cs")
             (rx (backref 1) ".xaml.cs")))))
   (kept-new-versions 10)
-  (major-mode-remap-alist
-   '((csharp-mode . csharp-ts-mode)
-     (css-mode . css-ts-mode)
-     (javascript-mode . js-ts-mode)
-     (js-mode . js-ts-mode)
-     (js-json-mode . json-ts-mode)
-     (nix-mode . nix-ts-mode)
-     (sh-mode . bash-ts-mode)))
   (safe-local-eval-forms
    '((add-hook 'write-file-hooks 'time-stamp)
      (add-hook 'write-file-functions 'time-stamp)
@@ -1463,9 +1463,19 @@ See `xref-backend-apropos' docs for PATTERN."
   :config
   (keymap-unset js-ts-mode-map "M-." t))
 
+(use-package js
+  :after files
+  :init
+  (setf (alist-get 'js-mode major-mode-remap-alist) 'js-ts-mode)
+  (setf (alist-get 'javascript-mode major-mode-remap-alist) 'js-ts-mode))
+
 (use-package json-navigator :ensure t)
 
 (use-package json-ts-mode :mode (rx "flake.lock" eos))
+
+(use-package json-ts-mode
+  :after files
+  :init (setf (alist-get 'js-json-mode major-mode-remap-alist) 'json-ts-mode))
 
 (use-package ledger-init
   :ensure ledger-mode
@@ -1931,7 +1941,11 @@ build."
   :ensure nix-mode
   :bind (:map mode-specific-map ("T" . nix-store-show-path)))
 
-(use-package nix-ts-mode :ensure t)
+(use-package nix-ts-mode
+  :ensure t
+  :when (package-installed-p 'nix-mode)
+  :after files
+  :init (setf (alist-get 'nix-mode major-mode-remap-alist) 'nix-ts-mode))
 
 (use-package notmuch
   :ensure t
@@ -2468,6 +2482,10 @@ Remove duplicates.  Remove inexistent files from
 
 (use-package sh-script
   :hook ((bash-ts-mode sh-mode) . sh-electric-here-document-mode))
+
+(use-package sh-script
+  :after files
+  :init (setf (alist-get 'sh-mode major-mode-remap-alist) 'bash-ts-mode))
 
 (use-package shell
   :bind
