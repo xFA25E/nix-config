@@ -117,7 +117,10 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
-    nur.url = "github:nix-community/NUR";
+    nur = {
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:nix-community/NUR";
+    };
 
     simple-nixos-mailserver = {
       inputs = {
