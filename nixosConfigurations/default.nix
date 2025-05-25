@@ -1,10 +1,10 @@
-inputs: let
+inputs: system: pkgs: let
   username = "val";
   mkNixos = module:
     inputs.nixpkgs.lib.nixosSystem {
+      inherit system pkgs;
       modules = [module];
       specialArgs = {inherit inputs username;};
-      system = null;
     };
 in {
   khors = mkNixos ./khors;

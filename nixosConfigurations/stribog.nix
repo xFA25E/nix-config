@@ -67,8 +67,6 @@
     };
   };
 
-  nixpkgs.system = lib.mkDefault "x86_64-linux";
-
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
 
   swapDevices = [{device = "/dev/disk/by-label/swap";}];

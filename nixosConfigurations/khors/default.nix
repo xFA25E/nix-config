@@ -142,12 +142,6 @@
     };
   };
 
-  nixpkgs = {
-    config.allowUnfree = true;
-    overlays = [inputs.self.overlays.default];
-    system = "x86_64-linux";
-  };
-
   programs.git.enable = true;
 
   security.acme = {

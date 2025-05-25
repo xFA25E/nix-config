@@ -80,8 +80,6 @@
     };
   };
 
-  nixpkgs.config.allowUnfree = true;
-
   programs.bash.promptInit = ''
     PS1='\n$(e=$?;[[ $e != 0 ]]&&printf "%s " "$e")\u $(p=''${PWD#"$HOME"};[[ $PWD != "$p" ]]&&printf "~";IFS=/;for q in ''${p:1};do printf "/%s" "''${q:0:1}";[[ ''${q:0:1} = . ]]&&printf "%s" "''${q:1:1}";done;[[ ''${q:0:1} != . ]]&&printf "%s" "''${q:1:1}";printf "%s" "''${q:2}") \$ '
   '';
