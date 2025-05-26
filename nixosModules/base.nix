@@ -115,6 +115,6 @@
   users.users.${username} = {
     initialHashedPassword = "";
     isNormalUser = true;
-    extraGroups = ["wheel" "networkmanager"];
+    extraGroups = ["wheel" "networkmanager" "docker"];
   };
 }
