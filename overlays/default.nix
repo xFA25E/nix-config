@@ -7,7 +7,7 @@ inputs: {
     browser = callPackage ./browser.nix {};
     cl-hyperspec = callPackage ./cl-hyperspec.nix {};
     dmenu = import ./dmenu.nix final prev;
-    emacsPackagesFor = import ./emacsPackages final prev;
+    # emacsPackagesFor = import ./emacsPackages final prev;
     extract_eml = callPackage ./extract_eml.nix {};
     filename_put_duration = callPackage ./filename_put_duration.nix {};
     format_seconds = callPackage ./format_seconds.nix {};

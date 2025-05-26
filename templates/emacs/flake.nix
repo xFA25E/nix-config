@@ -3,7 +3,7 @@
 
   inputs = {
     eldev.flake = false;
-    eldev.url = "github:doublep/eldev/1.3.1";
+    eldev.url = "github:doublep/eldev/1.11.1";
     emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";

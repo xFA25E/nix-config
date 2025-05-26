@@ -3030,6 +3030,7 @@ For ELEMENT see `tempo-define-template'."
                  (window-height . fit-window-to-buffer)))))
   (next-screen-context-lines 10)
   (recenter-positions '(top middle bottom))
+  (switch-to-buffer-obey-display-actions t)
 
   :config
   (put 'other-window 'repeat-map nil))
