@@ -27,18 +27,12 @@ in {
     };
     gtk2.configLocation = "${config.xdg.cacheHome}/gtk-2.0/gtkrc";
     iconTheme = {
-      name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
+      name = "WhiteSur";
+      package = pkgs.whitesur-icon-theme;
     };
     theme = {
-      name = "Gruvbox-Light-Medium";
-      package = pkgs.nur.repos.rycee.materia-theme.override {
-        configBase16 = {
-          name = "Gruvbox-Light-Medium";
-          kind = "light";
-          colors = builtins.mapAttrs (_: color: {hex.rgb = color;}) palette;
-        };
-      };
+      name = "WhiteSur";
+      package = pkgs.whitesur-gtk-theme;
     };
   };
 
