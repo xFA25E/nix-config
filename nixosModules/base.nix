@@ -89,7 +89,6 @@
       enable = true;
       interval = "13:00";
       package = pkgs.plocate;
-      localuser = null;
     };
 
     nscd.enableNsncd = true;

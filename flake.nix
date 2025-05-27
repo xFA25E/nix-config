@@ -108,10 +108,10 @@
 
     home-manager = {
       inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:nix-community/home-manager/release-24.11";
+      url = "github:nix-community/home-manager/release-25.05";
     };
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
 
     nix-colors.url = "github:Misterio77/nix-colors";
 
@@ -125,9 +125,9 @@
     simple-nixos-mailserver = {
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        nixpkgs-24_11.follows = "nixpkgs";
+        nixpkgs-25_05.follows = "nixpkgs";
       };
-      url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-24.11";
+      url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-25.05";
     };
 
     stumpwm = {

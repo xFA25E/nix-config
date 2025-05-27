@@ -3,105 +3,108 @@
     enable = true;
     profiles = {
       default = {
-        bookmarks = [
-          {
-            keyword = ":bc";
-            name = "bitchute";
-            url = "https://www.bitchute.com/search/?query=%s";
-          }
-          {
-            keyword = ":d";
-            name = "duckduckgo";
-            url = "https://duckduckgo.com/?q=%s&kk=-1&kah=it-it&kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&kak=-1&kax=-1&km=l";
-          }
-          {
-            keyword = ":dotnet";
-            name = "dotnet";
-            url = "https://learn.microsoft.com/en-us/dotnet/api/?term=%s";
-          }
-          {
-            keyword = ":gh";
-            name = "github";
-            url = "https://github.com/search?q=%s";
-          }
-          {
-            keyword = ":gmaps";
-            name = "google-maps";
-            url = "https://www.google.com/maps/search/%s";
-          }
-          {
-            keyword = ":gtr";
-            name = "google-translate-to-russian";
-            url = "https://translate.google.com/?sl=auto&tl=ru&op=translate&text=%s";
-          }
-          {
-            keyword = ":gte";
-            name = "google-translate-to-english";
-            url = "https://translate.google.com/?sl=auto&tl=en&op=translate&text=%s";
-          }
-          {
-            keyword = ":gti";
-            name = "google-translate-to-italian";
-            url = "https://translate.google.com/?sl=auto&tl=it&op=translate&text=%s";
-          }
-          {
-            keyword = ":maband";
-            name = "metalarchivesband";
-            url = "https://www.metal-archives.com/search?searchString=%s&type=band_name";
-          }
-          {
-            keyword = ":meteo";
-            name = "ilmeteo";
-            url = "https://www.ilmeteo.it/meteo/cerca?citta=%s";
-          }
-          {
-            keyword = ":nso";
-            name = "nixpkgs-search-options";
-            url = "https://search.nixos.org/options?query=%s";
-          }
-          {
-            keyword = ":nsp";
-            name = "nixpkgs-search-packages";
-            url = "https://search.nixos.org/packages?query=%s";
-          }
-          {
-            keyword = ":nuget";
-            name = "nuget";
-            url = "https://www.nuget.org/packages?q=%s";
-          }
-          {
-            keyword = ":os";
-            name = "odysee";
-            url = "https://odysee.com/$/search?q=%s";
-          }
-          {
-            keyword = ":rt";
-            name = "rutracker";
-            url = "https://rutracker.net/forum/tracker.php?nm=%s";
-          }
-          {
-            keyword = ":sp";
-            name = "startpage";
-            url = "https://startpage.com/sp/search?query=%s&prfe=a715a36c09c1472e9d5d804b0ba9312716a96d474575edbfa5e7cb0c646b34216e65fa4ae420b5df58e6c8d3e420eb1771f23caa2663bb5435b01ebb741af66083a80b0bb3682e008b0e7e1126";
-          }
-          {
-            keyword = ":sx";
-            name = "searx";
-            url = "https://searx.be/?q=%s&preferences=eJxtVcuO2zoM_ZrrjTFFH4uuvChaXNwBCkzRpN0KtEQrrCXRleRk3K8vnUSOMncWMSKaOjw8fFhDRsuRMHUWA0ZwjYNgZ7DYYXj4sWsca3DroYE5s2Y_OczYWWbrsCEvnmqK_Lx0-zhj4zEf2HTfnnb7JsGACSHqQ_e2yQf02HHSEJuIaXY5KQ4q4Ell6Lt_wSVsDJOSl-yOGDsGOb7haJvzrYeUFyHi2JJmg8fGUILeoVEYLAXJ4N2HDx-flTqSQU7_vP88kh4hJaX8nEiL4ciQlUqsCVzr0RCIcYFgUK5d8xeLJSvAkHJt1Fo_5GOFbik76JWiLIeIxpD4n_VY3yZEMyFGpQZyZ4ujPkJc2hUyUaqxBydM46u3t3A95X7WI-ZrxEsB2snB0no-SgUrZ7949CzBcoSQnBTZ1PES_gng7y1rmVZd2_VxjREWgJt6oG3iuYqSeVw4czrwCOHm57hPGd_EVFAmf_2XMsQ8rR1ThV7gwFwbeMIQceJ0007KTRDW25VIJxrJQIb67oXxxnCIiG3iIZ8gYmsoos4iy2sSruRvOWDkE91pNpjIq6VQOoCUc31cwYo6G70-G7L2dmGI4GFtgqLu75OkVIcoEIVEQdhI5cVzcNLrd8QihZFAV6FfFKYwmEOSXNOh8rzoVRy2gdkENMa2BgcKlInDXdPW6sE0pVdgttQhriWWWT9jzgbDXd7T2HqKkYuWL_jf2JDOf_g-fc-_EMfa0lOw9bnM5jX8u-f_5b8dKdTdg5nZpdcqVBIr0FXwa802kNsolzKWSy_20DqAdMT2fjVYSS6TxzJMVynLssZwvwKNrIj1ZyufbU9Obhav1P0k_-BoRHXgPOKysnySmVOftEYp25enR1nCp0gZ5c1jOFcfVdKRnSu-lxWupBnHbY_3MjRJMpV9njZmJejuvGFWV3355iwqoZN5FMQdukFJII4ezn0mtv_2-2-7isc-gmy_qH58_ypW2XgYG-kTFOi_m0eMQg==";
-          }
-          {
-            keyword = ":ya";
-            name = "yandex";
-            url = "https://yandex.ru/search/?text=%s";
-          }
-          {
-            keyword = ":yt";
-            name = "youtube";
-            url = "https://www.youtube.com/results?search_query=%s";
-          }
-        ];
+        bookmarks = {
+          force = true;
+          settings = [
+            {
+              keyword = ":bc";
+              name = "bitchute";
+              url = "https://www.bitchute.com/search/?query=%s";
+            }
+            {
+              keyword = ":d";
+              name = "duckduckgo";
+              url = "https://duckduckgo.com/?q=%s&kk=-1&kah=it-it&kl=wt-wt&ks=m&kaj=m&kam=osm&kp=-2&kn=-1&kd=1&kw=s&kak=-1&kax=-1&km=l";
+            }
+            {
+              keyword = ":dotnet";
+              name = "dotnet";
+              url = "https://learn.microsoft.com/en-us/dotnet/api/?term=%s";
+            }
+            {
+              keyword = ":gh";
+              name = "github";
+              url = "https://github.com/search?q=%s";
+            }
+            {
+              keyword = ":gmaps";
+              name = "google-maps";
+              url = "https://www.google.com/maps/search/%s";
+            }
+            {
+              keyword = ":gtr";
+              name = "google-translate-to-russian";
+              url = "https://translate.google.com/?sl=auto&tl=ru&op=translate&text=%s";
+            }
+            {
+              keyword = ":gte";
+              name = "google-translate-to-english";
+              url = "https://translate.google.com/?sl=auto&tl=en&op=translate&text=%s";
+            }
+            {
+              keyword = ":gti";
+              name = "google-translate-to-italian";
+              url = "https://translate.google.com/?sl=auto&tl=it&op=translate&text=%s";
+            }
+            {
+              keyword = ":maband";
+              name = "metalarchivesband";
+              url = "https://www.metal-archives.com/search?searchString=%s&type=band_name";
+            }
+            {
+              keyword = ":meteo";
+              name = "ilmeteo";
+              url = "https://www.ilmeteo.it/meteo/cerca?citta=%s";
+            }
+            {
+              keyword = ":nso";
+              name = "nixpkgs-search-options";
+              url = "https://search.nixos.org/options?query=%s";
+            }
+            {
+              keyword = ":nsp";
+              name = "nixpkgs-search-packages";
+              url = "https://search.nixos.org/packages?query=%s";
+            }
+            {
+              keyword = ":nuget";
+              name = "nuget";
+              url = "https://www.nuget.org/packages?q=%s";
+            }
+            {
+              keyword = ":os";
+              name = "odysee";
+              url = "https://odysee.com/$/search?q=%s";
+            }
+            {
+              keyword = ":rt";
+              name = "rutracker";
+              url = "https://rutracker.net/forum/tracker.php?nm=%s";
+            }
+            {
+              keyword = ":sp";
+              name = "startpage";
+              url = "https://startpage.com/sp/search?query=%s&prfe=a715a36c09c1472e9d5d804b0ba9312716a96d474575edbfa5e7cb0c646b34216e65fa4ae420b5df58e6c8d3e420eb1771f23caa2663bb5435b01ebb741af66083a80b0bb3682e008b0e7e1126";
+            }
+            {
+              keyword = ":sx";
+              name = "searx";
+              url = "https://searx.be/?q=%s&preferences=eJxtVcuO2zoM_ZrrjTFFH4uuvChaXNwBCkzRpN0KtEQrrCXRleRk3K8vnUSOMncWMSKaOjw8fFhDRsuRMHUWA0ZwjYNgZ7DYYXj4sWsca3DroYE5s2Y_OczYWWbrsCEvnmqK_Lx0-zhj4zEf2HTfnnb7JsGACSHqQ_e2yQf02HHSEJuIaXY5KQ4q4Ell6Lt_wSVsDJOSl-yOGDsGOb7haJvzrYeUFyHi2JJmg8fGUILeoVEYLAXJ4N2HDx-flTqSQU7_vP88kh4hJaX8nEiL4ciQlUqsCVzr0RCIcYFgUK5d8xeLJSvAkHJt1Fo_5GOFbik76JWiLIeIxpD4n_VY3yZEMyFGpQZyZ4ujPkJc2hUyUaqxBydM46u3t3A95X7WI-ZrxEsB2snB0no-SgUrZ7949CzBcoSQnBTZ1PES_gng7y1rmVZd2_VxjREWgJt6oG3iuYqSeVw4czrwCOHm57hPGd_EVFAmf_2XMsQ8rR1ThV7gwFwbeMIQceJ0007KTRDW25VIJxrJQIb67oXxxnCIiG3iIZ8gYmsoos4iy2sSruRvOWDkE91pNpjIq6VQOoCUc31cwYo6G70-G7L2dmGI4GFtgqLu75OkVIcoEIVEQdhI5cVzcNLrd8QihZFAV6FfFKYwmEOSXNOh8rzoVRy2gdkENMa2BgcKlInDXdPW6sE0pVdgttQhriWWWT9jzgbDXd7T2HqKkYuWL_jf2JDOf_g-fc-_EMfa0lOw9bnM5jX8u-f_5b8dKdTdg5nZpdcqVBIr0FXwa802kNsolzKWSy_20DqAdMT2fjVYSS6TxzJMVynLssZwvwKNrIj1ZyufbU9Obhav1P0k_-BoRHXgPOKysnySmVOftEYp25enR1nCp0gZ5c1jOFcfVdKRnSu-lxWupBnHbY_3MjRJMpV9njZmJejuvGFWV3355iwqoZN5FMQdukFJII4ezn0mtv_2-2-7isc-gmy_qH58_ypW2XgYG-kTFOi_m0eMQg==";
+            }
+            {
+              keyword = ":ya";
+              name = "yandex";
+              url = "https://yandex.ru/search/?text=%s";
+            }
+            {
+              keyword = ":yt";
+              name = "youtube";
+              url = "https://www.youtube.com/results?search_query=%s";
+            }
+          ];
+        };
 
-        extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+        extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
           i-dont-care-about-cookies
           keepa
           ublock-origin
