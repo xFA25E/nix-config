@@ -1,6 +1,12 @@
 {username, ...}: {
   programs.dconf.enable = true;
 
+  qt = {
+    enable = true;
+    platformTheme = "gtk2";
+    style = "gtk2";
+  };
+
   services = {
     displayManager.defaultSession = "none";
     libinput.enable = true;
