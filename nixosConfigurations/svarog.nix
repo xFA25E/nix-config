@@ -94,15 +94,9 @@
       support32Bit = true;
     };
 
-    extraConfig.client."10-resample-quality"."context.properties"."resample.quality" = 4;
-
-    # TODO: configure parameters
-    # TODO: what's node.passive
-    # TODO: should i set audio.rate?
-    # TODO: what's media.class
-    # TODO: i've seen configs with audio.position
-    extraConfig.pipewire."99-input-denoising" = {
-      "context.modules" = [
+    extraConfig = {
+      client."10-resample-quality"."context.properties"."resample.quality" = 4;
+      pipewire."99-input-denoising"."context.modules" = [
         {
           "name" = "libpipewire-module-filter-chain";
           "args" = {
@@ -113,7 +107,7 @@
                 {
                   "type" = "ladspa";
                   "name" = "rnnoise";
-                  "plug-in" = "${pkgs.rnnoise-plugin}/lib/ladspa/librnnoise_ladspa.so";
+                  "plugin" = "${pkgs.rnnoise-plugin}/lib/ladspa/librnnoise_ladspa.so";
                   "label" = "noise_suppressor_mono";
                   "control" = {
                     "VAD Threshold (%)" = 50.0;
@@ -121,6 +115,15 @@
                     "Retroactive VAD Grace (ms)" = 0;
                   };
                 }
+                # {
+                #   "name" = "gain";
+                #   "type" = "ladspa";
+                #   "plugin" = "gain";
+                #   "label" = "volume";
+                #   "control" = {
+                #     "Gain (dB)" = 10.0;
+                #   };
+                # }
               ];
             };
             "capture.props" = {
@@ -137,26 +140,9 @@
         }
       ];
     };
-
-    # extraConfig.pipewire-pulse."99-rnnoise" = {
-    #   "context.modules" = [
-    #     {
-    #       name = "libpipewire-module-echo-cancel";
-    #       args = {
-    #         # Tipo di cancellazione: "webrtc" (default) o "rnnoise"
-    #         echo-cancel.source = "auto_source";
-    #         echo-cancel.sink = "auto_null";
-    #         use.hw-capture = false;
-    #         use.hw-playback = false;
-    #         # aec_method = "webrtc"; # oppure "rnnoise" se installato
-    #         aec_method = "rnnoise"; # oppure "rnnoise" se installato
-    #       };
-    #     }
-    #   ];
-    # };
   };
 
-  environment.systemPackages = [pkgs.rnnoise pkgs.helvum];
+  environment.systemPackages = [pkgs.rnnoise pkgs.helvum pkgs.qpwgraph];
 
   virtualisation.docker.enable = true;
   virtualisation.docker.storageDriver = "btrfs";
@@ -164,5 +150,4 @@
   #   enable = true;
   #   setSocketVariable = true;
   # };
-
 }
