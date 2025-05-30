@@ -84,34 +84,85 @@
 
   boot.kernelParams = ["usbcore.autosuspend=-1"];
 
+  security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     pulse.enable = true;
+    jack.enable = true;
+    alsa = {
+      enable = true;
+      support32Bit = true;
+    };
 
-    extraConfig.pipewire-pulse."99-rnnoise" = {
+    extraConfig.client."10-resample-quality"."context.properties"."resample.quality" = 4;
+
+    # TODO: configure parameters
+    # TODO: what's node.passive
+    # TODO: should i set audio.rate?
+    # TODO: what's media.class
+    # TODO: i've seen configs with audio.position
+    extraConfig.pipewire."99-input-denoising" = {
       "context.modules" = [
         {
-          name = "libpipewire-module-echo-cancel";
-          args = {
-            # Tipo di cancellazione: "webrtc" (default) o "rnnoise"
-            echo-cancel.source = "auto_source";
-            echo-cancel.sink = "auto_null";
-            use.hw-capture = false;
-            use.hw-playback = false;
-            # aec_method = "webrtc"; # oppure "rnnoise" se installato
-            aec_method = "rnnoise"; # oppure "rnnoise" se installato
+          "name" = "libpipewire-module-filter-chain";
+          "args" = {
+            "node.description" = "Noise Canceling source";
+            "media.name" = "Noise Canceling source";
+            "filter.graph" = {
+              "nodes" = [
+                {
+                  "type" = "ladspa";
+                  "name" = "rnnoise";
+                  "plug-in" = "${pkgs.rnnoise-plugin}/lib/ladspa/librnnoise_ladspa.so";
+                  "label" = "noise_suppressor_mono";
+                  "control" = {
+                    "VAD Threshold (%)" = 50.0;
+                    "VAD Grace Period (ms)" = 200;
+                    "Retroactive VAD Grace (ms)" = 0;
+                  };
+                }
+              ];
+            };
+            "capture.props" = {
+              "node.name" = "capture.rnnoise_source";
+              "node.passive" = true;
+              "audio.rate" = 48000;
+            };
+            "playback.props" = {
+              "node.name" = "rnnoise_source";
+              "media.class" = "Audio/Source";
+              "audio.rate" = 48000;
+            };
           };
         }
       ];
     };
+
+    # extraConfig.pipewire-pulse."99-rnnoise" = {
+    #   "context.modules" = [
+    #     {
+    #       name = "libpipewire-module-echo-cancel";
+    #       args = {
+    #         # Tipo di cancellazione: "webrtc" (default) o "rnnoise"
+    #         echo-cancel.source = "auto_source";
+    #         echo-cancel.sink = "auto_null";
+    #         use.hw-capture = false;
+    #         use.hw-playback = false;
+    #         # aec_method = "webrtc"; # oppure "rnnoise" se installato
+    #         aec_method = "rnnoise"; # oppure "rnnoise" se installato
+    #       };
+    #     }
+    #   ];
+    # };
   };
 
   environment.systemPackages = [pkgs.rnnoise pkgs.helvum];
 
   virtualisation.docker.enable = true;
   virtualisation.docker.storageDriver = "btrfs";
-  virtualisation.docker.rootless = {
-    enable = true;
-    setSocketVariable = true;
-  };
+  # virtualisation.docker.rootless = {
+  #   enable = true;
+  #   setSocketVariable = true;
+  # };
+
 }

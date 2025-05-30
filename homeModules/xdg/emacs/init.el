@@ -739,7 +739,7 @@ For MARKER-CHAR see `dired-mark-extension'."
   ;;     (list "csharp-ls" "-s" sln)))
 
   (add-to-list 'eglot-server-programs '(js-ts-mode . ("typescript-language-server" "--tsserver-path" "tsserver" "--stdio")))
-  ;; (add-to-list 'eglot-server-programs '(csharp-ts-mode . eglot-csharp-server-program))
+  (add-to-list 'eglot-server-programs `(csharp-ts-mode . ,(eglot-alternatives '(("OmniSharp" "-lsp") ("csharp-ls")))))
   (add-to-list 'eglot-stay-out-of 'eldoc-documentation-strategy)
 
   (define-advice eglot-xref-backend (:override () dumb) 'eglot+dumb)
