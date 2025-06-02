@@ -14,19 +14,19 @@
     welcomeText = ''
       Welcome to C# development environment!
 
-      !!! REMEMBER !!!
+      !!! REMEMBER TO CUSTOMIZE YOUR package NAME EVERYWHERE !!!
 
-      $ dotnet new <template> -n <name> -o src
+      $ dotnet new <template> -n <name> -o <src>
 
       $ dotnet new gitignore
 
       $ dotnet new sln
 
-      $ dotnet sln add src
+      $ dotnet sln add <src>
 
       $ dotnet format --include-generated *.sln
 
-      $ dos2unix *.sln src/*.csproj .gitignore
+      $ dos2unix *.sln <src>/*.csproj .gitignore
     '';
   };
   emacs = {
