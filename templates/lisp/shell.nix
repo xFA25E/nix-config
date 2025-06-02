@@ -1,8 +1,8 @@
 let
   pkgs = import <nixpkgs> {};
 
-  PROJECT_ROOT = builtins.toString ./.;
-  QUICKLISP_DIR = "${PROJECT_ROOT}/.quicklisp";
+  PRJ_ROOT = builtins.toString ./.;
+  QUICKLISP_DIR = "${PRJ_ROOT}/.quicklisp";
 
   quicklisp-lisp = builtins.fetchurl https://beta.quicklisp.org/quicklisp.lisp;
   quickstart = pkgs.writeShellScriptBin "quickstart" ''
@@ -37,11 +37,11 @@ let
   abcl = make-implementation "abcl" pkgs.abcl "--noinit --load ${init-lisp}";
 in
   pkgs.mkShell {
-    CL_SOURCE_REGISTRY = "${PROJECT_ROOT}:";
+    CL_SOURCE_REGISTRY = "${PRJ_ROOT}:";
     ASDF_OUTPUT_TRANSLATIONS = ''
       (:output-translations
        :ignore-inherited-configuration
-       (t ("${PROJECT_ROOT}" ".common-lisp" :implementation)))
+       (t ("${PRJ_ROOT}" ".common-lisp" :implementation)))
     '';
     buildInputs = [quickstart sbcl ecl ccl clisp abcl];
     shellHook = ''

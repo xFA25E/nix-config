@@ -50,8 +50,8 @@ mkShell {
   NIX_LD = "${stdenv.cc.libc_bin}/bin/ld.so";
 
   shellHook = ''
-    export PROJECT_ROOT=$PWD
+    export PRJ_ROOT=$PWD
 
-    echo Welcome to devshell at $PROJECT_ROOT
+    echo Welcome to devshell at $PRJ_ROOT
   '';
 }
