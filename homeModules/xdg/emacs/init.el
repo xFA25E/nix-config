@@ -2660,8 +2660,7 @@ For ELEMENT see `tempo-define-template'."
        (let ((count (car (process-lines "notmuch" "count" "tag:unread"))))
          (unless (string= "0" count) count)))))
   (display-time-mode t)
-  (display-time-string-forms
-   '((format-time-string "%a %b %e %H:%M" now) (if mail (concat " @" mail) "") " ")))
+  (display-time-string-forms '((if mail (concat "@" mail) "") " ")))
 
 (use-package tramp
   :bind (:map ctl-x-x-map ("T" . tramp-cleanup-all-buffers))
