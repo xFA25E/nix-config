@@ -116,4 +116,6 @@
     isNormalUser = true;
     extraGroups = ["wheel" "networkmanager" "docker"];
   };
+
+  programs.nix-ld.enable = true;
 }
