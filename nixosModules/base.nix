@@ -114,7 +114,7 @@
   users.users.${username} = {
     initialHashedPassword = "";
     isNormalUser = true;
-    extraGroups = ["wheel" "networkmanager" "docker"];
+    extraGroups = ["wheel" "networkmanager"];
   };
 
   programs.nix-ld.enable = true;

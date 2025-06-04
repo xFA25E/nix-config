@@ -14,10 +14,12 @@
     inputs.nixos-hardware.nixosModules.common-pc-ssd
     inputs.self.nixosModules.base
     inputs.self.nixosModules.bluetooth
+    inputs.self.nixosModules.docker
     inputs.self.nixosModules.home
+    inputs.self.nixosModules.nvidia
+    inputs.self.nixosModules.pipewire
     inputs.self.nixosModules.x
     inputs.self.nixosModules.zsa
-    inputs.self.nixosModules.nvidia
   ];
 
   boot = {
@@ -69,84 +71,4 @@
 
   swapDevices = [{device = "/swap/swapfile";}];
   system.stateVersion = "24.11";
-
-  # services.pipewire.extraConfig.pipewire = {
-  #   "99-custom" = {
-  #     "context.properties" = {
-  #       "default.clock.rate" = 44100;
-  #       "default.clock.quantum" = 1024;
-  #       "default.clock.min-quantum" = 32;
-  #       "default.clock.max-quantum" = 2048;
-  #     };
-  #   };
-  # };
-
-  boot.kernelParams = ["usbcore.autosuspend=-1"];
-
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    pulse.enable = true;
-    jack.enable = true;
-    alsa = {
-      enable = true;
-      support32Bit = true;
-    };
-
-    extraConfig = {
-      client."10-resample-quality"."context.properties"."resample.quality" = 4;
-      pipewire."99-input-denoising"."context.modules" = [
-        {
-          "name" = "libpipewire-module-filter-chain";
-          "args" = {
-            "node.description" = "Noise Canceling source";
-            "media.name" = "Noise Canceling source";
-            "filter.graph" = {
-              "nodes" = [
-                {
-                  "type" = "ladspa";
-                  "name" = "rnnoise";
-                  "plugin" = "${pkgs.rnnoise-plugin}/lib/ladspa/librnnoise_ladspa.so";
-                  "label" = "noise_suppressor_mono";
-                  "control" = {
-                    "VAD Threshold (%)" = 50.0;
-                    "VAD Grace Period (ms)" = 200;
-                    "Retroactive VAD Grace (ms)" = 0;
-                  };
-                }
-                # {
-                #   "name" = "gain";
-                #   "type" = "ladspa";
-                #   "plugin" = "gain";
-                #   "label" = "volume";
-                #   "control" = {
-                #     "Gain (dB)" = 10.0;
-                #   };
-                # }
-              ];
-            };
-            "capture.props" = {
-              "node.name" = "capture.rnnoise_source";
-              "node.passive" = true;
-              "audio.rate" = 48000;
-            };
-            "playback.props" = {
-              "node.name" = "rnnoise_source";
-              "media.class" = "Audio/Source";
-              "audio.rate" = 48000;
-            };
-          };
-        }
-      ];
-    };
-  };
-
-  environment.systemPackages = [pkgs.rnnoise pkgs.helvum pkgs.qpwgraph];
-
-  virtualisation.docker.enable = true;
-  virtualisation.docker.storageDriver = "btrfs";
-  # virtualisation.docker.rootless = {
-  #   enable = true;
-  #   setSocketVariable = true;
-  # };
 }
