@@ -10,6 +10,7 @@
     inputs.agenix.nixosModules.default
     inputs.simple-nixos-mailserver.nixosModules.mailserver
     "${modulesPath}/profiles/qemu-guest.nix"
+    inputs.self.nixosModules.base
     inputs.self.nixosModules.sshd
   ];
 
@@ -21,15 +22,12 @@
       kernelModules = ["nvme"];
     };
     loader.grub.device = "/dev/sda";
-    tmp.cleanOnBoot = true;
   };
 
   fileSystems."/" = {
     device = "/dev/sda2";
     fsType = "ext4";
   };
-
-  i18n.defaultLocale = "en_US.UTF-8";
 
   mailserver = {
     certificateScheme = "acme-nginx";
@@ -126,22 +124,6 @@
     usePredictableInterfaceNames = lib.mkForce true;
   };
 
-  nix = {
-    gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 30d";
-    };
-    registry.nixpkgs.flake = inputs.nixpkgs;
-    settings = {
-      auto-optimise-store = true;
-      bash-prompt-suffix = ''$(printf '\10\10')nix \$ $(:)'';
-      experimental-features = ["nix-command" "flakes"];
-      max-jobs = "auto";
-      nix-path = ["nixpkgs=${inputs.nixpkgs}"];
-    };
-  };
-
   programs.git.enable = true;
 
   security.acme = {
@@ -165,14 +147,5 @@
   };
 
   system.stateVersion = "22.11";
-
-  time.timeZone = "Europe/Rome";
-
-  users.users.${username} = {
-    extraGroups = ["wheel"];
-    initialHashedPassword = "";
-    isNormalUser = true;
-  };
-
   zramSwap.enable = true;
 }
