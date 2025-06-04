@@ -18,7 +18,6 @@
     inputs.self.nixosModules.x
     inputs.self.nixosModules.zsa
     inputs.self.nixosModules.nvidia
-    inputs.self.nixosModules.sshd
   ];
 
   boot = {
