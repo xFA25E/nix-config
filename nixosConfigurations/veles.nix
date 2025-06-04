@@ -11,6 +11,7 @@
     inputs.self.nixosModules.base
     inputs.self.nixosModules.bluetooth
     inputs.self.nixosModules.home
+    inputs.self.nixosModules.pipewire
     inputs.self.nixosModules.x
     inputs.self.nixosModules.sshd
   ];
