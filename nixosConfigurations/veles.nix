@@ -10,6 +10,7 @@
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480
     inputs.self.nixosModules.base
     inputs.self.nixosModules.bluetooth
+    inputs.self.nixosModules.desktop
     inputs.self.nixosModules.home
     inputs.self.nixosModules.pipewire
     inputs.self.nixosModules.x

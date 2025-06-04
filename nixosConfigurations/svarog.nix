@@ -14,6 +14,7 @@
     inputs.nixos-hardware.nixosModules.common-pc-ssd
     inputs.self.nixosModules.base
     inputs.self.nixosModules.bluetooth
+    inputs.self.nixosModules.desktop
     inputs.self.nixosModules.docker
     inputs.self.nixosModules.home
     inputs.self.nixosModules.nvidia

@@ -8,6 +8,7 @@
 }: {
   imports = [
     inputs.self.nixosModules.base
+    inputs.self.nixosModules.desktop
     inputs.self.nixosModules.home
     inputs.self.nixosModules.x
     inputs.self.nixosModules.zsa

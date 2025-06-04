@@ -1,46 +1,13 @@
 {
-  config,
   inputs,
-  lib,
-  modulesPath,
   pkgs,
   username,
   ...
 }: {
-  imports = [(modulesPath + "/installer/scan/not-detected.nix")];
-
   boot.tmp.cleanOnBoot = true;
-
-  console = {
-    font = "Lat2-Terminus16";
-    keyMap = "dvorak";
-  };
-
-  documentation.man.generateCaches = true;
-
-  fonts = {
-    enableGhostscriptFonts = true;
-    fontDir.enable = true;
-    fontconfig.defaultFonts.monospace = ["Iosevka"];
-    packages = with pkgs; [
-      corefonts
-      fira-code
-      font-awesome
-      hack-font
-      hasklig
-      inconsolata
-      iosevka
-      # nerdfonts
-      open-sans
-      source-code-pro
-      unifont
-    ];
-  };
-
   i18n.defaultLocale = "en_US.UTF-8";
 
   networking = {
-    firewall.allowedTCPPorts = [8080 8000];
     hosts = {
       "0.0.0.0" = [
         "api.rewards.brave.com"
@@ -84,31 +51,6 @@
     PS1='\n$(e=$?;[[ $e != 0 ]]&&printf "%s " "$e")\u $(p=''${PWD#"$HOME"};[[ $PWD != "$p" ]]&&printf "~";IFS=/;for q in ''${p:1};do printf "/%s" "''${q:0:1}";[[ ''${q:0:1} = . ]]&&printf "%s" "''${q:1:1}";done;[[ ''${q:0:1} != . ]]&&printf "%s" "''${q:1:1}";printf "%s" "''${q:2}") \$ '
   '';
 
-  services = {
-    locate = {
-      enable = true;
-      interval = "13:00";
-      package = pkgs.plocate;
-    };
-
-    nscd.enableNsncd = true;
-    udisks2.enable = true;
-  };
-
-  systemd.services = {
-    "loadkeys" = {
-      enable = true;
-      description = "Change caps to ctrl";
-      wantedBy = ["default.target"];
-      unitConfig = {
-        Type = "oneshot";
-      };
-      serviceConfig = {
-        ExecStart = "${pkgs.kbd}/bin/loadkeys ${./ctrl2caps.map}";
-      };
-    };
-  };
-
   time.timeZone = "Europe/Rome";
 
   users.users.${username} = {
@@ -116,6 +58,4 @@
     isNormalUser = true;
     extraGroups = ["wheel" "networkmanager"];
   };
-
-  programs.nix-ld.enable = true;
 }

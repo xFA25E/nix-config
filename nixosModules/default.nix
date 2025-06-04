@@ -1,6 +1,7 @@
 {
   base = import ./base.nix;
   bluetooth = import ./bluetooth.nix;
+  desktop = import ./desktop.nix;
   docker = import ./docker.nix;
   home = import ./home.nix;
   nvidia = import ./nvidia.nix;
