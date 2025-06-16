@@ -117,6 +117,7 @@
       ytdlm
       ytdlmp
       ytdlp
+      zbar
       zip
       zoom-us
     ]);

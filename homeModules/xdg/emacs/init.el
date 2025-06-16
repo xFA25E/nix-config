@@ -545,12 +545,13 @@ For EDIT-COMMAND see `recompile'."
                "mediainfo"
                "mpv -vo=drm"
                "sort_videos_by_duration *")
-         (list "\\.cue\\'" "setsid -f mpv --profile=gui * >/dev/null 2>&1")
+         (list (rx ".cue" eos) "setsid -f mpv --profile=gui * >/dev/null 2>&1")
          (list "\\.rar\\'"
                '(let ((dir (shell-quote-argument (file-name-sans-extension file))))
                   (concat "mkdir " dir "; unrar x * " dir)))
-         (list "\\.torrent\\'" "transmission-show")
-         (list "\\.epub\\'" "ebook-convert ? .mobi &")))
+         (list (rx ".torrent" eos) "transmission-show")
+         (list (rx ".epub" eos) "ebook-convert ? .mobi &")
+         (list (rx ".db" eos) "setsid -f sqlitebrowser ? >/dev/null 2>&1")))
   (dired-listing-switches "-lFAv --si --group-directories-first")
   (dired-ls-F-marks-symlinks t)
   (dired-recursive-copies 'always)
@@ -891,7 +892,7 @@ See `xref-backend-apropos' docs for PATTERN."
 
 (use-package faces
   :custom-face
-  (default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 100 :width normal :foundry "UKWN" :family "Iosevka"))))
+  (default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 115 :width normal :foundry "UKWN" :family "Iosevka"))))
   (header-line ((t (:inherit default :background "grey90" :foreground "grey20"))))
   (mode-line ((t (:inherit default :background "white smoke" :foreground "black" :box (:line-width (1 . 1) :color "grey75") :height 0.83))))
   (mode-line-inactive ((t (:inherit mode-line :background "dark gray" :foreground "grey20" :weight light))))
@@ -2388,15 +2389,27 @@ ARG as in `move-beginning-of-line'."
   (calendar-longitude 9.038057))
 
 (use-package sql
+  :commands sql-sqlite-mode
+
   :custom
   (sql-input-ring-file-name (expand-file-name "emacs/sql_history" (xdg-cache-home)))
   (sql-sqlite-options '("-column" "-header" "-cmd" "PRAGMA foreign_keys = ON;"))
-  (sql-sqlite-program "sqlite3"))
+  (sql-sqlite-program "sqlite3")
 
-(use-package sql-indent :ensure t)
+  :config
+  (defun sql-sqlite-mode ()
+    "Run `sql-mode' with sqlite product."
+    (interactive)
+    (let ((sql-product 'sqlite))
+      (sql-mode))))
+
+(use-package sql-indent
+  :ensure t
+  :hook (sql-mode . sqlind-minor-mode))
 
 (use-package sqlup-mode
   :ensure t
+  :after sql
   :hook sql-mode)
 
 (use-package startup
@@ -2419,6 +2432,7 @@ ARG as in `move-beginning-of-line'."
   csharp-mode csharp-ts-mode
   java-mode
   js-ts-mode
+  ledger-mode
   nix-mode nix-ts-mode
   php-mode
   rust-ts-mode
