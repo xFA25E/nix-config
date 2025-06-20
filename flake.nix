@@ -106,6 +106,11 @@
       url = "github:fd0/grobi";
     };
 
+    gmdb2 = {
+      flake = false;
+      url = "github:mdbtools/gmdb2";
+    };
+
     home-manager = {
       inputs.nixpkgs.follows = "nixpkgs";
       url = "github:nix-community/home-manager/release-25.05";

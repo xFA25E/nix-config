@@ -1441,6 +1441,22 @@
         "type": "github"
       }
     },
+    "gmdb2": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1630679965,
+        "narHash": "sha256-8G4S2NC5fPFoixg+auhhRi5grssAlHbgy81xjD/cjGE=",
+        "owner": "mdbtools",
+        "repo": "gmdb2",
+        "rev": "60335e09512b1da729aeba02be5ad5b84135d7b5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mdbtools",
+        "repo": "gmdb2",
+        "type": "github"
+      }
+    },
     "grobi": {
       "flake": false,
       "locked": {
@@ -3018,6 +3034,7 @@
         "epkg-tempo-extra": "epkg-tempo-extra",
         "epkg-xattr": "epkg-xattr",
         "fu": "fu",
+        "gmdb2": "gmdb2",
         "grobi": "grobi",
         "home-manager": "home-manager_2",
         "nix-colors": "nix-colors",

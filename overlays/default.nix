@@ -1,7 +1,7 @@
 inputs: {
   default = final: prev: let
     inherit (final) callPackage;
-    inherit (inputs) stumpwm grobi;
+    inherit (inputs) stumpwm grobi gmdb2;
   in {
     brave-incognito = callPackage ./brave-incognito.nix {};
     browser = callPackage ./browser.nix {};
@@ -54,5 +54,7 @@ inputs: {
     });
 
     # mahogany = callPackage ./mahogany.nix {};
+
+    gmdb2 = callPackage ./gmdb2.nix {src = gmdb2;};
   };
 }
