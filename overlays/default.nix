@@ -34,6 +34,7 @@ inputs: {
     sudo_askpass = callPackage ./sudo_askpass.nix {};
     video_seconds = callPackage ./video_seconds.nix {};
     wallpapers = callPackage ./wallpapers {};
+    watch_time = callPackage ./watch_time.nix {};
     ytdl = callPackage ./ytdl.nix {};
     ytdla = callPackage ./ytdla.nix {};
     ytdlap = callPackage ./ytdlap.nix {};

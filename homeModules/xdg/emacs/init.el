@@ -535,7 +535,7 @@ For EDIT-COMMAND see `recompile'."
                "setsid -f gimp * >/dev/null 2>&1")
          (list (rx "." (or "3gp" "aiff" "avi" "flac" "flv" "m4a" "mkv" "mov" "mp3" "mp4" "mpg" "ogg" "ogv" "opus" "vob" "wav" "webm" "wmv" "mka" "m4v") eos)
                "setsid -f mpv --profile=gui * >/dev/null 2>&1"
-               "for vid in * ; do dur=$(video_seconds \"$vid\"); sum=$((sum + dur)); done; format_seconds \"%02h:%02m:%02s\" \"$sum\""
+               "watch_time 1.0 *"
                "recode_video hevc * &"
                '(pcase file
                   ((rx ".webm" eos) "strip_video opus * &")

@@ -101,6 +101,7 @@
       unzip
       vesktop
       video_seconds
+      watch_time
       wget
       woof
       wormhole-william
