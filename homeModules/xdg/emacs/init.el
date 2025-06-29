@@ -2662,7 +2662,12 @@ For ELEMENT see `tempo-define-template'."
   (customize-set-variable
    'tramp-remote-path
    (cl-remove-duplicates
-    (cl-list* "/run/wrappers/bin" "/run/current-system/sw/bin" tramp-remote-path)
+    (cl-list*
+     "/etc/profiles/per-user/val/bin"
+     "/run/wrappers/bin"
+     "/run/current-system/sw/bin"
+     'tramp-own-remote-path
+     tramp-remote-path)
     :test #'equal))
 
   (customize-set-variable
