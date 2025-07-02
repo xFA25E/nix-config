@@ -1264,9 +1264,37 @@ See `xref-backend-apropos' docs for PATTERN."
   :after files
   :init (setf (alist-get 'js-json-mode major-mode-remap-alist) 'json-ts-mode))
 
+(use-package ledger-flymake
+  :ensure ledger-mode
+  :after ledger-mode
+  :hook (ledger-mode . ledger-flymake-enable))
+
 (use-package ledger-init
   :ensure ledger-mode
   :custom (ledger-default-date-format "%Y-%m-%d"))
+
+(use-package ledger-post
+  :ensure ledger-mode
+  :config
+  (defun ledger-apply-discount-for-dl ()
+    (interactive)
+    (save-match-data
+      (cl-loop repeat 20
+               when (looking-at (rx "-" (+ digit) "." (+ digit)))
+               do (cl-return)
+               do (backward-char)
+               finally do (error "Couldn't match cost"))
+
+      (let ((cost
+             (thread-last (match-string-no-properties 0)
+               (string-to-number)
+               (-)
+               (* 0.3)
+               (format "%0.2f"))))
+        (search-forward "Liabilities:DarynaLyziuk")
+        (kill-line)
+        (insert "  " cost " EUR")
+        (call-interactively 'ledger-post-align-xact)))))
 
 (use-package ledger-report
   :ensure ledger-mode
@@ -1300,11 +1328,6 @@ See `xref-backend-apropos' docs for PATTERN."
       "%(binary) -f %(ledger-file) register %(account)")
      ("account monthly"
       "%(binary) -f %(ledger-file) --monthly register %(account)"))))
-
-(use-package ledger-flymake
-  :ensure ledger-mode
-  :after ledger-mode
-  :hook (ledger-mode . ledger-flymake-enable))
 
 (use-package link-hint
   :ensure t
