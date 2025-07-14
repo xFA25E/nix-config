@@ -10,6 +10,7 @@
     ++ (with pkgs; [
       acpi
       alsa-utils
+      anydesk
       ascii
       aspell
       aspellDicts.en
@@ -26,6 +27,7 @@
       brightnessctl
       browser
       calibre
+      cifs-utils
       cloc
       cpulimit
       djvulibre
@@ -94,6 +96,7 @@
       strip_video
       stumpwm
       nsxiv
+      teamviewer
       telegram-desktop
       tor-browser-bundle-bin
       transmission_3

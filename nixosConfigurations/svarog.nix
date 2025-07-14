@@ -72,4 +72,6 @@
 
   swapDevices = [{device = "/swap/swapfile";}];
   system.stateVersion = "24.11";
+
+  services.teamviewer.enable = true;
 }
