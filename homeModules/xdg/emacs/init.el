@@ -1264,6 +1264,10 @@ See `xref-backend-apropos' docs for PATTERN."
   :after files
   :init (setf (alist-get 'js-json-mode major-mode-remap-alist) 'json-ts-mode))
 
+(use-package ledger-commodities
+  :ensure ledger-mode
+  :custom (ledger-reconcile-default-commodity "EUR"))
+
 (use-package ledger-flymake
   :ensure ledger-mode
   :after ledger-mode
@@ -1273,10 +1277,11 @@ See `xref-backend-apropos' docs for PATTERN."
   :ensure ledger-mode
   :custom (ledger-default-date-format "%Y-%m-%d"))
 
-(use-package ledger-post
-  :ensure ledger-mode
+(use-package ledger-mode
+  :ensure t
+  :bind (:map ledger-mode-map ("C-c D" . ledger-apply-share-for-dl))
   :config
-  (defun ledger-apply-discount-for-dl ()
+  (defun ledger-apply-share-for-dl ()
     (interactive)
     (save-match-data
       (cl-loop repeat 20
@@ -1328,6 +1333,10 @@ See `xref-backend-apropos' docs for PATTERN."
       "%(binary) -f %(ledger-file) register %(account)")
      ("account monthly"
       "%(binary) -f %(ledger-file) --monthly register %(account)"))))
+
+(use-package ledger-state
+  :ensure ledger-mode
+  :custom (ledger-clear-whole-transactions t))
 
 (use-package link-hint
   :ensure t
@@ -2797,7 +2806,10 @@ For ELEMENT see `tempo-define-template'."
    'vc-directory-exclusion-list
    (cons ".eldev" (cl-remove ".eldev" vc-directory-exclusion-list :test #'equal))))
 
-(use-package verb :ensure t)
+(use-package verb
+  :ensure t
+  :after org
+  :init (keymap-set org-mode-map "C-c C-r" verb-command-map))
 
 (use-package vertico
   :ensure t
