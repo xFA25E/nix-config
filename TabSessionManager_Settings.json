@@ -25,7 +25,7 @@
   "backupFolder": "TabSessionManager - Backup",
   "enabledAutoSync": false,
   "includesAutoSaveToSync": true,
-  "openButtonBehavior": "openInNewWindow",
+  "openButtonBehavior": "openInCurrentWindow",
   "saveButtonBehavior": "saveAllWindows",
   "isSessionListOpenInTab": false,
   "theme": "light",
