@@ -14,6 +14,7 @@
     inputs.self.nixosModules.sshd
 
     ./sharry.nix
+    ./syncthing-relay.nix
   ];
 
   age.secrets = {
