@@ -8,5 +8,5 @@
 }:
 mkShell {
   packages = [agenix alejandra shellcheck statix];
-  shellHook = "export RULES=$PWD/nixos/khors/secrets/secrets.nix";
+  shellHook = "export RULES=$PWD/nixosConfigurations/khors/secrets/secrets.nix";
 }
