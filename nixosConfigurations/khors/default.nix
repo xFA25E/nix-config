@@ -12,9 +12,14 @@
     "${modulesPath}/profiles/qemu-guest.nix"
     inputs.self.nixosModules.base
     inputs.self.nixosModules.sshd
+
+    ./sharry.nix
   ];
 
-  age.secrets."mail".file = ./secrets/mail.age;
+  age.secrets = {
+    "mail".file = ./secrets/mail.age;
+    "sharry".file = ./secrets/sharry.age;
+  };
 
   boot = {
     initrd = {

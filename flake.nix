@@ -127,6 +127,11 @@
       url = "github:nix-community/NUR";
     };
 
+    sharry = {
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:eikek/sharry";
+    };
+
     simple-nixos-mailserver = {
       inputs = {
         nixpkgs.follows = "nixpkgs";
@@ -151,6 +156,8 @@
         inputs.nur.overlays.default
         inputs.emacs-overlay.overlays.default
         inputs.self.overlays.default
+
+        inputs.sharry.overlays.default
       ];
     };
   in {
