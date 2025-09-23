@@ -77,6 +77,14 @@ in {
       enable = true;
       rules = [
         {
+          name = "Veles Dual Monitor Luca House";
+          outputs_connected = ["eDP-1" "HDMI-2-ACR-1018-1094779835-G247HL-T0VEE0018540"];
+          configure_column = ["HDMI-2" "eDP-1@1368x768"];
+          atomic = true;
+          primary = "HDMI-2";
+          execute_after = ["xrandr --dpi 112"];
+        }
+        {
           name = "Veles Dual Monitor";
           outputs_connected = ["eDP-1" "HDMI-2"];
           configure_row = ["HDMI-2" "eDP-1@1368x768"];
