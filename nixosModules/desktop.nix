@@ -31,7 +31,10 @@
     ];
   };
 
-  networking.firewall.allowedTCPPorts = [8080 8000];
+  networking.firewall = {
+    allowedTCPPorts = [8080 8000 22000];
+    allowedUDPPorts = [21027 22000];
+  };
 
   services = {
     locate = {
