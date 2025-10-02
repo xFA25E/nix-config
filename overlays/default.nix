@@ -57,5 +57,24 @@ inputs: {
     # mahogany = callPackage ./mahogany.nix {};
 
     gmdb2 = callPackage ./gmdb2.nix {src = gmdb2;};
+
+    code-cursor = let
+      pname = "cursor";
+      version = "1.7.17";
+      urlHash = "34881053400013f38e2354f1479c88c9067039a2";
+    in
+      prev.code-cursor.overrideAttrs (_: {
+        inherit version;
+        sourceRoot = "${pname}-${version}-extracted/usr/share/cursor";
+        src = final.appimageTools.extract {
+          inherit version pname;
+          src = final.fetchurl {
+            url = "https://downloads.cursor.com/production/${urlHash}/linux/x64/Cursor-${version}-x86_64.AppImage";
+            hash = "sha256-OsZiUXWKNLO8sUqielk0kap0DAkMY8OvWYO0KV3iads=";
+          };
+        };
+
+        preInstall = "mkdir -p bin";
+      });
   };
 }

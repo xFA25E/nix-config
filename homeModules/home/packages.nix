@@ -124,5 +124,7 @@
       zbar
       zip
       zoom-us
+
+      code-cursor
     ]);
 }
