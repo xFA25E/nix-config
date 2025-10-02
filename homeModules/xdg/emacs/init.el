@@ -152,6 +152,7 @@
   csharp-mode
   csharp-ts-mode
   css-ts-mode
+  fsharp-mode
   html-mode
   js-ts-mode
   nix-mode
@@ -166,13 +167,15 @@
   (setf (alist-get 'alejandra apheleia-formatters) (list "alejandra"))
   (setf (alist-get 'csharpier apheleia-formatters) (list "dotnet-csharpier"))
   (setf (alist-get 'xmllint apheleia-formatters) (list "xmllint" "--format" "-" "--pretty" "2"))
+  (setf (alist-get 'fantomas apheleia-formatters) (list "fantomas" 'inplace))
 
   ;; (setf (alist-get 'nxml-mode apheleia-mode-alist) 'xmllint)
   (setf (alist-get 'csharp-mode apheleia-mode-alist) 'csharpier)
   (setf (alist-get 'csharp-ts-mode apheleia-mode-alist) 'csharpier)
   (setf (alist-get 'nix-mode apheleia-mode-alist) 'alejandra)
   (setf (alist-get 'nix-ts-mode apheleia-mode-alist) 'alejandra)
-  (setf (alist-get 'sh-mode apheleia-mode-alist) 'shfmt))
+  (setf (alist-get 'sh-mode apheleia-mode-alist) 'shfmt)
+  (setf (alist-get 'fsharp-mode apheleia-mode-alist) 'fantomas))
 
 (use-package apropos :custom (apropos-sort-by-scores t))
 
@@ -776,6 +779,14 @@ See `xref-backend-apropos' docs for PATTERN."
     (or (xref-backend-apropos 'eglot pattern)
         (xref-backend-apropos 'dumb-jump pattern))))
 
+(use-package eglot-fsharp
+  :ensure t
+  :after fsharp-mode
+  :demand t
+  :custom (eglot-fsharp-server-install-dir nil)
+  :config
+  (add-to-list 'eglot-server-programs `(fsharp-mode eglot-fsautocomplete "fsautocomplete" ,@eglot-fsharp-server-args)))
+
 (use-package eldoc
   :hook nix-mode nix-ts-mode
   :custom
@@ -1121,6 +1132,10 @@ See `xref-backend-apropos' docs for PATTERN."
 
   :config
   (keymap-unset  ctl-x-map "C-z" t))
+
+(use-package fsharp-mode
+  :ensure t
+  :config (remove-hook 'project-find-functions #'fsharp-mode-project-root))
 
 (use-package gdb-mi
   :custom
