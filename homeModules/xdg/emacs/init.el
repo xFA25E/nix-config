@@ -158,6 +158,7 @@
   nix-mode
   nix-ts-mode
   nxml-mode
+  typescript-ts-mode
   web-mode)
 
 (use-package apheleia-formatters
@@ -175,7 +176,8 @@
   (setf (alist-get 'nix-mode apheleia-mode-alist) 'alejandra)
   (setf (alist-get 'nix-ts-mode apheleia-mode-alist) 'alejandra)
   (setf (alist-get 'sh-mode apheleia-mode-alist) 'shfmt)
-  (setf (alist-get 'fsharp-mode apheleia-mode-alist) 'fantomas))
+  (setf (alist-get 'fsharp-mode apheleia-mode-alist) 'fantomas)
+  (setf (alist-get 'typescript-ts-mode apheleia-mode-alist) 'denofmt))
 
 (use-package apropos :custom (apropos-sort-by-scores t))
 
@@ -742,7 +744,9 @@ For MARKER-CHAR see `dired-mark-extension'."
   ;;                 (car slns))))
   ;;     (list "csharp-ls" "-s" sln)))
 
-  (add-to-list 'eglot-server-programs '(js-ts-mode . ("typescript-language-server" "--tsserver-path" "tsserver" "--stdio")))
+  ;; (add-to-list 'eglot-server-programs '(js-ts-mode . ("typescript-language-server" "--tsserver-path" "tsserver" "--stdio")))
+  (add-to-list 'eglot-server-programs '(typescript-ts-mode . ("vtsls" "--stdio")))
+  (add-to-list 'eglot-server-programs '(typescript-ts-mode . ("deno" "lsp")))
   (add-to-list 'eglot-server-programs `(csharp-ts-mode . ,(eglot-alternatives '(("OmniSharp" "-lsp") ("csharp-ls")))))
   (add-to-list 'eglot-stay-out-of 'eldoc-documentation-strategy)
 
@@ -1135,7 +1139,10 @@ See `xref-backend-apropos' docs for PATTERN."
 
 (use-package fsharp-mode
   :ensure t
-  :config (remove-hook 'project-find-functions #'fsharp-mode-project-root))
+  :config
+  (remove-hook 'project-find-functions #'fsharp-mode-project-root)
+  (remove-hook 'project-find-functions #'fsharp-mode-project-root)
+  )
 
 (use-package gdb-mi
   :custom
@@ -1876,9 +1883,7 @@ build."
 
 (use-package nsm :custom (nsm-settings-file (expand-file-name "emacs/network-security.data" (xdg-cache-home))))
 
-(use-package nxml-mode
-  :mode (rx ".axaml" eos) (rx ".xaml" eos)
-  :custom (nxml-child-indent 4))
+(use-package nxml-mode :mode (rx ".axaml" eos) (rx ".xaml" eos))
 
 (use-package orderless
   :ensure t
@@ -2477,8 +2482,10 @@ ARG as in `move-beginning-of-line'."
 (use-package subword
   :hook
   csharp-mode csharp-ts-mode
+  fsharp-mode
   java-mode
   js-ts-mode
+  typescript-ts-mode
   ledger-mode
   nix-mode nix-ts-mode
   php-mode
@@ -2778,6 +2785,8 @@ For ELEMENT see `tempo-define-template'."
   :config
   (setf (alist-get 'c-sharp treesit-language-source-alist) '("https://github.com/tree-sitter/tree-sitter-c-sharp"))
   (setf (alist-get 'json treesit-language-source-alist) '("https://github.com/tree-sitter/tree-sitter-json")))
+
+(use-package typescript-ts-mode :mode (rx ".ts" eos))
 
 (use-package uniquify :custom (uniquify-ignore-buffers-re (rx bol "*")))
 
