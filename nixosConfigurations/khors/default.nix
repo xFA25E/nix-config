@@ -15,6 +15,7 @@
 
     ./sharry.nix
     ./syncthing-relay.nix
+    ./webhooktest.nix
   ];
 
   age.secrets = {
