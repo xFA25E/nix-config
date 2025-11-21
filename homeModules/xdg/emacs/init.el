@@ -831,6 +831,7 @@ See `xref-backend-apropos' docs for PATTERN."
   (mode-line-compact 'long)
   (read-buffer-completion-ignore-case t)
   (read-minibuffer-restore-windows nil)
+  (ring-bell-function 'ignore)
   (scroll-conservatively 10000)
   (scroll-step 1)
   (tab-width 4)
