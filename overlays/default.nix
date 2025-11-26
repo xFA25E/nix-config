@@ -60,8 +60,8 @@ inputs: {
 
     code-cursor = let
       pname = "cursor";
-      version = "1.7.17";
-      urlHash = "34881053400013f38e2354f1479c88c9067039a2";
+      version = "2.1.32";
+      urlHash = "ef979b1b43d85eee2a274c25fd62d5502006e425";
     in
       prev.code-cursor.overrideAttrs (_: {
         inherit version;
@@ -70,7 +70,7 @@ inputs: {
           inherit version pname;
           src = final.fetchurl {
             url = "https://downloads.cursor.com/production/${urlHash}/linux/x64/Cursor-${version}-x86_64.AppImage";
-            hash = "sha256-OsZiUXWKNLO8sUqielk0kap0DAkMY8OvWYO0KV3iads=";
+            hash = "sha256-CKLUa5qaT8njAyPMRz6+iX9KSYyvNoyLZFZi6wmR4g0=";
           };
         };
 
