@@ -85,18 +85,18 @@
           prePatch =
             prePatch
             + ''
-              substituteInPlace lib/hyperspec.el --replace \
-                '"http://www.lispworks.com/reference/HyperSpec/"' \
+              substituteInPlace lib/hyperspec.el --replace-fail \
+                '"https://www.lispworks.com/reference/HyperSpec/"' \
                 '"file://${pkgs.cl-hyperspec}/HyperSpec/"'
             '';
-          patches =
-            patches
-            ++ map pkgs.fetchpatch [
-              {
-                url = "https://github.com/joaotavora/sly/pull/441.diff";
-                hash = "sha256-+rwVmrN4A4GY8oI3GiuMXq8JUyd0gT1oqdMA6NtTpnU=";
-              }
-            ];
+          # patches =
+          #   patches
+          #   ++ map pkgs.fetchpatch [
+          #     {
+          #       url = "https://github.com/joaotavora/sly/pull/441.diff";
+          #       hash = "sha256-+rwVmrN4A4GY8oI3GiuMXq8JUyd0gT1oqdMA6NtTpnU=";
+          #     }
+          #   ];
         });
 
         transmission = eprev.transmission.overrideAttrs ({patches ? [], ...}: {
