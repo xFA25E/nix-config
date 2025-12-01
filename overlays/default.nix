@@ -6,11 +6,13 @@ inputs: {
     brave-incognito = callPackage ./brave-incognito.nix {};
     browser = callPackage ./browser.nix {};
     cl-hyperspec = callPackage ./cl-hyperspec.nix {};
+    code-cursor = import ./code-cursor.nix final prev;
     dmenu = import ./dmenu.nix final prev;
-    # emacsPackagesFor = import ./emacsPackages final prev;
     extract_eml = callPackage ./extract_eml.nix {};
     filename_put_duration = callPackage ./filename_put_duration.nix {};
     format_seconds = callPackage ./format_seconds.nix {};
+    gmdb2 = callPackage ./gmdb2.nix {src = gmdb2;};
+    grobi = import ./grobi.nix final prev grobi;
     image-dired-external-viewer = callPackage ./image-dired-external-viewer.nix {};
     image_clipboard = callPackage ./image_clipboard.nix {};
     install_keys = callPackage ./install_keys.nix {};
@@ -43,38 +45,6 @@ inputs: {
     ytdlmp = callPackage ./ytdlmp.nix {};
     ytdlp = callPackage ./ytdlp.nix {};
 
-    grobi = prev.grobi.overrideAttrs (_: {
-      src = grobi;
-      vendorHash = "sha256-3hyI5oHV8qEkIsF6pk1xx1H98Wx+Ug/Z2IswVbzIQLQ=";
-      patches = map final.fetchpatch [
-        {
-          url = "https://github.com/fd0/grobi/pull/30.diff";
-          hash = "sha256-eSCCfsRuBdNqqd8EF4lhRXCFS1WzXGeOJiP/+h7p1Vk=";
-        }
-      ];
-    });
-
     # mahogany = callPackage ./mahogany.nix {};
-
-    gmdb2 = callPackage ./gmdb2.nix {src = gmdb2;};
-
-    code-cursor = let
-      pname = "cursor";
-      version = "2.1.32";
-      urlHash = "ef979b1b43d85eee2a274c25fd62d5502006e425";
-    in
-      prev.code-cursor.overrideAttrs (_: {
-        inherit version;
-        sourceRoot = "${pname}-${version}-extracted/usr/share/cursor";
-        src = final.appimageTools.extract {
-          inherit version pname;
-          src = final.fetchurl {
-            url = "https://downloads.cursor.com/production/${urlHash}/linux/x64/Cursor-${version}-x86_64.AppImage";
-            hash = "sha256-CKLUa5qaT8njAyPMRz6+iX9KSYyvNoyLZFZi6wmR4g0=";
-          };
-        };
-
-        preInstall = "mkdir -p bin";
-      });
   };
 }

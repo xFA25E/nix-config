@@ -8,10 +8,5 @@ pkgs: let
   filterSet = set: names: filterAttrs (name: _: elem name names) set;
 
   packageNames = attrNames ((import ./overlays null).default null null);
-  emacsPackageNames = dirNames ./overlays/emacsPackages;
-  mpvScriptNames = dirNames ./overlays/mpvScripts;
 in
   filterSet pkgs packageNames
-  // mapAttrs (name: recurseIntoAttrs) {
-    emacsPackages = filterSet (pkgs.emacsPackagesFor pkgs.emacs) emacsPackageNames;
-  }
