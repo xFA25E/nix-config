@@ -110,6 +110,14 @@
           ublock-origin
           youtube-recommended-videos
           tab-session-manager
+          (buildFirefoxXpiAddon {
+            pname = "media-url-timestamper";
+            version = "1.1.6";
+            addonId = "mediaurltimestamper@kestrel";
+            url = "https://addons.mozilla.org/firefox/downloads/file/4047192/media_url_timestamper-1.1.6.xpi";
+            sha256 = "sha256-IQEA22q0RGOdvhQE4YzQjmbDvXaTEqYrigvsS3oZUV8=";
+            meta = {};
+          })
         ];
 
         settings = {
