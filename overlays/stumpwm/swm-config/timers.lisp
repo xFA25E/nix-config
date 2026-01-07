@@ -117,8 +117,8 @@
 
 (defun callback (name &optional (executable "notify_ding"))
   (lambda ()
-    (run-program (list "notify-send" (format nil "Timer \"~A\" is out!" name)))
-    (run-program (list executable))))
+    (run-program (list "notify-send" (format nil "Timer \"~A\" is out!" name)) :ignore-error-status t)
+    (run-program (list executable) :ignore-error-status t)))
 
 (defun launch (name universal-time)
   (let ((timer (sb-ext:make-timer (callback name) :name name :thread t)))
@@ -150,7 +150,8 @@
 (defun sitting-timer-callback (name)
   (lambda ()
     (funcall (callback name "notify_church_bell"))
-    (launch-sitting-timer
-     (ecase name
-       (:sitting-timer-sit :sitting-timer-stand)
-       (:sitting-timer-stand :sitting-timer-sit)))))
+    (ignore-errors
+      (launch-sitting-timer
+       (ecase name
+         (:sitting-timer-sit :sitting-timer-stand)
+         (:sitting-timer-stand :sitting-timer-sit))))))
