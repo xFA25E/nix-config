@@ -10,10 +10,10 @@
 (defvar *nested-counter* 0)
 
 (defun current-layout ()
-  (run-program '("xkb-switch" "-p") :output '(:string :stripped t)))
+  (run-program '("xkb-switch" "-p") :output '(:string :stripped t) :ignore-error-status t))
 
 (defun set-layout (layout)
-  (run-program `("xkb-switch" "-s" ,layout)))
+  (run-program `("xkb-switch" "-s" ,layout) :ignore-error-status t))
 
 (defun set-default-saving-current-layout ()
   (let ((current-layout (current-layout)))

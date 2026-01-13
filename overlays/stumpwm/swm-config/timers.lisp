@@ -145,7 +145,7 @@
          (time (local-time:timestamp-to-universal (chronicity:parse text)))
          (timer (sb-ext:make-timer (sitting-timer-callback name) :name name :thread t)))
     (sb-ext:schedule-timer timer time :absolute-p t)
-    (run-program `("notify-send" ,(format nil "Timer \"~A\" is added" name)))))
+    (run-program `("notify-send" ,(format nil "Timer \"~A\" is added" name)) :ignore-error-status t)))
 
 (defun sitting-timer-callback (name)
   (lambda ()

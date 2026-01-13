@@ -6,7 +6,7 @@
 (in-package #:swm-config)
 
 (defun get-xresource (name)
-  (run-program (list "xrdb" "-get" name) :output '(:string :stripped t)))
+  (run-program (list "xrdb" "-get" name) :output '(:string :stripped t) :ignore-error-status t))
 
 (defun init ()
   (setf swm:*mouse-focus-policy* :click)

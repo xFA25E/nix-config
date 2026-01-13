@@ -7,7 +7,7 @@
 (in-package #:swm-config.status)
 
 (defun battery ()
-  (let ((output (run-program '("acpi" "--battery") :output '(:string :stripped t))))
+  (let ((output (run-program '("acpi" "--battery") :output '(:string :stripped t) :ignore-error-status t)))
     (re:register-groups-bind ((#'string-upcase state) (#'parse-integer percentage) time)
         ("[^:]+: ([a-zA-Z]+), ([0-9]+)%(?:, (.*))?" output :sharedp t)
       (list :percentage percentage :state (make-keyword state) :time time))))
@@ -20,7 +20,7 @@
       (round (* (/ brightness max-brightness) 100)))))
 
 (defun alsa ()
-  (let ((output (run-program '("amixer" "sget" "Master") :output :string)))
+  (let ((output (run-program '("amixer" "sget" "Master") :output :string :ignore-error-status t)))
     (re:register-groups-bind ((#'parse-integer volume) (#'string-upcase state))
         ("Front Left:[^[]+\\[([0-9]+)%\\][^[]+\\[(on|off)\\]" output :sharedp t)
       (list :volume volume :state (make-keyword state)))))

@@ -42,7 +42,7 @@
 ;;; MISC
 
 (swm:defcommand screenshot (name selectp) ((:string "Name (w/o ext): ") (:y-or-n "Select? "))
-  (let* ((pictures-directory (run-program '("xdg-user-dir" "PICTURES") :output '(:string :stripped t)))
+  (let* ((pictures-directory (run-program '("xdg-user-dir" "PICTURES") :output '(:string :stripped t) :ignore-error-status t))
          (screenshots-directory (subpathname* pictures-directory "screenshots/"))
          (screenshot-pathname (make-pathname :name name :type "png" :defaults screenshots-directory))
          (arguments (list "--overwrite" "--delay" "2" "--exec"
@@ -53,7 +53,7 @@
     (launch-program (cons "scrot" arguments))))
 
 (swm:defcommand covid-19-italy () ()
-  (let* ((json (run-program '("curl" "https://corona-stats.online/Italy?format=json") :output '(:string :stripped t)))
+  (let* ((json (run-program '("curl" "https://corona-stats.online/Italy?format=json") :output '(:string :stripped t) :ignore-error-status t))
          (data (first (gethash "data" (jojo:parse json :as :hash-table)))))
     (swm:message "COVID-19 Italy~%~@?~%~@?~%~@?~%~@?~%"
                  "    Cases: ~:D" (gethash "cases" data)
@@ -64,7 +64,7 @@
 (swm:defcommand hardware () ()
   (let-match ((mounts (re:all-matches-as-strings
                        ".*?(?:/|/run/media/val/backup)(?=\\n)"
-                       (run-program '("df" "--si" "--output=avail,target") :output :string)
+                       (run-program '("df" "--si" "--output=avail,target") :output :string :ignore-error-status t)
                        :sharedp t))
               ((plist :percentage percentage :state state :time time) (status:battery)))
     (swm:message "Free space:~%~{~A~%~}~%Battery: ~A% ~A ~A" mounts percentage state time)))
@@ -107,7 +107,7 @@
       `(progn
          (swm:defcommand ,name (&optional ,arguments) ((:rest))
            (when ,arguments
-             (run-program (list* ,@command (re:split " " ,arguments))))
+             (run-program (list* ,@command (re:split " " ,arguments)) :ignore-error-status t))
            (swm:message "~?~%~:{[~A]~6T~A~%~}" ,format-string ,format-arguments ',keys-and-args))
          (let ((,timer nil))
            (swm:define-interactive-keymap ,name-interactive
@@ -119,7 +119,7 @@
                        keys-and-args)))))))
 
 (define-interactive-controller mpd ("mpc" "-q")
-  "~A" (list (run-program '("mpc") :output :string))
+  "~A" (list (run-program '("mpc") :output :string :ignore-error-status t))
   (("<" "prev" "less")
    (">" "next" "greater")
    ("t" "toggle")

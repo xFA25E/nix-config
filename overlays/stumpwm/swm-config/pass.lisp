@@ -61,7 +61,7 @@
 
 (swm:defcommand pass-type (pass) ((:pass "Pass type: "))
   (with-running-gpg-agent
-    (let* ((contents (run-program `("pass" "show" ,pass) :output :string))
+    (let* ((contents (run-program `("pass" "show" ,pass) :output :string :ignore-error-status t))
            (menu (cons '("autotype" :autotype) (parse-entry-contents contents))))
       (match (swm:select-from-menu (swm:current-screen) menu "Pass type field: ")
          ((list _ :autotype)
@@ -80,7 +80,7 @@
 
 (swm:defcommand pass-otp (pass) ((:pass "Pass otp: "))
   (with-running-gpg-agent
-    (swm:window-send-string (run-program `("pass" "otp" ,pass) :output :string))))
+    (swm:window-send-string (run-program `("pass" "otp" ,pass) :output :string :ignore-error-status t))))
 
 (swm:defcommand pass-menu () ()
   (let ((menu '(("type" "pass-type")
