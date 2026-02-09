@@ -2,7 +2,6 @@
   autoconf,
   emacs,
   lib,
-  lispPackages_new,
   makeWrapper,
   pkg-config,
   sbcl,

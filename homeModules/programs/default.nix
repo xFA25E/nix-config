@@ -79,15 +79,22 @@
     };
 
     ssh = {
-      addKeysToAgent = "yes";
-      controlMaster = "auto";
-      controlPath = "~/.ssh/controlmasters/%r@%h:%p";
-      controlPersist = "1000m";
       enable = true;
+      enableDefaultConfig = false;
       extraOptionOverrides."StrictHostKeyChecking" = "accept-new";
       includes = ["config.d/config"];
-      serverAliveCountMax = 30;
-      serverAliveInterval = 5;
+      matchBlocks."*" = {
+        addKeysToAgent = "yes";
+        compression = false;
+        controlMaster = "auto";
+        controlPath = "~/.ssh/controlmasters/%r@%h:%p";
+        controlPersist = "1000m";
+        forwardAgent = false;
+        hashKnownHosts = false;
+        serverAliveCountMax = 30;
+        serverAliveInterval = 5;
+        userKnownHostsFile = "~/.ssh/known_hosts";
+      };
     };
   };
 }

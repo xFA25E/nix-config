@@ -77,7 +77,6 @@
       "watch*"
       "wc*"
       "which*"
-      "woof*"
       "xclip*"
       "xz*"
       "yay*"

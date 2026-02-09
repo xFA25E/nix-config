@@ -64,8 +64,8 @@ in {
       };
       Service = {
         Type = "notify";
-        ExecStart = "${pkgs.transmission_3}/bin/transmission-daemon -f --log-error";
-        ExecReload = "${pkgs.utillinux}/bin/kill -s HUP $MAINPID";
+        ExecStart = "${pkgs.transmission_4}/bin/transmission-daemon -f --log-error";
+        ExecReload = "${pkgs.util-linux}/bin/kill -s HUP $MAINPID";
         NoNewPrivileges = true;
       };
       Install.WantedBy = ["default.target"];

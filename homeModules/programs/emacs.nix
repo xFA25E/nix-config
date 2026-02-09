@@ -10,7 +10,7 @@
       package = pkgs.emacs;
       extraEmacsPackages = epkgs:
         [epkgs.treesit-grammars.with-all-grammars]
-        ++ map (flake: inputs."epkg-${flake}".packages.${pkgs.system}.default) [
+        ++ map (flake: inputs."epkg-${flake}".packages.${pkgs.stdenv.hostPlatform.system}.default) [
           "amded"
           "cyrillic-dvorak-im"
           "dired-atool-transient"
@@ -34,7 +34,7 @@
               hash = "sha256-29vT1E4SfRVuz8BY4D7h4zTPUy/hEAFSdAuWAJ/z3ys=";
             };
             commit = rev;
-            recipe = pkgs.writeText "recipe" ''(debase :fetcher git :url "${url}") '';
+            recipe = pkgs.writeText "recipe" ''(debase :fetcher git :url "${url}")'';
           };
 
         discomfort = let

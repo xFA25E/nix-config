@@ -5,7 +5,7 @@
 }: {
   home.packages =
     [
-      inputs.epkg-amded.packages.${pkgs.system}.amded
+      inputs.epkg-amded.packages.${pkgs.stdenv.hostPlatform.system}.amded
     ]
     ++ (with pkgs; [
       acpi
@@ -61,7 +61,7 @@
       make_backup
       mediainfo
       mkpasswd
-      mpc_cli
+      mpc
       mpvi
       nload
       notifiers
@@ -74,7 +74,7 @@
       pciutils
       pdftk
       perlPackages.JSONPP
-      pinentry
+      pinentry-all
       pueue
       pulsemixer
       pwgen
@@ -98,15 +98,14 @@
       nsxiv
       teamviewer
       telegram-desktop
-      tor-browser-bundle-bin
-      transmission_3
+      tor-browser
+      transmission_4
       udiskie
       unzip
       vesktop
       video_seconds
       watch_time
       wget
-      woof
       wormhole-william
       xclip
       xdg-user-dirs

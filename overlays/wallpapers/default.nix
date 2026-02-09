@@ -13,5 +13,5 @@ in
   } ''
     mkdir -p $out
     for src in $srcs; do ln -s $src $out/$(stripHash $src); done
-    convert $pepe -resize 1366x -crop 1366x768+0+200 $out/pepefishing.jpg
+    magick convert $pepe -resize 1366x -crop 1366x768+0+200 $out/pepefishing.jpg
   ''

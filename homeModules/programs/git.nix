@@ -46,24 +46,6 @@
       "*.gif  diff=exif"
       "*.pdf  diff=pdf"
     ];
-    extraConfig = {
-      credential.helper = "cache --timeout=86400";
-      diff = {
-        elisp.xfuncname = "^((;;;+|\\((cl-)?def\\S+)\\s+.*)";
-        lisp.xfuncname = "^\\((def\\S+\\s+.*)";
-        org.xfuncname = "^(\\*+\\s+.*)";
-        rstats.xfuncname = "^([a-zA-z.]+ <- function.*)$";
-        texinfo.xfuncname = "^@node[ \t][ \t]*\\([^,][^,]*\\)";
-
-        exif = {
-          binary = true;
-          textconv = "${pkgs.exiftool}/bin/exiftool";
-        };
-        pdf.textconv = toString (pkgs.writeShellScript "pdftotext-stdout" ''
-          ${pkgs.poppler_utils}/bin/pdftotext "$@" -
-        '');
-      };
-    };
     ignores = [
       "*-autoloads.el"
       "*.dx32fsl"
@@ -89,7 +71,27 @@
       key = "Litkovskyy Valeriy <vlr.ltkvsk@protonmail.com>";
       signByDefault = true;
     };
-    userEmail = "vlr.ltkvsk@protonmail.com";
-    userName = "Valeriy Litkovskyy";
+    settings = {
+      credential.helper = "cache --timeout=86400";
+      diff = {
+        elisp.xfuncname = "^((;;;+|\\((cl-)?def\\S+)\\s+.*)";
+        lisp.xfuncname = "^\\((def\\S+\\s+.*)";
+        org.xfuncname = "^(\\*+\\s+.*)";
+        rstats.xfuncname = "^([a-zA-z.]+ <- function.*)$";
+        texinfo.xfuncname = "^@node[ \t][ \t]*\\([^,][^,]*\\)";
+
+        exif = {
+          binary = true;
+          textconv = "${pkgs.exiftool}/bin/exiftool";
+        };
+        pdf.textconv = toString (pkgs.writeShellScript "pdftotext-stdout" ''
+          ${pkgs.poppler-utils}/bin/pdftotext "$@" -
+        '');
+      };
+      user = {
+        email = "vlr.ltkvsk@protonmail.com";
+        name = "Valeriy Litkovskyy";
+      };
+    };
   };
 }
