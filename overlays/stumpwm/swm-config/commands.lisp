@@ -37,7 +37,7 @@
   (swm:run-or-raise "firefox" '(:class "firefox")))
 
 (swm:defcommand telegram-desktop () ()
-  (swm:run-or-raise "telegram-desktop" '(:class "TelegramDesktop")))
+  (swm:run-or-raise "Telegram" '(:class "TelegramDesktop")))
 
 ;;; MISC
 
