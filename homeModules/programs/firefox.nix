@@ -106,16 +106,16 @@
 
         extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
           i-dont-care-about-cookies
-          keepa
           ublock-origin
           youtube-recommended-videos
           tab-session-manager
+          media-url-timestamper
           (buildFirefoxXpiAddon {
-            pname = "media-url-timestamper";
-            version = "1.1.6";
-            addonId = "mediaurltimestamper@kestrel";
-            url = "https://addons.mozilla.org/firefox/downloads/file/4047192/media_url_timestamper-1.1.6.xpi";
-            sha256 = "sha256-IQEA22q0RGOdvhQE4YzQjmbDvXaTEqYrigvsS3oZUV8=";
+            pname = "chatgpt-speed-booster";
+            version = "2.0.0";
+            addonId = "chatgpt-lag-fixer@bramgiessen.com";
+            url = "https://addons.mozilla.org/firefox/downloads/file/4662722/chatgpt_speed_booster-2.0.0.xpi";
+            sha256 = "sha256-a/pUxB93JyXqEfm25n/JtwEe+s55dazIM3G6SjvWVHI=";
             meta = {};
           })
         ];
@@ -207,7 +207,7 @@
           "extensions.webextensions.ExtensionStorageIDB.migrated.mediaurltimestamper@kestrel" = true;
           "extensions.webextensions.ExtensionStorageIDB.migrated.screenshots@mozilla.org" = true;
           "extensions.webextensions.ExtensionStorageIDB.migrated.uBlock0@raymondhill.net" = true;
-          "extensions.webextensions.uuids" = ''{"uBlock0@raymondhill.net":"ed81545f-4149-47b9-a289-ea98eb20221d","jid1-KKzOGWgsW3Ao4Q@jetpack":"38073834-2697-45b0-8238-c233089a7f8f","doh-rollout@mozilla.org":"3e2f9e29-6753-4af0-87f4-30a67b9f1102","formautofill@mozilla.org":"9b145aac-9bb4-4196-be4f-3cd25eefdb90","pictureinpicture@mozilla.org":"4dc52942-8a8e-4aae-b312-6bbfd49aff0f","screenshots@mozilla.org":"1deb33d4-528a-4034-9345-6c48cf23b301","webcompat-reporter@mozilla.org":"dff469c9-d240-4a37-862f-a5b44fdf8b7c","webcompat@mozilla.org":"9a310967-e580-48bf-b3e8-4eafebbc122d","default-theme@mozilla.org":"5296f9c7-d307-4aaf-b60a-406d4e0aa56f","addons-search-detection@mozilla.com":"186e74f8-d5de-4409-a45a-55affa3faebb","google@search.mozilla.org":"147e8d5f-207a-4397-8d05-11e68efdfd4a","wikipedia@search.mozilla.org":"2faa6d11-eb7a-46bf-914f-663f5715b06e","bing@search.mozilla.org":"fbc35289-8926-4380-ae6d-4b59984e28f8","ddg@search.mozilla.org":"8624cf23-6a11-44c5-9143-26cb22b3fcc4","amazon@search.mozilla.org":"86ed2a09-1db8-4add-bef7-b20dbea8621a","amazondotcom@search.mozilla.org":"d4c17cbd-5aa0-4a57-885c-c484be3f138f","myallychou@gmail.com":"4c2a7221-8620-40b5-9b25-572992d6e67f","ebay@search.mozilla.org":"7016e5e1-271c-4e94-b611-ecbf00c5d9af","qwant@search.mozilla.org":"9d822a0b-5f6a-486e-a10c-9caa36a6a764","Tab-Session-Manager@sienori":"fe68a8ae-2ec7-4f91-a013-5cbdb296f3b0","amptra@keepa.com":"c2f3d153-89c1-4526-9053-02dcd03b50c1","data-leak-blocker@mozilla.com":"b35e39f3-5376-4c6e-aef4-e8365f200e54","ipp-activator@mozilla.com":"d6e43919-b1b0-44e6-906f-651617bb81a6","mediaurltimestamper@kestrel":"feb5101a-ef51-488b-b6e6-fb1687309250","newtab@mozilla.org":"38215955-4031-4ce1-bace-5522dd3e143d"}'';
+          "extensions.webextensions.uuids" = ''{"uBlock0@raymondhill.net":"ed81545f-4149-47b9-a289-ea98eb20221d","jid1-KKzOGWgsW3Ao4Q@jetpack":"38073834-2697-45b0-8238-c233089a7f8f","doh-rollout@mozilla.org":"3e2f9e29-6753-4af0-87f4-30a67b9f1102","formautofill@mozilla.org":"9b145aac-9bb4-4196-be4f-3cd25eefdb90","pictureinpicture@mozilla.org":"4dc52942-8a8e-4aae-b312-6bbfd49aff0f","screenshots@mozilla.org":"1deb33d4-528a-4034-9345-6c48cf23b301","webcompat-reporter@mozilla.org":"dff469c9-d240-4a37-862f-a5b44fdf8b7c","webcompat@mozilla.org":"9a310967-e580-48bf-b3e8-4eafebbc122d","default-theme@mozilla.org":"5296f9c7-d307-4aaf-b60a-406d4e0aa56f","addons-search-detection@mozilla.com":"186e74f8-d5de-4409-a45a-55affa3faebb","google@search.mozilla.org":"147e8d5f-207a-4397-8d05-11e68efdfd4a","wikipedia@search.mozilla.org":"2faa6d11-eb7a-46bf-914f-663f5715b06e","bing@search.mozilla.org":"fbc35289-8926-4380-ae6d-4b59984e28f8","ddg@search.mozilla.org":"8624cf23-6a11-44c5-9143-26cb22b3fcc4","amazon@search.mozilla.org":"86ed2a09-1db8-4add-bef7-b20dbea8621a","amazondotcom@search.mozilla.org":"d4c17cbd-5aa0-4a57-885c-c484be3f138f","myallychou@gmail.com":"4c2a7221-8620-40b5-9b25-572992d6e67f","ebay@search.mozilla.org":"7016e5e1-271c-4e94-b611-ecbf00c5d9af","qwant@search.mozilla.org":"9d822a0b-5f6a-486e-a10c-9caa36a6a764","Tab-Session-Manager@sienori":"fe68a8ae-2ec7-4f91-a013-5cbdb296f3b0","data-leak-blocker@mozilla.com":"b35e39f3-5376-4c6e-aef4-e8365f200e54","ipp-activator@mozilla.com":"d6e43919-b1b0-44e6-906f-651617bb81a6","mediaurltimestamper@kestrel":"feb5101a-ef51-488b-b6e6-fb1687309250","newtab@mozilla.org":"38215955-4031-4ce1-bace-5522dd3e143d","chatgpt-lag-fixer@bramgiessen.com":"301341a8-627b-431f-bc1a-f4d1353eff4e"}'';
 
           # Breaks google meet
           # "general.platform.override" = "Win32";
