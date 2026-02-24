@@ -745,9 +745,9 @@ For MARKER-CHAR see `dired-mark-extension'."
   ;;     (list "csharp-ls" "-s" sln)))
 
   ;; (add-to-list 'eglot-server-programs '(js-ts-mode . ("typescript-language-server" "--tsserver-path" "tsserver" "--stdio")))
-  (add-to-list 'eglot-server-programs '(typescript-ts-mode . ("vtsls" "--stdio")))
-  (add-to-list 'eglot-server-programs '(typescript-ts-mode . ("deno" "lsp")))
+  (add-to-list 'eglot-server-programs `(typescript-ts-mode . ,(eglot-alternatives '(("vtsls" "--stdio") ("deno" "lsp")))))
   (add-to-list 'eglot-server-programs `(csharp-ts-mode . ,(eglot-alternatives '(("OmniSharp" "-lsp") ("csharp-ls")))))
+  (add-to-list 'eglot-server-programs `(sql-mode . ("sqls" "--config" "/home/val/Documents/projects/lendit/Lia/sqls.yml")))
   (add-to-list 'eglot-stay-out-of 'eldoc-documentation-strategy)
 
   (define-advice eglot-xref-backend (:override () dumb) 'eglot+dumb)
@@ -1149,6 +1149,10 @@ See `xref-backend-apropos' docs for PATTERN."
   :custom
   (gdb-many-windows t)
   (gdb-show-main t))
+
+(use-package gptel
+  :ensure t
+  :bind (:map mode-specific-map ("a" . gptel-send)))
 
 (use-package grep
   :bind (:map search-map ("M-g g" . rgrep))
