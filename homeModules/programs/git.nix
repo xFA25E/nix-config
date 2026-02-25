@@ -68,7 +68,7 @@
       "result"
     ];
     signing = {
-      key = "Litkovskyy Valeriy <vlr.ltkvsk@protonmail.com>";
+      key = "697F0965844B42B4";
       signByDefault = true;
     };
     settings = {
