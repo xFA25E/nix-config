@@ -87,7 +87,7 @@
         addKeysToAgent = "yes";
         compression = false;
         controlMaster = "auto";
-        controlPath = "~/.ssh/controlmasters/%r@%h:%p";
+        controlPath = "~/.ssh/controlmasters/%r@%n:%p";
         controlPersist = "1000m";
         forwardAgent = false;
         hashKnownHosts = false;
