@@ -96,10 +96,10 @@
 
     includes = [
       {
-        condition = "gitdir:~/Documents/projects/nonsolocodice";
+        condition = "gitdir:~/Documents/projects/nonsolocodice/";
         path = pkgs.writeText "nonsolocodice.config" ''
           [user]
-              email = vl@nonsolocodice.it
+              email = "vl@nonsolocodice.it"
         '';
       }
     ];
