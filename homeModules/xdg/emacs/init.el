@@ -166,7 +166,7 @@
   :custom (apheleia-mode-lighter nil)
   :config
   (setf (alist-get 'alejandra apheleia-formatters) (list "alejandra"))
-  (setf (alist-get 'csharpier apheleia-formatters) (list "dotnet-csharpier"))
+  (setf (alist-get 'csharpier apheleia-formatters) (list "csharpier" "format"))
   (setf (alist-get 'xmllint apheleia-formatters) (list "xmllint" "--format" "-" "--pretty" "2"))
   (setf (alist-get 'fantomas apheleia-formatters) (list "fantomas" 'inplace))
 

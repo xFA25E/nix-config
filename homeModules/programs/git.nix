@@ -93,5 +93,15 @@
         name = "Valeriy Litkovskyy";
       };
     };
+
+    includes = [
+      {
+        condition = "gitdir:~/Documents/projects/nonsolocodice";
+        path = pkgs.writeText "nonsolocodice.config" ''
+          [user]
+              email = vl@nonsolocodice.it
+        '';
+      }
+    ];
   };
 }
