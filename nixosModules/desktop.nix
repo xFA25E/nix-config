@@ -10,7 +10,10 @@
     keyMap = "dvorak";
   };
 
-  documentation.man.generateCaches = true;
+  documentation = {
+    man.generateCaches = true;
+    dev.enable = true;
+  };
 
   fonts = {
     enableGhostscriptFonts = true;

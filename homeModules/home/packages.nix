@@ -59,6 +59,8 @@
       libnotify
       libreoffice
       make_backup
+      man-pages
+      man-pages-posix
       mediainfo
       mkpasswd
       mpc
