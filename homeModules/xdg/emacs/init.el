@@ -2791,7 +2791,27 @@ For ELEMENT see `tempo-define-template'."
   (setf (alist-get 'c-sharp treesit-language-source-alist) '("https://github.com/tree-sitter/tree-sitter-c-sharp"))
   (setf (alist-get 'json treesit-language-source-alist) '("https://github.com/tree-sitter/tree-sitter-json")))
 
-(use-package typescript-ts-mode :mode (rx ".ts" eos))
+(use-package typescript-ts-mode
+  :mode (rx ".ts" eos)
+  :config
+  (add-hook
+   'typescript-ts-mode-hook
+   (lambda ()
+     (setq-local
+      treesit-thing-settings
+      `((typescript
+         (sexp ,(regexp-opt '("object" "pattern" "array" "function" "string"
+                              "escape" "template" "regex" "number" "identifier"
+                              "this" "super" "true" "false" "null" "undefined"
+                              "arguments" "pair")))
+         (sentence ,(regexp-opt '("import_statement" "debugger_statement" "expression_statement"
+                                  "if_statement" "switch_statement" "for_statement"
+                                  "for_in_statement" "while_statement" "do_statement"
+                                  "try_statement" "with_statement" "break_statement"
+                                  "continue_statement" "return_statement" "throw_statement"
+                                  "empty_statement" "labeled_statement" "variable_declaration"
+                                  "lexical_declaration" "property_signature")))
+         (text ,(regexp-opt '("comment" "template_string")))))))))
 
 (use-package uniquify :custom (uniquify-ignore-buffers-re (rx bol "*")))
 
