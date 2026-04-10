@@ -74,4 +74,7 @@
   system.stateVersion = "24.11";
 
   services.teamviewer.enable = true;
+
+  # virtualisation.virtualbox.host.enable = true;
+  # users.extraGroups.vboxusers.members = [username];
 }
