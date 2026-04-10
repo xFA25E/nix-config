@@ -58,6 +58,7 @@
       libjpeg
       libnotify
       libreoffice
+      lxrandr
       make_backup
       man-pages
       man-pages-posix
