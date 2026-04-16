@@ -1,7 +1,7 @@
 (defpackage #:swm-config.status
   (:use #:cl)
   (:local-nicknames (#:re #:cl-ppcre))
-  (:import-from #:alexandria #:make-keyword)
+  (:import-from #:alexandria #:make-keyword #:when-let)
   (:import-from #:uiop #:read-file-string #:run-program)
   (:export #:battery #:brightness #:alsa))
 (in-package #:swm-config.status)
@@ -14,9 +14,10 @@
 
 (defun brightness ()
   (flet ((read-number-from-pathspec (pathspec)
-           (parse-integer (read-file-string (first (directory pathspec))) :junk-allowed t)))
-    (let ((brightness (read-number-from-pathspec #p"/sys/class/backlight/*/brightness"))
-          (max-brightness (read-number-from-pathspec #p"/sys/class/backlight/*/max_brightness")))
+           (when-let ((directory (directory pathspec)))
+             (parse-integer (read-file-string (first directory)) :junk-allowed t))))
+    (when-let ((brightness (read-number-from-pathspec #p"/sys/class/backlight/*/brightness"))
+               (max-brightness (read-number-from-pathspec #p"/sys/class/backlight/*/max_brightness")))
       (round (* (/ brightness max-brightness) 100)))))
 
 (defun alsa ()
