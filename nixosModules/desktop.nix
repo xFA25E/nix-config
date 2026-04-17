@@ -18,7 +18,11 @@
   fonts = {
     enableGhostscriptFonts = true;
     fontDir.enable = true;
-    fontconfig.defaultFonts.monospace = ["Iosevka"];
+    fontconfig.defaultFonts = {
+      monospace = ["Iosevka"];
+      sansSerif = ["Iosevka Aile"];
+      serif = ["Iosevka Etoile"];
+    };
     packages = with pkgs; [
       corefonts
       fira-code
@@ -26,7 +30,9 @@
       hack-font
       hasklig
       inconsolata
-      iosevka
+      iosevka-bin
+      (iosevka-bin.override {variant = "Aile";})
+      (iosevka-bin.override {variant = "Etoile";})
       # nerdfonts
       open-sans
       source-code-pro
