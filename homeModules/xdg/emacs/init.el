@@ -578,10 +578,7 @@ For EDIT-COMMAND see `recompile'."
 
 (use-package dired-async
   :ensure async
-  :custom (dired-async-mode-lighter "")
-  :custom-face
-  (dired-async-message ((t (:foreground "dark orange"))))
-  (dired-async-mode-message ((t (:foreground "dark orange")))))
+  :custom (dired-async-mode-lighter ""))
 
 (use-package dired-aux
   :bind (:map dired-mode-map ("M-+" . dired-create-empty-file))
@@ -813,6 +810,12 @@ See `xref-backend-apropos' docs for PATTERN."
 
   :init
   (setq completion-ignore-case t)
+  (require-theme 'modus-themes)
+
+  :config
+  (setq modus-themes-mixed-fonts t)
+  (setq modus-themes-variable-pitch-ui t)
+  (modus-themes-load-theme 'modus-operandi-tinted)
 
   :hook
   ((csharp-mode csharp-ts-mode) . (lambda () (setq-local fill-column 100)))
@@ -906,14 +909,7 @@ See `xref-backend-apropos' docs for PATTERN."
   :hook (after-save . executable-make-buffer-file-executable-if-script-p)
   :custom (executable-chmod 64))
 
-(use-package faces
-  :custom-face
-  (default ((t (:inherit nil :extend nil :stipple nil :background "white smoke" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 115 :width normal :foundry "UKWN" :family "Iosevka"))))
-  (header-line ((t (:inherit default :background "grey90" :foreground "grey20"))))
-  (mode-line ((t (:inherit default :background "white smoke" :foreground "black" :box (:line-width (1 . 1) :color "grey75") :height 0.83))))
-  (mode-line-inactive ((t (:inherit mode-line :background "dark gray" :foreground "grey20" :weight light))))
-  (region ((t (:extend t :background "LemonChiffon2" :distant-foreground "gtk_selection_fg_color"))))
-  (tab-bar ((t (:inherit (variable-pitch default) :background "black" :foreground "white smoke" :height 0.8)))))
+(use-package faces :config (set-face-attribute 'default nil :height 115))
 
 (use-package files
   :bind
@@ -1416,10 +1412,7 @@ See `xref-backend-apropos' docs for PATTERN."
   :ensure t
   :custom (magit-define-global-key-bindings 'recommended))
 
-(use-package magit-diff
-  :ensure magit
-  :custom-face
-  (magit-diff-revision-summary-highlight ((t (:inherit magit-diff-hunk-heading-highlight :background "misty rose" :underline t)))))
+(use-package magit-diff :ensure magit)
 
 (use-package magit-extras
   :ensure magit
@@ -1987,11 +1980,7 @@ build."
   :ensure org
   :custom (org-duration-format 'h:mm))
 
-(use-package org-faces
-  :ensure org
-  :custom-face
-  (org-mode-line-clock ((t nil)))
-  (org-mode-line-clock-overrun ((t (:background "red")))))
+(use-package org-faces :ensure org)
 
 (use-package org-id
   :ensure org
@@ -2517,14 +2506,7 @@ ARG as in `move-beginning-of-line'."
   (tab-bar-tab-hints t)
 
   :config
-  (keymap-unset tab-prefix-map "1" t)
-
-  :custom-face
-  (tab-bar-tab ((t (:inherit tab-bar :background "white smoke" :foreground "black" :box (:line-width (1 . 1) :color "white smoke")))))
-  (tab-bar-tab-group-current ((t (:weight bold :box nil :inverse-video t :inherit tab-bar-tab))))
-  (tab-bar-tab-group-inactive ((t (:inherit tab-bar-tab-inactive))))
-  (tab-bar-tab-inactive ((t (:inherit tab-bar-tab :background "dark grey" :foreground "black" :box (:line-width (1 . 1) :color "black")))))
-  (tab-bar-tab-ungrouped ((t (:inherit tab-bar-tab-inactive)))))
+  (keymap-unset tab-prefix-map "1" t))
 
 (use-package tempo
   :bind

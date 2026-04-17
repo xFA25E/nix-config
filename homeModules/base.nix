@@ -16,7 +16,7 @@ in {
     ./xresources.nix
   ];
 
-  colorScheme = inputs.nix-colors.colorSchemes.gruvbox-light-medium;
+  colorScheme = inputs.nix-colors.colorSchemes.one-light;
   fonts.fontconfig.enable = true;
 
   gtk = {
