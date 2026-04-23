@@ -151,6 +151,7 @@
   :hook
   csharp-mode
   csharp-ts-mode
+  csproj-mode
   css-ts-mode
   fsharp-mode
   html-mode
@@ -173,6 +174,7 @@
   ;; (setf (alist-get 'nxml-mode apheleia-mode-alist) 'xmllint)
   (setf (alist-get 'csharp-mode apheleia-mode-alist) 'csharpier)
   (setf (alist-get 'csharp-ts-mode apheleia-mode-alist) 'csharpier)
+  (setf (alist-get 'csproj-mode apheleia-mode-alist) 'csharpier)
   (setf (alist-get 'nix-mode apheleia-mode-alist) 'alejandra)
   (setf (alist-get 'nix-ts-mode apheleia-mode-alist) 'alejandra)
   (setf (alist-get 'sh-mode apheleia-mode-alist) 'shfmt)
@@ -490,7 +492,9 @@ For EDIT-COMMAND see `recompile'."
   :after files
   :init (setf (alist-get 'csharp-mode major-mode-remap-alist) 'csharp-ts-mode))
 
-(use-package csproj-mode :ensure t)
+(use-package csproj-mode
+  :ensure t
+  :mode (rx ".slnx" eos))
 
 (use-package css-mode
   :after files
