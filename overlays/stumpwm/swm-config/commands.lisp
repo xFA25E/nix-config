@@ -39,6 +39,9 @@
 (swm:defcommand telegram-desktop () ()
   (swm:run-or-raise "Telegram" '(:class "TelegramDesktop")))
 
+(swm:defcommand vesktop () ()
+  (swm:run-or-raise "vesktop" '(:class "vesktop")))
+
 ;;; MISC
 
 (swm:defcommand screenshot (name selectp) ((:string "Name (w/o ext): ") (:y-or-n "Select? "))

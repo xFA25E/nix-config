@@ -55,7 +55,8 @@
   "C-b" "brave-incognito"
   "C-e" "mpv"
   "C-f" "firefox"
-  "C-t" "telegram-desktop")
+  "C-t" "telegram-desktop"
+  "C-r" "vesktop")
 
 ;;; TIMER
 
