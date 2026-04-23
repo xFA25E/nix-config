@@ -1,6 +1,7 @@
 {
   autoconf,
   emacs,
+  fetchFromGitHub,
   lib,
   makeWrapper,
   pkg-config,
@@ -10,6 +11,9 @@
   texinfo,
   writeText,
   withSlynk ? false,
+  SDL2,
+  SDL2_ttf,
+  libffi,
 }: let
   l = lib // builtins;
 
@@ -38,12 +42,26 @@
     systems = ["dynamic-mixins-swm" "stumpwm"];
   };
 
+  sdl-fonts = sbcl.buildASDFSystem {
+    pname = "sdl-fonts";
+    version = "0.0.1";
+    src = fetchFromGitHub {
+      owner = "stumpwm";
+      repo = "stumpwm-contrib";
+      rev = "78b574de489fa4a4c156d15a55ac991739a9c58f";
+      hash = "sha256-TAgfrhjy3WUd6sMR62/5HUFTRIRZdH62kbfqdv1+0gk=";
+    };
+    nativeLibs = [SDL2 SDL2_ttf];
+    lispLibs = [stumpwm] ++ l.attrsets.attrVals ["cffi" "cffi-libffi"] sbcl.pkgs;
+    systems = ["sdl-fonts"];
+  };
+
   swm-config = sbcl.buildASDFSystem {
     pname = "swm-config";
     version = "0.0.1";
     src = l.sources.sourceFilesBySuffices ./swm-config [".lisp" ".asd"];
     lispLibs =
-      [stumpwm]
+      [stumpwm sdl-fonts]
       ++ l.attrsets.attrVals [
         "alexandria"
         "chronicity"
@@ -60,7 +78,8 @@
 
   load-stumpwm = writeText "load-stumpwm.lisp" (''
       (require "asdf")
-      (asdf:load-system "swm-config") ''
+      (asdf:load-system "swm-config")
+    ''
     + l.strings.optionalString withSlynk ''
       (asdf:load-system "slynk")
       (mapc #'asdf:load-system (remove "slynk/" (asdf:registered-systems) :test-not #'uiop:string-prefix-p))
@@ -77,6 +96,9 @@ in
     preBuild = ''
       makeFlagsArray+=(sbcl_BUILDOPTS="--non-interactive --eval \"(setf sb-impl::*default-external-format* :UTF-8)\" --load ./load-stumpwm.lisp --load ./make-image.lisp")
       cat "${load-stumpwm}" >./load-stumpwm.lisp
+    '';
+    postInstall = ''
+      wrapProgram $out/bin/stumpwm --prefix LD_LIBRARY_PATH : "${lib.strings.makeLibraryPath [SDL2 SDL2_ttf libffi]}"
     '';
     dontStrip = true;
   }

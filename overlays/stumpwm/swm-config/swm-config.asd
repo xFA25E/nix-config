@@ -7,6 +7,7 @@
                "local-time"
                "local-time-duration"
                "trivia"
+               "sdl-fonts"
 
                "flexi-streams")
   :components ((:file "timers")

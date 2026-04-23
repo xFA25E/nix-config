@@ -2,6 +2,7 @@
   (:use #:cl)
   (:local-nicknames (#:swm #:stumpwm))
   (:import-from #:uiop #:launch-program #:run-program)
+  (:import-from #:sdl-fonts #:load-font)
   (:export #:init))
 (in-package #:swm-config)
 
@@ -13,7 +14,8 @@
   ;; (setf swm:*input-completion-style* (make-input-completion-style-unambiguous))
   ;; (setf swm::*input-refine-candidates-fn* #'swm:input-refine-fuzzy)
   (swm:set-prefix-key (swm:kbd "C-z"))
-  (swm:set-font "-*-terminus-medium-r-*-*-16-*-*-*-*-*-iso10646-1")
+  ;; DO NOT HARDCODE THIS
+  (swm:set-font (load-font "/run/current-system/sw/share/X11/fonts/IosevkaAile-Light.ttc" 11))
   (swm:clear-window-placement-rules)
   (launch-program '("systemctl" "--user" "start" "random-background.service"))
   (swm-config.reverse-im:init)
