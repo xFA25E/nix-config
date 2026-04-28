@@ -1953,7 +1953,7 @@ build."
   (:map mode-specific-map ("G a" . org-agenda))
   (:map org-agenda-mode-map ("T" . org-agenda-todo-yesterday))
   :custom
-  (org-agenda-files '("~/org/study.org" "~/org/life.org"))
+  (org-agenda-files '("~/org/study.org" "~/org/life.org" "~/org/billing.org"))
   (org-agenda-skip-deadline-if-done t)
   (org-agenda-skip-scheduled-if-done t)
   (org-agenda-span 'fortnight)
@@ -1969,7 +1969,12 @@ build."
   :bind (:map mode-specific-map ("G c" . org-capture))
   :custom
   (org-capture-templates
-   '(("r" "Remember" entry (file+headline "~/org/life.org" "Remember") "* %?"))))
+   '(("r" "Remember" entry (file+headline "~/org/life.org" "Remember") "* %?")
+     ("b" "Billing Task" entry (file "~/org/billing.org") "* TOTRANSFER %^{Task}%?
+:PROPERTIES:
+:CLIENT: %^{CLIENT}p
+:DATE: %<%Y-%m-%d>
+:END:" :prepend t :empty-lines 1 :clock-in t :clock-keep t))))
 
 (use-package org-clock
   :ensure org
