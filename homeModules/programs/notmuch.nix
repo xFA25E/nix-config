@@ -49,6 +49,9 @@ in {
         notmuch tag +polimi -litkov -- tag:new AND tag:litkov AND tag:inbox AND to:/polimi.it/
         notmuch tag +polimi -litkov -- tag:new AND tag:litkov AND tag:inbox AND from:/polimi.it/
 
+        ## else
+        notmuch tag +indeed +archive -inbox -unread -- tag:new AND tag:litkov AND from:"donotreply@match.indeed.com"
+
         # polimi rules
         notmuch tag +polimi -- 'path:polimi/**'
         notmuch tag +archive -- 'path:polimi/archive/**'
@@ -78,6 +81,12 @@ in {
         notmuch tag +nonsolocodice -- 'path:nonsolocodice/**'
         notmuch tag +inbox  -- 'path:nonsolocodice/inbox/**'
         notmuch tag +sent -- 'path:nonsolocodice/sent/**'
+
+        ## tag rules
+        notmuch tag +matthews -- tag:new AND tag:nonsolocodice AND "matw.com"
+        notmuch tag +logibiotech -- tag:new AND tag:nonsolocodice AND "logimaticweb"
+        notmuch tag +logibiotech -- tag:new AND tag:nonsolocodice AND "logibiotech"
+        notmuch tag +euroengineering -- tag:new AND tag:nonsolocodice AND "eeng.it"
 
         # after processing remove tag new
         notmuch tag -new -- tag:new
