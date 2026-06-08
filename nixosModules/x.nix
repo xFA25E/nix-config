@@ -8,7 +8,7 @@
   };
 
   services = {
-    displayManager.defaultSession = "none";
+    displayManager.defaultSession = null;
     libinput.enable = true;
 
     xserver = {
