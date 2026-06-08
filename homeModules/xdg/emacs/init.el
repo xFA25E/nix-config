@@ -1595,7 +1595,7 @@ See its documentiation for N."
      ("Нейронаука с Владимиром Алиповым" "https://www.youtube.com/feeds/videos.xml?channel_id=UCmEG9pKNZaE6QG_SaBBt93Q" nil nil nil)
      ("itpedia" "https://www.youtube.com/feeds/videos.xml?channel_id=UC6bTF68IAV1okfRfwXIP1Cg" nil nil nil)
      ("Joseph Bronski YouTube" "https://www.youtube.com/feeds/videos.xml?channel_id=UCiMwMDPJBB_mcBPknjPrfGA" nil nil nil)
-     ("Joseph Bronski Substack" "https://josephbronski.substack.com/feed" nil nil nil)
+     ("Joseph Bronski Substack" "https://josephbronski.substack.com/feed" nil nil nil) ; https://www.leonvoss.com/archive?sort=new https://sociobiology.org/
      ("Максим Вердикт" "https://www.youtube.com/feeds/videos.xml?channel_id=UC44oy3QadzoUZt7G0DDf5DQ" nil nil nil)
      ("Biopolitics" "https://biopolitics.substack.com/feed" nil nil nil)
      ("AltHype Cozy" "https://cozysounds.kanyecode.repl.co/feed/althype" nil nil nil)

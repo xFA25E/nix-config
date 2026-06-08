@@ -61,8 +61,16 @@ in {
 
     gammastep = {
       enable = true;
-      latitude = "8.877";
-      longitude = "47.339";
+      latitude = "47.339";
+      longitude = "8.877";
+      settings = {
+        general = {
+          adjustment-method = "randr";
+        };
+        randr = {
+          screen = 0;
+        };
+      };
     };
 
     gpg-agent = {
