@@ -79,6 +79,8 @@
         specialUse = "Trash";
       };
     };
+
+    stateVersion = 3;
   };
 
   networking = {

@@ -129,7 +129,7 @@
 
     sharry = {
       inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:eikek/sharry";
+      url = "github:eikek/sharry/v1.16.0";
     };
 
     simple-nixos-mailserver = {
