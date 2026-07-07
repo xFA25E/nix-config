@@ -78,7 +78,6 @@ in {
       GTK_IM_MODULE = "ibus";
       LESSHISFILE = "/dev/null";
       MAILDIR = config.accounts.email.maildirBasePath;
-      MPD_HOST = "localhost";
       MPD_PORT = "6600";
       NPM_CONFIG_USERCONFIG = "${config.xdg.configHome}/npm/npmrc";
       QT_IM_MODULE = "ibus";

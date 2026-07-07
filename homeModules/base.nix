@@ -26,6 +26,7 @@ in {
       size = 11;
     };
     gtk2.configLocation = "${config.xdg.cacheHome}/gtk-2.0/gtkrc";
+    gtk4.theme = config.gtk.theme;
     iconTheme = {
       name = "WhiteSur";
       package = pkgs.whitesur-icon-theme;

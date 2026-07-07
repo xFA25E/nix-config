@@ -39,12 +39,13 @@
   };
 
   mailserver = {
-    certificateScheme = "acme-nginx";
     enable = true;
+    stateVersion = 3;
     fqdn = "mail.litkov.one";
     domains = ["litkov.one"];
+    x509.useACMEHost = config.mailserver.fqdn;
 
-    loginAccounts = {
+    accounts = {
       "valeriy@litkov.one" = {
         aliases = ["postmaster@litkov.one" "valery@litkov.one"];
         hashedPasswordFile = config.age.secrets."mail".path;
@@ -58,31 +59,29 @@
     mailboxes = {
       Archive = {
         auto = "subscribe";
-        specialUse = "Archive";
+        special_use = "\\Archive";
       };
       Drafts = {
         auto = "subscribe";
-        specialUse = "Drafts";
+        special_use = "\\Drafts";
       };
       Flagged = {
         auto = "subscribe";
-        specialUse = "Flagged";
+        special_use = "\\Flagged";
       };
       Junk = {
         auto = "subscribe";
-        specialUse = "Junk";
+        special_use = "\\Junk";
       };
       Sent = {
         auto = "subscribe";
-        specialUse = "Sent";
+        special_use = "\\Sent";
       };
       Trash = {
         auto = "subscribe";
-        specialUse = "Trash";
+        special_use = "\\Trash";
       };
     };
-
-    stateVersion = 3;
   };
 
   networking = {
@@ -143,6 +142,10 @@
   };
 
   services = {
+    nginx = {
+      enable = true;
+      virtualHosts.${config.mailserver.fqdn}.enableACME = true;
+    };
     static-web-server = {
       enable = true;
       listen = "[::]:17171";

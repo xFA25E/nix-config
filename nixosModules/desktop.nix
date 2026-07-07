@@ -11,8 +11,8 @@
   };
 
   documentation = {
-    man.generateCaches = true;
     dev.enable = true;
+    man.cache.enable = true;
   };
 
   fonts = {

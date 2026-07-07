@@ -1,6 +1,11 @@
-{pkgs, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   programs.firefox = {
     enable = true;
+    configPath = ".mozilla/firefox";
     profiles = {
       default = {
         bookmarks = {

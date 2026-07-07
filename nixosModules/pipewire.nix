@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   # boot.kernelParams = ["usbcore.autosuspend=-1"];
-  environment.systemPackages = [pkgs.rnnoise pkgs.helvum pkgs.qpwgraph];
+  environment.systemPackages = [pkgs.rnnoise pkgs.qpwgraph];
 
   services.pipewire = {
     alsa = {

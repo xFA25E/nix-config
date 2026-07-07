@@ -68,6 +68,7 @@
     password-store = {
       enable = true;
       package = pkgs.pass.withExtensions (exts: [exts.pass-otp]);
+      settings = {PASSWORD_STORE_DIR = "$XDG_DATA_HOME/password-store";};
     };
 
     readline = {
@@ -83,17 +84,19 @@
       enableDefaultConfig = false;
       extraOptionOverrides."StrictHostKeyChecking" = "accept-new";
       includes = ["config.d/config"];
-      matchBlocks."*" = {
-        addKeysToAgent = "yes";
-        compression = false;
-        controlMaster = "auto";
-        controlPath = "~/.ssh/controlmasters/%r@%n:%p";
-        controlPersist = "1000m";
-        forwardAgent = false;
-        hashKnownHosts = false;
-        serverAliveCountMax = 30;
-        serverAliveInterval = 5;
-        userKnownHostsFile = "~/.ssh/known_hosts";
+      settings = {
+        "*" = {
+          AddKeysToAgent = "yes";
+          Compression = false;
+          ControlMaster = "auto";
+          ControlPath = "~/.ssh/controlmasters/%r@%n:%p";
+          ControlPersist = "1000m";
+          ForwardAgent = false;
+          HashKnownHosts = false;
+          ServerAliveCountMax = 30;
+          ServerAliveInterval = 5;
+          UserKnownHostsFile = "~/.ssh/known_hosts";
+        };
       };
     };
   };
