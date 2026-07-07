@@ -306,6 +306,7 @@ See `browse-url' for URL and ARGS."
 
 (use-package calendar
   :custom
+  (calendar-date-style 'iso)
   (calendar-time-zone-style 'numeric)
   (calendar-week-start-day 1))
 
@@ -2586,6 +2587,7 @@ For ELEMENT see `tempo-define-template'."
                   (dir-path (file-name-directory file-path)))
             (thread-last dir-path
               (string-remove-prefix "trunk/")
+              (string-remove-prefix "src/")
               (string-remove-suffix "/")
               (string-replace "/" "."))
           (file-name-sans-extension (buffer-name)))
@@ -2600,7 +2602,7 @@ For ELEMENT see `tempo-define-template'."
     (tempo-extra-define "foreach" mode
       '("foreach (var " p " in " p ")" > n
         "{" > n
-        p > n
+        p r > n
         "}" >))
 
     (tempo-extra-define "try" mode
