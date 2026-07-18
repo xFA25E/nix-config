@@ -15,6 +15,7 @@
     inputs.self.nixosModules.pipewire
     inputs.self.nixosModules.x
     inputs.self.nixosModules.sshd
+    inputs.self.nixosModules.podman
   ];
 
   boot = {
