@@ -115,14 +115,6 @@
           youtube-recommended-videos
           tab-session-manager
           media-url-timestamper
-          (buildFirefoxXpiAddon {
-            pname = "chatgpt-speed-booster";
-            version = "2.0.0";
-            addonId = "chatgpt-lag-fixer@bramgiessen.com";
-            url = "https://addons.mozilla.org/firefox/downloads/file/4662722/chatgpt_speed_booster-2.0.0.xpi";
-            sha256 = "sha256-a/pUxB93JyXqEfm25n/JtwEe+s55dazIM3G6SjvWVHI=";
-            meta = {};
-          })
         ];
 
         settings = {
