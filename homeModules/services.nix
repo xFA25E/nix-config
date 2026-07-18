@@ -95,7 +95,7 @@ in {
         {
           name = "Veles Dual Monitor";
           outputs_connected = ["eDP-1" "HDMI-2"];
-          configure_row = ["HDMI-2" "eDP-1@1368x768"];
+          configure_row = ["HDMI-2" "eDP-1@1920x1080"];
           atomic = true;
           primary = "HDMI-2";
           execute_after = ["xrandr --dpi 112"];
