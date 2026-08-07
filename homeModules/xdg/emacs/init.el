@@ -19,9 +19,9 @@
 ;; find powershell tree sitter
 ;; set completion for powershell scripts and shell
 ;; use psscriptanalyzer with flymake to highlight warnings
-;; something to open c# documentation from emacs
+;; something to open c# documentation from Emacs
 
-;; connect to remote desktop using emacs
+;; connect to remote desktop using Emacs
 
 ;; try omnisharp
 
@@ -1143,8 +1143,7 @@ See `xref-backend-apropos' docs for PATTERN."
   :ensure t
   :config
   (remove-hook 'project-find-functions #'fsharp-mode-project-root)
-  (remove-hook 'project-find-functions #'fsharp-mode-project-root)
-  )
+  (remove-hook 'project-find-functions #'fsharp-mode-project-root))
 
 (use-package gdb-mi
   :custom
