@@ -1426,7 +1426,19 @@ See `xref-backend-apropos' docs for PATTERN."
   :ensure t
   :custom (magit-define-global-key-bindings 'recommended))
 
-(use-package magit-diff :ensure magit)
+(use-package magit-diff
+  :ensure magit
+  :config
+  (define-advice magit-diff-select-merges (:override (&rest _ignore) add-diff-merges-options)
+    (magit-read-char-case nil t
+      (?u "[u]nspecified"    nil)
+      (?n "[n]off"           "off")
+      (?m "[m]on"            "on")
+      (?1 "[1]first-parent"  "first-parent")
+      (?s "[s]eparate"       "separate")
+      (?c "[c]ombined"       "combined")
+      (?d "[d]ense-combined" "dense-combined")
+      (?r "[r]emerge"        "remerge"))))
 
 (use-package magit-extras
   :ensure magit
