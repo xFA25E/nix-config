@@ -18,6 +18,7 @@
     ./webhooktest.nix
 
     ./landing.nix
+    ./blog.nix
   ];
 
   age.secrets = {

@@ -964,11 +964,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1783424596,
-        "narHash": "sha256-X15mLqhHSfhnpZLBqmJ9dtFfKFXvBjUaCbN5L6UnCDs=",
+        "lastModified": 1785295321,
+        "narHash": "sha256-TXDmojdKUruinlkf/0iFVm78x7IxpyIxOc+vdb2tuqc=",
         "owner": "nix-community",
         "repo": "emacs-overlay",
-        "rev": "fa518f84fa7e60eef450bc4551cea5d510347ed6",
+        "rev": "f872f15fdab1a029108cfca9296531d56872e27f",
         "type": "github"
       },
       "original": {
@@ -3160,6 +3160,7 @@
         "nur": "nur",
         "sharry": "sharry",
         "simple-nixos-mailserver": "simple-nixos-mailserver",
+        "sincere-blog": "sincere-blog",
         "stumpwm": "stumpwm"
       }
     },
@@ -3228,6 +3229,26 @@
         "ref": "nixos-26.05",
         "repo": "nixos-mailserver",
         "type": "gitlab"
+      }
+    },
+    "sincere-blog": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786095920,
+        "narHash": "sha256-D9eXkYwjemQA5aWHxH+DC32bYjuB0RZ53CypR6SBt78=",
+        "owner": "xFA25E",
+        "repo": "sincere-blog",
+        "rev": "f085a84ca428985509422db9d413cfc08949a094",
+        "type": "github"
+      },
+      "original": {
+        "owner": "xFA25E",
+        "repo": "sincere-blog",
+        "type": "github"
       }
     },
     "std": {

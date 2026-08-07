@@ -137,6 +137,11 @@
       url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-26.05";
     };
 
+    sincere-blog = {
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:xFA25E/sincere-blog";
+    };
+
     stumpwm = {
       flake = false;
       url = "github:stumpwm/stumpwm/24.11";
@@ -152,6 +157,7 @@
         inputs.agenix.overlays.default
         inputs.nur.overlays.default
         inputs.emacs-overlay.overlays.default
+        inputs.sincere-blog.overlays.default
         inputs.self.overlays.default
 
         inputs.sharry.overlays.default
