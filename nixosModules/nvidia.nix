@@ -5,6 +5,7 @@
       # extraPackages = with pkgs; [nvidia-vaapi-driver];
     };
     nvidia = {
+      modesetting.enable = true;
       open = true;
       nvidiaSettings = true;
     };

@@ -1153,7 +1153,16 @@ See `xref-backend-apropos' docs for PATTERN."
 
 (use-package gptel
   :ensure t
-  :bind (:map mode-specific-map ("a" . gptel-send)))
+  :bind (:map mode-specific-map ("a" . gptel-send))
+  :custom (gptel-crowdsourced-prompts-file (expand-file-name "gptel-crowdsourced-prompts.csv" (xdg-cache-home)))
+  :config
+  (gptel-make-ollama "Ollama"
+    :host "localhost:11434"
+    :stream t
+    :models '(qwen2.5-coder:7b deepseek-r1:8b))
+
+  (setq gptel-backend (gptel-make-gemini "Gemini" :key 'gptel-api-key :stream t))
+  (setq gptel-model 'gemini-flash-lite-latest))
 
 (use-package grep
   :bind (:map search-map ("M-g g" . rgrep))

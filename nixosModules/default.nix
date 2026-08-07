@@ -5,6 +5,7 @@
   docker = import ./docker.nix;
   home = import ./home.nix;
   nvidia = import ./nvidia.nix;
+  ollama = import ./ollama.nix;
   pipewire = import ./pipewire.nix;
   podman = import ./podman.nix;
   sshd = import ./sshd.nix;

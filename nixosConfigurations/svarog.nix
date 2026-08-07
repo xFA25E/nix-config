@@ -21,6 +21,7 @@
     inputs.self.nixosModules.pipewire
     inputs.self.nixosModules.x
     inputs.self.nixosModules.zsa
+    inputs.self.nixosModules.ollama
   ];
 
   boot = {
