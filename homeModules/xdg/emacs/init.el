@@ -578,6 +578,7 @@ For EDIT-COMMAND see `recompile'."
 
 (use-package dired-atool-transient
   :vc (:url "https://github.com/xFA25E/dired-atool-transient" :rev :newest)
+  :after dired
   :bind
   (:map dired-mode-map
         ("c" . dired-atool-transient-pack)
@@ -596,6 +597,7 @@ For EDIT-COMMAND see `recompile'."
 
 (use-package dired-tags
   :vc (:url "https://github.com/xFA25E/dired-tags" :rev :newest)
+  :after dired
   :bind (:map dired-mode-map ("C-c C-t" . dired-tags-prefix-map)))
 
 (use-package dired-x
