@@ -71,6 +71,8 @@
   (when-let ((font (cl-first (member "Segoe UI Emoji" (font-family-list)))))
     (set-fontset-font t 'symbol (font-spec :family font) nil 'prepend)))
 
+(setq nsxiv-file-extensions '("bmp" "gif" "jfif" "jpeg" "jpg" "nef" "pbm" "pgm" "png" "pnm" "ppm" "svg" "thm" "tif" "tiff" "webp" "xbm" "xpm"))
+
 (use-package abbrev
   :hook
   csharp-mode csharp-ts-mode
@@ -533,7 +535,7 @@ For EDIT-COMMAND see `recompile'."
    (list (list (rx "." (or "csv" "doc" "docx" "odp" "ods" "odt" "ppt" "pptx" "xls" "xlsx") eos)
                "setsid -f libreoffice * >/dev/null 2>&1"
                "libreoffice --invisible --headless --convert-to pdf * &")
-         (list (rx "." (or "bmp" "gif" "jfif" "jpeg" "jpg" "nef" "png" "thm" "tif" "webp" "xpm") eos)
+         (list (rx "." (regexp (regexp-opt nsxiv-file-extensions nil)) eos)
                "setsid -f nsxiv * >/dev/null 2>&1" "setsid -f gimp * >/dev/null 2>&1")
          (list (rx "." (or "ai" "eps") eos)
                "setsid -f inkscape * >/dev/null 2>&1"
@@ -617,10 +619,7 @@ For MARKER-CHAR see `dired-mark-extension'."
                         nil nil dflt)))
            (aref input 0)))
         (_ dired-marker-char))))
-    (dired-mark-extension
-     '("mp4" "mkv" "png" "jpeg" "jpg" "gif" "tiff" "tif" "xbm" "xpm" "pbm" "pgm" "ppm" "pnm" "svg")
-     '("bmp" "gif" "jfif" "jpeg" "jpg" "nef" "png" "thm" "tif" "webp" "xpm")
-     marker-char))
+    (dired-mark-extension nsxiv-file-extensions marker-char))
 
   (defun dired-mark-videos (&optional marker-char)
     "Mark videos.
@@ -1242,9 +1241,10 @@ See `xref-backend-apropos' docs for PATTERN."
   (image-dired-temp-rotate-image-file (expand-file-name "emacs/image-dired/rotate_temp" (xdg-cache-home))))
 
 (use-package image-file
-  :custom
-  (image-file-name-extensions
-   '("mp4" "mkv" "png" "jpeg" "jpg" "gif" "tiff" "tif" "xbm" "xpm" "pbm" "pgm" "ppm" "pnm" "svg")))
+  :config
+  (customize-set-variable
+   'image-file-name-extensions
+   (cl-union '("mp4" "mkv") image-file-name-extensions :test #'equal)))
 
 (use-package imenu
   :custom
