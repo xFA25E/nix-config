@@ -19,6 +19,7 @@
 
     ./landing.nix
     ./blog.nix
+    ./immich.nix
   ];
 
   age.secrets = {
