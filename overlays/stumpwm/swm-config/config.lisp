@@ -10,6 +10,8 @@
   (run-program (list "xrdb" "-get" name) :output '(:string :stripped t) :ignore-error-status t))
 
 (defun init ()
+  (setf swm::*menu-maximum-height* 10)
+
   (setf swm:*mouse-focus-policy* :click)
   ;; (setf swm:*input-completion-style* (make-input-completion-style-unambiguous))
   ;; (setf swm::*input-refine-candidates-fn* #'swm:input-refine-fuzzy)
