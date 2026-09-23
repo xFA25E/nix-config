@@ -81,6 +81,12 @@
     };
   };
 
+  services.btrfs.autoScrub = {
+    enable = true;
+    interval = "monthly";
+    fileSystems = ["/"];
+  };
+
   swapDevices = [{device = "/swap/swapfile";}];
   system.stateVersion = "24.11";
 }

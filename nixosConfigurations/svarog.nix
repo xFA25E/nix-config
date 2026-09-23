@@ -74,7 +74,15 @@
   swapDevices = [{device = "/swap/swapfile";}];
   system.stateVersion = "24.11";
 
-  services.teamviewer.enable = true;
+  services = {
+    btrfs.autoScrub = {
+      enable = true;
+      interval = "monthly";
+      fileSystems = ["/"];
+    };
+
+    teamviewer.enable = true;
+  };
 
   # virtualisation.virtualbox.host.enable = true;
   # users.extraGroups.vboxusers.members = [username];
