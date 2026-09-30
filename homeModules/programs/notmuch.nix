@@ -87,6 +87,7 @@ in {
         notmuch tag +logibiotech -- tag:new AND tag:nonsolocodice AND "logimaticweb"
         notmuch tag +logibiotech -- tag:new AND tag:nonsolocodice AND "logibiotech"
         notmuch tag +euroengineering -- tag:new AND tag:nonsolocodice AND "eeng.it"
+        notmuch tag +imgroup -- tag:new AND tag:nonsolocodice AND "im-group.com"
 
         # after processing remove tag new
         notmuch tag -new -- tag:new

@@ -964,7 +964,16 @@ See `xref-backend-apropos' docs for PATTERN."
   (:map ctl-x-x-map
         ("l d" . add-dir-local-variable)
         ("l f" . add-file-local-variable)
-        ("l F" . add-file-local-variable-prop-line)))
+        ("l F" . add-file-local-variable-prop-line))
+
+  :config
+  (connection-local-set-profile-variables
+   'legacy-dired-switches
+   '((dired-listing-switches . "-lFAh")))
+
+  (connection-local-set-profiles
+   '(:application tramp :machine "caggiati")
+   'legacy-dired-switches))
 
 (use-package find-dired
   :bind

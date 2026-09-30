@@ -82,6 +82,10 @@
     };
 
     teamviewer.enable = true;
+
+    xserver.deviceSection = ''
+      Option "ConnectedMonitor" "HDMI-0, DP-0"
+    '';
   };
 
   # virtualisation.virtualbox.host.enable = true;

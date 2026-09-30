@@ -25,7 +25,7 @@
 
   (setf swm:*window-format* "%m%50t")
   (setf swm:*mode-line-highlight-template* "^[^09~A^]")
-  (setf swm:*screen-mode-line-format* "[%n] %W^> %u %d")
+  (setf swm:*screen-mode-line-format* "[%n] %w^> %u %d")
   (setf swm:*mode-line-position* :bottom)
   (setf swm:*mode-line-border-width* 0)
   (setf swm:*mode-line-pad-x* 0)

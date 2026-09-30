@@ -50,7 +50,55 @@
   };
 
   programs.bash.promptInit = ''
-    PS1='\n$(e=$?;[[ $e != 0 ]]&&printf "%s " "$e")\u $(p=''${PWD#"$HOME"};[[ $PWD != "$p" ]]&&printf "~";IFS=/;for q in ''${p:1};do printf "/%s" "''${q:0:1}";[[ ''${q:0:1} = . ]]&&printf "%s" "''${q:1:1}";done;[[ ''${q:0:1} != . ]]&&printf "%s" "''${q:1:1}";printf "%s" "''${q:2}") \$ '
+    # 1. DEBUG trap captures start time of actual typed commands
+    trap 'timer=''${timer:-$SECONDS}' DEBUG
+
+    build_prompt() {
+      # CRITICAL: Capture exit code of user's command immediately
+      local exit_code=$?
+
+      # --- A. Timestamp & Duration Logic ---
+      if [ -n "$timer" ]; then
+        local elapsed=$((SECONDS - timer))
+        local time_part="$(date +'%Y-%m-%d %H:%M:%S') ''${elapsed}s "
+        unset timer
+      fi
+
+      # --- B. Error Status ---
+      local err_str=""
+      if [[ $exit_code != 0 ]]; then
+        err_str="$exit_code "
+      fi
+
+      # --- C. Shortened Path Logic ---
+      local path=''${PWD#"$HOME"}
+      local path_str=""
+
+      if [[ $PWD != "$path" ]]; then
+        path_str="~"
+      fi
+
+      local IFS=/
+      local part
+      for part in ''${path:1}; do
+        path_str="$path_str/''${part:0:1}"
+        if [[ ''${part:0:1} = . ]]; then
+          path_str="$path_str''${part:1:1}"
+        fi
+      done
+
+      if [[ -n "$part" ]]; then
+        if [[ ''${part:0:1} != . ]]; then
+          path_str="$path_str''${part:1:1}"
+        fi
+        path_str="$path_str''${part:2}"
+      fi
+
+      # --- D. Assemble PS1 directly ---
+      PS1="\n''${time_part}\n''${err_str}\u ''${path_str} \$ "
+    }
+
+    PROMPT_COMMAND=build_prompt
   '';
 
   time.timeZone = "Europe/Rome";
