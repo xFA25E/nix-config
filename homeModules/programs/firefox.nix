@@ -232,7 +232,6 @@
           "network.predictor.enabled" = false;
           "network.prefetch-next" = false;
           "pdfjs.enabledCache.state" = false;
-          "permissions.default.desktop-notification" = 2;
           "permissions.default.geo" = 2;
           "permissions.default.xr" = 2;
           "places.history.enabled" = false;
