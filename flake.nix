@@ -116,12 +116,17 @@
       url = "github:nix-community/home-manager/release-26.05";
     };
 
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     nix-colors.url = "github:Misterio77/nix-colors";
 
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nur = {
       inputs.nixpkgs.follows = "nixpkgs";

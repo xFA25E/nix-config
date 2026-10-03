@@ -8,6 +8,7 @@
 in {
   imports = [
     inputs.nix-colors.homeManagerModule
+    inputs.nix-index-database.homeModules.default
     ./email.nix
     ./home
     ./programs
