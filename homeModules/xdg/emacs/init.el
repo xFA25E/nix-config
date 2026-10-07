@@ -2904,8 +2904,11 @@ For ELEMENT see `tempo-define-template'."
 
 (use-package web-mode
   :ensure t
-  :mode (rx ".twig" eos)
-  :custom (web-mode-markup-indent-offset 2))
+  :mode
+  (rx ".twig" eos)
+  (rx ".razor" eos)
+  :custom
+  (web-mode-engines-alist (list (cons "razor" (rx ".razor" eos)))))
 
 (use-package wgrep
   :ensure t
