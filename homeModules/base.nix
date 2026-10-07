@@ -15,6 +15,7 @@ in {
     ./services.nix
     ./xdg
     ./xresources.nix
+    ./borgmatic.nix
   ];
 
   colorScheme = inputs.nix-colors.colorSchemes.one-light;

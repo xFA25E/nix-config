@@ -61,6 +61,12 @@
       fsType = "vfat";
       options = ["fmask=0022" "dmask=0022"];
     };
+
+    "/mnt/backup-local" = {
+      device = "/dev/disk/by-label/backup-local";
+      fsType = "ext4";
+      options = ["defaults" "noatime" "nofail" "user"];
+    };
   };
 
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
