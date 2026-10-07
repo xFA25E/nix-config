@@ -3230,11 +3230,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1786095920,
-        "narHash": "sha256-D9eXkYwjemQA5aWHxH+DC32bYjuB0RZ53CypR6SBt78=",
+        "lastModified": 1791377606,
+        "narHash": "sha256-WSaLxtnW8K/kL9/lNQx9gozOgF4SP2BEA753iMkjOec=",
         "owner": "xFA25E",
         "repo": "sincere-blog",
-        "rev": "f085a84ca428985509422db9d413cfc08949a094",
+        "rev": "5d357eef4523a39dc7bb48b1e7adcf336a0f6388",
         "type": "github"
       },
       "original": {
