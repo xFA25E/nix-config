@@ -17,7 +17,6 @@
           "dired-tags"
           "pueue"
           "rx-widget"
-          "sdcwoc"
           "tempo-extra"
         ];
 

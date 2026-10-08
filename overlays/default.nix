@@ -27,7 +27,6 @@ inputs: {
     select_music_dir = callPackage ./select_music_dir.nix {};
     select_ytdl_fmt = callPackage ./select_ytdl_fmt.nix {};
     sort_videos_by_duration = callPackage ./sort_videos_by_duration.nix {};
-    stardicts = callPackage ./stardicts {};
     strip_video = callPackage ./strip_video.nix {};
     stumpwm = callPackage ./stumpwm {
       src = stumpwm;

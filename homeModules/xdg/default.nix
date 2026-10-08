@@ -26,8 +26,6 @@
           Type = "Application";
         };
       };
-
-      "stardict/dic".source = pkgs.stardicts;
     };
 
     mimeApps = {

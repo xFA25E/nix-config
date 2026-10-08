@@ -73,14 +73,6 @@
       url = "github:xFA25E/rx-widget";
     };
 
-    epkg-sdcwoc = {
-      inputs = {
-        emacs-overlay.follows = "emacs-overlay";
-        nixpkgs.follows = "nixpkgs";
-      };
-      url = "github:xFA25E/sdcwoc";
-    };
-
     epkg-tempo-extra = {
       inputs = {
         emacs-overlay.follows = "emacs-overlay";
