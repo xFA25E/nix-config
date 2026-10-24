@@ -1168,7 +1168,7 @@ See `xref-backend-apropos' docs for PATTERN."
   (gptel-make-ollama "Ollama"
     :host "localhost:11434"
     :stream t
-    :models '(qwen2.5-coder:7b deepseek-r1:8b))
+    :models '(qwen2.5-coder:7b deepseek-r1:8b qwen3.5:9b))
 
   (setq gptel-backend (gptel-make-gemini "Gemini" :key 'gptel-api-key :stream t))
   (setq gptel-model 'gemini-flash-lite-latest))
