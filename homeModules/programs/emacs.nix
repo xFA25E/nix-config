@@ -21,6 +21,22 @@
         ];
 
       override = efinal: eprev: {
+        envrc = let
+          rev = "2316e004c1574234fe4d991bd75a254cdeaa83ae";
+          url = "https://github.com/purcell/envrc.git";
+        in
+          efinal.melpaBuild {
+            version = "0.12";
+            pname = "envrc";
+            src = pkgs.fetchgit {
+              inherit rev url;
+              hash = "sha256-tVNViz19rpPuiTWi19I+QKrcpEUBKgaKFMgwcQu6pc8=";
+            };
+            commit = rev;
+            recipe = pkgs.writeText "recipe" ''(envrc :fetcher git :url "${url}")'';
+            packageRequires = [efinal.inheritenv];
+          };
+
         debase = let
           rev = "5a728897d332229f7c7cc5beb21f806ee41bc12c";
           url = "https://codeberg.org/xFA25E/debase.git";

@@ -15,6 +15,7 @@
     direnv = {
       enable = true;
       enableBashIntegration = true;
+      nix-direnv.enable = true;
     };
 
     feh.enable = true;
