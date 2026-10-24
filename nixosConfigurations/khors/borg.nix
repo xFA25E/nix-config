@@ -15,7 +15,7 @@
 
       # Host is ignored; the path must match --restrict-to-repository on the desktop
       exec nice -n 19 ionice -c2 -n7 borg create --stats --compression auto,zstd --exclude-caches --lock-wait 3600 \
-        'ssh://borg@desktop/mnt/backup-local/khors-repo::khors-{now}' \
+        'ssh://borg@desktop/mnt/backup-local/khors-repo::khors-{now:%Y-%m-%dT%H:%M:%S.%f}' \
         /var/lib/immich/backups \
         /var/lib/immich/library \
         /var/lib/immich/profile \

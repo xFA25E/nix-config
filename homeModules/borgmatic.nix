@@ -82,6 +82,7 @@ in {
                   }
                 ];
                 encryption_passcommand = "${pkgs.pass}/bin/pass show other/backup-khors";
+                match_archives = "khors-*";
                 keep_daily = 7;
                 keep_weekly = 4;
                 keep_monthly = 12;
@@ -111,7 +112,7 @@ in {
                 --what="sleep:shutdown" \
                 --why="Prevent interrupting khors repo maintenance" \
                 ${pkgs.borgmatic}/bin/borgmatic \
-                  -c ${khorsMaintenanceYaml} prune compact check --verbosity -1 --syslog-verbosity 1
+                  -c ${khorsMaintenanceYaml} prune compact check --stats --verbosity -1 --list --syslog-verbosity 1
             '';
             Nice = 19;
             IOSchedulingClass = "best-effort";
