@@ -100,7 +100,7 @@
       stumpwm
       nsxiv
       teamviewer
-      telegram-desktop
+      inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.telegram-desktop
       tor-browser
       transmission_4
       udiskie
