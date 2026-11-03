@@ -1,6 +1,7 @@
 {
   config,
   inputs,
+  pkgs,
   ...
 }: {
   systemd.tmpfiles.rules = ["d /var/lib/immich-external-libraries 0755 immich immich -"];
@@ -8,7 +9,7 @@
   services = {
     immich = {
       enable = true;
-      package = inputs.nixpkgs-unstable.legacyPackages.${config.nixpkgs.system}.immich;
+      package = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.immich;
     };
 
     nginx = {
