@@ -23,7 +23,7 @@
   (swm-config.reverse-im:init)
   (swm-config.timers:init)
 
-  (setf swm:*window-format* "%m%50t")
+  (setf swm:*window-format* "[ %m%30t ]")
   (setf swm:*mode-line-highlight-template* "^[^09~A^]")
   (setf swm:*screen-mode-line-format* "[%n] %w^> %u %d")
   (setf swm:*mode-line-position* :bottom)
