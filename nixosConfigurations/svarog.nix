@@ -94,6 +94,13 @@
     '';
   };
 
-  # virtualisation.virtualbox.host.enable = true;
-  # users.extraGroups.vboxusers.members = [username];
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu = {
+      swtpm.enable = true;
+      vhostUserPackages = [pkgs.virtiofsd];
+    };
+  };
+  programs.virt-manager.enable = true;
+  users.users.${username}.extraGroups = ["libvirtd"];
 }
