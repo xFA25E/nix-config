@@ -33,6 +33,7 @@ inputs: {
       withSlynk = true;
     };
     sudo_askpass = callPackage ./sudo_askpass.nix {};
+    view-html-mail = callPackage ./view-html-mail {};
     video_seconds = callPackage ./video_seconds.nix {};
     wallpapers = callPackage ./wallpapers {};
     watch_time = callPackage ./watch_time.nix {};

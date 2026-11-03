@@ -107,6 +107,7 @@
       unzip
       vesktop
       video_seconds
+      view-html-mail
       watch_time
       wget
       wormhole-william
