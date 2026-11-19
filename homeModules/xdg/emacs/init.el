@@ -1171,6 +1171,7 @@ See `xref-backend-apropos' docs for PATTERN."
     :models '(qwen2.5-coder:7b deepseek-r1:8b qwen3.5:9b))
 
   (setq gptel-backend (gptel-make-gemini "Gemini" :key 'gptel-api-key :stream t))
+  (setq gptel-backend (gptel-make-openai "ChatGPT" :key 'gptel-api-key :stream t))
   (setq gptel-model 'gemini-flash-lite-latest))
 
 (use-package grep
