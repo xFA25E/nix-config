@@ -1,7 +1,7 @@
 final: prev: let
   pname = "cursor";
-  version = "3.19.13";
-  urlHash = "dd066f332fcea7382764400fde902f61920648d5";
+  version = "3.29.15";
+  urlHash = "86776fcb52ca505783155631089b65d646f9b03f";
 in
   prev.code-cursor.overrideAttrs (_: {
     inherit version;
@@ -10,7 +10,7 @@ in
       inherit version pname;
       src = final.fetchurl {
         url = "https://downloads.cursor.com/production/${urlHash}/linux/x64/Cursor-${version}-x86_64.AppImage";
-        hash = "sha256-B9kDP/TsvE2OmhYEq77ZyiQttho3FQlRa4Ux1RDptQg=";
+        hash = "sha256-rvFuzyfb6ohiXQbU+UXG0RUsSJ8v7dUDLJeNaW+UF9E=";
       };
     };
 
