@@ -82,20 +82,19 @@
     ssh = {
       enable = true;
       enableDefaultConfig = false;
-      extraOptionOverrides."StrictHostKeyChecking" = "accept-new";
       includes = ["config.d/config"];
       settings = {
         "*" = {
           AddKeysToAgent = "yes";
-          Compression = false;
-          ControlMaster = "auto";
-          ControlPath = "~/.ssh/controlmasters/%r@%n:%p";
-          ControlPersist = "1000m";
           ForwardAgent = false;
+          StrictHostKeyChecking = "accept-new";
           HashKnownHosts = false;
-          ServerAliveCountMax = 30;
-          ServerAliveInterval = 5;
-          UserKnownHostsFile = "~/.ssh/known_hosts";
+          ServerAliveInterval = 15;
+          ServerAliveCountMax = 4;
+          ConnectTimeout = 15;
+          ControlMaster = "auto";
+          ControlPath = "\${XDG_RUNTIME_DIR}/ssh-cm-%C";
+          ControlPersist = "10m";
         };
       };
     };

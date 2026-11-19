@@ -22,6 +22,7 @@
     inputs.self.nixosModules.x
     inputs.self.nixosModules.zsa
     inputs.self.nixosModules.ollama
+    inputs.self.nixosModules.sshd
   ];
 
   boot = {
